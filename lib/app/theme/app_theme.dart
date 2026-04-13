@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iced26/core/models/app_data.dart';
+import 'package:iced26/domain/entities/app_data.dart';
 
 class AppTheme {
   static final lightTheme = ThemeData(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iced26/app/theme/app_theme.dart';
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/data/app_data_repository.dart';
-import 'package:iced26/core/models/app_data.dart';
+import 'package:iced26/domain/entities/app_data.dart';
 import 'package:iced26/features/home/view/home_view.dart';
 
 void main() => runApp(const MyApp());

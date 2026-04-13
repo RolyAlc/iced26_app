@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:iced26/core/models/app_data.dart';
+
+import 'package:iced26/domain/entities/app_data.dart';
 import 'package:iced26/features/home/view/sections/home_bottom_bar.dart';
 import 'package:iced26/features/home/view/sections/home_categories_section.dart';
 import 'package:iced26/features/home/view/sections/home_featured_section.dart';
@@ -8,6 +9,7 @@ import 'package:iced26/features/home/view/sections/home_search_section.dart';
 import 'package:iced26/features/home/view/sections/home_social_news_section.dart';
 import 'package:iced26/features/home/viewmodel/home_viewmodel.dart';
 
+/// Pantalla principal de la aplicación.
 class HomeView extends StatelessWidget {
   const HomeView({super.key, required this.data});
 

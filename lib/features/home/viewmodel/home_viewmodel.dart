@@ -1,9 +1,10 @@
-import 'package:iced26/core/models/app_data.dart';
+import 'package:iced26/domain/entities/app_data.dart';
+import 'package:iced26/domain/entities/day.dart';
+import 'package:iced26/domain/entities/event.dart';
 
 /// ViewModel para la Home, que prepara los datos para las secciones.
 class HomeViewModel {
   HomeViewModel(this.data);
-
   final AppData data;
 
   // Obtenemos el primer día disponible.
