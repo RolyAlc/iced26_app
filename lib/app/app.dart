@@ -70,7 +70,7 @@ class _LoadingScreen extends StatelessWidget {
     return const Scaffold(
       body: Center(
         child: Image(
-          image: AssetImage(Assets.logoIced26),
+          image: AssetImage(Assets.logoIced26IconApp),
           width: 240,
           fit: BoxFit.contain,
         ),
