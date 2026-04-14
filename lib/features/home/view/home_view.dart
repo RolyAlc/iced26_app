@@ -22,27 +22,67 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              HomeHeaderSection(
-                today: DateTime.now(),
-                infoLabel: hvm.headerInfoLabel,
+        child: CustomScrollView(
+          slivers: [
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _HomeHeaderDelegate(
+                child: HomeHeaderSection(
+                  today: DateTime.now(),
+                  infoLabel: hvm.headerInfoLabel,
+                ),
               ),
-              const SizedBox(height: 16),
-              HomeFeaturedSection(events: hvm.featuredEvents),
-              const SizedBox(height: 16),
-              HomeCategoriesSection(items: hvm.categoryLabels),
-              const SizedBox(height: 16),
-              const HomeSocialNewsSection(),
-              const SizedBox(height: 24),
-            ],
-          ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  const SizedBox(height: 16),
+                  HomeFeaturedSection(events: hvm.featuredEvents),
+                  const SizedBox(height: 16),
+                  HomeCategoriesSection(items: hvm.categoryLabels),
+                  const SizedBox(height: 16),
+                  const HomeSocialNewsSection(),
+                  const SizedBox(height: 24),
+                ]),
+              ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: const HomeBottomBar(),
     );
+  }
+}
+
+/// Persistentencia de la pantalla principal.
+/// Permite mostrar la cabecera fija con el logo y la fecha.
+class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
+  _HomeHeaderDelegate({required this.child});
+
+  final Widget child;
+
+  @override
+  double get minExtent => 150;
+
+  @override
+  double get maxExtent => 150;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: child,
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) {
+    return oldDelegate.child != child;
   }
 }
