@@ -17,7 +17,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/app_data.json
-    - assets/data/brand/logo_iced26_new2-1-1024x628.png
+    - assets/brand/
 flutter_icons:
   # Añadimos el logo como icono de la app.
   android: true
