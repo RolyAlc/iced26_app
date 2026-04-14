@@ -5,7 +5,6 @@ import 'package:iced26/features/home/view/sections/home_bottom_bar.dart';
 import 'package:iced26/features/home/view/sections/home_categories_section.dart';
 import 'package:iced26/features/home/view/sections/home_featured_section.dart';
 import 'package:iced26/features/home/view/sections/home_header_section.dart';
-import 'package:iced26/features/home/view/sections/home_search_section.dart';
 import 'package:iced26/features/home/view/sections/home_social_news_section.dart';
 import 'package:iced26/features/home/viewmodel/home_viewmodel.dart';
 
@@ -17,24 +16,25 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = HomeViewModel(data);
+    final hvm = HomeViewModel(data);
 
     // Mostramos un layout general con scroll.
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              HomeHeaderSection(dayLabel: vm.firstDay?.date ?? ''),
+              HomeHeaderSection(
+                today: DateTime.now(),
+                infoLabel: hvm.headerInfoLabel,
+              ),
               const SizedBox(height: 16),
-              const HomeSearchSection(),
+              HomeFeaturedSection(events: hvm.featuredEvents),
               const SizedBox(height: 16),
-              HomeFeaturedSection(events: vm.featuredEvents),
-              const SizedBox(height: 16),
-              HomeCategoriesSection(items: vm.categoryLabels),
+              HomeCategoriesSection(items: hvm.categoryLabels),
               const SizedBox(height: 16),
               const HomeSocialNewsSection(),
               const SizedBox(height: 24),

@@ -27,7 +27,7 @@ class HomeSearchSection extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Search by name, time, duration and more',
+                    'Search',
                     style: TextStyle(fontSize: 12, color: Colors.black54),
                   ),
                 ),
