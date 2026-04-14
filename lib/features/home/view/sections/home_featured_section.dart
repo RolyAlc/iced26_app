@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:iced26/core/models/app_data.dart';
+
+import 'package:iced26/domain/entities/event.dart';
 
 class HomeFeaturedSection extends StatelessWidget {
   const HomeFeaturedSection({super.key, required this.events});
