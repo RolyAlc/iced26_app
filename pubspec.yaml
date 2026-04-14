@@ -18,6 +18,7 @@ flutter:
   assets:
     - assets/data/app_data.json
     - assets/brand/
+    - assets/brand/iconApp/
 flutter_icons:
   # Añadimos el logo como icono de la app.
   android: true
