@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/domain/entities/app_data.dart';
+// TODO: Extraer del JSON y aplicar en el tema.
+
+// Colores personalizados para la app
+class AppColors {
+  static const Color navBackground = Color(0xFFF1F8E9);
+  static const Color navIndicator = Color(0xFF7DA097);
+}
 
 class AppTheme {
   static final lightTheme = ThemeData(
