@@ -2,7 +2,7 @@
   "metadata": {
     "event_id": "ICED26",
     "version": "1.0.0",
-    "generated_at": "2026-04-13T18:18:13.787695+00:00"
+    "generated_at": "2026-04-15T00:22:53.372479+00:00"
   },
   "conference": {
     "name": "Agency and Academic Development",
@@ -1116,78 +1116,121 @@
         }
       }
     ],
+    "socials": [
+      {
+        "id": "social-1"
+      }
+    ],
+    "news": [
+      {
+        "id": "new-1",
+        "date_publish": "2026-06-23",
+        "title": {
+          "en": "CED26 CONFERENCE"
+        },
+        "content": {
+          "en": "Agency and Academic Development 24 - 26 June 2026."
+        },
+        "img_url": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "web_url": "https://iced26.es/"
+      }
+    ],
     "submission_types": [
       {
         "id": "type-symposia",
         "name": "Symposia",
         "duration_min": 90,
-        "lang": "en",
         "description": {
           "en": "Symposia offer an opportunity to present a series of coordinated contributions focused on a shared theme related to academic development. These sessions may bring together multiple perspectives, research findings, or practical innovations from different institutions, regions, or disciplines. Symposia sessions are directed by a chair, involving three to four presenters and one discussant. We welcome proposals that stimulate discussion, integrate theory and practice, and/or reflect international collaboration."
         },
         "schedule_description": {
           "en": "A symposium is scheduled for 90 minutes, allowing 15 minutes presentation time per speaker, 10 minutes for the discussant, and 20 minutes for open discussion."
-        }
+        },
+        "lang": "en"
       },
       {
         "id": "type-paper",
         "name": "Paper",
         "duration_min": 90,
-        "lang": "en",
         "description": {
           "en": "Single paper sessions offer participants the opportunity to present and discuss completed or well-developed work. The conference organizers aim to group paper sessions according to theme or topic. Each session encourages the exchange of ideas and constructive feedback across projects with a shared focus. We welcome both: empirical papers, which must include data and results, and theoretical or conceptual papers, which provide evidence-informed analyses, literature-based frameworks, or critical reflections on relevant themes in academic development."
         },
         "schedule_description": {
           "en": "Paper sessions are scheduled for 90 minutes. Four presenters are given 15 minutes presentation time followed by 5 minutes for questions. At the end of all presentations there is a 10- minute open discussion."
-        }
+        },
+        "lang": "en"
       },
       {
         "id": "type-poster",
         "name": "Poster",
         "duration_min": 90,
-        "lang": "en",
         "description": {
           "en": "Poster presentations offer a highly interactive format for sharing research, conceptual work, or practical initiatives in academic development. This format is ideal for fostering informal, focused dialogue and exchanging ideas with peers in a visual and engaging way. Each poster session includes several thematically linked contributions. The dynamic is as follows: each presenter gives a brief 5-minute overview of their poster to the audience gathered as a group. After all the authors’ brief presentations, an in-depth discussion between them and the audience follows, in an exhibition format, meaning participants can circulate and engage in deeper conversations with the presenters."
         },
         "schedule_description": {
           "en": "Poster sessions are scheduled for 90 minutes, following the format above. Materials for fixing posters will be provided."
-        }
+        },
+        "lang": "en"
       },
       {
         "id": "type-workshop",
         "name": "Workshop",
         "duration_min": 90,
-        "lang": "en",
         "description": {
           "en": "Workshops offer participants focused, practice-oriented learning opportunities designed to develop new professional skills in academic development, teaching, leadership, and institutional transformation. They are intensive, hands-on professional development and grounded in evidence-based practices. Workshops should be participant-centered and designed to foster practical takeaways that attendees can apply in their own institutions or teaching contexts."
         },
         "schedule_description": {
           "en": "Workshops during the conference are scheduled for 90 minutes. At the Pre-Conference on June 23, prior to the official start of the ICED26 Conference, each workshop lasts 3 hours. They are offered as an optional add-on session."
-        }
+        },
+        "lang": "en"
       },
       {
         "id": "type-collaborative",
         "name": "Collaborative Space",
         "duration_min": 60,
-        "lang": "en",
         "description": {
           "en": "A collaborative space is designed to support early-stage empirical or conceptual work, such as emerging research ideas or conceptual frameworks, work in progress, experiments with new tools, or initial reflections on practice. This space encourages constructive dialogue and potential collaboration, offering participants the opportunity to search for formative feedback, refine their ideas and explore partnerships."
         },
         "schedule_description": {
           "en": "Collaborative spaces are scheduled for 60 minutes. The person organising the collaborative space can organise the timing flexible and should be able to adapt the session to the number of attendees."
-        }
+        },
+        "lang": "en"
       },
       {
         "id": "type-iced-talks",
         "name": "ICED-Talks",
         "duration_min": 60,
-        "lang": "en",
         "description": {
           "en": "Inspired by the renowned TED-Talks format, ICED-Talks offer a vibrant forum for dynamic intellectual exchange. In this session format, distinguished professionals in the field of academic development share their expertise through concise, impactful 10-minute presentations. Each talk is designed to communicate “ideas worth sharing” — whether through innovative concepts, thought-provoking perspectives, or forward-looking educational practices. The format encourages accessibility and engagement, aiming to spark reflection and dialogue among participants."
         },
         "schedule_description": {
           "en": "ICED-Talks are scheduled in 60-minute sessions, featuring four speakers. While slides are welcome, presenters are encouraged to use visual imagery over text to support their storytelling and message."
-        }
+        },
+        "lang": "en"
+      },
+      {
+        "id": "type-key-notes",
+        "name": "Key Notes",
+        "duration_min": 60,
+        "description": {
+          "en": ""
+        },
+        "schedule_description": {
+          "en": ""
+        },
+        "lang": "en"
+      },
+      {
+        "id": "type-doctoral-colloquium",
+        "name": "Doctoral Colloquium",
+        "duration_min": 60,
+        "description": {
+          "en": ""
+        },
+        "schedule_description": {
+          "en": ""
+        },
+        "lang": "en"
       }
     ]
   }
