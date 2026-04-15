@@ -6,18 +6,16 @@ import 'package:iced26/domain/entities/i18n_str.dart';
 /// Devuelve un objeto 'Event' con los campos correctamente parseados.
 class EventMapper {
   static Event fromMap(Map<String, dynamic> json) {
-    // Extraemos los datos crudos primero
     final String id = json['id']?.toString() ?? '';
     final dynamic rawTitle = json['title'] ?? json['name'];
     final String? rawStart = json['start']?.toString();
     final String? rawEnd = json['end']?.toString();
     final String? zoneId = (json['zoneId'] ?? json['zone_id'])?.toString();
+    final String? roomId = (json['roomId'] ?? json['room_id'])?.toString();
     final String type = json['type']?.toString() ?? '';
     final String? lang = json['lang']?.toString();
     final String? filterDate = json['filter_date']?.toString();
     final String? filterTime = json['filter_time']?.toString();
-
-    // Convertimos a tipos de dominio
     final I18nStr title = I18nMapper.fromRaw(rawTitle);
     final DateTime? startDate = _parseDate(rawStart);
     final DateTime? endDate = _parseDate(rawEnd);
@@ -28,6 +26,7 @@ class EventMapper {
       startDate: startDate,
       endDate: endDate,
       zoneId: zoneId,
+      roomId: roomId,
       type: type,
       lang: lang,
       filterDate: filterDate,
@@ -35,8 +34,10 @@ class EventMapper {
     );
   }
 
+  // Parsear fechas en formato ISO 8601, devolviendo null si no es posible.
   static DateTime? _parseDate(String? value) {
     if (value == null || value.isEmpty) return null;
-    return DateTime.tryParse(value);
+    final parsed = DateTime.tryParse(value);
+    return parsed?.toLocal();
   }
 }

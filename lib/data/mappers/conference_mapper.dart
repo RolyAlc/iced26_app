@@ -9,11 +9,7 @@ class ConferenceMapper {
     // Extraemos el nombre de la conferencia, considerando que puede venir como 'name' o 'title'
     final dynamic rawName = json['name'] ?? json['title'];
     final I18nStr nameEntity = I18nMapper.fromRaw(rawName);
-
-    // Extraemos la lista de temas
     final List<dynamic> rawThemes = _ensureList(json['conference_themes']);
-
-    // Convertimos cada elemento de la lista en un 'I18nStr'
     final List<I18nStr> themesList = rawThemes.map((item) {
       return I18nMapper.fromRaw(item);
     }).toList();

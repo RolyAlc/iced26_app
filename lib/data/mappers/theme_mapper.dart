@@ -4,12 +4,9 @@ import 'package:iced26/domain/entities/theme_config.dart';
 /// Devuelve un objeto 'ThemeConfig' con los campos correctamente parseados.
 class ThemeMapper {
   static ThemeConfig fromMap(Map<String, dynamic> json) {
-    // Extraemos las secciones del JSON
     final dynamic rawColors = json['color'] ?? json['colors'];
     final dynamic rawTypography = json['typography'];
     final dynamic rawLogo = json['logo'];
-
-    // Procesamos el mapa de colores con seguridad (Cast de dynamic a String)
     final Map<String, String> processedColors = _parseColors(rawColors);
 
     return ThemeConfig(
