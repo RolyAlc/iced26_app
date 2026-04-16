@@ -116,7 +116,7 @@ class _IconInfoRow extends StatelessWidget {
   }
 }
 
-/// Chip personalizado para mostrar el estado de un evento (LIVE, ENDED, NEXT)
+/// Chip personalizado para mostrar el estado de un evento (LIVE, ENDED, NEXT).
 class SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback? onSeeAll;
@@ -153,7 +153,7 @@ class SectionHeader extends StatelessWidget {
   }
 }
 
-/// Chip personalizado para mostrar el estado de un evento (LIVE, ENDED, NEXT)
+/// Chip personalizado para mostrar el estado de un evento (LIVE, ENDED, NEXT).
 class _StatusChip extends StatelessWidget {
   final EventStatus status;
 
