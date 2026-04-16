@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:iced26/domain/entities/event_ui_model.dart';
-import 'package:iced26/features/home/view/sections/widgets/home_header_widget.dart';
+import 'package:iced26/features/home/view/sections/widgets/home_featured_widgets.dart';
 
+/// Sección de eventos destacados en la Home.
+/// Muestra una lista horizontal de eventos destacados del día actual,
+/// con un header que incluye un título y una acción "See all".
 class HomeFeaturedSection extends StatelessWidget {
   final List<EventUIModel> featuredEvents;
   final String sectionTitle;
