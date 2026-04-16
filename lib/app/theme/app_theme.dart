@@ -12,6 +12,12 @@ class AppTheme {
   static final lightTheme = ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+    searchBarTheme: _buildSearchBarTheme(
+      ColorScheme.fromSeed(seedColor: Colors.blue),
+    ),
+    searchViewTheme: _buildSearchViewTheme(
+      ColorScheme.fromSeed(seedColor: Colors.blue),
+    ),
   );
 
   /// Creamos el tema usando los colores del JSON.
@@ -27,7 +33,13 @@ class AppTheme {
     }
 
     // Aplicamos el esquema al tema Material 3.
-    return ThemeData(useMaterial3: true, colorScheme: scheme);
+    // TODO: Pasar a M3 expression
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      searchBarTheme: _buildSearchBarTheme(scheme),
+      searchViewTheme: _buildSearchViewTheme(scheme),
+    );
   }
 }
 
@@ -41,4 +53,36 @@ Color? _hexToColor(String? hex) {
   if (intValue == null) return null;
 
   return Color(intValue);
+}
+
+// Personalización de la barra de búsqueda para que se integre
+// con el diseño moderno de la app.
+SearchBarThemeData _buildSearchBarTheme(ColorScheme colorScheme) {
+  return SearchBarThemeData(
+    elevation: const WidgetStatePropertyAll(0),
+    backgroundColor: WidgetStatePropertyAll(colorScheme.surfaceContainerHigh),
+    shape: WidgetStatePropertyAll(
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+    ),
+    side: WidgetStatePropertyAll(
+      BorderSide(color: colorScheme.outlineVariant, width: 1.2),
+    ),
+    textStyle: WidgetStatePropertyAll(
+      TextStyle(fontWeight: FontWeight.w500, color: colorScheme.onSurface),
+    ),
+    hintStyle: WidgetStatePropertyAll(
+      TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
+    ),
+  );
+}
+
+// Personalización de la vista expandida de búsqueda para que se sienta
+// como una "capa" moderna que se desliza desde abajo.
+SearchViewThemeData _buildSearchViewTheme(ColorScheme colorScheme) {
+  return SearchViewThemeData(
+    backgroundColor: colorScheme.surface,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+    ),
+  );
 }
