@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/domain/entities/app_data.dart';
-import 'package:iced26/features/home/view/sections/home_bottom_bar.dart';
-import 'package:iced26/features/home/view/sections/home_categories_section.dart';
-import 'package:iced26/features/home/view/sections/home_featured_section.dart';
+import 'package:iced26/features/home/view/sections/home_filter_chips_section.dart';
 import 'package:iced26/features/home/view/sections/home_header_section.dart';
-import 'package:iced26/features/home/view/sections/home_social_news_section.dart';
 import 'package:iced26/features/home/viewmodel/home_viewmodel.dart';
+import 'package:iced26/features/home/view/sections/home_news_section.dart';
+import 'package:iced26/features/home/view/sections/home_featured_section.dart';
+import 'package:iced26/features/home/view/sections/home_categories_section.dart';
+import 'package:iced26/features/home/view/sections/home_social_activities_section.dart';
 
 /// Pantalla principal de la aplicación.
+/// Muestra un resumen de la conferencia, eventos destacados,
+/// categorías, noticias y actividades sociales.
 class HomeView extends StatelessWidget {
   const HomeView({super.key, required this.data});
 
@@ -33,24 +36,40 @@ class HomeView extends StatelessWidget {
                 ),
               ),
             ),
+            const SliverToBoxAdapter(child: HomeFilterChipsSection()),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
+                  const SizedBox(height: 8),
+                  HomeFeaturedSection(
+                    featuredEvents: hvm.featuredEvents,
+                    sectionTitle: 'Featured Events',
+                    onSeeAll: () {
+                      // TODO: Acción al presionar "See all"
+                    },
+                  ),
                   const SizedBox(height: 16),
-                  HomeFeaturedSection(events: hvm.featuredEvents),
-                  const SizedBox(height: 16),
-                  HomeCategoriesSection(items: hvm.categoryLabels),
-                  const SizedBox(height: 16),
-                  const HomeSocialNewsSection(),
-                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HomeCategoriesSection(items: hvm.categoryLabels),
+                        const SizedBox(height: 24),
+                        HomeNewsSection(news: hvm.news),
+                        const SizedBox(height: 24),
+                        HomeSocialActivitiesSection(socials: hvm.socials),
+                        const SizedBox(height: 32),
+                      ],
+                    ),
+                  ),
                 ]),
               ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: const HomeBottomBar(),
     );
   }
 }
@@ -63,10 +82,10 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
 
   @override
-  double get minExtent => 150;
+  double get minExtent => 140;
 
   @override
-  double get maxExtent => 150;
+  double get maxExtent => 140;
 
   @override
   Widget build(
@@ -74,9 +93,10 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
+    final theme = Theme.of(context);
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      color: theme.colorScheme.surface,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: child,
     );
   }

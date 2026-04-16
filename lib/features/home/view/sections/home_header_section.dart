@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:iced26/app/widgets/smart_search_bar.dart';
 import 'package:iced26/core/constants/assets.dart';
-import 'package:iced26/features/home/view/sections/home_search_section.dart';
 
-/// Sección de cabecera en la pantalla principal, con el logo, la fecha y la barra de búsqueda.
+/// Sección de encabezado en la pantalla principal
+/// Muestra el logo, la fecha y una etiqueta informativa.
 class HomeHeaderSection extends StatelessWidget {
   const HomeHeaderSection({
     super.key,
@@ -17,64 +18,74 @@ class HomeHeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final locale = MaterialLocalizations.of(context);
-    final dateLabel = locale.formatFullDate(today);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
+    // Formateo de la fecha (Ej: "Monday, June 26, 2024")
+    final String dateLabel = MaterialLocalizations.of(
+      context,
+    ).formatFullDate(today);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Fila superior: Logo y Datos de la sesión
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              flex: 2,
-              child: Image.asset(
-                Assets.logoIced26,
-                height: 44,
-                fit: BoxFit.contain,
-                alignment: Alignment.centerLeft,
-              ),
+            // Parte izquierda: Logo de la App
+            _buildLogo(),
+            // Parte derecha: Fecha e información de la sesión
+            _buildInfoColumn(dateLabel, colorScheme, textTheme),
+          ],
+        ),
+
+        const SizedBox(height: 8),
+        const SmartSearchBar(), // Barra de búsqueda compacta en el header
+      ],
+    );
+  }
+
+  /// Sub-widget para el Logo
+  Widget _buildLogo() {
+    return Image.asset(Assets.logoIced26, height: 48, fit: BoxFit.contain);
+  }
+
+  /// Sub-widget para la información de fecha y etiqueta
+  Widget _buildInfoColumn(
+    String dateLabel,
+    ColorScheme colors,
+    TextTheme texts,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.calendar_month_outlined,
+              size: 14,
+              color: colors.primary,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Icon(
-                        Icons.calendar_month_outlined,
-                        size: 14,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        dateLabel,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    infoLabel,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary,
-                    ),
-                    textAlign: TextAlign.right,
-                  ),
-                ],
-              ),
+            const SizedBox(width: 4),
+            Text(
+              dateLabel,
+              style: texts.labelSmall?.copyWith(color: colors.onSurfaceVariant),
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        const HomeSearchSection(),
+        const SizedBox(height: 4),
+        // Etiqueta principal de información
+        // Ej: "Welcome to ICED26"
+        Text(
+          infoLabel,
+          style: texts.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: colors.primary,
+          ),
+        ),
       ],
     );
   }
