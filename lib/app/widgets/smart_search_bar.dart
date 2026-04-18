@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/app/widgets/app_bottom_sheet.dart';
-import 'package:iced26/features/home/viewmodel/search_viewmodel.dart';
+import 'package:iced26/features/home/providers/search_provider.dart';
 
-class SmartSearchBar extends StatelessWidget {
-  // Ahora el ViewModel se inyecta, permitiendo que el estado persista.
-  final SearchViewModel searchViewModel;
+/// Widget con una barra de búsqueda inteligente que permite buscar por texto.
+class SmartSearchBar extends ConsumerWidget {
+  final Search searchNotifier;
 
-  const SmartSearchBar({super.key, required this.searchViewModel});
+  const SmartSearchBar({super.key, required this.searchNotifier});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).colorScheme;
 
     return Hero(
@@ -26,13 +27,14 @@ class SmartSearchBar extends StatelessWidget {
     );
   }
 
+  /// Abre el modal con la barra de búsqueda.
   void _openSearch(BuildContext context) {
     AppBottomSheet.show(
       context: context,
       title: 'Search ICED26',
       isFullHeight: true,
-      scrollable: false, // El modal gestiona su propio scroll con ListView
-      child: _SearchModalBody(viewModel: searchViewModel),
+      scrollable: false,
+      child: _SearchModalBody(notifier: searchNotifier),
     );
   }
 }
@@ -67,31 +69,31 @@ class _SearchBarVisualContainer extends StatelessWidget {
   }
 }
 
-class _SearchModalBody extends StatelessWidget {
-  final SearchViewModel viewModel;
-  const _SearchModalBody({required this.viewModel});
+/// Body del modal de búsqueda con la barra de búsqueda y resultados.
+class _SearchModalBody extends ConsumerWidget {
+  final Search notifier;
+  const _SearchModalBody({required this.notifier});
 
   @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: viewModel,
-      builder: (context, _) {
-        return Column(
-          children: [
-            _SearchInputField(
-              onChanged: viewModel.performSearch,
-              query: viewModel.query,
-            ),
-            const SizedBox(height: 24),
-            Expanded(child: _buildContent(context)),
-          ],
-        );
-      },
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(searchProvider);
+
+    return Column(
+      children: [
+        _SearchInputField(
+          onChanged: notifier.performSearch,
+          query: state.query,
+        ),
+        const SizedBox(height: 24),
+        Expanded(child: _buildContent(context, state)),
+      ],
     );
   }
 
-  Widget _buildContent(BuildContext context) {
-    if (viewModel.query.isEmpty) {
+  /// Construye el contenido del modal de búsqueda.
+  Widget _buildContent(BuildContext context, SearchState state) {
+    // Si la consulta está vacía, muestra el helper de bienvenida.
+    if (state.query.isEmpty) {
       return const _SearchHelper(
         title: 'Explore',
         subtitle: 'Find speakers and sessions...',
@@ -99,7 +101,7 @@ class _SearchModalBody extends StatelessWidget {
       );
     }
 
-    if (viewModel.results.isEmpty) {
+    if (state.results.isEmpty) {
       return const _SearchHelper(
         title: 'No results',
         subtitle: 'Try another search...',
@@ -108,9 +110,9 @@ class _SearchModalBody extends StatelessWidget {
     }
 
     return ListView.builder(
-      itemCount: viewModel.results.length,
+      itemCount: state.results.length,
       itemBuilder: (context, index) {
-        final event = viewModel.results[index];
+        final event = state.results[index];
         final colors = Theme.of(context).colorScheme;
 
         return ListTile(
@@ -123,7 +125,7 @@ class _SearchModalBody extends StatelessWidget {
             event.title.resolve('en'),
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          subtitle: Text(viewModel.getRoomName(event.roomId)),
+          subtitle: Text(notifier.getRoomName(event.roomId)),
           onTap: () => Navigator.pop(context),
         );
       },
@@ -131,8 +133,7 @@ class _SearchModalBody extends StatelessWidget {
   }
 }
 
-/// El campo de texto estilizado para la búsqueda.
-/// Se extrae para no ensuciar la lógica del Modal.
+/// Campo de texto para la búsqueda.
 class _SearchInputField extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final String query;
@@ -169,8 +170,7 @@ class _SearchInputField extends StatelessWidget {
   }
 }
 
-/// Widget para estados vacíos o de bienvenida (Empty States).
-/// Centraliza el diseño de "Icono + Título + Subtítulo".
+/// Mensaje a mostrar cuando no hay resultados de búsqueda.
 class _SearchHelper extends StatelessWidget {
   final String title;
   final String subtitle;

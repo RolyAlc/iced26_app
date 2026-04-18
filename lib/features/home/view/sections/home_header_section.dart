@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/app/widgets/smart_search_bar.dart';
 import 'package:iced26/core/constants/assets.dart';
+import 'package:iced26/features/home/providers/search_provider.dart';
 
 /// Sección de encabezado en la pantalla principal
-/// Muestra el logo, la fecha y una etiqueta informativa.
-class HomeHeaderSection extends StatelessWidget {
+/// Muestra el logo, la fecha y una barra de búsqueda.
+class HomeHeaderSection extends ConsumerWidget {
   const HomeHeaderSection({
     super.key,
     required this.today,
@@ -15,13 +17,13 @@ class HomeHeaderSection extends StatelessWidget {
   final DateTime today;
   final String infoLabel;
 
+  /// Construye la sección del encabezado.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-
-    // Formateo de la fecha (Ej: "Monday, June 26, 2024")
+    final searchNotifier = ref.watch(searchProvider.notifier);
     final String dateLabel = MaterialLocalizations.of(
       context,
     ).formatFullDate(today);
@@ -29,20 +31,17 @@ class HomeHeaderSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Fila superior: Logo y Datos de la sesión
+        // Fila superior: Logo e Información
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Parte izquierda: Logo de la App
             _buildLogo(),
-            // Parte derecha: Fecha e información de la sesión
             _buildInfoColumn(dateLabel, colorScheme, textTheme),
           ],
         ),
-
         const SizedBox(height: 8),
-        const SmartSearchBar(), // Barra de búsqueda compacta en el header
+        SmartSearchBar(searchNotifier: searchNotifier),
       ],
     );
   }
@@ -77,8 +76,6 @@ class HomeHeaderSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 4),
-        // Etiqueta principal de información
-        // Ej: "Welcome to ICED26"
         Text(
           infoLabel,
           style: texts.titleSmall?.copyWith(

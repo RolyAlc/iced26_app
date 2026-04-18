@@ -1,42 +1,32 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:iced26/app/navigation_constants.dart';
-import 'package:iced26/app/viewmodel/app_navigation_viewmodel.dart';
-
-/// Datos de los destinos de la barra de navegación.
-class NavItemData {
-  final IconData icon;
-  final IconData selectedIcon;
-  final String label;
-
-  const NavItemData({
-    required this.icon,
-    required this.selectedIcon,
-    required this.label,
-  });
-}
+import 'package:iced26/app/providers/navigation_provider.dart';
 
 /// Widget que representa la barra de navegación.
-class AppNavigationBar extends StatelessWidget {
-  final AppNavigationViewModel viewModel;
-
-  const AppNavigationBar({super.key, required this.viewModel});
+class AppNavigationBar extends ConsumerWidget {
+  const AppNavigationBar({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    //TODO: Cargar padding desde constantes
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = ref.watch(navigationProvider);
+    final notifier = ref.read(navigationProvider.notifier);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
       child: _GlassContainer(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: _buildNavItems(),
+          children: _buildNavItems(currentIndex, notifier),
         ),
       ),
     );
   }
 
-  List<Widget> _buildNavItems() {
+  /// Construye la lista de items de la barra de navegación.
+  List<Widget> _buildNavItems(int currentIndex, Navigation notifier) {
     return mainNavigationItems.asMap().entries.map((entry) {
       final index = entry.key;
       final item = entry.value;
@@ -45,8 +35,8 @@ class AppNavigationBar extends StatelessWidget {
         label: item.label,
         icon: item.icon,
         selectedIcon: item.selectedIcon,
-        isSelected: viewModel.currentIndex == index,
-        onTap: () => viewModel.setIndex(index),
+        isSelected: currentIndex == index,
+        onTap: () => notifier.setIndex(index),
       );
     }).toList();
   }
@@ -54,6 +44,7 @@ class AppNavigationBar extends StatelessWidget {
 
 /// Widget para el efecto Glassmorphism.
 class _GlassContainer extends StatelessWidget {
+  /// Widget que se envuelve en el efecto Glassmorphism.
   final Widget child;
   const _GlassContainer({required this.child});
 
