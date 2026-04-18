@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import 'package:iced26/core/data/app_repository_provider.dart';
 import 'package:iced26/data/mappers/event_ui_mapper.dart';
 import 'package:iced26/features/home/viewmodel/home_categories_viewmodel.dart';
@@ -13,7 +13,7 @@ import 'package:iced26/domain/entities/event.dart';
 part 'home_provider.g.dart';
 
 /// Provee el estado de la home.
-/// Retorna el estado completo de la UI
+/// Retorna el estado completo de la UI.
 @riverpod
 class Home extends _$Home {
   @override
