@@ -2,7 +2,7 @@ import 'package:iced26/data/mappers/i18n_mapper.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 
-/// Mapper para convertir el JSON de un tipo de presentación en una instancia de 'SubmissionType'.
+/// Mapper de submission types de JSON (categorias).
 class SubmissionTypeMapper {
   static SubmissionType fromMap(Map<String, dynamic> json) {
     final dynamic rawDuration = json['duration_min'];
