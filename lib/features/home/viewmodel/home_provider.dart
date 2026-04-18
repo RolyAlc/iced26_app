@@ -9,13 +9,16 @@ import 'package:iced26/features/home/domain/category.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/social_activity.dart';
 
 part 'home_provider.g.dart';
 
-/// Provee el estado de la home.
-/// Retorna el estado completo de la UI.
+/// Provider del estado de la página principal.
 @riverpod
 class Home extends _$Home {
+  /// Construye el estado de la página principal.
+  /// Devuelve el estado de la home
   @override
   Future<HomeState> build() async {
     final repository = ref.watch(appRepositoryProvider);
@@ -24,11 +27,15 @@ class Home extends _$Home {
       repository.getAllDays(),
       repository.getAllEvents(),
       repository.getAllRooms(),
+      repository.getAllNews(),
+      repository.getAllSocialActivities(),
     ]);
 
     final days = results[0] as List<Day>;
     final events = results[1] as List<Event>;
     final rooms = results[2] as List<Room>;
+    final news = results[3] as List<NewsItem>;
+    final socials = results[4] as List<SocialActivity>;
 
     final featuredEvents = events.map((e) {
       final room = rooms.firstWhereOrNull((r) => r.id == e.roomId);
@@ -47,7 +54,8 @@ class Home extends _$Home {
       days: List.from(days),
       featuredEvents: featuredEvents,
       categoryLayout: categoryLayout,
-      news: [], // Próximamente desde la DB
+      news: news,
+      socialActivities: socials,
       headerInfoLabel: 'Welcome to ICED26',
     );
   }

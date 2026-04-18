@@ -1,91 +1,125 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/domain/entities/app_data.dart';
-import 'package:iced26/features/home/view/sections/home_filter_chips_section.dart';
-import 'package:iced26/features/home/view/sections/home_header_section.dart';
-import 'package:iced26/features/home/viewmodel/home_viewmodel.dart';
+import 'package:iced26/app/bootstrap_provider.dart';
+import 'package:iced26/app/widgets/loading_screen.dart';
+import 'package:iced26/app/widgets/staggered_fade_in.dart';
+import 'package:iced26/features/home/viewmodel/home_provider.dart';
 import 'package:iced26/features/home/view/sections/home_news_section.dart';
+import 'package:iced26/features/home/view/sections/home_header_section.dart';
+import 'package:iced26/features/home/viewmodel/search_viewmodel_provider.dart';
 import 'package:iced26/features/home/view/sections/home_featured_section.dart';
 import 'package:iced26/features/home/view/sections/home_categories_section.dart';
 import 'package:iced26/features/home/view/sections/home_social_activities_section.dart';
 
-/// Pantalla principal de la aplicación.
-/// Muestra un resumen de la conferencia, eventos destacados,
-/// categorías, noticias y actividades sociales.
-class HomeView extends StatelessWidget {
-  const HomeView({super.key, required this.data});
+/// Vista de la página principal.
+class HomeView extends ConsumerWidget {
+  const HomeView({super.key});
 
-  final AppData data;
+  /// Construye la vista de la página principal.
+  /// Devuelve la estructura básica de la página principal.
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Esperamos a que la base de datos esté lista.
+    final bootstrapAsync = ref.watch(bootstrapProvider);
+
+    return bootstrapAsync.when(
+      data: (_) => const _HomeScaffold(),
+      loading: () => const LoadingScreen(),
+      error: (err, stack) => Scaffold(body: Center(child: Text('Error: $err'))),
+    );
+  }
+}
+
+/// Scaffold de la página principal.
+class _HomeScaffold extends ConsumerWidget {
+  const _HomeScaffold();
 
   @override
-  Widget build(BuildContext context) {
-    final hvm = HomeViewModel(data);
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Escuchamos el estado de la Home.
+    final homeStateAsync = ref.watch(homeProvider);
 
-    // Mostramos un layout general con scroll.
+    // TODO: Migrar SearchViewModel a Riverpod en la siguiente fase.
+    final searchViewModel = ref.watch(searchViewModelProvider);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _HomeHeaderDelegate(
-                child: HomeHeaderSection(
-                  today: DateTime.now(),
-                  infoLabel: hvm.headerInfoLabel,
-                ),
-              ),
-            ),
-            const SliverToBoxAdapter(child: HomeFilterChipsSection()),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  const SizedBox(height: 8),
-                  HomeFeaturedSection(
-                    featuredEvents: hvm.featuredEvents,
-                    sectionTitle: 'Featured Events',
-                    onSeeAll: () {
-                      // TODO: Acción al presionar "See all"
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        HomeCategoriesSection(items: hvm.categoryLabels),
-                        const SizedBox(height: 24),
-                        HomeNewsSection(news: hvm.news),
-                        const SizedBox(height: 24),
-                        HomeSocialActivitiesSection(socials: hvm.socials),
-                        const SizedBox(height: 32),
-                      ],
+        child: homeStateAsync.when(
+          data: (state) => RefreshIndicator(
+            onRefresh: () => ref.refresh(homeProvider.future),
+            child: CustomScrollView(
+              slivers: [
+                // Cabecera fija (Sticky Header)
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _HomeHeaderDelegate(
+                    child: HomeHeaderSection(
+                      today: DateTime.now(),
+                      infoLabel: state.headerInfoLabel,
+                      searchViewModel: searchViewModel,
                     ),
                   ),
-                ]),
-              ),
+                ),
+
+                // Categorías
+                if (state.categoryLayout != null)
+                  SliverToBoxAdapter(
+                    child: StaggeredFadeIn(
+                      delay: const Duration(milliseconds: 200),
+                      child: HomeCategoriesSection(
+                        layout: state.categoryLayout!,
+                      ),
+                    ),
+                  ),
+
+                // Eventos
+                SliverToBoxAdapter(
+                  child: StaggeredFadeIn(
+                    delay: const Duration(milliseconds: 300),
+                    child: HomeFeaturedSection(
+                      featuredEvents: state.featuredEvents,
+                      sectionTitle: 'Featured Sessions',
+                    ),
+                  ),
+                ),
+
+                // Noticias
+                SliverToBoxAdapter(
+                  child: StaggeredFadeIn(
+                    delay: const Duration(milliseconds: 400),
+                    child: HomeNewsSection(news: state.news),
+                  ),
+                ),
+
+                // Actividades Sociales
+                SliverToBoxAdapter(
+                  child: StaggeredFadeIn(
+                    delay: const Duration(milliseconds: 500),
+                    child: HomeSocialActivitiesSection(
+                      socials: state.socialActivities,
+                    ),
+                  ),
+                ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 100)),
+              ],
             ),
-          ],
+          ),
+          loading: () => const LoadingScreen(),
+          error: (err, stack) =>
+              Center(child: Text('Error al cargar datos: $err')),
         ),
       ),
     );
   }
 }
 
-/// Persistentencia de la pantalla principal.
-/// Permite mostrar la cabecera fija con el logo y la fecha.
+/// Gestiona el header fijo de la vista principal.
 class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
-  _HomeHeaderDelegate({required this.child});
-
   final Widget child;
-
-  @override
-  double get minExtent => 140;
-
-  @override
-  double get maxExtent => 140;
+  _HomeHeaderDelegate({required this.child});
 
   @override
   Widget build(
@@ -93,16 +127,15 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final theme = Theme.of(context);
-    return Container(
-      color: theme.colorScheme.surface,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: child,
-    );
+    return child;
   }
 
   @override
-  bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) {
-    return oldDelegate.child != child;
-  }
+  double get maxExtent => 180.0;
+  @override
+  double get minExtent => 180.0;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      false;
 }
