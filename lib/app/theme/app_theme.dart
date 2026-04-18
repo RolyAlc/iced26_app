@@ -1,88 +1,137 @@
 import 'package:flutter/material.dart';
-import 'package:iced26/domain/entities/app_data.dart';
-// TODO: Extraer del JSON y aplicar en el tema.
+import 'package:google_fonts/google_fonts.dart';
 
-// Colores personalizados para la app
-class AppColors {
-  static const Color navBackground = Color(0xFFF1F8E9);
-  static const Color navIndicator = Color(0xFF7DA097);
-}
+import 'package:iced26/domain/entities/theme_config.dart';
 
-class AppTheme {
-  static final lightTheme = ThemeData(
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-    searchBarTheme: _buildSearchBarTheme(
-      ColorScheme.fromSeed(seedColor: Colors.blue),
-    ),
-    searchViewTheme: _buildSearchViewTheme(
-      ColorScheme.fromSeed(seedColor: Colors.blue),
-    ),
-  );
-
-  /// Creamos el tema usando los colores del JSON.
-  static ThemeData fromAppData(AppData data) {
-    final colors = data.theme.colors;
-    final primary = _hexToColor(colors['primary']) ?? Colors.blue;
-    final secondary = _hexToColor(colors['secondary']);
-
-    // Usamos el color principal como base del esquema.
-    var scheme = ColorScheme.fromSeed(seedColor: primary);
-    if (secondary != null) {
-      scheme = scheme.copyWith(secondary: secondary);
+/// Extensión para convertir texto a color.
+extension ColorParser on String {
+  Color? toColor() {
+    final hex = replaceFirst('#', '');
+    if (hex.length != 6 && hex.length != 8) {
+      return null;
     }
 
-    // Aplicamos el esquema al tema Material 3.
-    // TODO: Pasar a M3 expression
-    return ThemeData(
-      useMaterial3: true,
-      colorScheme: scheme,
-      searchBarTheme: _buildSearchBarTheme(scheme),
-      searchViewTheme: _buildSearchViewTheme(scheme),
-    );
+    final buffer = StringBuffer();
+    if (hex.length == 6) buffer.write('ff');
+    buffer.write(hex);
+
+    final value = int.tryParse(buffer.toString(), radix: 16);
+    if (value == null) {
+      return null;
+    }
+
+    return Color(value);
   }
 }
 
-Color? _hexToColor(String? hex) {
-  if (hex == null || hex.isEmpty) return null;
-
-  final cleaned = hex.replaceAll('#', '');
-  final value = cleaned.length == 6 ? 'FF$cleaned' : cleaned;
-  final intValue = int.tryParse(value, radix: 16);
-
-  if (intValue == null) return null;
-
-  return Color(intValue);
+// TODO: M3 expression soportar colores deribados de los colores Brand (como flat, contrastes, etc...)?¿
+// TODO: Exportar desde el JSON.
+/// Centraliza los colores constantes de la marca.
+class AppBrandColors {
+  static const Color primary = Color(0xFF75A49C);
+  static const Color secondary = Color(0xFF927363);
+  static const Color accent = Color(0xFFF88E5C);
+  static const Color surface = Color(0xFFFCFCFC);
+  static const Color navIndicator = Color(0xFF7DA097);
 }
 
-// Personalización de la barra de búsqueda para que se integre
-// con el diseño moderno de la app.
-SearchBarThemeData _buildSearchBarTheme(ColorScheme colorScheme) {
-  return SearchBarThemeData(
-    elevation: const WidgetStatePropertyAll(0),
-    backgroundColor: WidgetStatePropertyAll(colorScheme.surfaceContainerHigh),
-    shape: WidgetStatePropertyAll(
-      RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-    ),
-    side: WidgetStatePropertyAll(
-      BorderSide(color: colorScheme.outlineVariant, width: 1.2),
-    ),
-    textStyle: WidgetStatePropertyAll(
-      TextStyle(fontWeight: FontWeight.w500, color: colorScheme.onSurface),
-    ),
-    hintStyle: WidgetStatePropertyAll(
-      TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
-    ),
+/// Clase que construye el tema.
+/// Usa el método [_generate] para generar el tema desde los colores de la marca.
+class AppTheme {
+  /// Tema por defecto (Light)
+  static ThemeData get lightTheme => _generate(
+    primary: AppBrandColors.primary,
+    secondary: AppBrandColors.secondary,
+    accent: AppBrandColors.accent,
   );
-}
 
-// Personalización de la vista expandida de búsqueda para que se sienta
-// como una "capa" moderna que se desliza desde abajo.
-SearchViewThemeData _buildSearchViewTheme(ColorScheme colorScheme) {
-  return SearchViewThemeData(
-    backgroundColor: colorScheme.surface,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-    ),
-  );
+  /// Construye el tema desde la entidad de configuración.
+  static ThemeData fromThemeConfig(ThemeConfig config) {
+    return _generate(
+      primary: config.colors['primary']?.toColor() ?? AppBrandColors.primary,
+      secondary:
+          config.colors['secondary']?.toColor() ?? AppBrandColors.secondary,
+      accent: config.colors['accent']?.toColor() ?? AppBrandColors.accent,
+    );
+  }
+
+  /// Genera el tema desde los colores de la marca.
+  static ThemeData _generate({
+    required Color primary,
+    required Color secondary,
+    required Color accent,
+  }) {
+    final scheme = ColorScheme.fromSeed(
+      seedColor: primary,
+      secondary: secondary,
+      tertiary: accent,
+      surface: AppBrandColors.surface,
+    );
+
+    final textTheme = _buildTextTheme();
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      textTheme: textTheme,
+      scaffoldBackgroundColor: scheme.surface,
+      cardTheme: _buildCardTheme(scheme),
+      chipTheme: _buildChipTheme(scheme, textTheme),
+      searchBarTheme: _buildSearchBarTheme(scheme),
+    );
+  }
+
+  /// Genera el text theme.
+  static TextTheme _buildTextTheme() {
+    final base = GoogleFonts.latoTextTheme();
+    final display = GoogleFonts.outfitTextTheme();
+    return base.copyWith(
+      displayLarge: display.displayLarge,
+      headlineMedium: display.headlineMedium,
+    );
+  }
+
+  /// Genera el card theme.
+  static CardThemeData _buildCardTheme(ColorScheme scheme) {
+    return CardThemeData(
+      elevation: 0,
+      color: Color.alphaBlend(
+        scheme.primary.withValues(alpha: 0.05),
+        scheme.surface,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+    );
+  }
+
+  /// Genera el search bar theme.
+  static SearchBarThemeData _buildSearchBarTheme(ColorScheme scheme) {
+    return SearchBarThemeData(
+      elevation: const WidgetStatePropertyAll(0),
+      backgroundColor: WidgetStatePropertyAll(
+        Color.alphaBlend(
+          scheme.primary.withValues(alpha: 0.08),
+          scheme.surface,
+        ),
+      ),
+      shape: WidgetStatePropertyAll(
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+      ),
+      side: WidgetStatePropertyAll(BorderSide(color: scheme.outlineVariant)),
+    );
+  }
+
+  /// Genera el chip theme.
+  static ChipThemeData _buildChipTheme(
+    ColorScheme scheme,
+    TextTheme textTheme,
+  ) {
+    return ChipThemeData(
+      shape: const StadiumBorder(),
+      backgroundColor: scheme.secondaryContainer.withValues(alpha: 0.5),
+      labelStyle: textTheme.labelLarge?.copyWith(
+        color: scheme.onSecondaryContainer,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
 }

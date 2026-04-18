@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:iced26/app/theme/app_theme.dart';
 import 'package:iced26/core/constants/assets.dart';
 
 /// Pantalla de carga genérica para mostrar mientras se inicializa la app o se cargan datos.
@@ -19,7 +20,7 @@ class LoadingScreen extends StatelessWidget {
             SizedBox(height: 20),
             // Un indicador de progreso para que sepa que la app no está congelada
             CircularProgressIndicator(
-              color: Color(0xFF7DA097), // Usamos tu verde corporativo
+              color: AppBrandColors.navIndicator, // Usamos tu verde corporativo
             ),
           ],
         ),
