@@ -111,9 +111,19 @@ class _SearchModalBody extends StatelessWidget {
       itemCount: viewModel.results.length,
       itemBuilder: (context, index) {
         final event = viewModel.results[index];
+        final colors = Theme.of(context).colorScheme;
+
         return ListTile(
-          title: Text(event.title.resolve('en')),
-          subtitle: Text('Room: ${event.roomId ?? 'TBA'}'),
+          contentPadding: const EdgeInsets.symmetric(vertical: 4),
+          leading: CircleAvatar(
+            backgroundColor: colors.primaryContainer.withValues(alpha: 0.2),
+            child: Icon(Icons.event_rounded, color: colors.primary, size: 20),
+          ),
+          title: Text(
+            event.title.resolve('en'),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(viewModel.getRoomName(event.roomId)),
           onTap: () => Navigator.pop(context),
         );
       },
