@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Pantalla de error genérica para mostrar mensajes de error de forma amigable.
 class ErrorScreen extends StatelessWidget {
   const ErrorScreen({super.key, required this.error});
 
