@@ -6,6 +6,8 @@ import 'package:iced26/data/sources/local_json_service.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/utils/logger.dart';
 
 /// Repositorio de la aplicación.
@@ -17,30 +19,28 @@ class AppRepository {
 
   /// Inicializamos la base de datos con los datos del JSON si está vacía.
   Future<void> initializeDataIfNeeded() async {
-    // Miramos si ya tenemos días registrados (señal de que hay datos).
     final existingDays = await _db.select(_db.days).get();
+    final existingNews = await _db.select(_db.news).get();
 
-    // Si ya hay datos, no hacemos nada.
-    if (existingDays.isNotEmpty) {
+    // TODO: Mejorar este control de carga de datos.
+    // Si ya tenemos días y noticias, consideramos que la base de datos está completa.
+    if (existingDays.isNotEmpty && existingNews.isNotEmpty) {
       return;
     }
 
-    // Si está vacía, cargamos el JSON original.
     logger.i('Base de datos vacía. Insertamos los datos desde el JSON...');
     final jsonString = await _jsonService.loadAppDataJson();
     final appData = AppDataMapper.fromJsonString(jsonString);
 
-    // Volcamos los datos en SQLite usando 'batch' para que sea ultra rápido.
     await _db.batch((batch) {
-      // Guardamos los días
       batch.insertAll(
         _db.days,
         appData.collections.days.map((d) {
           return DaysCompanion.insert(id: d.id, date: d.date, title: d.title);
         }),
+        mode: InsertMode.insertOrReplace,
       );
 
-      // Guardamos las salas (Rooms)
       batch.insertAll(
         _db.rooms,
         appData.collections.rooms.map((r) {
@@ -52,6 +52,7 @@ class AppRepository {
             sessionStyle: Value(r.sessionStyle),
           );
         }),
+        mode: InsertMode.insertOrReplace,
       );
 
       // Guardamos los eventos
@@ -72,6 +73,38 @@ class AppRepository {
             filterTime: Value(e.filterTime),
           );
         }),
+        mode: InsertMode.insertOrReplace,
+      );
+
+      batch.insertAll(
+        _db.news,
+        appData.collections.news.map((n) {
+          return NewsCompanion.insert(
+            id: n.id,
+            title: n.title,
+            content: n.content,
+            imgUrl: n.imgUrl,
+            webUrl: n.webUrl,
+            date: n.datePublish.toIso8601String(),
+          );
+        }),
+        mode: InsertMode.insertOrReplace,
+      );
+
+      batch.insertAll(
+        _db.socialActivities,
+        appData.collections.socials.map((s) {
+          return SocialActivitiesCompanion.insert(
+            id: s.id,
+            title: s.title,
+            description: s.description,
+            date: s.date,
+            time: s.time,
+            location: s.location,
+            imgUrl: s.imgUrl,
+          );
+        }),
+        mode: InsertMode.insertOrReplace,
       );
     });
     logger.i('Datos insertados en la base de datos.');
@@ -80,7 +113,6 @@ class AppRepository {
   /// Obtiene todos los días de la conferencia.
   Future<List<Day>> getAllDays() async {
     final results = await _db.select(_db.days).get();
-    // Convertimos de la clase de Drift a nuestra entidad de Domain.
     return results
         .map((d) => Day(id: d.id, date: d.date, title: d.title))
         .toList();
@@ -119,6 +151,41 @@ class AppRepository {
             lang: e.lang,
             filterDate: e.filterDate,
             filterTime: e.filterTime,
+          ),
+        )
+        .toList();
+  }
+
+  /// Obtiene todas las noticias.
+  Future<List<NewsItem>> getAllNews() async {
+    final results = await _db.select(_db.news).get();
+    return results
+        .map(
+          (n) => NewsItem(
+            id: n.id,
+            title: n.title,
+            content: n.content,
+            imgUrl: n.imgUrl,
+            webUrl: n.webUrl,
+            datePublish: DateTime.tryParse(n.date) ?? DateTime.now(),
+          ),
+        )
+        .toList();
+  }
+
+  /// Obtiene todas las actividades sociales.
+  Future<List<SocialActivity>> getAllSocialActivities() async {
+    final results = await _db.select(_db.socialActivities).get();
+    return results
+        .map(
+          (s) => SocialActivity(
+            id: s.id,
+            title: s.title,
+            description: s.description,
+            date: s.date,
+            time: s.time,
+            location: s.location,
+            imgUrl: s.imgUrl,
           ),
         )
         .toList();
