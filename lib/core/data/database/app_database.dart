@@ -70,13 +70,50 @@ class Events extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// Tabla de news.
+@DataClassName('NewsTable')
+class News extends Table {
+  TextColumn get id => text()();
+  TextColumn get title => text().map(const I18nConverter())();
+  TextColumn get content => text().map(const I18nConverter())();
+  TextColumn get imgUrl => text()();
+  TextColumn get webUrl => text()();
+  TextColumn get date => text()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Tabla de social activities.
+@DataClassName('SocialActivityTable')
+class SocialActivities extends Table {
+  TextColumn get id => text()();
+  TextColumn get title => text().map(const I18nConverter())();
+  TextColumn get description => text().map(const I18nConverter())();
+  TextColumn get date => text()();
+  TextColumn get time => text()();
+  TextColumn get location => text().map(const I18nConverter())();
+  TextColumn get imgUrl => text()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// Base de datos de la aplicación.
-@DriftDatabase(tables: [Days, Rooms, Events])
+@DriftDatabase(tables: [Days, Rooms, Events, News, SocialActivities])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (m, from, to) async {
+      // Si subimos de versión, nos aseguramos de crear las tablas nuevas.
+      await m.createAll();
+    },
+  );
 }
 
 /// Abre la conexión a la base de datos.
