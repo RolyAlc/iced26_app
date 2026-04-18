@@ -7,13 +7,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.9
   url_launcher: ^6.3.2
+  google_fonts: ^8.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.4
 flutter:
   uses-material-design: true
   assets:
@@ -25,3 +26,16 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/data/brand/logo_iced26_new2-1-1024x628.png"
+analyzer:
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+linter:
+  rules:
+    - avoid_dynamic_calls
+    - always_declare_return_types
+    - prefer_final_locals
+    - avoid_unused_parameters
+    - unnecessary_this
+    - use_super_parameters
+    - camel_case_types
