@@ -1,51 +1,59 @@
 import 'package:flutter/material.dart';
-
 import 'package:iced26/domain/entities/event_ui_model.dart';
 
-// Widgets reutilizables para la Home, como tarjetas de eventos destacados
+/// Tarjeta de sesión destacada.
 class FeaturedCard extends StatelessWidget {
   final EventUIModel event;
 
   const FeaturedCard({super.key, required this.event});
 
+  /// Construye la tarjeta de sesión destacada.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
     return SizedBox(
-      width: 260,
+      width: 280,
       child: Card(
-        color: colors.primaryContainer.withValues(alpha: 0.4),
+        margin: EdgeInsets.zero,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _CardHeader(event: event),
-              const Spacer(),
-              Text(
-                event.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colors.onPrimaryContainer,
+        color: colors.surfaceContainerHigh,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        child: InkWell(
+          onTap: () {}, // TODO: Navegar al detalle de la sesión
+          borderRadius: BorderRadius.circular(28),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _CardHeader(event: event),
+                const Spacer(),
+                Text(
+                  event.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colors.onSurface,
+                    letterSpacing: -0.2,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              _IconInfoRow(
-                icon: Icons.meeting_room_outlined,
-                label: event.room,
-              ),
-              const SizedBox(height: 4),
-              _IconInfoRow(
-                icon: Icons.access_time,
-                label: 'Duration: ${event.duration}',
-              ),
-            ],
+                const SizedBox(height: 12),
+                _IconInfoRow(
+                  icon: Icons.meeting_room_rounded,
+                  label: event.room,
+                  color: colors.primary,
+                ),
+                const SizedBox(height: 6),
+                _IconInfoRow(
+                  icon: Icons.schedule_rounded,
+                  label: 'Duration: ${event.duration}',
+                  color: colors.secondary,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -53,10 +61,9 @@ class FeaturedCard extends StatelessWidget {
   }
 }
 
-// Widgets auxiliares para el FeaturedCard, como el header con estado y la fila de iconos.
+/// Cabecera de la tarjeta de sesión destacada.
 class _CardHeader extends StatelessWidget {
   final EventUIModel event;
-
   const _CardHeader({required this.event});
 
   @override
@@ -65,42 +72,47 @@ class _CardHeader extends StatelessWidget {
     final colors = theme.colorScheme;
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: colors.surface.withValues(alpha: 0.8),
-            borderRadius: BorderRadius.circular(20),
+            color: colors.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
             event.timeRange,
             style: theme.textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: colors.onSurface,
+              color: colors.primary,
             ),
           ),
         ),
-        const SizedBox(width: 8),
         _StatusChip(status: event.status),
       ],
     );
   }
 }
 
-/// Chip personalizado para mostrar el estado de un evento (LIVE, ENDED, NEXT)
+/// Información de la tarjeta de sesión destacada.
 class _IconInfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
+  final Color color;
 
-  const _IconInfoRow({required this.icon, required this.label});
+  const _IconInfoRow({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Row(
       children: [
-        Icon(icon, size: 14, color: theme.colorScheme.onSurfaceVariant),
-        const SizedBox(width: 6),
+        Icon(icon, size: 16, color: color.withValues(alpha: 0.7)),
+        const SizedBox(width: 8),
         Expanded(
           child: Text(
             label,
@@ -108,6 +120,7 @@ class _IconInfoRow extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -116,7 +129,7 @@ class _IconInfoRow extends StatelessWidget {
   }
 }
 
-/// Chip personalizado para mostrar el estado de un evento (LIVE, ENDED, NEXT).
+/// Cabecera de la sección.
 class SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback? onSeeAll;
@@ -125,45 +138,63 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    final theme = Theme.of(context);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
           ),
-          TextButton(
-            onPressed: onSeeAll ?? () => _showSeeAllSoon(context),
-            child: const Text("See all", style: TextStyle(fontSize: 12)),
+        ),
+        TextButton(
+          onPressed: onSeeAll ?? () => _showSeeAllSoon(context),
+          child: Row(
+            children: [
+              Text(
+                "See all",
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 12,
+                color: theme.colorScheme.primary,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
+  /// Muestra un SnackBar con un mensaje de "Coming Soon".
   void _showSeeAllSoon(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Próximamente: filtros por eventos del día'),
+        content: Text('Coming Soon: Daily session filters'),
         duration: Duration(seconds: 2),
       ),
     );
   }
 }
 
-/// Chip personalizado para mostrar el estado de un evento (LIVE, ENDED, NEXT).
+/// Etiqueta de estado de la sesión.
 class _StatusChip extends StatelessWidget {
   final EventStatus status;
-
   const _StatusChip({required this.status});
 
+  /// Mapeo del estado a colores y etiquetas.
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    // Definimos las propiedades visuales según el estado
     final (Color background, Color foreground, String label) = switch (status) {
       EventStatus.live => (
         colors.errorContainer,
@@ -182,16 +213,16 @@ class _StatusChip extends StatelessWidget {
       ),
     };
 
-    return Chip(
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      visualDensity: VisualDensity.compact,
-      backgroundColor: background,
-      side: BorderSide.none,
-      shape: StadiumBorder(),
-      label: Text(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
         label,
         style: TextStyle(
-          fontSize: 11,
+          fontSize: 10,
           color: foreground,
           fontWeight: FontWeight.bold,
         ),

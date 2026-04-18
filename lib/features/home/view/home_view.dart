@@ -7,7 +7,6 @@ import 'package:iced26/app/widgets/staggered_fade_in.dart';
 import 'package:iced26/features/home/viewmodel/home_provider.dart';
 import 'package:iced26/features/home/view/sections/home_news_section.dart';
 import 'package:iced26/features/home/view/sections/home_header_section.dart';
-import 'package:iced26/features/home/viewmodel/search_viewmodel_provider.dart';
 import 'package:iced26/features/home/view/sections/home_featured_section.dart';
 import 'package:iced26/features/home/view/sections/home_categories_section.dart';
 import 'package:iced26/features/home/view/sections/home_social_activities_section.dart';
@@ -37,11 +36,8 @@ class _HomeScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Escuchamos el estado de la Home.
+    // Escuchamos el estado de la Home para actualizar la vista.
     final homeStateAsync = ref.watch(homeProvider);
-
-    // TODO: Migrar SearchViewModel a Riverpod en la siguiente fase.
-    final searchViewModel = ref.watch(searchViewModelProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -55,55 +51,62 @@ class _HomeScaffold extends ConsumerWidget {
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: _HomeHeaderDelegate(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
                     child: HomeHeaderSection(
                       today: DateTime.now(),
                       infoLabel: state.headerInfoLabel,
-                      searchViewModel: searchViewModel,
                     ),
                   ),
                 ),
 
-                // Categorías
-                if (state.categoryLayout != null)
-                  SliverToBoxAdapter(
-                    child: StaggeredFadeIn(
-                      delay: const Duration(milliseconds: 200),
-                      child: HomeCategoriesSection(
-                        layout: state.categoryLayout!,
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      const SizedBox(height: 16),
+
+                      // Categorías
+                      if (state.categoryLayout != null)
+                        StaggeredFadeIn(
+                          delay: const Duration(milliseconds: 200),
+                          child: HomeCategoriesSection(
+                            layout: state.categoryLayout!,
+                          ),
+                        ),
+
+                      const SizedBox(height: 24),
+
+                      // Eventos
+                      StaggeredFadeIn(
+                        delay: const Duration(milliseconds: 300),
+                        child: HomeFeaturedSection(
+                          featuredEvents: state.featuredEvents,
+                          sectionTitle: 'Featured Sessions',
+                        ),
                       ),
-                    ),
-                  ),
 
-                // Eventos
-                SliverToBoxAdapter(
-                  child: StaggeredFadeIn(
-                    delay: const Duration(milliseconds: 300),
-                    child: HomeFeaturedSection(
-                      featuredEvents: state.featuredEvents,
-                      sectionTitle: 'Featured Sessions',
-                    ),
-                  ),
-                ),
+                      const SizedBox(height: 24),
 
-                // Noticias
-                SliverToBoxAdapter(
-                  child: StaggeredFadeIn(
-                    delay: const Duration(milliseconds: 400),
-                    child: HomeNewsSection(news: state.news),
-                  ),
-                ),
+                      // Noticias
+                      StaggeredFadeIn(
+                        delay: const Duration(milliseconds: 400),
+                        child: HomeNewsSection(news: state.news),
+                      ),
 
-                // Actividades Sociales
-                SliverToBoxAdapter(
-                  child: StaggeredFadeIn(
-                    delay: const Duration(milliseconds: 500),
-                    child: HomeSocialActivitiesSection(
-                      socials: state.socialActivities,
-                    ),
+                      const SizedBox(height: 24),
+
+                      // Actividades Sociales
+                      StaggeredFadeIn(
+                        delay: const Duration(milliseconds: 500),
+                        child: HomeSocialActivitiesSection(
+                          socials: state.socialActivities,
+                        ),
+                      ),
+
+                      const SizedBox(height: 100),
+                    ]),
                   ),
                 ),
-
-                const SliverToBoxAdapter(child: SizedBox(height: 100)),
               ],
             ),
           ),
@@ -116,10 +119,12 @@ class _HomeScaffold extends ConsumerWidget {
   }
 }
 
-/// Gestiona el header fijo de la vista principal.
+/// Gestiona el header fijo de la vista principal con fondo sólido.
 class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
-  _HomeHeaderDelegate({required this.child});
+  final Color backgroundColor;
+
+  _HomeHeaderDelegate({required this.child, required this.backgroundColor});
 
   @override
   Widget build(
@@ -127,15 +132,21 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return child;
+    return Container(
+      color: backgroundColor,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      alignment: Alignment.bottomCenter,
+      child: child,
+    );
   }
 
   @override
-  double get maxExtent => 180.0;
+  double get maxExtent => 200.0;
   @override
-  double get minExtent => 180.0;
+  double get minExtent => 200.0;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      false;
+  bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) =>
+      child != oldDelegate.child ||
+      backgroundColor != oldDelegate.backgroundColor;
 }
