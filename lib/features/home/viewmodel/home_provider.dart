@@ -11,6 +11,7 @@ import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
+import 'package:iced26/domain/entities/submission_type.dart';
 
 part 'home_provider.g.dart';
 
@@ -29,6 +30,7 @@ class Home extends _$Home {
       repository.getAllRooms(),
       repository.getAllNews(),
       repository.getAllSocialActivities(),
+      repository.getAllSubmissionTypes(),
     ]);
 
     final days = results[0] as List<Day>;
@@ -36,6 +38,7 @@ class Home extends _$Home {
     final rooms = results[2] as List<Room>;
     final news = results[3] as List<NewsItem>;
     final socials = results[4] as List<SocialActivity>;
+    final subTypes = results[5] as List<SubmissionType>;
 
     final featuredEvents = events.map((e) {
       final room = rooms.firstWhereOrNull((r) => r.id == e.roomId);
@@ -45,13 +48,14 @@ class Home extends _$Home {
     }).toList();
 
     final categoriesVM = HomeCategoriesViewModel();
-    final distinctTypes = events.map((e) => e.type).toSet().toList();
     final categoryLayout = categoriesVM.buildLayout(
-      distinctTypes.map((t) => Category(name: t)).toList(),
+      subTypes.map((st) => Category(name: st.name.resolve('en'))).toList(),
     );
 
     return HomeState(
       days: List.from(days),
+      allEvents: events,
+      allRooms: rooms,
       featuredEvents: featuredEvents,
       categoryLayout: categoryLayout,
       news: news,

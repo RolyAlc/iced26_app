@@ -10,6 +10,8 @@ import 'package:iced26/domain/entities/i18n_str.dart';
 
 part 'app_database.g.dart';
 
+// Consultar con los datos del json y los mappers.
+
 /// Convertidor de I18nStr a String y viceversa.
 class I18nConverter extends TypeConverter<I18nStr, String> {
   const I18nConverter();
@@ -99,13 +101,48 @@ class SocialActivities extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// Tabla de configuración de la aplicación.
+@DataClassName('AppConfigTable')
+class AppConfigs extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
+/// Tabla de tipos de presentación.
+@DataClassName('SubmissionTypeTable')
+class SubmissionTypes extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().map(const I18nConverter())();
+  IntColumn get durationMin => integer().nullable()();
+  TextColumn get lang => text().nullable()();
+  TextColumn get description => text().map(const I18nConverter())();
+  TextColumn get scheduleDescription => text().map(const I18nConverter())();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// Base de datos de la aplicación.
-@DriftDatabase(tables: [Days, Rooms, Events, News, SocialActivities])
+@DriftDatabase(
+  tables: [
+    Days,
+    Rooms,
+    Events,
+    News,
+    SocialActivities,
+    AppConfigs,
+    SubmissionTypes,
+  ],
+)
+/// Implementación de la base de datos.
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
