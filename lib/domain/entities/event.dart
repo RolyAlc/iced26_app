@@ -4,6 +4,7 @@ import 'package:iced26/domain/entities/i18n_str.dart';
 class Event {
   final String id;
   final I18nStr title;
+  final I18nStr? subtitle;
   final DateTime? startDate;
   final DateTime? endDate;
   final String? zoneId;
@@ -16,6 +17,7 @@ class Event {
   Event({
     required this.id,
     required this.title,
+    this.subtitle,
     this.startDate,
     this.endDate,
     this.zoneId,

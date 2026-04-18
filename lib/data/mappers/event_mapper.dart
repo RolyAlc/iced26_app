@@ -16,13 +16,18 @@ class EventMapper {
     final String? lang = json['lang']?.toString();
     final String? filterDate = json['filter_date']?.toString();
     final String? filterTime = json['filter_time']?.toString();
+    final dynamic rawSubtitle = json['subtitle'];
     final I18nStr title = I18nMapper.fromRaw(rawTitle);
+    final I18nStr? subtitle = rawSubtitle != null
+        ? I18nMapper.fromRaw(rawSubtitle)
+        : null;
     final DateTime? startDate = _parseDate(rawStart);
     final DateTime? endDate = _parseDate(rawEnd);
 
     return Event(
       id: id,
       title: title,
+      subtitle: subtitle,
       startDate: startDate,
       endDate: endDate,
       zoneId: zoneId,
