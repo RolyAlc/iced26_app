@@ -38,7 +38,7 @@ HomeRepository homeRepository(HomeRepositoryRef ref) {
 @riverpod
 ConfigRepository configRepository(ConfigRepositoryRef ref) {
   final db = ref.watch(appDatabaseProvider);
-  final jsonService = LocalJsonService(); // O inyectarlo si prefieres
+  final jsonService = LocalJsonService();
   return ConfigRepositoryImpl(db, jsonService);
 }
 

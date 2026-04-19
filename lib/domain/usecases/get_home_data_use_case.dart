@@ -1,6 +1,6 @@
 import 'package:iced26/core/errors/result.dart';
-import 'package:iced26/domain/repositories/i_agenda_repository.dart';
-import 'package:iced26/domain/repositories/i_home_repository.dart';
+import 'package:iced26/domain/repositories/agenda_repository.dart';
+import 'package:iced26/domain/repositories/home_repository.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
@@ -15,8 +15,8 @@ import 'package:iced26/domain/entities/category.dart';
 
 /// Caso de uso: Obtener toda la información necesaria para la pantalla Home.
 class GetHomeDataUseCase {
-  final IAgendaRepository _agendaRepo;
-  final IHomeRepository _homeRepo;
+  final AgendaRepository _agendaRepo;
+  final HomeRepository _homeRepo;
 
   GetHomeDataUseCase(this._agendaRepo, this._homeRepo);
 
