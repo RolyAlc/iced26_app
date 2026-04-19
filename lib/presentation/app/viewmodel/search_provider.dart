@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 import 'package:iced26/domain/entities/room.dart';
-import 'package:iced26/presentation/features/home/viewmodel/home_provider.dart';
+import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 
 part 'search_provider.g.dart';
 
@@ -34,7 +34,7 @@ class Search extends _$Search {
   void performSearch(String text) {
     if (text == state.query) return;
 
-    final homeData = ref.read(homeProvider).value;
+    final homeData = ref.read(homeViewModelProvider).value;
     if (homeData == null) return;
 
     if (text.isEmpty) {
@@ -56,7 +56,7 @@ class Search extends _$Search {
   /// Devuelve el nombre de una sala por su ID.
   String getRoomName(String? roomId) {
     if (roomId == null) return 'No room';
-    final rooms = ref.read(homeProvider).value?.allRooms ?? [];
+    final rooms = ref.read(homeViewModelProvider).value?.allRooms ?? [];
     final room = rooms.firstWhere(
       (r) => r.id == roomId,
       orElse: () => Room(

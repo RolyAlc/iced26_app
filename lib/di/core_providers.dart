@@ -1,10 +1,13 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:iced26/domain/repositories/i_agenda_repository.dart';
-import 'package:iced26/domain/repositories/i_home_repository.dart';
-import 'package:iced26/domain/repositories/i_config_repository.dart';
-import 'package:iced26/data/repositories/app_repository.dart';
+import 'package:iced26/domain/repositories/agenda_repository.dart';
+import 'package:iced26/domain/repositories/home_repository.dart';
+import 'package:iced26/domain/repositories/config_repository.dart';
+import 'package:iced26/data/repositories/agenda_repository_impl.dart';
+import 'package:iced26/data/repositories/home_repository_impl.dart';
+import 'package:iced26/data/repositories/config_repository_impl.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
+import 'package:iced26/data/sources/local/json/local_json_service.dart';
 import 'package:iced26/domain/usecases/get_home_data_use_case.dart';
 
 part 'core_providers.g.dart';
@@ -19,31 +22,32 @@ GetHomeDataUseCase getHomeDataUseCase(GetHomeDataUseCaseRef ref) {
 
 /// Provee el repositorio de la agenda.
 @riverpod
-IAgendaRepository agendaRepository(AgendaRepositoryRef ref) {
+AgendaRepository agendaRepository(AgendaRepositoryRef ref) {
   final db = ref.watch(appDatabaseProvider);
-  return AppRepository(db);
+  return AgendaRepositoryImpl(db);
 }
 
 /// Provee el repositorio de la home.
 @riverpod
-IHomeRepository homeRepository(HomeRepositoryRef ref) {
+HomeRepository homeRepository(HomeRepositoryRef ref) {
   final db = ref.watch(appDatabaseProvider);
-  return AppRepository(db);
+  return HomeRepositoryImpl(db);
 }
 
 /// Provee el repositorio de configuración.
 @riverpod
-IConfigRepository configRepository(ConfigRepositoryRef ref) {
+ConfigRepository configRepository(ConfigRepositoryRef ref) {
   final db = ref.watch(appDatabaseProvider);
-  return AppRepository(db);
+  final jsonService = LocalJsonService(); // O inyectarlo si prefieres
+  return ConfigRepositoryImpl(db, jsonService);
 }
 
 /// Proveedor de la base de datos.
 @riverpod
 AppDatabase appDatabase(AppDatabaseRef ref) {
-  final db = AppDatabase(); // Instancia de la base de datos.
-
-  ref.onDispose(() => db.close()); // Cierra la conexión a la base de datos.
-
+  // Instancia de la base de datos.
+  final db = AppDatabase();
+  // Cierra la conexión a la base de datos.
+  ref.onDispose(() => db.close());
   return db;
 }

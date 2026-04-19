@@ -9,8 +9,9 @@ part 'bootstrap_provider.g.dart';
 /// Devuelve un result que puede ser null o un error.
 @riverpod
 Future<void> bootstrap(BootstrapRef ref) async {
+  // Observamos el repositorio de configuración.
   final configRepo = ref.watch(configRepositoryProvider);
-
+  // Inicializamos los datos de la aplicación si no existen.
   final result = await configRepo.initializeDataIfNeeded();
 
   return switch (result) {
