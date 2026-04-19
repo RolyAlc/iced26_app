@@ -4,7 +4,7 @@ import 'package:iced26/presentation/app/app_shell.dart';
 import 'package:iced26/presentation/app/theme/app_theme.dart';
 import 'package:iced26/presentation/app/widgets/loading_screen.dart';
 import 'package:iced26/di/bootstrap_provider.dart';
-import 'package:iced26/presentation/app/viewmodel/theme_provider.dart';
+import 'package:iced26/presentation/app/state/theme_provider.dart';
 
 /// Raíz de la aplicación.
 class MyApp extends ConsumerWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
-import 'package:iced26/presentation/app/viewmodel/search_provider.dart';
+import 'package:iced26/presentation/app/state/search_provider.dart';
 
 /// Widget con una barra de búsqueda inteligente que permite buscar por texto.
 class SmartSearchBar extends ConsumerWidget {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/presentation/app/navigation_constants.dart';
-import 'package:iced26/presentation/app/viewmodel/navigation_provider.dart';
+import 'package:iced26/presentation/app/state/navigation_provider.dart';
 
 /// Widget que representa la barra de navegación.
 class AppNavigationBar extends ConsumerWidget {
@@ -44,8 +44,7 @@ class AppNavigationBar extends ConsumerWidget {
 
 /// Widget para el efecto Glassmorphism.
 class _GlassContainer extends StatelessWidget {
-  /// Widget que se envuelve en el efecto Glassmorphism.
-  final Widget child;
+  final Widget child; // Widget envuelto por Glassmorphism.
   const _GlassContainer({required this.child});
 
   @override
@@ -90,6 +89,7 @@ class _NavigationItem extends StatelessWidget {
     required this.onTap,
   });
 
+  /// Construye el item de la barra de navegación.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

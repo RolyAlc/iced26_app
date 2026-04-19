@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/presentation/app/widgets/smart_search_bar.dart';
 import 'package:iced26/core/constants/assets.dart';
-import 'package:iced26/presentation/app/viewmodel/search_provider.dart';
+import 'package:iced26/presentation/app/state/search_provider.dart';
 
 /// Sección de encabezado en la pantalla principal
 /// Muestra el logo, la fecha y una barra de búsqueda.
