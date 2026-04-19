@@ -1,3 +1,4 @@
+import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/data/mappers/i18n_mapper.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
@@ -23,6 +24,18 @@ class SubmissionTypeMapper {
       lang: lang,
       description: description,
       scheduleDescription: scheduleDescription,
+    );
+  }
+
+  /// Convierte un registro de la base de datos (Drift) a una entidad.
+  static SubmissionType fromDrift(SubmissionTypeTable data) {
+    return SubmissionType(
+      id: data.id,
+      name: data.name,
+      durationMin: data.durationMin,
+      lang: data.lang,
+      description: data.description,
+      scheduleDescription: data.scheduleDescription,
     );
   }
 }

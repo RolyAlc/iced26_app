@@ -1,3 +1,4 @@
+import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/data/mappers/i18n_mapper.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
@@ -28,6 +29,19 @@ class SocialActivityMapper {
       time: time,
       location: location,
       imgUrl: imgUrl,
+    );
+  }
+
+  /// Convierte un registro de la base de datos (Drift) a una entidad.
+  static SocialActivity fromDrift(SocialActivityTable data) {
+    return SocialActivity(
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      date: data.date,
+      time: data.time,
+      location: data.location,
+      imgUrl: data.imgUrl,
     );
   }
 }

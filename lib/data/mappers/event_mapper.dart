@@ -1,48 +1,27 @@
-import 'package:iced26/data/mappers/i18n_mapper.dart';
+import 'package:iced26/data/sources/local/database/app_database.dart';
+import 'package:iced26/data/models/dto/event_dto.dart';
 import 'package:iced26/domain/entities/event.dart';
-import 'package:iced26/domain/entities/i18n_str.dart';
 
 /// Mapper para convertir el JSON de un evento en una instancia de 'Event'.
-/// Devuelve un objeto 'Event' con los campos correctamente parseados.
 class EventMapper {
   static Event fromMap(Map<String, dynamic> json) {
-    final String id = json['id']?.toString() ?? '';
-    final dynamic rawTitle = json['title'] ?? json['name'];
-    final String? rawStart = json['start']?.toString();
-    final String? rawEnd = json['end']?.toString();
-    final String? zoneId = (json['zoneId'] ?? json['zone_id'])?.toString();
-    final String? roomId = (json['roomId'] ?? json['room_id'])?.toString();
-    final String type = json['type']?.toString() ?? '';
-    final String? lang = json['lang']?.toString();
-    final String? filterDate = json['filter_date']?.toString();
-    final String? filterTime = json['filter_time']?.toString();
-    final dynamic rawSubtitle = json['subtitle'];
-    final I18nStr title = I18nMapper.fromRaw(rawTitle);
-    final I18nStr? subtitle = rawSubtitle != null
-        ? I18nMapper.fromRaw(rawSubtitle)
-        : null;
-    final DateTime? startDate = _parseDate(rawStart);
-    final DateTime? endDate = _parseDate(rawEnd);
-
-    return Event(
-      id: id,
-      title: title,
-      subtitle: subtitle,
-      startDate: startDate,
-      endDate: endDate,
-      zoneId: zoneId,
-      roomId: roomId,
-      type: type,
-      lang: lang,
-      filterDate: filterDate,
-      filterTime: filterTime,
-    );
+    return EventDTO.fromMap(json).toEntity();
   }
 
-  // Parsear fechas en formato ISO 8601, devolviendo null si no es posible.
-  static DateTime? _parseDate(String? value) {
-    if (value == null || value.isEmpty) return null;
-    final parsed = DateTime.tryParse(value);
-    return parsed?.toLocal();
+  /// Convierte un registro de la base de datos (Drift) a una entidad.
+  static Event fromDrift(EventTable data) {
+    return Event(
+      id: data.id,
+      title: data.title,
+      subtitle: data.subtitle,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      zoneId: data.zoneId,
+      roomId: data.roomId,
+      type: data.type,
+      lang: data.lang,
+      filterDate: data.filterDate,
+      filterTime: data.filterTime,
+    );
   }
 }
