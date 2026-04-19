@@ -1,137 +1,120 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/domain/entities/app_data.dart';
-import 'package:iced26/domain/entities/event.dart';
-import 'package:iced26/domain/entities/zone.dart';
+import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
+import 'package:iced26/presentation/features/agenda/viewmodel/agenda_viewmodel.dart';
+import 'package:iced26/presentation/features/agenda/viewmodel/models/agenda_state.dart';
 
 /// Pantalla principal de la agenda, que muestra los eventos organizados por días.
-class AgendaScreen extends StatelessWidget {
-  const AgendaScreen({super.key, required this.appData});
+class ScheduleView extends ConsumerWidget {
+  const ScheduleView({super.key});
 
-  final AppData appData;
-
+  /// Construye la vista de la agenda.
   @override
-  Widget build(BuildContext context) {
-    final locale = Localizations.localeOf(context).languageCode;
-    final daySections = _buildDaySections(locale);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final agendaStateAsync = ref.watch(agendaViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(appData.conference.name.resolve(locale))),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        itemCount: daySections.length,
-        itemBuilder: (context, index) =>
-            _DaySection(section: daySections[index]),
+      appBar: AppBar(title: const Text('Schedule'), centerTitle: true),
+      body: AppAsyncValueWidget(
+        asyncValue: agendaStateAsync,
+        data: (state) => _AgendaList(sections: state.sections),
       ),
     );
   }
+}
 
-  List<_DaySectionData> _buildDaySections(String locale) {
-    final events = [...appData.collections.events];
-    events.sort((a, b) {
-      final aTime = a.startDate ?? DateTime(1900);
-      final bTime = b.startDate ?? DateTime(1900);
-      return aTime.compareTo(bTime);
-    });
+/// Lista de eventos organizada por días.
+class _AgendaList extends StatelessWidget {
+  final List<AgendaDaySection> sections;
 
-    final zones = {for (final zone in appData.collections.zones) zone.id: zone};
+  const _AgendaList({required this.sections});
 
-    if (appData.collections.days.isNotEmpty) {
-      return appData.collections.days.map((day) {
-        final dayEvents = events.where((event) {
-          if (event.startDate == null) return false;
-          if (event.startDate != null && day.date.isNotEmpty) {
-            return event.startDate!.toIso8601String().startsWith(day.date);
-          }
-          return false;
-        }).toList();
-
-        return _DaySectionData(
-          title: day.title.resolve(locale),
-          date: day.date,
-          events: dayEvents,
-          zones: zones,
-        );
-      }).toList();
-    }
-
-    final grouped = <String, List<Event>>{};
-    for (final event in events) {
-      final startDate = event.startDate;
-      final key = startDate == null ? 'Sin fecha' : _formatDate(startDate);
-      grouped.putIfAbsent(key, () => []).add(event);
-    }
-
-    return grouped.entries
-        .map(
-          (entry) => _DaySectionData(
-            title: entry.key,
-            date: entry.key,
-            events: entry.value,
-            zones: zones,
-          ),
-        )
-        .toList();
+  /// Construye la lista de eventos.
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: sections.length,
+      itemBuilder: (context, index) {
+        final section = sections[index];
+        return _DaySection(section: section);
+      },
+    );
   }
 }
 
-class _DaySectionData {
-  _DaySectionData({
-    required this.title,
-    required this.date,
-    required this.events,
-    required this.zones,
-  });
-
-  final String title;
-  final String date;
-  final List<Event> events;
-  final Map<String, Zone> zones;
-}
-
+/// Sección de un día en la agenda.
 class _DaySection extends StatelessWidget {
+  final AgendaDaySection section;
+
   const _DaySection({required this.section});
 
-  final _DaySectionData section;
-
+  /// Construye una sección del día.
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           child: Text(
             section.title,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
-        ...section.events.map((event) {
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            child: ListTile(
-              /* title: Text(event.title.resolve(locale)),
-              subtitle: Text(_eventSubtitle(event, zoneName)),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => SessionDetailScreen(
-                    appData:
-                        (context.findAncestorWidgetOfExactType<AgendaScreen>()!)
-                            .appData,
-                    event: event,
-                  ),
-                ),
-              ), */
-            ),
-          );
-        }),
-        const SizedBox(height: 8),
+        ...section.events.map((event) => _EventCard(event: event)),
+        const SizedBox(height: 16),
       ],
     );
   }
 }
 
-String _formatDate(DateTime date) {
-  return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+/// Tarjeta de evento.
+class _EventCard extends StatelessWidget {
+  final dynamic event; // [:: Futuro] Usar EventUIModel
+
+  const _EventCard({required this.event});
+
+  /// Construye una tarjeta de evento.
+  @override
+  Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        title: Text(
+          event.title.resolve(locale),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.access_time, size: 16),
+                const SizedBox(width: 4),
+                Text(event.filterTime ?? 'No time'),
+              ],
+            ),
+          ],
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () {
+          // Navegar a detalle
+        },
+      ),
+    );
+  }
 }

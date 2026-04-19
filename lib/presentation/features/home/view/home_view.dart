@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/di/bootstrap_provider.dart';
+import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/app/widgets/loading_screen.dart';
 import 'package:iced26/presentation/app/widgets/staggered_fade_in.dart';
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
@@ -44,7 +45,8 @@ class _HomeScaffold extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
-        child: homeStateAsync.when(
+        child: AppAsyncValueWidget(
+          asyncValue: homeStateAsync,
           data: (state) => RefreshIndicator(
             onRefresh: () => ref.refresh(homeViewModelProvider.future),
             child: CustomScrollView(
@@ -112,9 +114,6 @@ class _HomeScaffold extends ConsumerWidget {
               ],
             ),
           ),
-          loading: () => const LoadingScreen(),
-          error: (err, stack) =>
-              Center(child: Text('Error al cargar datos: $err')),
         ),
       ),
     );
