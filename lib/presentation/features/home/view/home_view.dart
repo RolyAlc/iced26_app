@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/di/bootstrap_provider.dart';
 import 'package:iced26/presentation/app/widgets/loading_screen.dart';
 import 'package:iced26/presentation/app/widgets/staggered_fade_in.dart';
-import 'package:iced26/presentation/features/home/viewmodel/home_provider.dart';
+import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_news_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_header_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_featured_section.dart';
@@ -34,17 +34,19 @@ class HomeView extends ConsumerWidget {
 class _HomeScaffold extends ConsumerWidget {
   const _HomeScaffold();
 
+  /// Construye el scaffold de la página principal.
+  /// Devuelve la estructura básica de la página principal.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Escuchamos el estado de la Home para actualizar la vista.
-    final homeStateAsync = ref.watch(homeProvider);
+    final homeStateAsync = ref.watch(homeViewModelProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: homeStateAsync.when(
           data: (state) => RefreshIndicator(
-            onRefresh: () => ref.refresh(homeProvider.future),
+            onRefresh: () => ref.refresh(homeViewModelProvider.future),
             child: CustomScrollView(
               slivers: [
                 // Cabecera fija (Sticky Header)
@@ -126,6 +128,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   _HomeHeaderDelegate({required this.child, required this.backgroundColor});
 
+  /// Construye el widget del header.
   @override
   Widget build(
     BuildContext context,
@@ -140,11 +143,16 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     );
   }
 
+  // [:: Futuro] Constantes.
+  /// Constante para el máximo de extent (Header).
   @override
   double get maxExtent => 200.0;
+
+  /// Constante para el mínimo de extent (Header).
   @override
   double get minExtent => 200.0;
 
+  /// Determina si el header debe reconstruirse.
   @override
   bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) =>
       child != oldDelegate.child ||
