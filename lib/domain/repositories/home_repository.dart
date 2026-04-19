@@ -4,7 +4,7 @@ import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 
 /// Contrato para la gestión de contenidos de la Home (Noticias, Sociales, Categorías).
-abstract class IHomeRepository {
+abstract class HomeRepository {
   /// Obtiene todas las noticias.
   Future<Result<List<NewsItem>>> getAllNews();
 

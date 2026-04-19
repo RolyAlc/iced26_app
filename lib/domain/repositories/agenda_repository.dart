@@ -4,7 +4,7 @@ import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/event.dart';
 
 /// Contrato para la gestión de la agenda y eventos.
-abstract class IAgendaRepository {
+abstract class AgendaRepository {
   /// Obtiene todos los días de la conferencia.
   Future<Result<List<Day>>> getAllDays();
 
