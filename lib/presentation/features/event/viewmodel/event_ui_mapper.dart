@@ -1,6 +1,6 @@
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/presentation/features/event/viewmodel/event_duration_formatter.dart';
-import 'package:iced26/domain/event_status_resolver.dart';
+import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/features/event/viewmodel/event_time_formatter.dart';
 import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
 
 /// Tarjeta de sesión destacada.

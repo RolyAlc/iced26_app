@@ -1,5 +1,5 @@
 import 'package:iced26/domain/entities/event.dart';
-import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
+import 'package:iced26/domain/entities/event_status.dart';
 
 /// Utiliza la información de un [Event] para determinar su estado actual.
 /// Devuelve un [EventStatus] (live, next, ended) que la UI puede

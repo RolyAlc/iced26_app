@@ -1,5 +1,4 @@
-/// Estados posibles de un evento para la UI.
-enum EventStatus { live, next, ended }
+import 'package:iced26/domain/entities/event_status.dart';
 
 /// Modelo de datos para representar un evento en la capa de presentación.
 class EventUIModel {
