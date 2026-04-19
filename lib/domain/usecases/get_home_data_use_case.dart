@@ -38,7 +38,8 @@ class GetHomeDataUseCase {
       }
     }
 
-    // Si llegamos aquí, todos son Success
+    // TODO: Mejorar el manejo de errores.
+    // En caso de que todo haya ido bien, obtenemos los datos.
     final days = (results[0] as Success<List<Day>>).data;
     final events = (results[1] as Success<List<Event>>).data;
     final rooms = (results[2] as Success<List<Room>>).data;

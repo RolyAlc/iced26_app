@@ -42,8 +42,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
             mode: InsertMode.insertOrReplace,
           );
 
-          // Sembrar noticias, actividades, etc.
-          // (Aquí iría el resto de la siembra si fuera necesaria)
+          // [:: Futuro] Añadir en caso de nuevos sections en el JSON.
+          // Noticias, actividades, etc.
 
           // Guardar configuración inicial de tema
           batch.insert(

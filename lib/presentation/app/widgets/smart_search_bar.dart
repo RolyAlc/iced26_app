@@ -39,11 +39,12 @@ class SmartSearchBar extends ConsumerWidget {
   }
 }
 
-/// Widget interno puramente visual para cumplir con KISS y mejorar legibilidad.
+/// Widget interno visual.
 class _SearchBarVisualContainer extends StatelessWidget {
   final ColorScheme colors;
   const _SearchBarVisualContainer({required this.colors});
 
+  /// Construye el contenedor visual.
   @override
   Widget build(BuildContext context) {
     return Container(
