@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/app/app.dart';
+import 'package:iced26/presentation/app/app.dart';
 
 /// Punto de entrada de la aplicación.
 void main() {
