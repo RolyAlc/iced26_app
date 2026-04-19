@@ -9,6 +9,7 @@ import 'package:iced26/data/repositories/config_repository_impl.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/data/sources/local/json/local_json_service.dart';
 import 'package:iced26/domain/usecases/get_home_data_use_case.dart';
+import 'package:iced26/domain/usecases/get_agenda_data_use_case.dart';
 
 part 'core_providers.g.dart';
 
@@ -20,21 +21,28 @@ GetHomeDataUseCase getHomeDataUseCase(GetHomeDataUseCaseRef ref) {
   return GetHomeDataUseCase(agendaRepo, homeRepo);
 }
 
-/// Provee el repositorio de la agenda.
+/// Provee el caso de uso para obtener los datos de la Agenda.
+@riverpod
+GetAgendaDataUseCase getAgendaDataUseCase(GetAgendaDataUseCaseRef ref) {
+  final agendaRepo = ref.watch(agendaRepositoryProvider);
+  return GetAgendaDataUseCase(agendaRepo);
+}
+
+/// Provee el repositorio de la Agenda.
 @riverpod
 AgendaRepository agendaRepository(AgendaRepositoryRef ref) {
   final db = ref.watch(appDatabaseProvider);
   return AgendaRepositoryImpl(db);
 }
 
-/// Provee el repositorio de la home.
+/// Provee el repositorio de la Home.
 @riverpod
 HomeRepository homeRepository(HomeRepositoryRef ref) {
   final db = ref.watch(appDatabaseProvider);
   return HomeRepositoryImpl(db);
 }
 
-/// Provee el repositorio de configuración.
+/// Provee el repositorio de Configuración.
 @riverpod
 ConfigRepository configRepository(ConfigRepositoryRef ref) {
   final db = ref.watch(appDatabaseProvider);
