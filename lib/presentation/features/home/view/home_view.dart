@@ -47,72 +47,69 @@ class _HomeScaffold extends ConsumerWidget {
       body: SafeArea(
         child: AppAsyncValueWidget(
           asyncValue: homeStateAsync,
-          data: (state) => RefreshIndicator(
-            onRefresh: () => ref.refresh(homeViewModelProvider.future),
-            child: CustomScrollView(
-              slivers: [
-                // Cabecera fija (Sticky Header)
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _HomeHeaderDelegate(
-                    backgroundColor: Theme.of(context).colorScheme.surface,
-                    child: HomeHeaderSection(
-                      today: DateTime.now(),
-                      infoLabel: state.headerInfoLabel,
+          data: (state) => CustomScrollView(
+            slivers: [
+              // Cabecera fija (Sticky Header)
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _HomeHeaderDelegate(
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  child: HomeHeaderSection(
+                    today: DateTime.now(),
+                    infoLabel: state.headerInfoLabel,
+                  ),
+                ),
+              ),
+
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    const SizedBox(height: 16),
+
+                    // Categorías
+                    if (state.categoryLayout != null)
+                      StaggeredFadeIn(
+                        delay: const Duration(milliseconds: 200),
+                        child: HomeCategoriesSection(
+                          layout: state.categoryLayout!,
+                        ),
+                      ),
+
+                    const SizedBox(height: 24),
+
+                    // Eventos
+                    StaggeredFadeIn(
+                      delay: const Duration(milliseconds: 300),
+                      child: HomeFeaturedSection(
+                        featuredEvents: state.featuredEvents,
+                        sectionTitle: 'Featured Sessions',
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(height: 24),
+
+                    // Noticias
+                    StaggeredFadeIn(
+                      delay: const Duration(milliseconds: 400),
+                      child: HomeNewsSection(news: state.news),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Actividades Sociales
+                    StaggeredFadeIn(
+                      delay: const Duration(milliseconds: 500),
+                      child: HomeSocialActivitiesSection(
+                        socials: state.socialActivities,
+                      ),
+                    ),
+
+                    const SizedBox(height: 100),
+                  ]),
                 ),
-
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      const SizedBox(height: 16),
-
-                      // Categorías
-                      if (state.categoryLayout != null)
-                        StaggeredFadeIn(
-                          delay: const Duration(milliseconds: 200),
-                          child: HomeCategoriesSection(
-                            layout: state.categoryLayout!,
-                          ),
-                        ),
-
-                      const SizedBox(height: 24),
-
-                      // Eventos
-                      StaggeredFadeIn(
-                        delay: const Duration(milliseconds: 300),
-                        child: HomeFeaturedSection(
-                          featuredEvents: state.featuredEvents,
-                          sectionTitle: 'Featured Sessions',
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Noticias
-                      StaggeredFadeIn(
-                        delay: const Duration(milliseconds: 400),
-                        child: HomeNewsSection(news: state.news),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Actividades Sociales
-                      StaggeredFadeIn(
-                        delay: const Duration(milliseconds: 500),
-                        child: HomeSocialActivitiesSection(
-                          socials: state.socialActivities,
-                        ),
-                      ),
-
-                      const SizedBox(height: 100),
-                    ]),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

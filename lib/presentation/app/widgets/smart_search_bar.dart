@@ -14,15 +14,12 @@ class SmartSearchBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).colorScheme;
 
-    return Hero(
-      tag: 'search_bar_hero',
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _openSearch(context),
-          borderRadius: BorderRadius.circular(32),
-          child: _SearchBarVisualContainer(colors: colors),
-        ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openSearch(context),
+        borderRadius: BorderRadius.circular(32),
+        child: _SearchBarVisualContainer(colors: colors),
       ),
     );
   }
