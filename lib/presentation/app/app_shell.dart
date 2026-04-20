@@ -16,6 +16,7 @@ class AppShell extends ConsumerWidget {
     final currentIndex = ref.watch(navigationProvider);
 
     return Scaffold(
+      extendBody: true,
       body: IndexedStack(
         index: currentIndex,
         children: const [
