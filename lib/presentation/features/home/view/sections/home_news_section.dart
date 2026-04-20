@@ -3,7 +3,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/presentation/features/home/view/sections/widgets/news_card.dart';
-import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart'; // Importamos el nuevo panel
+import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
+import 'package:iced26/core/logger/logger.dart';
 
 /// Sección de noticias con integración de AppBottomSheet (Fase 3).
 /// Mejora la UX reduciendo la fricción al abrir enlaces externos.
@@ -129,7 +130,7 @@ class HomeNewsSection extends StatelessWidget {
         }
       }
     } catch (error) {
-      debugPrint('Error launching URL: $error');
+      logger.e('Error launching URL: $error');
     }
   }
 }
