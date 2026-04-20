@@ -4,8 +4,8 @@ import 'package:iced26/domain/entities/app_data.dart';
 
 /// Repositorio para cargar los datos de la aplicación desde un JSON local.
 /// DEvuelve un objeto AppData con toda la información necesaria para la app.
-class AppDataRepository {
-  const AppDataRepository({LocalJsonService? localJsonService})
+class AppDataRepositoryImpl {
+  const AppDataRepositoryImpl({LocalJsonService? localJsonService})
     : _localJsonService = localJsonService ?? const LocalJsonService();
 
   final LocalJsonService _localJsonService;
