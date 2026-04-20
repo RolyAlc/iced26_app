@@ -78,6 +78,8 @@ class AppTheme {
       cardTheme: _buildCardTheme(scheme),
       chipTheme: _buildChipTheme(scheme, textTheme),
       searchBarTheme: _buildSearchBarTheme(scheme),
+      visualDensity:
+          VisualDensity.adaptivePlatformDensity, // Added for consistent spacing
     );
   }
 

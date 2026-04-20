@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 /// Widget para animaciones de entrada escalonadas.
 class StaggeredFadeIn extends StatefulWidget {
+  /// [:: Dev] Cambia a false para deshabilitar todas las animaciones de entrada.
+  static const bool kEnabled = false;
+
   const StaggeredFadeIn({
     super.key,
     required this.child,
@@ -69,6 +72,7 @@ class _StaggeredFadeInState extends State<StaggeredFadeIn>
   /// Construye el widget de animación escalonada.
   @override
   Widget build(BuildContext context) {
+    if (!StaggeredFadeIn.kEnabled) return widget.child;
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(position: _slideAnimation, child: widget.child),

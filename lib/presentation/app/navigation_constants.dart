@@ -13,6 +13,9 @@ class NavigationItem {
   });
 }
 
+/// Espacio vertical necesario para que el contenido no quede oculto tras la Nav Bar flotante.
+const double kAppBottomNavigationBarHeight = 0.0;
+
 /// La lista maestra de navegación.
 const List<NavigationItem> mainNavigationItems = [
   NavigationItem(

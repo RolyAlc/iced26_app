@@ -13,9 +13,15 @@ class AppNavigationBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(navigationProvider);
     final notifier = ref.read(navigationProvider.notifier);
+    final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+      padding: EdgeInsets.only(
+        left: 24,
+        right: 24,
+        top: 24,
+        bottom: 24 + bottomInset,
+      ),
       child: _GlassContainer(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -107,28 +113,32 @@ class _NavigationItem extends StatelessWidget {
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              isSelected ? selectedIcon : icon,
-              color: isSelected
-                  ? activeColor
-                  : theme.colorScheme.onSurfaceVariant,
-            ),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: isSelected
-                  ? Text(
-                      label,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: activeColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-          ],
+        child: AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isSelected ? selectedIcon : icon,
+                color: isSelected
+                    ? activeColor
+                    : theme.colorScheme.onSurfaceVariant,
+              ),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: isSelected
+                    ? Text(
+                        label,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: activeColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ],
+          ),
         ),
       ),
     );
