@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:iced26/core/errors/result.dart';
-import 'package:iced26/di/core_providers.dart';
+import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/features/agenda/viewmodel/models/agenda_state.dart';
 import 'package:iced26/domain/entities/event.dart';
 

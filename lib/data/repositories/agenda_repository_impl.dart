@@ -7,7 +7,7 @@ import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/repositories/agenda_repository.dart';
-import 'package:iced26/core/logger/logger.dart';
+import 'package:iced26/core/services/logger/logger.dart';
 
 /// Repositorio para la gestión de la agenda.
 class AgendaRepositoryImpl implements AgendaRepository {
@@ -21,7 +21,7 @@ class AgendaRepositoryImpl implements AgendaRepository {
       final data = await call();
       return Success(data);
     } catch (e) {
-      logger.e('Database Error (Agenda): $e');
+      AppLogger.e('Database Error (Agenda): $e');
       return Failure('Error al acceder a la agenda: $e');
     }
   }

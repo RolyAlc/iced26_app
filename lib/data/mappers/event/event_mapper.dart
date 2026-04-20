@@ -1,5 +1,5 @@
 import 'package:iced26/data/sources/local/database/app_database.dart';
-import 'package:iced26/data/models/dto/event_dto.dart';
+import 'package:iced26/data/dtos/event_dto.dart';
 import 'package:iced26/domain/entities/event.dart';
 
 /// Mapper para convertir el JSON de un evento en una instancia de 'Event'.

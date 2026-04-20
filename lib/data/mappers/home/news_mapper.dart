@@ -1,5 +1,5 @@
 import 'package:iced26/data/sources/local/database/app_database.dart';
-import 'package:iced26/data/models/dto/news_dto.dart';
+import 'package:iced26/data/dtos/news_dto.dart';
 import 'package:iced26/domain/entities/new.dart';
 
 /// Mapper datos de 'news' del JSON en una instancia de NewsItem.

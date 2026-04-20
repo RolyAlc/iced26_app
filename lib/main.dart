@@ -8,7 +8,8 @@ import 'package:iced26/presentation/app/app.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // TODO: Quitar en producción
-  debugPaintSizeEnabled = false; // Muestra los bordes de widgets para depurar
+  debugPaintSizeEnabled =
+      false; // [:: Dev] Muestra los bordes de widgets para depurar
 
   runApp(const ProviderScope(child: MyApp()));
 }

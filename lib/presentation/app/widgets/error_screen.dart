@@ -5,6 +5,7 @@ class ErrorScreen extends StatelessWidget {
   const ErrorScreen({super.key, required this.error});
 
   final String error;
+  final String titleError = 'Oops! Something went wrong';
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +18,12 @@ class ErrorScreen extends StatelessWidget {
             children: [
               const Icon(Icons.error_outline, color: Colors.red, size: 60),
               const SizedBox(height: 16),
-              const Text(
-                '¡Ups! Algo salió mal',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Text(
+                titleError,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 10),
               Text(

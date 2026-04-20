@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iced26/core/logger/logger.dart';
+import 'package:iced26/core/services/logger/logger.dart';
 
 /// Header expresivo de búsqueda con filtros integrados
 /// Combina un 'SearchBar' moderno con 'FilterChips' para una experiencia
@@ -27,7 +27,7 @@ class ExpressiveSearchHeader extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.tune),
                     onPressed: () {
-                      logger.d("Abrir filtros avanzados");
+                      AppLogger.d("Abrir filtros avanzados");
                     },
                   ),
                 ],
@@ -77,7 +77,7 @@ class ExpressiveSearchHeader extends StatelessWidget {
       label: Text(label),
       avatar: Icon(icon, size: 16),
       onSelected: (bool selected) {
-        logger.d('Filtro "$label" seleccionado: $selected');
+        AppLogger.d('Filtro "$label" seleccionado: $selected');
       },
       shape: const StadiumBorder(),
       showCheckmark: false,

@@ -7,7 +7,7 @@ import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 import 'package:iced26/domain/repositories/home_repository.dart';
-import 'package:iced26/core/logger/logger.dart';
+import 'package:iced26/core/services/logger/logger.dart';
 
 /// Repositorio para la gestión de la home.
 class HomeRepositoryImpl implements HomeRepository {
@@ -21,7 +21,7 @@ class HomeRepositoryImpl implements HomeRepository {
       final data = await call();
       return Success(data);
     } catch (e) {
-      logger.e('Database Error (Home): $e');
+      AppLogger.e('Database Error (Home): $e');
       return Failure('Error al cargar datos de inicio: $e');
     }
   }

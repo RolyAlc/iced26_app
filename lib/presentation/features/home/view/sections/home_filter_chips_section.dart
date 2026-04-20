@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iced26/core/logger/logger.dart';
+import 'package:iced26/core/services/logger/logger.dart';
 
 /// Sección de chips de filtro horizontal para la pantalla de inicio.
 class HomeFilterChipsSection extends StatelessWidget {
@@ -36,7 +36,7 @@ class HomeFilterChipsSection extends StatelessWidget {
       label: Text(label),
       avatar: Icon(icon, size: 16),
       onSelected: (bool selected) {
-        logger.d('Filtro "$label" seleccionado: $selected');
+        AppLogger.d('Filtro "$label" seleccionado: $selected');
       },
       shape: const StadiumBorder(),
       showCheckmark: false,
