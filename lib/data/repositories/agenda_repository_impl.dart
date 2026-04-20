@@ -1,6 +1,6 @@
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/data/mappers/day_mapper.dart';
-import 'package:iced26/data/mappers/event_mapper.dart';
+import 'package:iced26/data/mappers/event/event_mapper.dart';
 import 'package:iced26/data/mappers/room_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/day.dart';

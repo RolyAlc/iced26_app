@@ -1,9 +1,9 @@
 import 'package:iced26/data/mappers/day_mapper.dart';
-import 'package:iced26/data/mappers/event_mapper.dart';
-import 'package:iced26/data/mappers/news_mapper.dart';
+import 'package:iced26/data/mappers/event/event_mapper.dart';
+import 'package:iced26/data/mappers/home/news_mapper.dart';
 import 'package:iced26/data/mappers/person_mapper.dart';
 import 'package:iced26/data/mappers/room_mapper.dart';
-import 'package:iced26/data/mappers/social_activity_mapper.dart';
+import 'package:iced26/data/mappers/home/social_activity_mapper.dart';
 import 'package:iced26/data/mappers/submission_type_mapper.dart';
 import 'package:iced26/data/mappers/zone_mapper.dart';
 import 'package:iced26/domain/entities/collections.dart';
