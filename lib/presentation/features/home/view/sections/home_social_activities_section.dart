@@ -1,46 +1,59 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/domain/entities/social_activity.dart';
-import 'package:iced26/presentation/features/home/view/sections/widgets/social_card.dart';
-import 'package:iced26/presentation/features/home/view/sections/widgets/home_featured_widgets.dart';
+import 'package:iced26/presentation/features/home/widgets/social_card.dart';
 
 /// Sección de actividades sociales.
+/// Diseño edge-to-edge: misma lógica que HomeFeaturedSection.
 class HomeSocialActivitiesSection extends StatelessWidget {
-  const HomeSocialActivitiesSection({super.key, required this.socials});
+  const HomeSocialActivitiesSection({
+    super.key,
+    required this.socials,
+    this.showFadeMask = false,
+  });
 
   final List<SocialActivity> socials;
-  final String titleSection = 'Social Activities';
+  final bool showFadeMask;
 
   /// Construye la sección de actividades sociales.
   @override
   Widget build(BuildContext context) {
-    // Si no hay sociales, no mostramos nada.
-    if (socials.isEmpty) {
-      return const SizedBox.shrink();
+    if (socials.isEmpty) return const SizedBox.shrink();
+
+    final colors = Theme.of(context).colorScheme;
+
+    final content = SizedBox(
+      height: SocialCard.cardHeight,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
+        itemCount: socials.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 14),
+        itemBuilder: (context, index) {
+          return SocialCard(
+            activity: socials[index],
+            onTap: () {
+              // TODO: Implementar navegación al detalle social
+            },
+          );
+        },
+      ),
+    );
+
+    if (showFadeMask) {
+      return ShaderMask(
+        shaderCallback: (bounds) => LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          stops: const [0.85, 1.0],
+          colors: [Colors.white, colors.surface.withValues(alpha: 0.0)],
+        ).createShader(bounds),
+        blendMode: BlendMode.dstIn,
+        child: content,
+      );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionHeader(title: titleSection),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 180,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            clipBehavior: Clip.none,
-            itemCount: socials.length,
-            itemBuilder: (context, index) {
-              return SocialCard(
-                activity: socials[index],
-                onTap: () {
-                  // TODO: Implementar navegación al detalle social
-                },
-              );
-            },
-          ),
-        ),
-      ],
-    );
+    return content;
   }
 }

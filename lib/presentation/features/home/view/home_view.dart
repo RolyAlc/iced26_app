@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/di/bootstrap_provider.dart';
+import 'package:iced26/di/bootstrap.dart';
 import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/app/widgets/loading_screen.dart';
 import 'package:iced26/presentation/app/widgets/staggered_fade_in.dart';
@@ -11,146 +11,119 @@ import 'package:iced26/presentation/features/home/view/sections/home_header_sect
 import 'package:iced26/presentation/features/home/view/sections/home_featured_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_categories_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_social_activities_section.dart';
+import 'package:iced26/presentation/widgets/app_empty_state.dart';
+import 'package:iced26/presentation/widgets/app_page.dart';
+import 'package:iced26/presentation/widgets/app_section.dart';
 
 /// Vista de la página principal.
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
-  /// Construye la vista de la página principal.
-  /// Devuelve la estructura básica de la página principal.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Esperamos a que la base de datos esté lista.
     final bootstrapAsync = ref.watch(bootstrapProvider);
 
     return bootstrapAsync.when(
-      data: (_) => const _HomeScaffold(),
+      data: (_) => const _HomeContent(),
       loading: () => const LoadingScreen(),
-      error: (err, stack) => Scaffold(body: Center(child: Text('Error: $err'))),
+      error: (err, stack) => Center(child: Text('Error: $err')),
     );
   }
 }
 
-/// Scaffold de la página principal.
-class _HomeScaffold extends ConsumerWidget {
-  const _HomeScaffold();
+/// Contenido de la página principal.
+class _HomeContent extends ConsumerWidget {
+  const _HomeContent();
 
-  /// Construye el scaffold de la página principal.
-  /// Devuelve la estructura básica de la página principal.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Escuchamos el estado de la Home para actualizar la vista.
     final homeStateAsync = ref.watch(homeViewModelProvider);
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
-        child: AppAsyncValueWidget(
-          asyncValue: homeStateAsync,
-          data: (state) => CustomScrollView(
-            slivers: [
-              // Cabecera fija (Sticky Header)
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _HomeHeaderDelegate(
-                  backgroundColor: Theme.of(context).colorScheme.surface,
-                  child: HomeHeaderSection(
-                    today: DateTime.now(),
-                    infoLabel: state.headerInfoLabel,
-                  ),
-                ),
-              ),
-
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    const SizedBox(height: 16),
-
-                    // Categorías
-                    if (state.categoryLayout != null)
-                      StaggeredFadeIn(
-                        delay: const Duration(milliseconds: 200),
-                        child: HomeCategoriesSection(
-                          layout: state.categoryLayout!,
-                        ),
-                      ),
-
-                    const SizedBox(height: 24),
-
-                    // Eventos
-                    StaggeredFadeIn(
-                      delay: const Duration(milliseconds: 300),
-                      child: HomeFeaturedSection(
-                        featuredEvents: state.featuredEvents,
-                        sectionTitle: 'Featured Sessions',
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Noticias
-                    StaggeredFadeIn(
-                      delay: const Duration(milliseconds: 400),
-                      child: HomeNewsSection(news: state.news),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Actividades Sociales
-                    StaggeredFadeIn(
-                      delay: const Duration(milliseconds: 500),
-                      child: HomeSocialActivitiesSection(
-                        socials: state.socialActivities,
-                      ),
-                    ),
-
-                    const SizedBox(height: 100),
-                  ]),
-                ),
-              ),
-            ],
+    return AppAsyncValueWidget(
+      asyncValue: homeStateAsync,
+      data: (state) => AppPage(
+        header: AppSection(
+          // Wrap HomeHeaderSection with AppSection
+          topPadding:
+              0, // AppPage handles top inset, so AppSection shouldn't add extra top padding here.
+          bottomPadding:
+              0, // Let AppSection handle vertical spacing between sections.
+          child: HomeHeaderSection(
+            today: DateTime.now(),
+            infoLabel: state.headerInfoLabel,
           ),
         ),
+        headerHeight:
+            HomeHeaderSection.headerHeight +
+            24, // Altura base + padding // Might need adjustment after wrapping
+        children: [
+          // Eventos Destacados — Carrusel horizontal (Edge-to-Edge)
+          StaggeredFadeIn(
+            delay: const Duration(milliseconds: 200),
+            child: AppSection(
+              title: 'Featured sessions',
+              edgeToEdge: true,
+              child: HomeFeaturedSection(featuredEvents: state.featuredEvents),
+            ),
+          ),
+
+          // Categorías — Bento Grid (Con padding horizontal estándar)
+          if (state.categoryLayout != null)
+            StaggeredFadeIn(
+              delay: const Duration(milliseconds: 300),
+              child: AppSection(
+                title: 'Categories',
+                child: HomeCategoriesSection(layout: state.categoryLayout!),
+              ),
+            ),
+
+          // Noticias — Lista vertical (Con padding horizontal estándar)
+          if (state.news.isNotEmpty)
+            StaggeredFadeIn(
+              delay: const Duration(milliseconds: 400),
+              child: AppSection(
+                title: 'Latest news',
+                child: HomeNewsSection(news: state.news),
+              ),
+            )
+          else
+            const AppEmptyState(
+              title: 'No news available',
+              message: 'Check back later for the latest updates.',
+              illustration: Icon(
+                Icons.newspaper_rounded,
+                size: 60,
+              ), // Example using Icon
+            ),
+
+          // Actividades Sociales — Carrusel horizontal (Edge-to-Edge)
+          if (state.socialActivities.isNotEmpty)
+            StaggeredFadeIn(
+              delay: const Duration(milliseconds: 500),
+              child: AppSection(
+                title: 'Social activities',
+                edgeToEdge: true,
+                child: HomeSocialActivitiesSection(
+                  socials: state.socialActivities,
+                ),
+              ),
+            )
+          else if (state.socialActivities.isNotEmpty ==
+              false) // Explicit check for empty
+            AppSection(
+              title: 'Social activities',
+              edgeToEdge: true,
+              child: const AppEmptyState(
+                title: 'No social activities found',
+                message: 'Check back later for upcoming events.',
+                illustration: Icon(
+                  Icons.celebration_rounded,
+                  size: 60,
+                ), // Example using Icon
+              ),
+            ),
+        ],
       ),
     );
   }
-}
-
-/// Gestiona el header fijo de la vista principal con fondo sólido.
-class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
-  final Widget child;
-  final Color backgroundColor;
-
-  _HomeHeaderDelegate({required this.child, required this.backgroundColor});
-
-  /// Construye el widget del header.
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return Container(
-      color: backgroundColor,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      alignment: Alignment.bottomCenter,
-      child: child,
-    );
-  }
-
-  // [:: Futuro] Constantes.
-  /// Constante para el máximo de extent (Header).
-  @override
-  double get maxExtent => 200.0;
-
-  /// Constante para el mínimo de extent (Header).
-  @override
-  double get minExtent => 200.0;
-
-  /// Determina si el header debe reconstruirse.
-  @override
-  bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) =>
-      child != oldDelegate.child ||
-      backgroundColor != oldDelegate.backgroundColor;
 }

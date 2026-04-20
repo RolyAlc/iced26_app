@@ -2,10 +2,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:collection/collection.dart';
 
 import 'package:iced26/core/errors/result.dart';
-import 'package:iced26/di/core_providers.dart';
+import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/category_layout.dart';
 import 'package:iced26/presentation/mappers/event_ui_mapper.dart';
-import 'package:iced26/presentation/features/home/viewmodel/home_categories_viewmodel.dart';
 import 'package:iced26/domain/entities/category.dart';
 
 part 'home_viewmodel.g.dart';
@@ -31,8 +31,7 @@ class HomeViewModel extends _$HomeViewModel {
         }).toList();
 
         // Mapeo UI para Categories
-        final categoriesVM = HomeCategoriesViewModel();
-        final categoryLayout = categoriesVM.buildLayout(
+        final categoryLayout = _buildCategoryLayout(
           data.subTypes
               .map((st) => Category(name: st.name.resolve('en')))
               .toList(),
@@ -53,6 +52,17 @@ class HomeViewModel extends _$HomeViewModel {
     }
   }
 
-  // [:: Futuro] Se pueden añadir métodos adicionales para la UI, como filtros locales
-  // o navegación que dependa de la lógica de la Home.
+  /// Construye la disposición de las categorías para la Home.
+  CategoryLayout _buildCategoryLayout(List<Category> categories) {
+    if (categories.isEmpty) {
+      // Devolvemos un layout vacío o manejamos el error según la política del proyecto
+      throw Exception('No categories available');
+    }
+
+    return CategoryLayout(
+      featured: categories.first,
+      secondary: categories.length > 1 ? categories[1] : categories.first,
+      others: categories.length > 2 ? categories.sublist(2) : <Category>[],
+    );
+  }
 }

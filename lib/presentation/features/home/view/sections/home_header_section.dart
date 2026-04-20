@@ -17,6 +17,10 @@ class HomeHeaderSection extends ConsumerWidget {
   final DateTime today;
   final String infoLabel;
 
+  /// Altura fija esperada para el contenido del header.
+  /// Facilita el cálculo del SliverPersistentHeaderDelegate sin medir con GlobalKeys.
+  static const double headerHeight = 142.0;
+
   /// Construye la sección del encabezado.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
