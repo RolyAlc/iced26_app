@@ -13,8 +13,6 @@ class Event {
   final String? lang;
   final String? filterDate;
   final String? filterTime;
-
-  /// IDs de los speakers asociados (solo disponible cuando se carga desde JSON).
   final List<String> speakerIds;
 
   Event({

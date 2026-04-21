@@ -10,12 +10,13 @@ import 'package:iced26/domain/entities/i18n_str.dart';
 
 part 'app_database.g.dart';
 
-// Consultar con los datos del json y los mappers.
+// TODO: Consultar con los datos del json y los mappers.
 
 /// Convertidor de I18nStr a String y viceversa.
 class I18nConverter extends TypeConverter<I18nStr, String> {
   const I18nConverter();
 
+  /// Convierte un String a I18nStr.
   @override
   I18nStr fromSql(String fromDb) {
     final Map<String, dynamic> json =
@@ -23,6 +24,7 @@ class I18nConverter extends TypeConverter<I18nStr, String> {
     return I18nStr(json.map((key, value) => MapEntry(key, value.toString())));
   }
 
+  /// Convierte un I18nStr a String.
   @override
   String toSql(I18nStr value) {
     return jsonEncode(value.values);
@@ -67,6 +69,7 @@ class Events extends Table {
   TextColumn get lang => text().nullable()();
   TextColumn get filterDate => text().nullable()();
   TextColumn get filterTime => text().nullable()();
+  TextColumn get speakerIdsJson => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -166,14 +169,18 @@ class SubmissionTypes extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  // TODO: Añadir un ADR para versionado de la base de datos.
+  /// Versionado de la base de datos.
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
+  /// Estrategia de migración.
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
-      // Si subimos de versión, nos aseguramos de crear las tablas nuevas.
-      await m.createAll();
+      if (from < 7) {
+        await m.addColumn(events, events.speakerIdsJson);
+      }
     },
   );
 }

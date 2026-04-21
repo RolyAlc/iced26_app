@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/data/dtos/event_dto.dart';
 import 'package:iced26/domain/entities/event.dart';
@@ -10,6 +12,10 @@ class EventMapper {
 
   /// Convierte un registro de la base de datos (Drift) a una entidad.
   static Event fromDrift(EventTable data) {
+    final raw = data.speakerIdsJson;
+    final speakerIds = raw != null
+        ? (jsonDecode(raw) as List<dynamic>).cast<String>()
+        : <String>[];
     return Event(
       id: data.id,
       title: data.title,
@@ -22,6 +28,7 @@ class EventMapper {
       lang: data.lang,
       filterDate: data.filterDate,
       filterTime: data.filterTime,
+      speakerIds: speakerIds,
     );
   }
 }

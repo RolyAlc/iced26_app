@@ -94,6 +94,9 @@ class ConfigRepositoryImpl implements ConfigRepository {
               lang: Value(e.lang),
               filterDate: Value(e.filterDate),
               filterTime: Value(e.filterTime),
+              speakerIdsJson: Value(
+                e.speakerIds.isEmpty ? null : jsonEncode(e.speakerIds),
+              ),
             ),
           ),
           mode: InsertMode.insertOrReplace,
