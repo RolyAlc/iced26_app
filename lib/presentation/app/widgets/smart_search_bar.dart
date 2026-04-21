@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 
@@ -18,20 +19,24 @@ class SmartSearchBar extends ConsumerWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => _openSearch(context),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(AppRadius.l),
         child: _SearchBarVisualContainer(colors: colors),
       ),
     );
   }
 
-  /// Abre el modal con la barra de búsqueda.
-  void _openSearch(BuildContext context) {
+  /// Abre el modal de busqueda desde cualquier punto de la app.
+  void _openSearch(BuildContext context) =>
+      SmartSearchBar.open(context, searchNotifier);
+
+  /// Abre el modal de búsqueda con la barra de búsqueda.
+  static void open(BuildContext context, Search notifier) {
     AppBottomSheet.show(
       context: context,
       title: 'Search ICED26',
       isFullHeight: true,
       scrollable: false,
-      child: _SearchModalBody(notifier: searchNotifier),
+      child: _SearchModalBody(notifier: notifier),
     );
   }
 }
@@ -46,19 +51,19 @@ class _SearchBarVisualContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
       decoration: BoxDecoration(
         color: Color.alphaBlend(
           colors.primary.withValues(alpha: 0.08),
           colors.surface,
         ),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(AppRadius.l),
         border: Border.all(color: colors.outlineVariant, width: 1.2),
       ),
       child: Row(
         children: [
           Icon(Icons.search_rounded, color: colors.primary),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.sm),
           const Expanded(child: Text('Search sessions, authors, rooms...')),
           Icon(Icons.tune_rounded, color: colors.secondary),
         ],
@@ -82,7 +87,7 @@ class _SearchModalBody extends ConsumerWidget {
           onChanged: notifier.performSearch,
           query: state.query,
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.l),
         Expanded(child: _buildContent(context, state)),
       ],
     );
@@ -114,7 +119,7 @@ class _SearchModalBody extends ConsumerWidget {
         final colors = Theme.of(context).colorScheme;
 
         return ListTile(
-          contentPadding: const EdgeInsets.symmetric(vertical: 4),
+          contentPadding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
           leading: CircleAvatar(
             backgroundColor: colors.primaryContainer.withValues(alpha: 0.2),
             child: Icon(Icons.event_rounded, color: colors.primary, size: 20),
@@ -153,7 +158,7 @@ class _SearchInputField extends StatelessWidget {
         fillColor: colors.surfaceContainerLow,
         // Bordes redondeados consistentes con los Cards de la App
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppRadius.m),
           borderSide: BorderSide.none,
         ),
         // Botón para limpiar la búsqueda si hay texto
@@ -193,7 +198,7 @@ class _SearchHelper extends StatelessWidget {
           children: [
             // Icono grande con opacidad baja para un look elegante
             Icon(icon, size: 64, color: colors.primary.withValues(alpha: 0.15)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.m),
             Text(
               title,
               style: theme.textTheme.titleLarge?.copyWith(
@@ -201,7 +206,7 @@ class _SearchHelper extends StatelessWidget {
                 color: colors.onSurface,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.s),
             Text(
               subtitle,
               textAlign: TextAlign.center,
