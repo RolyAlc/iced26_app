@@ -9,6 +9,7 @@ import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart'
 import 'package:iced26/presentation/features/home/view/sections/home_news_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_header_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_featured_section.dart';
+import 'package:iced26/presentation/features/home/view/sections/home_keynote_speakers_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_social_activities_section.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/widgets/app_empty_state.dart';
@@ -57,6 +58,17 @@ class _HomeContent extends ConsumerWidget {
             ),
           ),
 
+          // Keynote Speakers — Carrusel horizontal (Edge-to-Edge)
+          if (state.keynoteSpeakers.isNotEmpty)
+            StaggeredFadeIn(
+              delay: const Duration(milliseconds: 350),
+              child: AppSection(
+                title: 'Keynote speakers',
+                edgeToEdge: true,
+                child: HomeKeynoteSection(speakers: state.keynoteSpeakers),
+              ),
+            ),
+
           // Noticias — Lista vertical
           StaggeredFadeIn(
             delay: const Duration(milliseconds: 400),
@@ -82,8 +94,7 @@ class _HomeContent extends ConsumerWidget {
               dataChild: HomeSocialActivitiesSection(
                 socials: state.socialActivities,
               ),
-              // Con datos el carrusel ya lleva `AppSpacing.l` dentro; vacío antes
-              // iba con márgenes de sección (no edge) — replicamos solo el empty.
+              // Empty state sin padding extra
               emptyChild: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: AppSpacing.l),
                 child: AppEmptyState(
