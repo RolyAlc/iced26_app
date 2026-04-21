@@ -35,6 +35,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
       await _db.delete(_db.submissionTypes).go();
       await _db.delete(_db.rooms).go();
       await _db.delete(_db.days).go();
+      await _db.delete(_db.people).go();
 
       await _db.batch((batch) {
         // Añadir sections: días
@@ -126,6 +127,20 @@ class ConfigRepositoryImpl implements ConfigRepository {
               time: sa.time,
               location: sa.location,
               imgUrl: sa.imgUrl,
+            ),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+
+        // Añadir sections: people
+        batch.insertAll(
+          _db.people,
+          appData.collections.people.map(
+            (p) => PeopleCompanion.insert(
+              id: p.id,
+              name: p.name,
+              institution: Value(p.institution),
+              photoUrl: Value(p.photoUrl),
             ),
           ),
           mode: InsertMode.insertOrReplace,

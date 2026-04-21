@@ -9,7 +9,11 @@ import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_mod
 class EventUIMapper {
   static const _formatter = EventFormatter();
 
-  static EventUIModel fromEntity(Event entity, String roomName) {
+  static EventUIModel fromEntity(
+    Event entity,
+    String roomName, {
+    String? imageUrl,
+  }) {
     final status = EventStatusResolver.resolve(entity);
     final timeRange = _formatter.formatTimeRange(
       entity.startDate,
@@ -26,6 +30,7 @@ class EventUIMapper {
       duration: duration,
       room: roomName,
       status: status,
+      imageUrl: imageUrl,
     );
   }
 }

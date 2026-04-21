@@ -101,6 +101,18 @@ class SocialActivities extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// Tabla de personas de la conferencia (speakers, organizadores...).
+@DataClassName('PersonTable')
+class People extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text().map(const I18nConverter())();
+  TextColumn get institution => text().nullable()();
+  TextColumn get photoUrl => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// Tabla de configuración de la aplicación.
 @DataClassName('AppConfigTable')
 class AppConfigs extends Table {
@@ -147,6 +159,7 @@ class SubmissionTypes extends Table {
     AppConfigs,
     SubmissionTypes,
     Favorites,
+    People,
   ],
 )
 /// Implementación de la base de datos.
@@ -154,7 +167,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(

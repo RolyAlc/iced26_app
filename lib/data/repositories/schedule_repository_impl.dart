@@ -1,10 +1,12 @@
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/data/mappers/day_mapper.dart';
 import 'package:iced26/data/mappers/event/event_mapper.dart';
+import 'package:iced26/data/mappers/person_mapper.dart';
 import 'package:iced26/data/mappers/room_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/repositories/schedule_repository.dart';
 import 'package:iced26/core/services/logger/logger.dart';
@@ -50,6 +52,15 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
     return _guard(() async {
       final results = await _db.select(_db.events).get();
       return results.map((e) => EventMapper.fromDrift(e)).toList();
+    });
+  }
+
+  /// Obtiene todas las personas de la conferencia.
+  @override
+  Future<Result<List<Person>>> getAllPeople() async {
+    return _guard(() async {
+      final results = await _db.select(_db.people).get();
+      return results.map((p) => PersonMapper.fromDrift(p)).toList();
     });
   }
 }

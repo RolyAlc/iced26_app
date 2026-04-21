@@ -3,11 +3,59 @@ import 'package:collection/collection.dart';
 
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/domain/entities/category.dart';
+import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/domain/entities/event_status.dart';
+import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
 import 'package:iced26/presentation/mappers/event_ui_mapper.dart';
-import 'package:iced26/domain/entities/category.dart';
 
 part 'home_viewmodel.g.dart';
+
+/// Helper que asigna una prioridad numérica al estado del evento.
+int _statusPriority(EventStatus s) => switch (s) {
+  EventStatus.live => 0,
+  EventStatus.next => 1,
+  EventStatus.ended => 2,
+};
+
+/// Ordena eventos por relevancia: live, next y ended.
+List<Event> _sortedByRelevance(List<Event> events) {
+  final now = DateTime.now();
+  final liveOrNext =
+      events
+          .where(
+            (e) =>
+                EventStatusResolver.resolve(e, now: now) != EventStatus.ended,
+          )
+          .toList()
+        ..sort((a, b) {
+          final pa = _statusPriority(EventStatusResolver.resolve(a, now: now));
+          final pb = _statusPriority(EventStatusResolver.resolve(b, now: now));
+          if (pa != pb) return pa.compareTo(pb);
+          return (a.startDate ?? DateTime(9999)).compareTo(
+            b.startDate ?? DateTime(9999),
+          );
+        });
+
+  if (liveOrNext.isNotEmpty) return liveOrNext;
+
+  // Post-conferencia: mostrar los últimos eventos por orden cronológico inverso
+  return [...events]..sort(
+    (a, b) =>
+        (b.startDate ?? DateTime(0)).compareTo(a.startDate ?? DateTime(0)),
+  );
+}
+
+/// Devuelve la foto del primer speaker con photoUrl, o null si no hay ninguna.
+String? _resolveSpeakerPhoto(Event event, Map<String, Person> peopleById) {
+  for (final id in event.speakerIds) {
+    final photoUrl = peopleById[id]?.photoUrl;
+    if (photoUrl != null && photoUrl.isNotEmpty) return photoUrl;
+  }
+  return null;
+}
 
 /// ViewModel para la pantalla Home.
 /// Centraliza la obtención de datos a través del 'UseCase' y gestiona el estado de la UI.
@@ -22,11 +70,15 @@ class HomeViewModel extends _$HomeViewModel {
 
     switch (result) {
       case Success(data: final data):
-        // Mapeo UI para Featured Events
-        final featuredEvents = data.allEvents.take(5).map((e) {
+        // Mapeo UI para Featured Events — ordenados por relevancia: live → next → ended
+        final peopleById = {for (final p in data.allPeople) p.id: p};
+        final featuredEvents = _sortedByRelevance(data.allEvents).take(5).map((
+          e,
+        ) {
           final room = data.allRooms.firstWhereOrNull((r) => r.id == e.roomId);
           final roomName = room?.name.resolve('en') ?? 'Unknown Room';
-          return EventUIMapper.fromEntity(e, roomName);
+          final imageUrl = _resolveSpeakerPhoto(e, peopleById);
+          return EventUIMapper.fromEntity(e, roomName, imageUrl: imageUrl);
         }).toList();
 
         // Mapeo UI para Categories

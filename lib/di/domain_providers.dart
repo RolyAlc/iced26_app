@@ -18,7 +18,7 @@ GetHomeDataUseCase getHomeDataUseCase(GetHomeDataUseCaseRef ref) {
 
 /// Provee el caso de uso para obtener los datos de Schedule.
 @riverpod
-GetScheduleDataUseCase getScheduleDataUseCase(GetscheduleDataUseCaseRef ref) {
+GetScheduleDataUseCase getScheduleDataUseCase(GetScheduleDataUseCaseRef ref) {
   final scheduleRepo = ref.watch(scheduleRepositoryProvider);
   return GetScheduleDataUseCase(scheduleRepo);
 }

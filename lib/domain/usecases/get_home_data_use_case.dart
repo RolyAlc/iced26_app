@@ -3,6 +3,7 @@ import 'package:iced26/domain/repositories/schedule_repository.dart';
 import 'package:iced26/domain/repositories/home_repository.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
@@ -13,6 +14,7 @@ typedef HomeDataResult = ({
   List<Day> days,
   List<Event> allEvents,
   List<Room> allRooms,
+  List<Person> allPeople,
   List<NewsItem> news,
   List<SocialActivity> socialActivities,
   List<SubmissionType> subTypes,
@@ -31,31 +33,31 @@ class GetHomeDataUseCase {
       _scheduleRepo.getAllDays(),
       _scheduleRepo.getAllEvents(),
       _scheduleRepo.getAllRooms(),
+      _scheduleRepo.getAllPeople(),
       _homeRepo.getAllNews(),
       _homeRepo.getAllSocialActivities(),
       _homeRepo.getAllSubmissionTypes(),
     ]);
 
-    // Verificamos si hubo algún error en las peticiones
     for (final result in results) {
       if (result is Failure) {
         return Failure((result as Failure).message);
       }
     }
 
-    // TODO: Mejorar el manejo de errores.
-    // En caso de que todo haya ido bien, obtenemos los datos.
     final days = (results[0] as Success<List<Day>>).data;
     final events = (results[1] as Success<List<Event>>).data;
     final rooms = (results[2] as Success<List<Room>>).data;
-    final news = (results[3] as Success<List<NewsItem>>).data;
-    final socials = (results[4] as Success<List<SocialActivity>>).data;
-    final subTypes = (results[5] as Success<List<SubmissionType>>).data;
+    final people = (results[3] as Success<List<Person>>).data;
+    final news = (results[4] as Success<List<NewsItem>>).data;
+    final socials = (results[5] as Success<List<SocialActivity>>).data;
+    final subTypes = (results[6] as Success<List<SubmissionType>>).data;
 
     return Success((
       days: days,
       allEvents: events,
       allRooms: rooms,
+      allPeople: people,
       news: news,
       socialActivities: socials,
       subTypes: subTypes,

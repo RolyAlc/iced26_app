@@ -15,6 +15,8 @@ class EventDTO {
   final String? filterDate;
   final String? filterTime;
 
+  final List<String> speakerIds;
+
   EventDTO({
     required this.id,
     required this.title,
@@ -27,10 +29,17 @@ class EventDTO {
     this.lang,
     this.filterDate,
     this.filterTime,
+    this.speakerIds = const [],
   });
 
   /// Crea un DTO mapeando las claves del JSON.
   factory EventDTO.fromMap(Map<String, dynamic> json) {
+    final rawSpeakers = json['speakers'] as List<dynamic>? ?? [];
+    final speakerIds = rawSpeakers
+        .map((s) => s['personId']?.toString() ?? '')
+        .where((id) => id.isNotEmpty)
+        .toList();
+
     return EventDTO(
       id: json['id']?.toString() ?? '',
       title: json['title'] ?? json['name'],
@@ -43,6 +52,7 @@ class EventDTO {
       lang: json['lang']?.toString(),
       filterDate: json['filter_date']?.toString(),
       filterTime: json['filter_time']?.toString(),
+      speakerIds: speakerIds,
     );
   }
 
@@ -60,6 +70,7 @@ class EventDTO {
       lang: lang,
       filterDate: filterDate,
       filterTime: filterTime,
+      speakerIds: speakerIds,
     );
   }
 

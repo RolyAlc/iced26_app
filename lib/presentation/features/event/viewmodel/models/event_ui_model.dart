@@ -7,6 +7,7 @@ class EventUIModel {
   final String duration;
   final String room;
   final EventStatus status;
+  final String? imageUrl;
 
   EventUIModel({
     required this.title,
@@ -14,5 +15,6 @@ class EventUIModel {
     required this.duration,
     required this.room,
     required this.status,
+    this.imageUrl,
   });
 }

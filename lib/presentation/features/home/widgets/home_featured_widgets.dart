@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/widgets/app_card.dart';
 import 'package:iced26/presentation/widgets/app_network_image.dart';
+import 'package:iced26/presentation/widgets/event_status_chip.dart';
 
 /// Tarjeta de sesión destacada.
 class FeaturedCard extends StatelessWidget {
@@ -30,7 +30,7 @@ class FeaturedCard extends StatelessWidget {
         children: [
           // Fallback si el asset falla: surfaceContainerHigh (color sólido de AppCard).
           AppNetworkImage(
-            url: '',
+            url: event.imageUrl ?? '',
             placeholder: AppNetworkImageAssetPlaceholder(
               assetPath: Assets.expressiveShape,
             ),
@@ -114,7 +114,7 @@ class _CardHeader extends StatelessWidget {
             ),
           ),
         ),
-        _StatusChip(status: event.status),
+        EventStatusChip(status: event.status),
       ],
     );
   }
@@ -153,108 +153,6 @@ class _IconInfoRow extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// Cabecera de la sección.
-class SectionHeader extends StatelessWidget {
-  final String title;
-  final VoidCallback? onSeeAll;
-
-  const SectionHeader({super.key, required this.title, this.onSeeAll});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.5,
-          ),
-        ),
-        TextButton(
-          onPressed: onSeeAll ?? () => _showSeeAllSoon(context),
-          child: Row(
-            children: [
-              Text(
-                "See all",
-                style: TextStyle(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 12,
-                color: theme.colorScheme.primary,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// Muestra un SnackBar con un mensaje de "Coming Soon".
-  void _showSeeAllSoon(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming Soon: Daily session filters'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-}
-
-/// Etiqueta de estado de la sesión.
-class _StatusChip extends StatelessWidget {
-  final EventStatus status;
-  const _StatusChip({required this.status});
-
-  /// Mapeo del estado a colores y etiquetas.
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    final (Color background, Color foreground, String label) = switch (status) {
-      EventStatus.live => (
-        colors.errorContainer,
-        colors.onErrorContainer,
-        'LIVE',
-      ),
-      EventStatus.ended => (
-        colors.surfaceContainerHighest,
-        colors.onSurfaceVariant,
-        'ENDED',
-      ),
-      EventStatus.next => (
-        colors.primaryContainer,
-        colors.onPrimaryContainer,
-        'NEXT',
-      ),
-    };
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(AppRadius.s),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 10,
-          color: foreground,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
     );
   }
 }
