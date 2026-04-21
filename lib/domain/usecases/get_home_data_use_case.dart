@@ -1,5 +1,5 @@
 import 'package:iced26/core/errors/result.dart';
-import 'package:iced26/domain/repositories/agenda_repository.dart';
+import 'package:iced26/domain/repositories/schedule_repository.dart';
 import 'package:iced26/domain/repositories/home_repository.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
@@ -8,6 +8,7 @@ import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 
+/// Contiene todos los datos necesarios para la pantalla Home.
 typedef HomeDataResult = ({
   List<Day> days,
   List<Event> allEvents,
@@ -19,17 +20,17 @@ typedef HomeDataResult = ({
 
 /// Caso de uso: Obtener toda la información necesaria para la pantalla Home.
 class GetHomeDataUseCase {
-  final AgendaRepository _agendaRepo;
+  final ScheduleRepository _scheduleRepo;
   final HomeRepository _homeRepo;
 
-  GetHomeDataUseCase(this._agendaRepo, this._homeRepo);
+  GetHomeDataUseCase(this._scheduleRepo, this._homeRepo);
 
   /// Devuelve los datos puros de la Home.
   Future<Result<HomeDataResult>> execute() async {
     final results = await Future.wait([
-      _agendaRepo.getAllDays(),
-      _agendaRepo.getAllEvents(),
-      _agendaRepo.getAllRooms(),
+      _scheduleRepo.getAllDays(),
+      _scheduleRepo.getAllEvents(),
+      _scheduleRepo.getAllRooms(),
       _homeRepo.getAllNews(),
       _homeRepo.getAllSocialActivities(),
       _homeRepo.getAllSubmissionTypes(),
