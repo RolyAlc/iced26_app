@@ -9,6 +9,7 @@ import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/mappers/event_ui_mapper.dart';
 
 part 'home_viewmodel.g.dart';
@@ -81,6 +82,25 @@ class HomeViewModel extends _$HomeViewModel {
           return EventUIMapper.fromEntity(e, roomName, imageUrl: imageUrl);
         }).toList();
 
+        // Keynote speakers: personas referenciadas en eventos de tipo keynote
+        final keynoteEvents = data.allEvents
+            .where((e) => e.type == 'keynote')
+            .toList();
+        final keynoteSpeakers = data.allPeople
+            .where((p) => keynoteEvents.any((e) => e.speakerIds.contains(p.id)))
+            .map(
+              (p) => KeynoteSpeakerUIModel(
+                id: p.id,
+                name: p.name.resolve('en'),
+                institution: p.institution,
+                photoUrl: p.photoUrl,
+                events: keynoteEvents
+                    .where((e) => e.speakerIds.contains(p.id))
+                    .toList(),
+              ),
+            )
+            .toList();
+
         // Mapeo UI para Categories
         final categories = data.subTypes
             .map((st) => Category(name: st.name.resolve('en')))
@@ -91,6 +111,7 @@ class HomeViewModel extends _$HomeViewModel {
           allEvents: data.allEvents,
           allRooms: data.allRooms,
           featuredEvents: featuredEvents,
+          keynoteSpeakers: keynoteSpeakers,
           categories: categories,
           news: data.news,
           socialActivities: data.socialActivities,
