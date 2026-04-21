@@ -1,23 +1,35 @@
 import 'package:flutter/material.dart';
 
+import 'package:iced26/core/constants/assets.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/widgets/app_card.dart';
+import 'package:iced26/presentation/widgets/app_network_image.dart';
 
 /// Tarjeta de noticia.
 class NewsCard extends StatelessWidget {
-  const NewsCard({
+  const NewsCard.hero({
     super.key,
     required this.title,
     required this.subtitle,
     required this.imageUrl,
     required this.onTap,
-    this.isFeatured = false,
-  });
+  }) : _isHero = true;
+
+  const NewsCard.compact({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.imageUrl,
+    required this.onTap,
+  }) : _isHero = false;
 
   final String title;
   final String subtitle;
   final String imageUrl;
   final VoidCallback onTap;
-  final bool isFeatured;
+  final bool _isHero;
+
+  static const double _heroHeight = 220.0;
 
   /// Construye la tarjeta de noticia.
   @override
@@ -27,8 +39,8 @@ class NewsCard extends StatelessWidget {
 
     return AppCard(
       onTap: onTap,
-      borderRadius: 28,
-      child: isFeatured
+      borderRadius: AppRadius.m,
+      child: _isHero
           ? _buildFeaturedLayout(theme, colors)
           : _buildStandardLayout(theme, colors),
     );
@@ -37,12 +49,21 @@ class NewsCard extends StatelessWidget {
   /// Layout Destacado: Imagen de fondo con gradiente y texto superpuesto.
   Widget _buildFeaturedLayout(ThemeData theme, ColorScheme colors) {
     return SizedBox(
-      height: 220,
+      height: _heroHeight,
       width: double.infinity,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          _NewsImage(imageUrl: imageUrl, height: 220, width: double.infinity),
+          AppNetworkImage(
+            url: imageUrl,
+            height: _heroHeight,
+            width: double.infinity,
+            placeholder: AppNetworkImageAssetPlaceholder(
+              assetPath: Assets.expressiveShape,
+              height: _heroHeight,
+              width: double.infinity,
+            ),
+          ),
           const DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -54,7 +75,7 @@ class NewsCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(AppSpacing.m),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +90,7 @@ class NewsCard extends StatelessWidget {
                     letterSpacing: -0.5,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 Text(
                   subtitle,
                   maxLines: 1,
@@ -89,14 +110,23 @@ class NewsCard extends StatelessWidget {
   /// Layout Estándar: Diseño horizontal compacto.
   Widget _buildStandardLayout(ThemeData theme, ColorScheme colors) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(AppSpacing.sm),
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: _NewsImage(imageUrl: imageUrl, width: 80, height: 80),
+            borderRadius: BorderRadius.circular(AppRadius.m),
+            child: AppNetworkImage(
+              url: imageUrl,
+              width: 80,
+              height: 80,
+              placeholder: AppNetworkImageAssetPlaceholder(
+                assetPath: Assets.expressiveShape,
+                width: 80,
+                height: 80,
+              ),
+            ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AppSpacing.m),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +140,7 @@ class NewsCard extends StatelessWidget {
                     color: colors.onSurface,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: AppSpacing.s),
                 Text(
                   subtitle,
                   maxLines: 1,
@@ -123,76 +153,6 @@ class NewsCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Widget auxiliar para mostrar la imagen de la noticia o un placeholder si hay error.
-class _NewsImage extends StatelessWidget {
-  const _NewsImage({
-    required this.imageUrl,
-    required this.width,
-    required this.height,
-  });
-
-  final String imageUrl;
-  final double width;
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    // Si la URL está vacía, muestra el placeholder.
-    if (imageUrl.isEmpty) {
-      return _Placeholder(width: width, height: height);
-    }
-
-    return Image.network(
-      imageUrl,
-      width: width,
-      height: height,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) =>
-          _Placeholder(width: width, height: height),
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Container(
-          width: width,
-          height: height,
-          color: colors.surfaceContainerHighest,
-          child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-        );
-      },
-    );
-  }
-}
-
-/// Widget auxiliar para mostrar un placeholder si la imagen no está disponible.
-class _Placeholder extends StatelessWidget {
-  const _Placeholder({required this.width, required this.height});
-  final double width;
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerHighest,
-        image: const DecorationImage(
-          image: AssetImage('assets/brand/expressive_shape.jpg'),
-          fit: BoxFit.cover,
-          opacity: 0.4,
-        ),
-      ),
-      child: Icon(
-        Icons.newspaper_rounded,
-        color: colors.primary,
-        size: width > 100 ? 48 : 24,
       ),
     );
   }

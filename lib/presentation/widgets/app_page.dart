@@ -1,103 +1,130 @@
 import 'package:flutter/material.dart';
-import 'package:iced26/presentation/app/navigation_constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/presentation/core/ui_engine/ui_metrics.dart';
 
 /// Un contenedor maestro que gestiona el layout de una página completa.
-///
-/// Se encarga de:
-/// 1. Gestionar el scroll (Slivers o Normal).
-/// 2. Inyectar automáticamente el padding inferior para la Navigation Bar.
-/// 3. Ofrecer un punto de entrada para headers pegajosos (sticky).
-class AppPage extends StatelessWidget {
-  /// Lista de secciones o widgets que componen la página.
+class AppPage extends ConsumerStatefulWidget {
   final List<Widget> children;
-
-  /// Header opcional que se mantiene fijo en la parte superior.
   final Widget? header;
-
-  /// Altura fija del header. Si es null, se intenta calcular.
-  final double? headerHeight;
-
-  /// Si es true, usa [CustomScrollView] con Slivers. Ideal para efectos premium.
   final bool useSlivers;
-
-  /// Padding interno del scroll.
   final EdgeInsets? padding;
-
-  /// Color de fondo de la página.
   final Color? backgroundColor;
 
   const AppPage({
     super.key,
     required this.children,
     this.header,
-    this.headerHeight,
     this.useSlivers = true,
     this.padding,
     this.backgroundColor,
   });
 
   @override
+  ConsumerState<AppPage> createState() => _AppPageState();
+}
+
+class _AppPageState extends ConsumerState<AppPage> {
+  /// Medición del header de **esta** página (no va al provider global: evita conflictos con [IndexedStack]).
+  // TODO: Mejorar medición del header.
+  double _headerHeight = 0;
+
+  @override
   Widget build(BuildContext context) {
-    // Calculamos el padding inferior automáticamente.
-    final bottomInset =
-        MediaQuery.of(context).padding.bottom + kAppBottomNavigationBarHeight;
+    final theme = Theme.of(context);
     final topInset = MediaQuery.of(context).padding.top;
+    final double bottomInset = widget.useSlivers
+        ? 0.0
+        : ref.watch(uiMetricsProvider).navBarHeight;
 
-    if (!useSlivers) {
-      return Scaffold(
-        backgroundColor: backgroundColor,
-        body: Column(
-          children: [
-            header ?? const SizedBox.shrink(),
-            Expanded(
-              child: ListView(
-                padding: (padding ?? EdgeInsets.zero).copyWith(
-                  bottom: bottomInset,
-                ),
-                children: children,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          if (header != null)
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _AppPageHeaderDelegate(
-                child: header!,
-                height: headerHeight ?? 80, // Valor por defecto sensato
-                topPadding: topInset,
-                backgroundColor:
-                    backgroundColor ?? Theme.of(context).colorScheme.surface,
-              ),
-            ),
-
-          SliverPadding(
-            padding: (padding ?? EdgeInsets.zero).copyWith(bottom: bottomInset),
-            sliver: SliverList(delegate: SliverChildListDelegate(children)),
-          ),
-        ],
+    return NotificationListener<UIMetricsNotification>(
+      onNotification: (notification) {
+        final h = notification.headerHeight;
+        if (h != null && (h - _headerHeight).abs() > 0.5) {
+          setState(() => _headerHeight = h);
+        }
+        return false;
+      },
+      child: Material(
+        color: widget.backgroundColor ?? theme.colorScheme.surface,
+        child: widget.useSlivers
+            ? _buildSliverLayout(context, topInset)
+            : _buildNormalLayout(context, bottomInset),
       ),
+    );
+  }
+
+  /// Layout normal para cuando no se usan slivers.
+  Widget _buildNormalLayout(BuildContext context, double bottomInset) {
+    return Column(
+      children: [
+        widget.header ?? const SizedBox.shrink(),
+        Expanded(
+          child: ListView(
+            primary: false,
+            padding: (widget.padding ?? EdgeInsets.zero).copyWith(
+              bottom: bottomInset,
+            ),
+            children: widget.children,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Layout con slivers para cuando se usa [CustomScrollView].
+  Widget _buildSliverLayout(BuildContext context, double topInset) {
+    final double effectiveHeaderHeight = _headerHeight > 0
+        ? _headerHeight
+        : AppLayout.pageHeaderFallbackHeight;
+
+    return CustomScrollView(
+      primary: false,
+      clipBehavior: Clip.hardEdge,
+      slivers: [
+        if (widget.header != null)
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _AppPageHeaderDelegate(
+              child: UIMetricsReporter(
+                onReportHeader: (size) => size.height,
+                child: widget.header!,
+              ),
+              height: effectiveHeaderHeight,
+              topPadding: topInset,
+              bottomPadding: AppSpacing.s,
+              backgroundColor:
+                  widget.backgroundColor ??
+                  Theme.of(context).colorScheme.surface,
+            ),
+          ),
+
+        SliverPadding(
+          padding: widget.padding ?? EdgeInsets.zero,
+          sliver: SliverList(
+            delegate: SliverChildListDelegate(widget.children),
+          ),
+        ),
+
+        const SliverClearanceSpacer(),
+      ],
     );
   }
 }
 
+/// Delegado para [SliverPersistentHeader] que envuelve el header de [AppPage].
 class _AppPageHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
   final double height;
   final double topPadding;
+  final double bottomPadding;
   final Color backgroundColor;
 
   _AppPageHeaderDelegate({
     required this.child,
     required this.height,
     required this.topPadding,
+    required this.bottomPadding,
     required this.backgroundColor,
   });
 
@@ -109,22 +136,31 @@ class _AppPageHeaderDelegate extends SliverPersistentHeaderDelegate {
   ) {
     return Container(
       color: backgroundColor,
-      padding: EdgeInsets.only(top: topPadding),
-      alignment: Alignment.center,
+      padding: EdgeInsets.only(
+        top: topPadding,
+        bottom: bottomPadding,
+        left: AppSpacing.l,
+        right: AppSpacing.l,
+      ),
+      alignment: Alignment.topLeft,
       child: child,
     );
   }
 
+  /// Altura máxima del header.
   @override
-  double get maxExtent => height + topPadding;
+  double get maxExtent => height + topPadding + bottomPadding;
 
+  /// Altura mínima del header.
   @override
-  double get minExtent => height + topPadding;
+  double get minExtent => height + topPadding + bottomPadding;
 
+  /// Indica si el header debe reconstruirse.
   @override
   bool shouldRebuild(covariant _AppPageHeaderDelegate oldDelegate) =>
       child != oldDelegate.child ||
       height != oldDelegate.height ||
       topPadding != oldDelegate.topPadding ||
+      bottomPadding != oldDelegate.bottomPadding ||
       backgroundColor != oldDelegate.backgroundColor;
 }

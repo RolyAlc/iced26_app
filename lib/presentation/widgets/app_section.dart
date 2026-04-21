@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/presentation/widgets/app_skeleton.dart';
 
 /// Un contenedor para secciones de contenido con márgenes consistentes.
-///
-/// Se encarga de:
-/// 1. Aplicar el padding horizontal centralizado de la app (20px).
-/// 2. Gestionar el título de la sección de forma tipográficamente coherente.
-/// 3. Ofrecer una estructura clara para el contenido.
 class AppSection extends StatelessWidget {
+  /// Valor por defecto para los paddings verticales (ritmo estándar).
+  static const double defaultVerticalPadding = AppSpacing.m;
+
   /// Título opcional de la sección.
   final String? title;
 
@@ -32,9 +32,53 @@ class AppSection extends StatelessWidget {
     this.trailing,
     required this.child,
     this.edgeToEdge = false,
-    this.topPadding = 16,
-    this.bottomPadding = 16,
+    this.topPadding = defaultVerticalPadding,
+    this.bottomPadding = defaultVerticalPadding,
   });
+
+  /// Sección con **un solo** cuerpo según prioridad: `isLoading` → sin datos con
+  /// `emptyChild` → `dataChild`.
+  factory AppSection.resolved({
+    Key? key,
+    String? title,
+    Widget? trailing,
+    bool edgeToEdge = false,
+    double topPadding = defaultVerticalPadding,
+    double bottomPadding = defaultVerticalPadding,
+    bool isLoading = false,
+    Widget? loadingChild,
+    required bool hasData,
+    required Widget dataChild,
+    Widget? emptyChild,
+  }) {
+    final Widget body;
+    if (isLoading) {
+      body = loadingChild ?? _defaultSectionSkeleton();
+    } else if (!hasData && emptyChild != null) {
+      body = emptyChild;
+    } else {
+      body = dataChild;
+    }
+    return AppSection(
+      key: key,
+      title: title,
+      trailing: trailing,
+      edgeToEdge: edgeToEdge,
+      topPadding: topPadding,
+      bottomPadding: bottomPadding,
+      child: body,
+    );
+  }
+
+  /// Skeleton por defecto para secciones.
+  static Widget _defaultSectionSkeleton() {
+    return const AppSkeleton(
+      height: 132,
+      textLines: 2,
+      imagePlaceholders: 1,
+      spacing: AppSpacing.sm,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +90,7 @@ class AppSection extends StatelessWidget {
         children: [
           if (title != null || trailing != null)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -55,20 +99,20 @@ class AppSection extends StatelessWidget {
                       title!,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
                       ),
                     ),
                   trailing ?? const SizedBox.shrink(),
                 ],
               ),
             ),
-
-          if (title != null || trailing != null) const SizedBox(height: 12),
-
+          if (title != null || trailing != null)
+            const SizedBox(height: AppSpacing.sm),
           if (edgeToEdge)
             child
           else
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
               child: child,
             ),
         ],
