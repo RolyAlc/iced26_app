@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// La tarjeta base de la aplicación con estilo Material 3 / Moderno.
-///
-/// Se encarga de:
-/// 1. Estandarizar bordes redondeados y elevación.
-/// 2. Gestionar el feedback táctil ([InkWell]).
-/// 3. Ofrecer consistencia visual en toda la app.
+/// Tarjeta base de la aplicación.
 class AppCard extends StatelessWidget {
   /// El contenido de la tarjeta.
   final Widget child;
