@@ -111,6 +111,17 @@ class AppConfigs extends Table {
   Set<Column> get primaryKey => {key};
 }
 
+/// Tabla de favoritos del usuario.
+@DataClassName('FavoriteTable')
+class Favorites extends Table {
+  TextColumn get eventId => text()();
+  DateTimeColumn get savedAt =>
+      dateTime().clientDefault(() => DateTime.now())();
+
+  @override
+  Set<Column> get primaryKey => {eventId};
+}
+
 /// Tabla de tipos de presentación.
 @DataClassName('SubmissionTypeTable')
 class SubmissionTypes extends Table {
@@ -135,6 +146,7 @@ class SubmissionTypes extends Table {
     SocialActivities,
     AppConfigs,
     SubmissionTypes,
+    Favorites,
   ],
 )
 /// Implementación de la base de datos.
@@ -142,7 +154,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
