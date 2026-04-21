@@ -88,7 +88,7 @@ class EventDetailContent extends ConsumerWidget {
             icon: Icon(
               isFavorite ? Icons.bookmark : Icons.bookmark_add_outlined,
             ),
-            label: Text(isFavorite ? 'Saved' : 'Add to Favorites'),
+            label: Text(isFavorite ? 'Saved' : 'Add to favorites'),
           ),
         ),
       ],
