@@ -10,6 +10,7 @@ import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmod
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 import 'package:iced26/presentation/widgets/app_page.dart';
 
+/// Vista del schedule.
 class ScheduleView extends ConsumerWidget {
   const ScheduleView({super.key});
 
@@ -23,6 +24,7 @@ class ScheduleView extends ConsumerWidget {
   }
 }
 
+/// Contenido de la vista del schedule.
 class _ScheduleContent extends ConsumerWidget {
   const _ScheduleContent({required this.state});
 
@@ -32,6 +34,10 @@ class _ScheduleContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedDayIndex = ref.watch(selectedDayIndexProvider);
     final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
+    final showFavorites = ref.watch(showOnlyFavoritesProvider);
+    final favoriteIds = ref.watch(
+      favoriteIdsProvider.select((ids) => ids.valueOrNull ?? <String>{}),
+    );
 
     final safeIndex = state.sections.isEmpty
         ? 0
@@ -41,7 +47,8 @@ class _ScheduleContent extends ConsumerWidget {
         ? null
         : state.sections[safeIndex];
 
-    final visibleItems = daySection == null
+    // Filtro por categoría
+    var visibleItems = daySection == null
         ? <ScheduleItem>[]
         : selectedCategory == null
         ? daySection.items
@@ -54,6 +61,21 @@ class _ScheduleContent extends ConsumerWidget {
                 },
               )
               .toList();
+
+    // Filtro por favoritos (se apila sobre el de categoría)
+    if (showFavorites) {
+      visibleItems = visibleItems
+          .where(
+            (item) => switch (item) {
+              SingleEventItem(:final event) => favoriteIds.contains(event.id),
+              // Muestra el grupo si al menos un evento está guardado
+              ParallelGroupItem(:final events) => events.any(
+                (e) => favoriteIds.contains(e.id),
+              ),
+            },
+          )
+          .toList();
+    }
 
     return DefaultTabController(
       length: state.sections.length,
@@ -68,21 +90,28 @@ class _ScheduleContent extends ConsumerWidget {
           sections: state.sections,
           onDaySelect: (index) =>
               ref.read(selectedDayIndexProvider.notifier).state = index,
+          showFavorites: showFavorites,
+          onFavoritesToggle: () =>
+              ref.read(showOnlyFavoritesProvider.notifier).update((v) => !v),
         ),
         children: [
           const SizedBox(height: AppSpacing.m),
-          ...visibleItems.map(
-            (item) => switch (item) {
-              SingleEventItem(:final event) => EventCard(event: event),
-              ParallelGroupItem() => ParallelBlock(group: item),
-            },
-          ),
+          if (showFavorites && visibleItems.isEmpty)
+            _EmptyFavorites()
+          else
+            ...visibleItems.map(
+              (item) => switch (item) {
+                SingleEventItem(:final event) => EventCard(event: event),
+                ParallelGroupItem() => ParallelBlock(group: item),
+              },
+            ),
         ],
       ),
     );
   }
 }
 
+/// Header de la vista del schedule.
 class _ScheduleHeader extends StatelessWidget {
   const _ScheduleHeader({
     required this.categories,
@@ -90,6 +119,8 @@ class _ScheduleHeader extends StatelessWidget {
     required this.onCategorySelect,
     required this.sections,
     required this.onDaySelect,
+    required this.showFavorites,
+    required this.onFavoritesToggle,
   });
 
   final List<String> categories;
@@ -97,6 +128,8 @@ class _ScheduleHeader extends StatelessWidget {
   final ValueChanged<String?> onCategorySelect;
   final List<ScheduleDaySection> sections;
   final ValueChanged<int> onDaySelect;
+  final bool showFavorites;
+  final VoidCallback onFavoritesToggle;
 
   String _tabLabel(String date) {
     final dt = DateTime.tryParse(date);
@@ -148,9 +181,45 @@ class _ScheduleHeader extends StatelessWidget {
             categories: categories,
             selected: selectedCategory,
             onSelect: onCategorySelect,
+            showFavorites: showFavorites,
+            onFavoritesToggle: onFavoritesToggle,
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Mensaje que se muestra cuando no hay favoritos.
+class _EmptyFavorites extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+      child: Column(
+        children: [
+          Icon(
+            Icons.bookmark_border,
+            size: 48,
+            color: theme.colorScheme.outlineVariant,
+          ),
+          const SizedBox(height: AppSpacing.m),
+          Text(
+            'No saved sessions yet',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Tap the bookmark on any session to save it',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.outline,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

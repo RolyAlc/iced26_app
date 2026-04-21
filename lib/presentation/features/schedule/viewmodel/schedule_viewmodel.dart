@@ -14,6 +14,9 @@ final selectedDayIndexProvider = StateProvider<int>((ref) => 0);
 /// Categoria activa como filtro. `null` = sin filtro (mostrar todo).
 final selectedScheduleCategoryProvider = StateProvider<String?>((ref) => null);
 
+/// Muestra solo los eventos guardados en favoritos.
+final showOnlyFavoritesProvider = StateProvider<bool>((ref) => false);
+
 /// IDs de eventos marcados como favoritos (stream reactivo desde Drift).
 @riverpod
 Stream<Set<String>> favoriteIds(FavoriteIdsRef ref) {

@@ -1,47 +1,69 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/domain/entities/category.dart';
-import 'package:iced26/presentation/features/home/viewmodel/mappers/category_ui_mapper.dart';
+import 'package:iced26/presentation/features/schedule/view/helpers/event_type_style.dart';
 
 /// Barra de filtros de categoria para la pantalla Schedule.
-/// Chips M3 con icono y color por categoria. `null` = sin filtro.
+/// El chip "My Schedule" aparece primero si se proveen los callbacks de favoritos.
 class ScheduleCategoryFilterBar extends StatelessWidget {
   const ScheduleCategoryFilterBar({
     super.key,
     required this.categories,
     required this.selected,
     required this.onSelect,
+    this.showFavorites = false,
+    this.onFavoritesToggle,
   });
 
   final List<String> categories;
   final String? selected;
   final ValueChanged<String?> onSelect;
+  final bool showFavorites;
+  final VoidCallback? onFavoritesToggle;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       clipBehavior: Clip.none,
       child: Row(
         children: [
+          if (onFavoritesToggle != null) ...[
+            _CategoryChip(
+              label: 'My Schedule',
+              icon: showFavorites ? Icons.bookmark : Icons.bookmark_border,
+              color: colors.tertiary,
+              selected: showFavorites,
+              onTap: onFavoritesToggle!,
+            ),
+            const SizedBox(width: AppSpacing.xs),
+          ],
           _CategoryChip(
             label: 'All',
             icon: Icons.apps_rounded,
-            color: Theme.of(context).colorScheme.primary,
-            selected: selected == null,
-            onTap: () => onSelect(null),
+            color: colors.primary,
+            // "All" solo aparece activo si no estamos en modo favoritos
+            selected: !showFavorites && selected == null,
+            onTap: () {
+              if (showFavorites) onFavoritesToggle?.call();
+              onSelect(null);
+            },
           ),
           ...categories.map((cat) {
-            final style = CategoryUiMapper.resolve(Category(name: cat));
+            final style = resolveTypeStyle(context, cat);
             return Padding(
               padding: const EdgeInsets.only(left: AppSpacing.xs),
               child: _CategoryChip(
                 label: cat,
                 icon: style.icon,
                 color: style.color,
-                selected: selected == cat,
-                onTap: () => onSelect(selected == cat ? null : cat),
+                selected: !showFavorites && selected == cat,
+                onTap: () {
+                  if (showFavorites) onFavoritesToggle?.call();
+                  onSelect(selected == cat ? null : cat);
+                },
               ),
             );
           }),
@@ -51,6 +73,7 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
   }
 }
 
+/// Chip con icono y color por categoria (tipo de evento).
 class _CategoryChip extends StatelessWidget {
   const _CategoryChip({
     required this.label,
