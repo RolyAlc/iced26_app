@@ -4,4 +4,5 @@ class Assets {
   static const logoIced26IconApp =
       'assets/brand/iconApp/logo_iced26_new2-1-1:1.png';
   static const logoIced26 = 'assets/brand/logo_iced26_new2-1-1024x628.png';
+  static const expressiveShape = 'assets/brand/expressive_shape.jpg';
 }
