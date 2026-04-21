@@ -2,27 +2,27 @@ import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/room.dart';
-import 'package:iced26/domain/repositories/agenda_repository.dart';
+import 'package:iced26/domain/repositories/schedule_repository.dart';
 
-typedef AgendaDataResult = ({
+typedef ScheduleDataResult = ({
   List<Day> days,
   List<Event> allEvents,
   List<Room> allRooms,
 });
 
-/// Caso de uso: Obtener los datos crudos para la pantalla de Agenda.
-class GetAgendaDataUseCase {
+/// Caso de uso: Obtener los datos crudos para la pantalla de Schedule.
+class GetScheduleDataUseCase {
   // Repo inyectado por dependencias.
-  final AgendaRepository _agendaRepo;
+  final ScheduleRepository _scheduleRepo;
 
-  GetAgendaDataUseCase(this._agendaRepo);
+  GetScheduleDataUseCase(this._scheduleRepo);
 
   /// Ejecuta el caso de uso y devuelve un Result con los datos de dominio.
-  Future<Result<AgendaDataResult>> execute() async {
+  Future<Result<ScheduleDataResult>> execute() async {
     final results = await Future.wait([
-      _agendaRepo.getAllDays(),
-      _agendaRepo.getAllEvents(),
-      _agendaRepo.getAllRooms(),
+      _scheduleRepo.getAllDays(),
+      _scheduleRepo.getAllEvents(),
+      _scheduleRepo.getAllRooms(),
     ]);
 
     // Gestión de errores
