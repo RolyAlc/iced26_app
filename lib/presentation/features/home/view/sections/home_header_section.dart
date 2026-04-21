@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/presentation/app/widgets/smart_search_bar.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
+import 'package:iced26/presentation/app/widgets/smart_search_bar.dart';
 
 /// Sección de encabezado en la pantalla principal
 /// Muestra el logo, la fecha y una barra de búsqueda.
@@ -17,11 +18,6 @@ class HomeHeaderSection extends ConsumerWidget {
   final DateTime today;
   final String infoLabel;
 
-  /// Altura fija esperada para el contenido del header.
-  /// Facilita el cálculo del SliverPersistentHeaderDelegate sin medir con GlobalKeys.
-  static const double headerHeight = 142.0;
-
-  /// Construye la sección del encabezado.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -44,7 +40,7 @@ class HomeHeaderSection extends ConsumerWidget {
             _buildInfoColumn(dateLabel, colorScheme, textTheme),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.s),
         SmartSearchBar(searchNotifier: searchNotifier),
       ],
     );
@@ -79,7 +75,7 @@ class HomeHeaderSection extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           infoLabel,
           style: texts.titleSmall?.copyWith(

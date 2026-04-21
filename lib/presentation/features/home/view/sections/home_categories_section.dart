@@ -1,68 +1,37 @@
 import 'package:flutter/material.dart';
 
+import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/domain/entities/category.dart';
 import 'package:iced26/presentation/features/home/viewmodel/mappers/category_ui_mapper.dart';
 import 'package:iced26/presentation/features/home/widgets/category_card.dart';
-import 'package:iced26/presentation/features/home/viewmodel/models/category_layout.dart';
 
-// TODO: aplicar Bento Grid en las screens
-
-/// Seccion de categorias. Bento Grid.
+/// Seccion de categorias. Grid uniforme de 2 columnas.
+/// Escala correctamente con cualquier numero de categorias (5, 8, 11...).
 class HomeCategoriesSection extends StatelessWidget {
-  const HomeCategoriesSection({super.key, required this.layout});
+  const HomeCategoriesSection({super.key, required this.categories});
 
-  final CategoryLayout layout;
+  final List<Category> categories;
+
+  static const double _childAspectRatio = 2.8;
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        const spacing = 8.0;
-        return Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: CategoryCard(
-                    name: layout.featured.name,
-                    style: CategoryUiMapper.resolve(layout.featured),
-                    isFeatured: true,
-                    onTap: () {},
-                  ),
-                ),
-                const SizedBox(width: spacing),
-                Expanded(
-                  flex: 2,
-                  child: CategoryCard(
-                    name: layout.secondary.name,
-                    style: CategoryUiMapper.resolve(layout.secondary),
-                    onTap: () {},
-                  ),
-                ),
-              ],
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: AppSpacing.s,
+      mainAxisSpacing: AppSpacing.s,
+      childAspectRatio: _childAspectRatio,
+      children: categories
+          .map(
+            (category) => CategoryCard(
+              name: category.name,
+              style: CategoryUiMapper.resolve(category),
+              onTap: () {},
             ),
-            const SizedBox(height: spacing),
-            if (layout.others.isNotEmpty)
-              Wrap(
-                spacing: spacing,
-                runSpacing: spacing,
-                children: layout.others.map((category) {
-                  final itemWidth = constraints.maxWidth > spacing
-                      ? (constraints.maxWidth - spacing) / 2
-                      : 0.0;
-                  return SizedBox(
-                    width: itemWidth,
-                    child: CategoryCard(
-                      name: category.name,
-                      style: CategoryUiMapper.resolve(category),
-                      onTap: () {},
-                    ),
-                  );
-                }).toList(),
-              ),
-          ],
-        );
-      },
+          )
+          .toList(),
     );
   }
 }

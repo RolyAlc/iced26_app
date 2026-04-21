@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/core/constants/assets.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card.dart';
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
+import 'package:iced26/presentation/widgets/app_network_image.dart';
 import 'package:iced26/core/services/logger/logger.dart';
 
 /// Sección de noticias con integración de AppBottomSheet (Fase 3).
@@ -13,6 +16,8 @@ class HomeNewsSection extends StatelessWidget {
 
   final List<NewsItem> news;
 
+  static const double _modalImageHeight = 200.0;
+
   @override
   Widget build(BuildContext context) {
     if (news.isEmpty) return const SizedBox.shrink();
@@ -20,30 +25,28 @@ class HomeNewsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        NewsCard(
-          isFeatured: true,
+        NewsCard.hero(
           title: news[0].title.resolve('en'),
           subtitle: news[0].content.resolve('en'),
           imageUrl: news[0].imgUrl,
           onTap: () => _showNewsDetails(context, news[0]),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.sm),
         if (news.length > 1)
-          ListView.separated(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: news.length - 1,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final item = news[index + 1];
-              return NewsCard(
-                title: item.title.resolve('en'),
-                subtitle: item.content.resolve('en'),
-                imageUrl: item.imgUrl,
-                onTap: () => _showNewsDetails(context, item),
-              );
-            },
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 1; i < news.length; i++) ...[
+                if (i > 1) const SizedBox(height: AppSpacing.sm),
+                NewsCard.compact(
+                  title: news[i].title.resolve('en'),
+                  subtitle: news[i].content.resolve('en'),
+                  imageUrl: news[i].imgUrl,
+                  onTap: () => _showNewsDetails(context, news[i]),
+                ),
+              ],
+            ],
           ),
       ],
     );
@@ -66,9 +69,9 @@ class HomeNewsSection extends StatelessWidget {
           icon: const Icon(Icons.open_in_new_rounded, size: 18),
           label: const Text('Read full article'),
           style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppRadius.m),
             ),
           ),
         ),
@@ -77,20 +80,22 @@ class HomeNewsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Imagen en el modal (Opcional, pero da mucha calidad visual)
-          if (item.imgUrl.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: Image.network(
-                  item.imgUrl,
-                  height: 200,
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.l),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.l),
+              child: AppNetworkImage(
+                url: item.imgUrl,
+                height: _modalImageHeight,
+                width: double.infinity,
+                placeholder: AppNetworkImageAssetPlaceholder(
+                  assetPath: Assets.expressiveShape,
+                  height: _modalImageHeight,
                   width: double.infinity,
-                  fit: BoxFit.cover,
                 ),
               ),
             ),
+          ),
 
           Text(
             item.content.resolve('en'),
@@ -104,7 +109,7 @@ class HomeNewsSection extends StatelessWidget {
     );
   }
 
-  /// Lógica de navegación externa.
+  /// Logica de navegacion externa.
   Future<void> _launchURL(BuildContext context, String urlString) async {
     final Uri url = Uri.parse(urlString);
     try {

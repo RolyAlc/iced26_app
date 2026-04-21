@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
-import 'package:iced26/presentation/features/home/viewmodel/models/category_layout.dart';
 import 'package:iced26/presentation/mappers/event_ui_mapper.dart';
 import 'package:iced26/domain/entities/category.dart';
 
@@ -31,18 +30,16 @@ class HomeViewModel extends _$HomeViewModel {
         }).toList();
 
         // Mapeo UI para Categories
-        final categoryLayout = _buildCategoryLayout(
-          data.subTypes
-              .map((st) => Category(name: st.name.resolve('en')))
-              .toList(),
-        );
+        final categories = data.subTypes
+            .map((st) => Category(name: st.name.resolve('en')))
+            .toList();
 
         return HomeState(
           days: data.days,
           allEvents: data.allEvents,
           allRooms: data.allRooms,
           featuredEvents: featuredEvents,
-          categoryLayout: categoryLayout,
+          categories: categories,
           news: data.news,
           socialActivities: data.socialActivities,
           headerInfoLabel: 'Welcome to ICED26',
@@ -50,19 +47,5 @@ class HomeViewModel extends _$HomeViewModel {
       case Failure(message: final msg):
         throw msg;
     }
-  }
-
-  /// Construye la disposición de las categorías para la Home.
-  CategoryLayout _buildCategoryLayout(List<Category> categories) {
-    if (categories.isEmpty) {
-      // Devolvemos un layout vacío o manejamos el error según la política del proyecto
-      throw Exception('No categories available');
-    }
-
-    return CategoryLayout(
-      featured: categories.first,
-      secondary: categories.length > 1 ? categories[1] : categories.first,
-      others: categories.length > 2 ? categories.sublist(2) : <Category>[],
-    );
   }
 }

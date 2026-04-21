@@ -9,8 +9,8 @@ import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart'
 import 'package:iced26/presentation/features/home/view/sections/home_news_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_header_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_featured_section.dart';
-import 'package:iced26/presentation/features/home/view/sections/home_categories_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_social_activities_section.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/widgets/app_page.dart';
 import 'package:iced26/presentation/widgets/app_section.dart';
@@ -42,20 +42,10 @@ class _HomeContent extends ConsumerWidget {
     return AppAsyncValueWidget(
       asyncValue: homeStateAsync,
       data: (state) => AppPage(
-        header: AppSection(
-          // Wrap HomeHeaderSection with AppSection
-          topPadding:
-              0, // AppPage handles top inset, so AppSection shouldn't add extra top padding here.
-          bottomPadding:
-              0, // Let AppSection handle vertical spacing between sections.
-          child: HomeHeaderSection(
-            today: DateTime.now(),
-            infoLabel: state.headerInfoLabel,
-          ),
+        header: HomeHeaderSection(
+          today: DateTime.now(),
+          infoLabel: state.headerInfoLabel,
         ),
-        headerHeight:
-            HomeHeaderSection.headerHeight +
-            24, // Altura base + padding // Might need adjustment after wrapping
         children: [
           // Eventos Destacados — Carrusel horizontal (Edge-to-Edge)
           StaggeredFadeIn(
@@ -67,61 +57,43 @@ class _HomeContent extends ConsumerWidget {
             ),
           ),
 
-          // Categorías — Bento Grid (Con padding horizontal estándar)
-          if (state.categoryLayout != null)
-            StaggeredFadeIn(
-              delay: const Duration(milliseconds: 300),
-              child: AppSection(
-                title: 'Categories',
-                child: HomeCategoriesSection(layout: state.categoryLayout!),
+          // Noticias — Lista vertical
+          StaggeredFadeIn(
+            delay: const Duration(milliseconds: 400),
+            child: AppSection.resolved(
+              title: 'Latest news',
+              hasData: state.news.isNotEmpty,
+              dataChild: HomeNewsSection(news: state.news),
+              emptyChild: const AppEmptyState(
+                title: 'No news available',
+                message: 'Check back later for the latest updates.',
+                illustration: Icon(Icons.newspaper_rounded, size: 60),
               ),
             ),
-
-          // Noticias — Lista vertical (Con padding horizontal estándar)
-          if (state.news.isNotEmpty)
-            StaggeredFadeIn(
-              delay: const Duration(milliseconds: 400),
-              child: AppSection(
-                title: 'Latest news',
-                child: HomeNewsSection(news: state.news),
-              ),
-            )
-          else
-            const AppEmptyState(
-              title: 'No news available',
-              message: 'Check back later for the latest updates.',
-              illustration: Icon(
-                Icons.newspaper_rounded,
-                size: 60,
-              ), // Example using Icon
-            ),
+          ),
 
           // Actividades Sociales — Carrusel horizontal (Edge-to-Edge)
-          if (state.socialActivities.isNotEmpty)
-            StaggeredFadeIn(
-              delay: const Duration(milliseconds: 500),
-              child: AppSection(
-                title: 'Social activities',
-                edgeToEdge: true,
-                child: HomeSocialActivitiesSection(
-                  socials: state.socialActivities,
-                ),
-              ),
-            )
-          else if (state.socialActivities.isNotEmpty ==
-              false) // Explicit check for empty
-            AppSection(
+          StaggeredFadeIn(
+            delay: const Duration(milliseconds: 500),
+            child: AppSection.resolved(
               title: 'Social activities',
               edgeToEdge: true,
-              child: const AppEmptyState(
-                title: 'No social activities found',
-                message: 'Check back later for upcoming events.',
-                illustration: Icon(
-                  Icons.celebration_rounded,
-                  size: 60,
-                ), // Example using Icon
+              hasData: state.socialActivities.isNotEmpty,
+              dataChild: HomeSocialActivitiesSection(
+                socials: state.socialActivities,
+              ),
+              // Con datos el carrusel ya lleva `AppSpacing.l` dentro; vacío antes
+              // iba con márgenes de sección (no edge) — replicamos solo el empty.
+              emptyChild: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.l),
+                child: AppEmptyState(
+                  title: 'No social activities found',
+                  message: 'Check back later for upcoming events.',
+                  illustration: Icon(Icons.celebration_rounded, size: 60),
+                ),
               ),
             ),
+          ),
         ],
       ),
     );
