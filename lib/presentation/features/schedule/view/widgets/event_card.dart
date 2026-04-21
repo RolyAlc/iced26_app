@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/domain/entities/event_status.dart';
+import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/features/schedule/view/helpers/event_type_style.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/widgets/app_card.dart';
+import 'package:iced26/presentation/widgets/event_status_chip.dart';
 
 /// Tarjeta de un evento.
 class EventCard extends ConsumerWidget {
@@ -19,8 +22,13 @@ class EventCard extends ConsumerWidget {
     final locale = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
     final style = resolveTypeStyle(context, event.type);
-    final favoriteIds = ref.watch(favoriteIdsProvider).valueOrNull ?? {};
-    final isFavorite = favoriteIds.contains(event.id);
+    final status = EventStatusResolver.resolve(event);
+    // select() evita que la card se reconstruya cuando cambia el favorito de otro evento
+    final isFavorite = ref.watch(
+      favoriteIdsProvider.select(
+        (ids) => ids.valueOrNull?.contains(event.id) ?? false,
+      ),
+    );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -38,11 +46,21 @@ class EventCard extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      event.title.resolve(locale),
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            event.title.resolve(locale),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        if (status != EventStatus.ended) ...[
+                          const SizedBox(width: AppSpacing.xs),
+                          EventStatusChip(status: status),
+                        ],
+                      ],
                     ),
                     if (event.filterTime != null) ...[
                       const SizedBox(height: AppSpacing.xs),
