@@ -10,6 +10,7 @@ class AppPage extends ConsumerStatefulWidget {
   final bool useSlivers;
   final EdgeInsets? padding;
   final Color? backgroundColor;
+  final double? headerFallbackHeight;
 
   const AppPage({
     super.key,
@@ -18,6 +19,7 @@ class AppPage extends ConsumerStatefulWidget {
     this.useSlivers = true,
     this.padding,
     this.backgroundColor,
+    this.headerFallbackHeight,
   });
 
   @override
@@ -76,7 +78,7 @@ class _AppPageState extends ConsumerState<AppPage> {
   Widget _buildSliverLayout(BuildContext context, double topInset) {
     final double effectiveHeaderHeight = _headerHeight > 0
         ? _headerHeight
-        : AppLayout.pageHeaderFallbackHeight;
+        : (widget.headerFallbackHeight ?? AppLayout.pageHeaderFallbackHeight);
 
     return CustomScrollView(
       primary: false,

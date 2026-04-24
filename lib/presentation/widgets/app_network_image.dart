@@ -21,9 +21,21 @@ class AppNetworkImage extends StatelessWidget {
   /// Widget mostrado cuando la URL está vacía o la carga falla.
   final Widget? placeholder;
 
+  bool get _isAsset => !url.startsWith('http');
+
   @override
   Widget build(BuildContext context) {
     if (url.isEmpty) return _fallback(context);
+
+    if (_isAsset) {
+      return Image.asset(
+        url,
+        width: width,
+        height: height,
+        fit: fit,
+        errorBuilder: (_, _, _) => _fallback(context),
+      );
+    }
 
     return Image.network(
       url,
