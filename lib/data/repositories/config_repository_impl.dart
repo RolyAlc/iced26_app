@@ -85,7 +85,12 @@ class ConfigRepositoryImpl implements ConfigRepository {
             (e) => EventsCompanion.insert(
               id: e.id,
               title: e.title,
-              subtitle: Value(e.subtitle),
+              subtitle: Value(e.abstract_),
+              description: Value(e.description),
+              subtype: Value(e.subtype),
+              track: Value(e.track),
+              tagsJson: Value(e.tags.isEmpty ? null : jsonEncode(e.tags)),
+              durationMin: Value(e.durationMin),
               startDate: Value(e.startDate),
               endDate: Value(e.endDate),
               zoneId: Value(e.zoneId),
@@ -97,6 +102,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
               speakerIdsJson: Value(
                 e.speakerIds.isEmpty ? null : jsonEncode(e.speakerIds),
               ),
+              aboutPresentationUrl: Value(e.aboutPresentationUrl),
+              videoPresentationUrl: Value(e.videoPresentationUrl),
             ),
           ),
           mode: InsertMode.insertOrReplace,
@@ -142,7 +149,10 @@ class ConfigRepositoryImpl implements ConfigRepository {
             (p) => PeopleCompanion.insert(
               id: p.id,
               name: p.name,
+              country: Value(p.country),
+              title: Value(p.title),
               institution: Value(p.institution),
+              bio: Value(p.bio),
               photoUrl: Value(p.photoUrl),
             ),
           ),

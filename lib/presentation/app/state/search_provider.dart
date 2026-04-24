@@ -45,9 +45,9 @@ class Search extends _$Search {
     final lowercaseQuery = text.toLowerCase();
     final filtered = homeData.allEvents.where((event) {
       final title = event.title.resolve('en').toLowerCase();
-      final subtitle = event.subtitle?.resolve('en').toLowerCase() ?? '';
+      final abstract_ = event.abstract_?.resolve('en').toLowerCase() ?? '';
       return title.contains(lowercaseQuery) ||
-          subtitle.contains(lowercaseQuery);
+          abstract_.contains(lowercaseQuery);
     }).toList();
 
     state = state.copyWith(query: text, results: filtered);

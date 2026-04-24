@@ -60,7 +60,13 @@ class Rooms extends Table {
 class Events extends Table {
   TextColumn get id => text()();
   TextColumn get title => text().map(const I18nConverter())();
+  // 'subtitle' almacena el campo 'abstract' del contrato (renombrado en entidad a abstract_)
   TextColumn get subtitle => text().nullable().map(const I18nConverter())();
+  TextColumn get description => text().nullable()();
+  TextColumn get subtype => text().nullable()();
+  TextColumn get track => text().nullable()();
+  TextColumn get tagsJson => text().nullable()();
+  IntColumn get durationMin => integer().nullable()();
   DateTimeColumn get startDate => dateTime().nullable()();
   DateTimeColumn get endDate => dateTime().nullable()();
   TextColumn get zoneId => text().nullable()();
@@ -70,6 +76,8 @@ class Events extends Table {
   TextColumn get filterDate => text().nullable()();
   TextColumn get filterTime => text().nullable()();
   TextColumn get speakerIdsJson => text().nullable()();
+  TextColumn get aboutPresentationUrl => text().nullable()();
+  TextColumn get videoPresentationUrl => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -109,7 +117,10 @@ class SocialActivities extends Table {
 class People extends Table {
   TextColumn get id => text()();
   TextColumn get name => text().map(const I18nConverter())();
+  TextColumn get country => text().nullable()();
+  TextColumn get title => text().nullable()();
   TextColumn get institution => text().nullable()();
+  TextColumn get bio => text().nullable()();
   TextColumn get photoUrl => text().nullable()();
 
   @override
@@ -172,7 +183,7 @@ class AppDatabase extends _$AppDatabase {
   // TODO: Añadir un ADR para versionado de la base de datos.
   /// Versionado de la base de datos.
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 10;
 
   /// Estrategia de migración.
   @override
@@ -180,6 +191,22 @@ class AppDatabase extends _$AppDatabase {
     onUpgrade: (m, from, to) async {
       if (from < 7) {
         await m.addColumn(events, events.speakerIdsJson);
+      }
+      if (from < 8) {
+        await m.addColumn(events, events.description);
+        await m.addColumn(events, events.subtype);
+        await m.addColumn(events, events.track);
+        await m.addColumn(events, events.tagsJson);
+        await m.addColumn(events, events.durationMin);
+      }
+      if (from < 9) {
+        await m.addColumn(people, people.country);
+        await m.addColumn(people, people.title);
+        await m.addColumn(people, people.bio);
+      }
+      if (from < 10) {
+        await m.addColumn(events, events.aboutPresentationUrl);
+        await m.addColumn(events, events.videoPresentationUrl);
       }
     },
   );

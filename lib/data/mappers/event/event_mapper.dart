@@ -12,14 +12,21 @@ class EventMapper {
 
   /// Convierte un registro de la base de datos (Drift) a una entidad.
   static Event fromDrift(EventTable data) {
-    final raw = data.speakerIdsJson;
-    final speakerIds = raw != null
-        ? (jsonDecode(raw) as List<dynamic>).cast<String>()
+    final speakerIds = data.speakerIdsJson != null
+        ? (jsonDecode(data.speakerIdsJson!) as List<dynamic>).cast<String>()
+        : <String>[];
+    final tags = data.tagsJson != null
+        ? (jsonDecode(data.tagsJson!) as List<dynamic>).cast<String>()
         : <String>[];
     return Event(
       id: data.id,
       title: data.title,
-      subtitle: data.subtitle,
+      abstract_: data.subtitle,
+      description: data.description,
+      subtype: data.subtype,
+      track: data.track,
+      tags: tags,
+      durationMin: data.durationMin,
       startDate: data.startDate,
       endDate: data.endDate,
       zoneId: data.zoneId,
@@ -29,6 +36,8 @@ class EventMapper {
       filterDate: data.filterDate,
       filterTime: data.filterTime,
       speakerIds: speakerIds,
+      aboutPresentationUrl: data.aboutPresentationUrl,
+      videoPresentationUrl: data.videoPresentationUrl,
     );
   }
 }

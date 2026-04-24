@@ -4,7 +4,12 @@ import 'package:iced26/domain/entities/i18n_str.dart';
 class Event {
   final String id;
   final I18nStr title;
-  final I18nStr? subtitle;
+  final I18nStr? abstract_;
+  final String? description;
+  final String? subtype;
+  final String? track;
+  final List<String> tags;
+  final int? durationMin;
   final DateTime? startDate;
   final DateTime? endDate;
   final String? zoneId;
@@ -14,11 +19,18 @@ class Event {
   final String? filterDate;
   final String? filterTime;
   final List<String> speakerIds;
+  final String? aboutPresentationUrl;
+  final String? videoPresentationUrl;
 
   Event({
     required this.id,
     required this.title,
-    this.subtitle,
+    this.abstract_,
+    this.description,
+    this.subtype,
+    this.track,
+    this.tags = const [],
+    this.durationMin,
     this.startDate,
     this.endDate,
     this.zoneId,
@@ -28,5 +40,7 @@ class Event {
     this.filterDate,
     this.filterTime,
     this.speakerIds = const [],
+    this.aboutPresentationUrl,
+    this.videoPresentationUrl,
   });
 }

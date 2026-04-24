@@ -8,8 +8,13 @@ class PersonMapper {
     return Person(
       id: json['id']?.toString() ?? '',
       name: I18nMapper.fromRaw(json['name'] ?? json['full_name']),
+      country: json['country']?.toString(),
+      title: json['title']?.toString(),
       institution: json['institution']?.toString(),
-      photoUrl: json['photo_url']?.toString(),
+      bio: json['bio']?.toString(),
+      photoUrl:
+          json['photo_url']?.toString() ??
+          (json['photo_path'] != null ? 'assets/${json['photo_path']}' : null),
     );
   }
 
@@ -18,7 +23,10 @@ class PersonMapper {
     return Person(
       id: data.id,
       name: data.name,
+      country: data.country,
+      title: data.title,
       institution: data.institution,
+      bio: data.bio,
       photoUrl: data.photoUrl,
     );
   }
