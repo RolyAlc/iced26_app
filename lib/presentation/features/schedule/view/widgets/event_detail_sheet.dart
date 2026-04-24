@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
@@ -79,6 +80,31 @@ class EventDetailContent extends ConsumerWidget {
           DetailRow(icon: Icons.meeting_room_outlined, text: event.roomId!),
         if (event.lang != null)
           DetailRow(icon: Icons.language, text: event.lang!.toUpperCase()),
+        if (event.aboutPresentationUrl != null || event.videoPresentationUrl != null) ...[
+          const SizedBox(height: AppSpacing.s),
+          const Divider(),
+          const SizedBox(height: AppSpacing.xs),
+        ],
+        if (event.aboutPresentationUrl != null)
+          DetailLinkRow(
+            icon: Icons.article_outlined,
+            label: 'About this presentation',
+            url: event.aboutPresentationUrl!,
+          ),
+        if (event.videoPresentationUrl != null) ...[
+          const SizedBox(height: AppSpacing.s),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.tonalIcon(
+              onPressed: () => launchUrl(
+                Uri.parse(event.videoPresentationUrl!),
+                mode: LaunchMode.externalApplication,
+              ),
+              icon: const Icon(Icons.play_circle_outline_rounded),
+              label: const Text('Watch recording'),
+            ),
+          ),
+        ],
         const SizedBox(height: AppSpacing.l),
         SizedBox(
           width: double.infinity,
@@ -119,6 +145,55 @@ class DetailRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Fila de enlace externo en el detalle de un evento.
+class DetailLinkRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String url;
+
+  const DetailLinkRow({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.url,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: () => launchUrl(
+        Uri.parse(url),
+        mode: LaunchMode.externalApplication,
+      ),
+      borderRadius: BorderRadius.circular(AppRadius.s),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: theme.colorScheme.primary),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                decoration: TextDecoration.underline,
+                decorationColor: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Icon(
+              Icons.open_in_new_rounded,
+              size: 14,
+              color: theme.colorScheme.primary,
+            ),
+          ],
+        ),
       ),
     );
   }
