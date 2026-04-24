@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 
 /// Extensión para convertir texto a color.
@@ -84,6 +85,9 @@ class AppTheme {
   }
 
   /// Genera el text theme.
+  // Fuentes definidas en styles.json > typography: primary="Lato", secondary="Lato".
+  // Outfit cubre los estilos de display (no incluido en el contrato).
+  // Si cambia la fuente en el JSON, actualizar aquí también.
   static TextTheme _buildTextTheme() {
     final base = GoogleFonts.latoTextTheme();
     final display = GoogleFonts.outfitTextTheme();
@@ -96,19 +100,21 @@ class AppTheme {
   /// Genera el card theme.
   static CardThemeData _buildCardTheme(ColorScheme scheme) {
     return CardThemeData(
-      elevation: 0,
+      elevation: AppElevation.none,
       color: Color.alphaBlend(
         scheme.primary.withValues(alpha: 0.05),
         scheme.surface,
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.container),
+      ),
     );
   }
 
   /// Genera el search bar theme.
   static SearchBarThemeData _buildSearchBarTheme(ColorScheme scheme) {
     return SearchBarThemeData(
-      elevation: const WidgetStatePropertyAll(0),
+      elevation: const WidgetStatePropertyAll(AppElevation.none),
       backgroundColor: WidgetStatePropertyAll(
         Color.alphaBlend(
           scheme.primary.withValues(alpha: 0.08),
@@ -116,7 +122,9 @@ class AppTheme {
         ),
       ),
       shape: WidgetStatePropertyAll(
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.l),
+        ),
       ),
       side: WidgetStatePropertyAll(BorderSide(color: scheme.outlineVariant)),
     );

@@ -43,7 +43,7 @@ class EventStatusChip extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          fontSize: 10,
+          fontSize: AppTextSize.chip,
           color: foreground,
           fontWeight: FontWeight.bold,
           letterSpacing: 0.4,

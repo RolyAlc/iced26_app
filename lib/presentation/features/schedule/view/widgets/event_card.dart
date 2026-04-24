@@ -133,7 +133,7 @@ class TypeIcon extends StatelessWidget {
               '$badge',
               style: theme.textTheme.labelSmall?.copyWith(
                 color: theme.colorScheme.surface,
-                fontSize: 10,
+                fontSize: AppTextSize.chip,
                 fontWeight: FontWeight.bold,
               ),
             ),

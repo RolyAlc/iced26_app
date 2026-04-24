@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/services/logger/logger.dart';
 
 /// Header expresivo de búsqueda con filtros integrados
@@ -20,7 +21,7 @@ class ExpressiveSearchHeader extends StatelessWidget {
                 hintText: "Search events...",
                 leading: const Icon(Icons.search, size: 20),
                 onTap: () => controller.openView(),
-                elevation: const WidgetStatePropertyAll(2),
+                elevation: const WidgetStatePropertyAll(AppElevation.low),
                 side: const WidgetStatePropertyAll(BorderSide.none),
                 shape: const WidgetStatePropertyAll(StadiumBorder()),
                 trailing: [

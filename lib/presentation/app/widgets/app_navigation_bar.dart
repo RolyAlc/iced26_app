@@ -135,7 +135,7 @@ class _NavigationItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.l),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
+        duration: AppDuration.medium,
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.m,
           vertical: AppSpacing.s,
@@ -147,7 +147,7 @@ class _NavigationItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.m),
         ),
         child: AnimatedSize(
-          duration: const Duration(milliseconds: 300),
+          duration: AppDuration.medium,
           curve: Curves.easeInOut,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -159,7 +159,7 @@ class _NavigationItem extends StatelessWidget {
                     : theme.colorScheme.onSurfaceVariant,
               ),
               AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
+                duration: AppDuration.fast,
                 child: isSelected
                     ? Text(
                         label,

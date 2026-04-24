@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 
 // TODO: Buscar widget de material 3 para este componente.
 /// Widget base para los paneles deslizantes de la app.
@@ -77,7 +78,9 @@ class AppBottomSheet extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(AppRadius.container),
+          ),
         ),
         child: SafeArea(
           // Protegemos el notch (si llegáramos a tocarlo) y la zona inferior de gestos.

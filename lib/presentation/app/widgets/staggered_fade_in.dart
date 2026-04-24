@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Widget para animaciones de entrada escalonadas.
 class StaggeredFadeIn extends StatefulWidget {
@@ -9,7 +10,7 @@ class StaggeredFadeIn extends StatefulWidget {
     super.key,
     required this.child,
     this.delay = Duration.zero,
-    this.duration = const Duration(milliseconds: 600),
+    this.duration = AppDuration.entrance,
     this.offset = const Offset(0, 0.1),
   });
 
