@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/assets.dart';
-import 'package:iced26/presentation/app/state/search_provider.dart';
-import 'package:iced26/presentation/app/widgets/smart_search_bar.dart';
 
-/// Sección de encabezado en la pantalla principal
-/// Muestra el logo, la fecha y una barra de búsqueda.
-class HomeHeaderSection extends ConsumerWidget {
+/// Sección de encabezado scrollable — logo + info de conferencia.
+/// La barra de búsqueda vive en el header pinned de AppPage.
+class HomeHeaderSection extends StatelessWidget {
   const HomeHeaderSection({
     super.key,
     required this.today,
@@ -19,30 +16,27 @@ class HomeHeaderSection extends ConsumerWidget {
   final String infoLabel;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    final searchNotifier = ref.watch(searchProvider.notifier);
     final String dateLabel = MaterialLocalizations.of(
       context,
     ).formatFullDate(today);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Fila superior: Logo e Información
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _buildLogo(),
-            _buildInfoColumn(dateLabel, colorScheme, textTheme),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.s),
-        SmartSearchBar(searchNotifier: searchNotifier),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.l,
+        vertical: AppSpacing.m,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildLogo(),
+          _buildInfoColumn(dateLabel, colorScheme, textTheme),
+        ],
+      ),
     );
   }
 

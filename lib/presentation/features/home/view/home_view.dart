@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/di/bootstrap.dart';
+import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/app/widgets/loading_screen.dart';
+import 'package:iced26/presentation/app/widgets/smart_search_bar.dart';
 import 'package:iced26/presentation/app/widgets/staggered_fade_in.dart';
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_news_section.dart';
@@ -40,14 +42,21 @@ class _HomeContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final homeStateAsync = ref.watch(homeViewModelProvider);
 
+    final searchNotifier = ref.watch(searchProvider.notifier);
+
     return AppAsyncValueWidget(
       asyncValue: homeStateAsync,
       data: (state) => AppPage(
-        header: HomeHeaderSection(
-          today: DateTime.now(),
-          infoLabel: state.headerInfoLabel,
-        ),
+        header: SmartSearchBar(searchNotifier: searchNotifier),
+        headerFallbackHeight: AppLayout.searchBarHeaderFallbackHeight,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
         children: [
+          // Logo + info de conferencia — scrollable, desaparece al bajar
+          HomeHeaderSection(
+            today: DateTime.now(),
+            infoLabel: state.headerInfoLabel,
+          ),
+
           // Eventos Destacados — Carrusel horizontal (Edge-to-Edge)
           StaggeredFadeIn(
             delay: const Duration(milliseconds: 200),

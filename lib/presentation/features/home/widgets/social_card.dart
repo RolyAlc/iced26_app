@@ -48,7 +48,7 @@ class SocialCard extends StatelessWidget {
               color: colors.onTertiaryContainer.withValues(alpha: 0.7),
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
-              fontSize: 10,
+              fontSize: AppTextSize.chip,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
