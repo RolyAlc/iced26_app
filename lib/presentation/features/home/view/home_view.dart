@@ -49,7 +49,6 @@ class _HomeContent extends ConsumerWidget {
       data: (state) => AppPage(
         header: SmartSearchBar(searchNotifier: searchNotifier),
         headerFallbackHeight: AppLayout.searchBarHeaderFallbackHeight,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
         children: [
           // Logo + info de conferencia — scrollable, desaparece al bajar
           HomeHeaderSection(
