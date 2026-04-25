@@ -34,3 +34,9 @@ WatchFavoritesUseCase watchFavoritesUseCase(WatchFavoritesUseCaseRef ref) {
 ToggleFavoriteUseCase toggleFavoriteUseCase(ToggleFavoriteUseCaseRef ref) {
   return ToggleFavoriteUseCase(ref.watch(favoritesRepositoryProvider));
 }
+
+/// IDs de eventos marcados como favoritos (stream reactivo desde Drift).
+@riverpod
+Stream<Set<String>> favoriteIds(FavoriteIdsRef ref) {
+  return ref.watch(watchFavoritesUseCaseProvider).execute();
+}

@@ -25,6 +25,7 @@ class EventUIMapper {
     );
 
     return EventUIModel(
+      id: entity.id,
       title: entity.title.resolve('en'),
       timeRange: timeRange,
       duration: duration,
