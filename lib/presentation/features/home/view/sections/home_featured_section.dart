@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
-import 'package:iced26/presentation/features/home/widgets/home_featured_widgets.dart';
+import 'package:iced26/presentation/features/home/widgets/featured_card/featured_card.dart';
 
 /// Sección de eventos destacados en la Home.
 class HomeFeaturedSection extends StatelessWidget {
