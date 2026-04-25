@@ -13,20 +13,18 @@ import 'package:iced26/presentation/features/schedule/view/helpers/event_type_st
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/widgets/event_status_chip.dart';
 
-/// Muestra el detalle de un evento en un bottom sheet.
+/// Muestra el detalle de un evento en un bottom sheet con estética Vision 2026.
 void showDetailSheet(BuildContext context, Event event) {
-  final locale = Localizations.localeOf(context).languageCode;
   AppBottomSheet.show(
     context: context,
-    title: event.title.resolve(locale),
+    // El título ahora va dentro del contenido para mayor libertad de diseño
+    title: '',
     child: EventDetailContent(event: event),
   );
 }
 
-/// Contenido del detalle de un evento.
 class EventDetailContent extends ConsumerWidget {
   final Event event;
-
   const EventDetailContent({super.key, required this.event});
 
   String? _duration() {
@@ -40,10 +38,11 @@ class EventDetailContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final locale = Localizations.localeOf(context).languageCode;
     final style = resolveTypeStyle(context, event.type);
     final status = EventStatusResolver.resolve(event);
     final duration = _duration();
-    // select() evita rebuild cuando cambia el favorito de otro evento
     final isFavorite = ref.watch(
       favoriteIdsProvider.select(
         (ids) => ids.valueOrNull?.contains(event.id) ?? false,
@@ -53,17 +52,30 @@ class EventDetailContent extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // 1. Header: Chips de categoría y estado
         Row(
           children: [
-            Chip(
-              avatar: Icon(style.icon, size: 14, color: style.color),
-              label: Text(event.type),
-              backgroundColor: style.color.withValues(alpha: 0.12),
-              side: BorderSide.none,
-              labelStyle: TextStyle(
-                color: style.color,
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: style.color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppRadius.s),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(style.icon, size: 12, color: style.color),
+                  const SizedBox(width: 6),
+                  Text(
+                    event.type.toUpperCase(),
+                    style: TextStyle(
+                      color: style.color,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 10,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
               ),
             ),
             if (status != EventStatus.ended) ...[
@@ -73,48 +85,134 @@ class EventDetailContent extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.m),
-        if (event.filterTime != null)
-          DetailRow(icon: Icons.access_time, text: event.filterTime!),
-        if (duration != null) DetailRow(icon: Icons.timelapse, text: duration),
-        if (event.roomId != null)
-          DetailRow(icon: Icons.meeting_room_outlined, text: event.roomId!),
-        if (event.lang != null)
-          DetailRow(icon: Icons.language, text: event.lang!.toUpperCase()),
-        if (event.aboutPresentationUrl != null || event.videoPresentationUrl != null) ...[
-          const SizedBox(height: AppSpacing.s),
-          const Divider(),
-          const SizedBox(height: AppSpacing.xs),
-        ],
-        if (event.aboutPresentationUrl != null)
-          DetailLinkRow(
-            icon: Icons.article_outlined,
-            label: 'About this presentation',
-            url: event.aboutPresentationUrl!,
+
+        // 2. Título Hero
+        Text(
+          event.title.resolve(locale),
+          style: theme.textTheme.displaySmall?.copyWith(
+            fontWeight: FontWeight.w900,
+            height: 1.0,
+            letterSpacing: -1.0,
           ),
-        if (event.videoPresentationUrl != null) ...[
-          const SizedBox(height: AppSpacing.s),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.tonalIcon(
-              onPressed: () => launchUrl(
-                Uri.parse(event.videoPresentationUrl!),
-                mode: LaunchMode.externalApplication,
+        ),
+        const SizedBox(height: AppSpacing.l),
+
+        // 3. Grid de Atributos (2x2)
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.m),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(AppRadius.m),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _AttributeCell(
+                      icon: Icons.access_time_filled_rounded,
+                      label: 'Time',
+                      value: event.filterTime ?? '--:--',
+                    ),
+                  ),
+                  Expanded(
+                    child: _AttributeCell(
+                      icon: Icons.meeting_room_rounded,
+                      label: 'Room',
+                      value: event.roomId ?? 'TBA',
+                    ),
+                  ),
+                ],
               ),
-              icon: const Icon(Icons.play_circle_outline_rounded),
-              label: const Text('Watch recording'),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
+                child: Divider(
+                  height: 1,
+                  color: theme.colorScheme.outlineVariant.withValues(
+                    alpha: 0.2,
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: _AttributeCell(
+                      icon: Icons.timelapse_rounded,
+                      label: 'Duration',
+                      value: duration ?? '--',
+                    ),
+                  ),
+                  Expanded(
+                    child: _AttributeCell(
+                      icon: Icons.translate_rounded,
+                      label: 'Language',
+                      value: event.lang?.toUpperCase() ?? '--',
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.l),
+
+        // 4. Enlaces y Multimedia
+        if (event.aboutPresentationUrl != null ||
+            event.videoPresentationUrl != null) ...[
+          Text(
+            'Resources'.toUpperCase(),
+            style: theme.textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
             ),
           ),
+          const SizedBox(height: AppSpacing.s),
+          if (event.aboutPresentationUrl != null)
+            _ActionLink(
+              icon: Icons.description_outlined,
+              label: 'About this presentation',
+              onTap: () => launchUrl(
+                Uri.parse(event.aboutPresentationUrl!),
+                mode: LaunchMode.externalApplication,
+              ),
+            ),
+          if (event.videoPresentationUrl != null)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.s),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton.tonalIcon(
+                  onPressed: () => launchUrl(
+                    Uri.parse(event.videoPresentationUrl!),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  icon: const Icon(Icons.play_circle_fill_rounded),
+                  label: const Text('Watch recording'),
+                ),
+              ),
+            ),
+          const SizedBox(height: AppSpacing.l),
         ],
-        const SizedBox(height: AppSpacing.l),
+
+        // 5. Acción Principal: Favorito
         SizedBox(
           width: double.infinity,
-          child: FilledButton.tonalIcon(
+          height: 56,
+          child: FilledButton.icon(
+            style: FilledButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.m),
+              ),
+            ),
             onPressed: () =>
                 ref.read(toggleFavoriteUseCaseProvider).execute(event.id),
             icon: Icon(
-              isFavorite ? Icons.bookmark : Icons.bookmark_add_outlined,
+              isFavorite ? Icons.bookmark : Icons.bookmark_add_rounded,
             ),
-            label: Text(isFavorite ? 'Saved' : 'Add to favorites'),
+            label: Text(
+              isFavorite ? 'Saved to my schedule' : 'Add to my schedule',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ],
@@ -122,75 +220,92 @@ class EventDetailContent extends ConsumerWidget {
   }
 }
 
-/// Fila de detalle de un evento.
-class DetailRow extends StatelessWidget {
+/// Celda de atributo para el Grid.
+class _AttributeCell extends StatelessWidget {
   final IconData icon;
-  final String text;
+  final String label;
+  final String value;
 
-  const DetailRow({super.key, required this.icon, required this.text});
+  const _AttributeCell({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: theme.colorScheme.onSurfaceVariant),
-          const SizedBox(width: AppSpacing.sm),
-          Text(
-            text,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
           ),
-        ],
-      ),
+          child: Icon(icon, size: 16, color: theme.colorScheme.primary),
+        ),
+        const SizedBox(width: AppSpacing.s),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant.withValues(
+                  alpha: 0.6,
+                ),
+              ),
+            ),
+            Text(
+              value,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
 
-/// Fila de enlace externo en el detalle de un evento.
-class DetailLinkRow extends StatelessWidget {
+/// Enlace de acción estilizado.
+class _ActionLink extends StatelessWidget {
   final IconData icon;
   final String label;
-  final String url;
+  final VoidCallback onTap;
 
-  const DetailLinkRow({
-    super.key,
+  const _ActionLink({
     required this.icon,
     required this.label,
-    required this.url,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return InkWell(
-      onTap: () => launchUrl(
-        Uri.parse(url),
-        mode: LaunchMode.externalApplication,
-      ),
+      onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.s),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Row(
           children: [
-            Icon(icon, size: 18, color: theme.colorScheme.primary),
-            const SizedBox(width: AppSpacing.sm),
-            Text(
-              label,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                decoration: TextDecoration.underline,
-                decorationColor: theme.colorScheme.primary,
+            Icon(icon, size: 20, color: theme.colorScheme.onSurfaceVariant),
+            const SizedBox(width: AppSpacing.s),
+            Expanded(
+              child: Text(
+                label,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
-            const SizedBox(width: AppSpacing.xs),
             Icon(
-              Icons.open_in_new_rounded,
-              size: 14,
-              color: theme.colorScheme.primary,
+              Icons.chevron_right_rounded,
+              size: 16,
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ],
         ),
