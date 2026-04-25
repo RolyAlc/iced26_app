@@ -1,3 +1,4 @@
+import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 
 /// Entidad que representa un evento de la conferencia.
@@ -14,7 +15,7 @@ class Event {
   final DateTime? endDate;
   final String? zoneId;
   final String? roomId;
-  final String type;
+  final EventType type;
   final String? lang;
   final String? filterDate;
   final String? filterTime;
