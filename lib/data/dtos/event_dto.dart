@@ -1,4 +1,5 @@
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/data/mappers/i18n_mapper.dart';
 
 /// DTO para el evento de la conferencia.
@@ -47,13 +48,8 @@ class EventDTO {
 
   /// Crea un DTO mapeando las claves del JSON.
   factory EventDTO.fromMap(Map<String, dynamic> json) {
-    final rawSpeakers = json['speakers'] as List<dynamic>? ?? [];
-    final speakerIds = rawSpeakers
-        .map((s) => s['personId']?.toString() ?? '')
-        .where((id) => id.isNotEmpty)
-        .toList();
-
-    final rawTags = json['tags'] as List<dynamic>? ?? [];
+    final List<String> speakerIds = _mapSpeakerIds(json);
+    final List<String> tags = _mapTags(json);
 
     return EventDTO(
       id: json['id']?.toString() ?? '',
@@ -62,7 +58,7 @@ class EventDTO {
       description: json['description']?.toString(),
       subtype: json['subtype']?.toString(),
       track: json['track']?.toString(),
-      tags: rawTags.map((e) => e.toString()).toList(),
+      tags: tags,
       durationMin: (json['duration_min'] as num?)?.toInt(),
       start: (json['start'] ?? json['startDate'])?.toString(),
       end: (json['end'] ?? json['endDate'])?.toString(),
@@ -80,6 +76,9 @@ class EventDTO {
 
   /// Convierte el DTO a la entidad de Dominio.
   Event toEntity() {
+    final DateTime? startDate = _parseDate(start);
+    final DateTime? endDate = _parseDate(end);
+
     return Event(
       id: id,
       title: I18nMapper.fromRaw(title),
@@ -89,11 +88,11 @@ class EventDTO {
       track: track,
       tags: tags,
       durationMin: durationMin,
-      startDate: _parseDate(start),
-      endDate: _parseDate(end),
+      startDate: startDate,
+      endDate: endDate,
       zoneId: zoneId,
       roomId: roomId,
-      type: type,
+      type: EventType.fromString(type),
       lang: lang,
       filterDate: filterDate,
       filterTime: filterTime,
@@ -103,10 +102,45 @@ class EventDTO {
     );
   }
 
+  /// Mapea los speakers del JSON a una lista de IDs válidos.
+  static List<String> _mapSpeakerIds(Map<String, dynamic> json) {
+    final rawSpeakers = json['speakers'] as List<dynamic>? ?? [];
+
+    final List<String> result = [];
+
+    for (final speaker in rawSpeakers) {
+      final id = speaker['personId']?.toString();
+
+      if (id != null && id.isNotEmpty) {
+        result.add(id);
+      }
+    }
+
+    return result;
+  }
+
+  /// Mapea los tags del JSON a lista de strings.
+  static List<String> _mapTags(Map<String, dynamic> json) {
+    final rawTags = json['tags'] as List<dynamic>? ?? [];
+
+    final List<String> result = [];
+
+    for (final tag in rawTags) {
+      result.add(tag.toString());
+    }
+
+    return result;
+  }
+
   /// Parsea una fecha y la convierte a la hora local.
   static DateTime? _parseDate(String? value) {
-    if (value == null || value.isEmpty) return null;
-    final parsed = DateTime.tryParse(value);
-    return parsed?.toLocal();
+    if (value == null) return null;
+    if (value.isEmpty) return null;
+
+    final DateTime? parsed = DateTime.tryParse(value);
+
+    if (parsed == null) return null;
+
+    return parsed.toLocal();
   }
 }

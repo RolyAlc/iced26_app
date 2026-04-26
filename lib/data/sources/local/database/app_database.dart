@@ -148,6 +148,18 @@ class Favorites extends Table {
   Set<Column> get primaryKey => {eventId};
 }
 
+/// Tabla de zonas de la conferencia.
+@DataClassName('ZoneTable')
+class Zones extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text()();
+  TextColumn get lang => text().nullable()();
+  TextColumn get description => text().nullable().map(const I18nConverter())();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// Tabla de tipos de presentación.
 @DataClassName('SubmissionTypeTable')
 class SubmissionTypes extends Table {
@@ -167,6 +179,7 @@ class SubmissionTypes extends Table {
   tables: [
     Days,
     Rooms,
+    Zones,
     Events,
     News,
     SocialActivities,
@@ -181,9 +194,10 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   // TODO: Añadir un ADR para versionado de la base de datos.
+  // TODO: Es necesario?¿
   /// Versionado de la base de datos.
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   /// Estrategia de migración.
   @override
@@ -207,6 +221,9 @@ class AppDatabase extends _$AppDatabase {
       if (from < 10) {
         await m.addColumn(events, events.aboutPresentationUrl);
         await m.addColumn(events, events.videoPresentationUrl);
+      }
+      if (from < 11) {
+        await m.createTable(zones);
       }
     },
   );

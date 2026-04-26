@@ -45,3 +45,9 @@ class Event {
     this.videoPresentationUrl,
   });
 }
+
+// Extension separada porque es lógica de presentación (formateo de texto para UI),
+// no un comportamiento de dominio.
+extension EventX on Event {
+  String get formattedDateTime => [?filterDate, ?filterTime].join(' · ');
+}

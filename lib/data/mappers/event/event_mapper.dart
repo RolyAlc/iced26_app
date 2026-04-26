@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/data/dtos/event_dto.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/domain/entities/event_type.dart';
 
 /// Mapper para convertir el JSON de un evento en una instancia de 'Event'.
 class EventMapper {
@@ -12,12 +13,14 @@ class EventMapper {
 
   /// Convierte un registro de la base de datos (Drift) a una entidad.
   static Event fromDrift(EventTable data) {
-    final speakerIds = data.speakerIdsJson != null
+    final List<String> speakerIds = data.speakerIdsJson != null
         ? (jsonDecode(data.speakerIdsJson!) as List<dynamic>).cast<String>()
         : <String>[];
-    final tags = data.tagsJson != null
+    final List<String> tags = data.tagsJson != null
         ? (jsonDecode(data.tagsJson!) as List<dynamic>).cast<String>()
         : <String>[];
+    final EventType type = EventType.fromString(data.type);
+
     return Event(
       id: data.id,
       title: data.title,
@@ -31,7 +34,7 @@ class EventMapper {
       endDate: data.endDate,
       zoneId: data.zoneId,
       roomId: data.roomId,
-      type: data.type,
+      type: type,
       lang: data.lang,
       filterDate: data.filterDate,
       filterTime: data.filterTime,
