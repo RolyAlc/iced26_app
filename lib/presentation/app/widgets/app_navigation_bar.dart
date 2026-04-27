@@ -9,11 +9,14 @@ import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/widgets/smart_search_bar.dart';
 import 'package:iced26/presentation/core/ui_engine/ui_metrics.dart';
 
-/// Widget que representa la barra de navegación.
+const double _glassBackgroundOpacity = 0.8;
+const double _glassBorderOpacity = 0.5;
+const double _selectedItemBackgroundOpacity = 0.1;
+
+/// Widget que representa la barra de navegación con efecto glassmorphism.
 class AppNavigationBar extends ConsumerWidget {
   const AppNavigationBar({super.key});
 
-  /// Altura del contenedor interno de la barra.
   static const double barHeight = 72.0;
 
   @override
@@ -36,56 +39,34 @@ class AppNavigationBar extends ConsumerWidget {
           height: barHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: _buildNavItems(
-              context,
-              currentIndex,
-              notifier,
-              searchNotifier,
-            ),
+            children: [
+              for (final (index, item) in mainNavigationItems.indexed)
+                _NavigationItem(
+                  label: item.label,
+                  icon: item.icon,
+                  selectedIcon: item.selectedIcon,
+                  isSelected: item.isAction ? false : currentIndex == index,
+                  onTap: item.isAction
+                      ? () => SmartSearchBar.open(context, searchNotifier)
+                      : () => notifier.setIndex(index),
+                ),
+            ],
           ),
         ),
       ),
     );
   }
-
-  // Indice del tab Search en mainNavigationItems.
-  static const int _searchIndex = 2;
-
-  /// Construye la lista de items de la barra de navegación.
-  List<Widget> _buildNavItems(
-    BuildContext context,
-    int currentIndex,
-    Navigation notifier,
-    Search searchNotifier,
-  ) {
-    return mainNavigationItems.asMap().entries.map((entry) {
-      final index = entry.key;
-      final item = entry.value;
-      final isSearch = index == _searchIndex;
-
-      return _NavigationItem(
-        label: item.label,
-        icon: item.icon,
-        selectedIcon: item.selectedIcon,
-        // Search nunca aparece como destino seleccionado — es una accion.
-        isSelected: isSearch ? false : currentIndex == index,
-        onTap: isSearch
-            ? () => SmartSearchBar.open(context, searchNotifier)
-            : () => notifier.setIndex(index),
-      );
-    }).toList();
-  }
 }
 
-/// Widget para el efecto Glassmorphism.
 class _GlassContainer extends StatelessWidget {
-  final Widget child; // Widget envuelto por Glassmorphism.
-  final double height;
   const _GlassContainer({required this.child, required this.height});
+
+  final Widget child;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.l),
@@ -94,12 +75,14 @@ class _GlassContainer extends StatelessWidget {
         child: Container(
           height: height,
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest.withValues(
-              alpha: 0.8,
+            color: colorScheme.surfaceContainerHighest.withValues(
+              alpha: _glassBackgroundOpacity,
             ),
             borderRadius: BorderRadius.circular(AppRadius.l),
             border: Border.all(
-              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+              color: colorScheme.outlineVariant.withValues(
+                alpha: _glassBorderOpacity,
+              ),
             ),
           ),
           child: child,
@@ -109,14 +92,7 @@ class _GlassContainer extends StatelessWidget {
   }
 }
 
-/// Widget que representa un item de la barra de navegación.
 class _NavigationItem extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final IconData selectedIcon;
-  final bool isSelected;
-  final VoidCallback onTap;
-
   const _NavigationItem({
     required this.label,
     required this.icon,
@@ -125,7 +101,12 @@ class _NavigationItem extends StatelessWidget {
     required this.onTap,
   });
 
-  /// Construye el item de la barra de navegación.
+  final String label;
+  final IconData icon;
+  final IconData selectedIcon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -142,7 +123,7 @@ class _NavigationItem extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? activeColor.withValues(alpha: 0.1)
+              ? activeColor.withValues(alpha: _selectedItemBackgroundOpacity)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(AppRadius.m),
         ),

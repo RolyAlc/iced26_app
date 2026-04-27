@@ -75,7 +75,7 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: scheme,
       textTheme: textTheme,
-      scaffoldBackgroundColor: scheme.surface,
+      scaffoldBackgroundColor: scheme.surfaceContainerLow,
       cardTheme: _buildCardTheme(scheme),
       chipTheme: _buildChipTheme(scheme, textTheme),
       searchBarTheme: _buildSearchBarTheme(scheme),
@@ -94,6 +94,7 @@ class AppTheme {
     return base.copyWith(
       displayLarge: display.displayLarge,
       headlineMedium: display.headlineMedium,
+      titleLarge: base.titleLarge?.copyWith(fontWeight: FontWeight.w800),
     );
   }
 

@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 
-/// Clase que define los elementos de navegación y sus propiedades.
+/// Define una pestaña de navegación principal.
+///
+/// [isAction] marca items que disparan una acción en lugar de navegar
+/// (p.ej. abrir el buscador). Nunca aparecen como "seleccionados".
 class NavigationItem {
   final IconData icon;
   final IconData selectedIcon;
   final String label;
+  final bool isAction;
 
   const NavigationItem({
     required this.icon,
     required this.selectedIcon,
     required this.label,
+    this.isAction = false,
   });
 }
 
-/// La lista maestra de navegación.
+/// Lista de pestañas de navegación principales.
 const List<NavigationItem> mainNavigationItems = [
   NavigationItem(
     icon: Icons.home_outlined,
@@ -29,6 +34,7 @@ const List<NavigationItem> mainNavigationItems = [
     icon: Icons.search_outlined,
     selectedIcon: Icons.search,
     label: 'Search',
+    isAction: true,
   ),
   NavigationItem(
     icon: Icons.bookmark_outline,

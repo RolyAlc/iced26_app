@@ -4,26 +4,13 @@ import 'package:iced26/presentation/widgets/app_skeleton.dart';
 
 /// Un contenedor para secciones de contenido con márgenes consistentes.
 class AppSection extends StatelessWidget {
-  /// Valor por defecto para los paddings verticales (ritmo estándar).
   static const double defaultVerticalPadding = AppSpacing.m;
 
-  /// Título opcional de la sección.
   final String? title;
-
-  /// Widget que se muestra a la derecha del título (ej. "Ver más").
   final Widget? trailing;
-
-  /// El contenido principal de la sección.
   final Widget child;
-
-  /// Si es true, la sección NO aplica padding horizontal al contenido.
-  /// Útil para carruseles horizontales que deben ir de borde a borde.
   final bool edgeToEdge;
-
-  /// Espaciado vertical antes de la sección.
   final double topPadding;
-
-  /// Espaciado vertical después de la sección.
   final double bottomPadding;
 
   const AppSection({
@@ -36,8 +23,6 @@ class AppSection extends StatelessWidget {
     this.bottomPadding = defaultVerticalPadding,
   });
 
-  /// Sección con **un solo** cuerpo según prioridad: `isLoading` → sin datos con
-  /// `emptyChild` → `dataChild`.
   factory AppSection.resolved({
     Key? key,
     String? title,
@@ -51,14 +36,14 @@ class AppSection extends StatelessWidget {
     required Widget dataChild,
     Widget? emptyChild,
   }) {
-    final Widget body;
-    if (isLoading) {
-      body = loadingChild ?? _defaultSectionSkeleton();
-    } else if (!hasData && emptyChild != null) {
-      body = emptyChild;
-    } else {
-      body = dataChild;
-    }
+    final Widget resolvedChild = _resolveChild(
+      isLoading: isLoading,
+      hasData: hasData,
+      dataChild: dataChild,
+      loadingChild: loadingChild,
+      emptyChild: emptyChild,
+    );
+
     return AppSection(
       key: key,
       title: title,
@@ -66,8 +51,26 @@ class AppSection extends StatelessWidget {
       edgeToEdge: edgeToEdge,
       topPadding: topPadding,
       bottomPadding: bottomPadding,
-      child: body,
+      child: resolvedChild,
     );
+  }
+
+  static Widget _resolveChild({
+    required bool isLoading,
+    required bool hasData,
+    required Widget dataChild,
+    Widget? loadingChild,
+    Widget? emptyChild,
+  }) {
+    if (isLoading) {
+      return loadingChild ?? _defaultSectionSkeleton();
+    }
+
+    if (!hasData && emptyChild != null) {
+      return emptyChild;
+    }
+
+    return dataChild;
   }
 
   /// Skeleton por defecto para secciones.
@@ -82,13 +85,15 @@ class AppSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasHeader = title != null || trailing != null;
+
     return Padding(
       padding: EdgeInsets.only(top: topPadding, bottom: bottomPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (title != null || trailing != null)
+          if (hasHeader) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
               child: Row(
@@ -106,8 +111,8 @@ class AppSection extends StatelessWidget {
                 ],
               ),
             ),
-          if (title != null || trailing != null)
             const SizedBox(height: AppSpacing.sm),
+          ],
           if (edgeToEdge)
             child
           else
