@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/features/schedule/view/schedule_category_filter_bar.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
@@ -10,13 +11,14 @@ import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmod
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 import 'package:iced26/presentation/widgets/app_page.dart';
 
-/// Vista del schedule.
+/// Vista principal del schedule.
 class ScheduleView extends ConsumerWidget {
   const ScheduleView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scheduleStateAsync = ref.watch(scheduleViewModelProvider);
+
     return AppAsyncValueWidget(
       asyncValue: scheduleStateAsync,
       data: (state) => _ScheduleContent(state: state),
@@ -24,7 +26,8 @@ class ScheduleView extends ConsumerWidget {
   }
 }
 
-/// Contenido de la vista del schedule.
+/// Contenido principal del schedule.
+/// SRP: solo coordina estado + composición UI.
 class _ScheduleContent extends ConsumerWidget {
   const _ScheduleContent({required this.state});
 
@@ -32,108 +35,100 @@ class _ScheduleContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedDayIndex = ref.watch(selectedDayIndexProvider);
-    final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
-    final showFavorites = ref.watch(showOnlyFavoritesProvider);
-    final favoriteIds = ref.watch(
-      favoriteIdsProvider.select((ids) => ids.valueOrNull ?? <String>{}),
-    );
-
-    final safeIndex = state.sections.isEmpty
-        ? 0
-        : selectedDayIndex.clamp(0, state.sections.length - 1);
-
-    final daySection = state.sections.isEmpty
-        ? null
-        : state.sections[safeIndex];
-
-    // Filtro por categoría
-    var visibleItems = daySection == null
-        ? <ScheduleItem>[]
-        : selectedCategory == null
-        ? daySection.items
-        : daySection.items
-              .where(
-                (item) => switch (item) {
-                  SingleEventItem(:final event) =>
-                    event.type == selectedCategory,
-                  ParallelGroupItem(:final type) => type == selectedCategory,
-                },
-              )
-              .toList();
-
-    // Filtro por favoritos (se apila sobre el de categoría)
-    if (showFavorites) {
-      visibleItems = visibleItems
-          .where(
-            (item) => switch (item) {
-              SingleEventItem(:final event) => favoriteIds.contains(event.id),
-              // Muestra el grupo si al menos un evento está guardado
-              ParallelGroupItem(:final events) => events.any(
-                (e) => favoriteIds.contains(e.id),
-              ),
-            },
-          )
-          .toList();
-    }
+    final uiState = _ScheduleUiState.fromRef(ref, state);
 
     return DefaultTabController(
       length: state.sections.length,
-      initialIndex: safeIndex,
+      initialIndex: uiState.safeDayIndex,
       child: AppPage(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-        header: _ScheduleHeader(
-          categories: state.categories,
-          selectedCategory: selectedCategory,
-          onCategorySelect: (cat) =>
-              ref.read(selectedScheduleCategoryProvider.notifier).state = cat,
-          sections: state.sections,
-          onDaySelect: (index) =>
-              ref.read(selectedDayIndexProvider.notifier).state = index,
-          showFavorites: showFavorites,
-          onFavoritesToggle: () =>
-              ref.read(showOnlyFavoritesProvider.notifier).update((v) => !v),
+        header: _ScheduleHeader.fromState(
+          state: state,
+          uiState: uiState,
+          ref: ref,
         ),
         children: [
           const SizedBox(height: AppSpacing.m),
-          if (showFavorites && visibleItems.isEmpty)
-            _EmptyFavorites()
-          else
-            ...visibleItems.map(
-              (item) => switch (item) {
-                SingleEventItem(:final event) => EventCard(event: event),
-                ParallelGroupItem() => ParallelBlock(group: item),
-              },
-            ),
+          _ScheduleBody(uiState: uiState),
         ],
       ),
     );
   }
 }
 
-/// Header de la vista del schedule.
-class _ScheduleHeader extends StatelessWidget {
-  const _ScheduleHeader({
-    required this.categories,
+/// Estado derivado de UI (separación de lógica vs vista)
+class _ScheduleUiState {
+  _ScheduleUiState({
+    required this.selectedDayIndex,
     required this.selectedCategory,
-    required this.onCategorySelect,
-    required this.sections,
-    required this.onDaySelect,
     required this.showFavorites,
-    required this.onFavoritesToggle,
+    required this.visibleItems,
+    required this.sectionsLength,
   });
 
-  final List<String> categories;
-  final String? selectedCategory;
-  final ValueChanged<String?> onCategorySelect;
-  final List<ScheduleDaySection> sections;
-  final ValueChanged<int> onDaySelect;
+  final int selectedDayIndex;
+  final EventType? selectedCategory;
   final bool showFavorites;
-  final VoidCallback onFavoritesToggle;
+  final List<ScheduleItem> visibleItems;
+  final int sectionsLength;
 
-  String _tabLabel(String date) {
+  int get safeDayIndex {
+    if (sectionsLength == 0) return 0;
+    return selectedDayIndex.clamp(0, sectionsLength - 1);
+  }
+
+  static _ScheduleUiState fromRef(WidgetRef ref, ScheduleState state) {
+    return _ScheduleUiState(
+      selectedDayIndex: ref.watch(selectedDayIndexProvider),
+      selectedCategory: ref.watch(selectedScheduleCategoryProvider),
+      showFavorites: ref.watch(showOnlyFavoritesProvider),
+      visibleItems: ref.watch(visibleItemsProvider),
+      sectionsLength: state.sections.length,
+    );
+  }
+}
+
+/// Body separado (SRP: render de lista)
+class _ScheduleBody extends StatelessWidget {
+  const _ScheduleBody({required this.uiState});
+
+  final _ScheduleUiState uiState;
+
+  @override
+  Widget build(BuildContext context) {
+    if (uiState.showFavorites && uiState.visibleItems.isEmpty) {
+      return const _EmptyFavorites();
+    }
+
+    return Column(
+      children: uiState.visibleItems.map(_ScheduleItemBuilder.build).toList(),
+    );
+  }
+}
+
+/// Builder de items (elimina switch del build principal)
+class _ScheduleItemBuilder {
+  static Widget build(ScheduleItem item) {
+    return switch (item) {
+      SingleEventItem(:final event) => EventCard(event: event),
+      ParallelGroupItem() => ParallelBlock(group: item),
+      DaySeparatorItem(:final label, :final date) => _DaySeparator(
+        label: label,
+        date: date,
+      ),
+    };
+  }
+}
+
+class _DaySeparator extends StatelessWidget {
+  const _DaySeparator({required this.label, required this.date});
+
+  final String label;
+  final String date;
+
+  String _formatDate() {
     final dt = DateTime.tryParse(date);
-    if (dt == null) return date;
+    if (dt == null) return label;
     const months = [
       'Jan',
       'Feb',
@@ -148,31 +143,143 @@ class _ScheduleHeader extends StatelessWidget {
       'Nov',
       'Dec',
     ];
+    return '$label · ${months[dt.month - 1]} ${dt.day}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.l, bottom: AppSpacing.s),
+      child: Row(
+        children: [
+          Text(
+            _formatDate(),
+            style: theme.textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.s),
+          Expanded(
+            child: Divider(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Header refactorizado (sin lógica en build principal)
+class _ScheduleHeader extends StatelessWidget {
+  const _ScheduleHeader({
+    required this.categories,
+    required this.selectedCategory,
+    required this.onCategorySelect,
+    required this.sections,
+    required this.onDaySelect,
+    required this.showFavorites,
+    required this.onFavoritesToggle,
+  });
+
+  final List<EventType> categories;
+  final EventType? selectedCategory;
+  final ValueChanged<EventType?> onCategorySelect;
+  final List<ScheduleDaySection> sections;
+  final ValueChanged<int> onDaySelect;
+  final bool showFavorites;
+  final VoidCallback onFavoritesToggle;
+
+  static Widget fromState({
+    required ScheduleState state,
+    required _ScheduleUiState uiState,
+    required WidgetRef ref,
+  }) {
+    return _ScheduleHeader(
+      categories: state.categories,
+      selectedCategory: uiState.selectedCategory,
+      onCategorySelect: (cat) =>
+          ref.read(selectedScheduleCategoryProvider.notifier).state = cat,
+      sections: state.sections,
+      onDaySelect: (index) =>
+          ref.read(selectedDayIndexProvider.notifier).state = index,
+      showFavorites: uiState.showFavorites,
+      onFavoritesToggle: () =>
+          ref.read(showOnlyFavoritesProvider.notifier).update((v) => !v),
+    );
+  }
+
+  /// Formatea la fecha a un formato legible para la UI
+  String _formatTabLabel(String date) {
+    final dt = DateTime.tryParse(date);
+    if (dt == null) return date;
+
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
     return '${months[dt.month - 1]} ${dt.day}';
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isFiltered = selectedCategory != null || showFavorites;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          'Schedule',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+          child: Text(
+            'Schedule',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         if (sections.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.s),
-          TabBar(
-            onTap: onDaySelect,
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            padding: EdgeInsets.zero,
-            tabs: sections.map((s) => Tab(text: _tabLabel(s.date))).toList(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+            child: AnimatedOpacity(
+              opacity: isFiltered ? 0.35 : 1.0,
+              duration: const Duration(milliseconds: 200),
+              child: IgnorePointer(
+                ignoring: isFiltered,
+                child: TabBar(
+                  onTap: onDaySelect,
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  padding: EdgeInsets.zero,
+                  labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: theme.colorScheme.primary,
+                  ),
+                  unselectedLabelStyle: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.normal,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  tabs: sections
+                      .map((s) => Tab(text: _formatTabLabel(s.date)))
+                      .toList(),
+                ),
+              ),
+            ),
           ),
         ],
         if (categories.isNotEmpty) ...[
@@ -181,8 +288,8 @@ class _ScheduleHeader extends StatelessWidget {
             categories: categories,
             selected: selectedCategory,
             onSelect: onCategorySelect,
-            showFavorites: showFavorites,
-            onFavoritesToggle: onFavoritesToggle,
+            isFavoritesMode: showFavorites,
+            onFavoritesTap: onFavoritesToggle,
           ),
         ],
       ],
@@ -190,11 +297,14 @@ class _ScheduleHeader extends StatelessWidget {
   }
 }
 
-/// Mensaje que se muestra cuando no hay favoritos.
+/// Empty state
 class _EmptyFavorites extends StatelessWidget {
+  const _EmptyFavorites();
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
       child: Column(

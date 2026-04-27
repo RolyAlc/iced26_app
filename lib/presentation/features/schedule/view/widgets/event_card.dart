@@ -5,13 +5,13 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
-import 'package:iced26/presentation/features/schedule/view/helpers/event_type_style.dart';
+import 'package:iced26/presentation/helpers/event_type_style.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
-import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
+import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/widgets/app_card.dart';
 import 'package:iced26/presentation/widgets/event_status_chip.dart';
 
-/// Tarjeta de un evento.
+/// Tarjeta de un evento para la lista de eventos.
 class EventCard extends ConsumerWidget {
   final Event event;
 
@@ -23,7 +23,7 @@ class EventCard extends ConsumerWidget {
     final theme = Theme.of(context);
     final style = resolveTypeStyle(context, event.type);
     final status = EventStatusResolver.resolve(event);
-    // select() evita que la card se reconstruya cuando cambia el favorito de otro evento
+
     final isFavorite = ref.watch(
       favoriteIdsProvider.select(
         (ids) => ids.valueOrNull?.contains(event.id) ?? false,
@@ -43,52 +43,128 @@ class EventCard extends ConsumerWidget {
               TypeIcon(style: style),
               const SizedBox(width: AppSpacing.m),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            event.title.resolve(locale),
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        if (status != EventStatus.ended) ...[
-                          const SizedBox(width: AppSpacing.xs),
-                          EventStatusChip(status: status),
-                        ],
-                      ],
-                    ),
-                    if (event.filterTime != null) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        event.filterTime!,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ],
+                child: _EventContent(
+                  event: event,
+                  locale: locale,
+                  status: status,
+                  theme: theme,
                 ),
               ),
               const SizedBox(width: AppSpacing.s),
-              if (isFavorite)
-                Padding(
-                  padding: const EdgeInsets.only(right: AppSpacing.xs),
-                  child: Icon(
-                    Icons.bookmark,
-                    size: 18,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-              Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+              _RightIcons(isFavorite: isFavorite, theme: theme),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Contenido principal de la tarjeta, sin iconos.
+class _EventContent extends StatelessWidget {
+  final Event event;
+  final String locale;
+  final EventStatus status;
+  final ThemeData theme;
+
+  const _EventContent({
+    required this.event,
+    required this.locale,
+    required this.status,
+    required this.theme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _TitleRow(event: event, locale: locale, status: status, theme: theme),
+        if (event.filterTime != null)
+          _EventTime(time: event.filterTime!, theme: theme),
+      ],
+    );
+  }
+}
+
+/// Título del evento con su estado.
+class _TitleRow extends StatelessWidget {
+  final Event event;
+  final String locale;
+  final EventStatus status;
+  final ThemeData theme;
+
+  const _TitleRow({
+    required this.event,
+    required this.locale,
+    required this.status,
+    required this.theme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            event.title.resolve(locale),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        if (status != EventStatus.ended) ...[
+          const SizedBox(width: AppSpacing.xs),
+          EventStatusChip(status: status),
+        ],
+      ],
+    );
+  }
+}
+
+/// Hora del evento.
+class _EventTime extends StatelessWidget {
+  final String time;
+  final ThemeData theme;
+
+  const _EventTime({required this.time, required this.theme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.xs),
+      child: Text(
+        time,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
+}
+
+/// Iconos de la tarjeta.
+class _RightIcons extends StatelessWidget {
+  final bool isFavorite;
+  final ThemeData theme;
+
+  const _RightIcons({required this.isFavorite, required this.theme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        if (isFavorite)
+          Padding(
+            padding: const EdgeInsets.only(right: AppSpacing.xs),
+            child: Icon(
+              Icons.bookmark,
+              size: 18,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+      ],
     );
   }
 }

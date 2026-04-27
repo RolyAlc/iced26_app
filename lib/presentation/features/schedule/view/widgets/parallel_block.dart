@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
-import 'package:iced26/presentation/features/schedule/view/helpers/event_type_style.dart';
+import 'package:iced26/presentation/helpers/event_type_style.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
@@ -15,17 +16,18 @@ class ParallelBlock extends StatelessWidget {
 
   const ParallelBlock({super.key, required this.group});
 
-  String get _typeLabel => group.type == 'workshop' ? 'Workshops' : 'Sessions';
+  String get _typeLabel =>
+      group.type == EventType.workshop ? 'Workshops' : 'Sessions';
+  String get _title => '${group.events.length} Parallel $_typeLabel';
 
-  /// Muestra un sheet con los eventos paralelos.
   void _showSheet(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
     AppBottomSheet.show(
       context: context,
-      title: '${group.events.length} Parallel $_typeLabel',
+      title: _title,
       child: Column(
         children: group.events
-            .map((e) => ParallelEventOption(event: e, locale: locale))
+            .map((e) => _ParallelEventOption(event: e, locale: locale))
             .toList(),
       ),
     );
@@ -35,7 +37,7 @@ class ParallelBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style = resolveTypeStyle(context, group.type);
-    final time = group.events.first.filterTime;
+    final time = group.events.isNotEmpty ? group.events.first.filterTime : null;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -50,26 +52,7 @@ class ParallelBlock extends StatelessWidget {
               TypeIcon(style: style, badge: group.events.length),
               const SizedBox(width: AppSpacing.m),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${group.events.length} Parallel $_typeLabel',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (time != null) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        time,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                child: _ParallelContent(title: _title, time: time),
               ),
               const SizedBox(width: AppSpacing.s),
               Icon(Icons.expand_more, color: theme.colorScheme.outline),
@@ -81,21 +64,50 @@ class ParallelBlock extends StatelessWidget {
   }
 }
 
-/// Opción de evento paralelo.
-class ParallelEventOption extends StatelessWidget {
-  final Event event;
-  final String locale;
+/// Contenido del bloque paralelo.
+class _ParallelContent extends StatelessWidget {
+  final String title;
+  final String? time;
 
-  const ParallelEventOption({
-    super.key,
-    required this.event,
-    required this.locale,
-  });
+  const _ParallelContent({required this.title, this.time});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        if (time != null)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: Text(
+              time!,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
 
+/// Opción de evento paralelo en un sheet.
+class _ParallelEventOption extends StatelessWidget {
+  final Event event;
+  final String locale;
+
+  const _ParallelEventOption({required this.event, required this.locale});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return ListTile(
       contentPadding: EdgeInsets.zero,
       title: Text(

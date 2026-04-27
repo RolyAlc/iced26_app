@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/presentation/features/schedule/view/helpers/event_type_style.dart';
+import 'package:iced26/domain/entities/event_type.dart';
+import 'package:iced26/presentation/helpers/event_type_style.dart';
 
 /// Barra de filtros de categoria para la pantalla Schedule.
 /// El chip "My Schedule" aparece primero si se proveen los callbacks de favoritos.
@@ -11,15 +12,16 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
     required this.categories,
     required this.selected,
     required this.onSelect,
-    this.showFavorites = false,
-    this.onFavoritesToggle,
+    required this.onFavoritesTap,
+    required this.isFavoritesMode,
   });
 
-  final List<String> categories;
-  final String? selected;
-  final ValueChanged<String?> onSelect;
-  final bool showFavorites;
-  final VoidCallback? onFavoritesToggle;
+  final List<EventType> categories;
+  final EventType? selected;
+
+  final ValueChanged<EventType?> onSelect;
+  final VoidCallback onFavoritesTap;
+  final bool isFavoritesMode;
 
   @override
   Widget build(BuildContext context) {
@@ -27,49 +29,63 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      clipBehavior: Clip.none,
-      child: Row(
-        children: [
-          if (onFavoritesToggle != null) ...[
-            _CategoryChip(
-              label: 'My Schedule',
-              icon: showFavorites ? Icons.bookmark : Icons.bookmark_border,
-              color: colors.tertiary,
-              selected: showFavorites,
-              onTap: onFavoritesToggle!,
-            ),
-            const SizedBox(width: AppSpacing.xs),
-          ],
-          _CategoryChip(
-            label: 'All',
-            icon: Icons.apps_rounded,
-            color: colors.primary,
-            // "All" solo aparece activo si no estamos en modo favoritos
-            selected: !showFavorites && selected == null,
-            onTap: () {
-              if (showFavorites) onFavoritesToggle?.call();
-              onSelect(null);
-            },
-          ),
-          ...categories.map((cat) {
-            final style = resolveTypeStyle(context, cat);
-            return Padding(
-              padding: const EdgeInsets.only(left: AppSpacing.xs),
-              child: _CategoryChip(
-                label: cat,
-                icon: style.icon,
-                color: style.color,
-                selected: !showFavorites && selected == cat,
-                onTap: () {
-                  if (showFavorites) onFavoritesToggle?.call();
-                  onSelect(selected == cat ? null : cat);
-                },
-              ),
-            );
-          }),
-        ],
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+      child: Row(children: _buildChips(context, colors)),
     );
+  }
+
+  List<Widget> _buildChips(BuildContext context, ColorScheme colors) {
+    return [
+      _favoritesChip(colors),
+      const SizedBox(width: AppSpacing.xs),
+      _allChip(colors),
+      ..._categoryChips(context, colors),
+    ];
+  }
+
+  Widget _favoritesChip(ColorScheme colors) {
+    return _CategoryChip(
+      label: 'My Schedule',
+      icon: isFavoritesMode ? Icons.bookmark : Icons.bookmark_border,
+      color: colors.tertiary,
+      selected: isFavoritesMode,
+      onTap: onFavoritesTap,
+    );
+  }
+
+  Widget _allChip(ColorScheme colors) {
+    return _CategoryChip(
+      label: 'All',
+      icon: Icons.apps_rounded,
+      color: colors.primary,
+      selected: !isFavoritesMode && selected == null,
+      onTap: () => onSelect(null),
+    );
+  }
+
+  List<Widget> _categoryChips(BuildContext context, ColorScheme colors) {
+    return categories.map((cat) {
+      final style = resolveTypeStyle(context, cat);
+
+      return Padding(
+        padding: const EdgeInsets.only(left: AppSpacing.xs),
+        child: _CategoryChip(
+          label: cat.label,
+          icon: style.icon,
+          color: style.color,
+          selected: !isFavoritesMode && selected == cat,
+          onTap: () => _handleCategoryTap(cat),
+        ),
+      );
+    }).toList();
+  }
+
+  void _handleCategoryTap(EventType cat) {
+    if (selected == cat) {
+      onSelect(null);
+    } else {
+      onSelect(cat);
+    }
   }
 }
 
