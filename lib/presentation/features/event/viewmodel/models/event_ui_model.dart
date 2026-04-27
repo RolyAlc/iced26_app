@@ -1,3 +1,4 @@
+import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 
 /// Modelo de datos para representar un evento en la capa de presentación.
@@ -10,6 +11,9 @@ class EventUIModel {
   final EventStatus status;
   final String? imageUrl;
 
+  /// Entidad de dominio embebida exclusivamente para abrir el detail sheet.
+  final Event event;
+
   EventUIModel({
     required this.id,
     required this.title,
@@ -17,6 +21,7 @@ class EventUIModel {
     required this.duration,
     required this.room,
     required this.status,
+    required this.event,
     this.imageUrl,
   });
 }

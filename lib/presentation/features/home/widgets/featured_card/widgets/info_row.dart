@@ -22,7 +22,14 @@ class InfoRow extends StatelessWidget {
       children: [
         Icon(icon, size: 14, color: color),
         const SizedBox(width: AppSpacing.xs),
-        Text(text, style: style),
+        Flexible(
+          child: Text(
+            text,
+            style: style,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
       ],
     );
   }

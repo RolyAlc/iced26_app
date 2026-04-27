@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:iced26/core/constants/design_tokens.dart';
 
-/// Boton para guardar o no un evento.
+/// Botón de guardar evento — icono bookmark.
 class SaveButton extends StatelessWidget {
   final bool isSaved;
   final VoidCallback onTap;
@@ -12,30 +11,11 @@ class SaveButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    final bgColor = isSaved ? colors.primaryContainer : colors.onSurface;
-    final fgColor = isSaved ? colors.onPrimaryContainer : Colors.white;
-    final icon = isSaved ? Icons.bookmark : Icons.add;
-    final label = isSaved ? 'Saved' : 'Save';
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.m,
-          vertical: AppSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(AppRadius.l),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 14, color: fgColor),
-            const SizedBox(width: AppSpacing.xs),
-            Text(label, style: TextStyle(color: fgColor)),
-          ],
-        ),
+    return IconButton(
+      onPressed: onTap,
+      icon: Icon(
+        isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+        color: isSaved ? colors.primary : colors.onSurfaceVariant,
       ),
     );
   }

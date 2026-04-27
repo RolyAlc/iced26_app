@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+import 'package:iced26/presentation/widgets/app_network_image.dart';
+
+/// Imagen de fondo del speaker (ocupa toda la card).
+class SpeakerCardImage extends StatelessWidget {
+  const SpeakerCardImage({super.key, required this.photoUrl});
+
+  final String? photoUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return AppNetworkImage(
+      url: photoUrl ?? '',
+      fit: BoxFit.cover,
+      placeholder: ColoredBox(
+        color: colors.surfaceContainerHighest,
+        child: Center(
+          child: Icon(
+            Icons.person_rounded,
+            size: 48,
+            color: colors.onSurfaceVariant.withValues(alpha: 0.4),
+          ),
+        ),
+      ),
+    );
+  }
+}

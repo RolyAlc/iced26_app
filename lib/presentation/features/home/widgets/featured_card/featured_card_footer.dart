@@ -19,9 +19,8 @@ class FeaturedCardFooter extends ConsumerWidget {
     final isSaved = favoriteIds.contains(event.id);
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _EventInfo(event: event),
+        Expanded(child: _EventInfo(event: event)),
         SaveButton(
           isSaved: isSaved,
           onTap: () =>

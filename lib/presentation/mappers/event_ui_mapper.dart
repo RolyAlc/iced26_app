@@ -3,9 +3,7 @@ import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
 
-/// Mapea un [Event] a un [EventUIModel] para la capa de presentación
-/// Devuelve un modelo listo para mostrar en la UI,
-/// con formato de texto y estado resuelto.
+/// Mapper para convertir un [Event] a un [EventUIModel].
 class EventUIMapper {
   static const _formatter = EventFormatter();
 
@@ -31,6 +29,7 @@ class EventUIMapper {
       duration: duration,
       room: roomName,
       status: status,
+      event: entity,
       imageUrl: imageUrl,
     );
   }

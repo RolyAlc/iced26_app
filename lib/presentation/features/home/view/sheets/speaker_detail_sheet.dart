@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
-import 'package:iced26/presentation/features/schedule/view/helpers/event_type_style.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
+import 'package:iced26/presentation/helpers/event_type_style.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
 import 'package:iced26/presentation/widgets/app_network_image.dart';
 
@@ -28,87 +28,124 @@ class _SpeakerDetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Foto grande — aspect ratio 4:3 (banner), centrada en el rostro
-        if (speaker.photoUrl != null)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadius.m),
-            child: AspectRatio(
-              aspectRatio: 4 / 3,
-              child: AppNetworkImage(
-                url: speaker.photoUrl!,
-                fit: BoxFit.cover,
-                placeholder: ColoredBox(
-                  color: colors.surfaceContainerHighest,
-                  child: Center(
-                    child: Icon(
-                      Icons.person_rounded,
-                      size: 64,
-                      color: colors.onSurfaceVariant.withValues(alpha: 0.4),
-                    ),
-                  ),
-                ),
+        _SpeakerImage(photoUrl: speaker.photoUrl),
+        _SpeakerInstitution(institution: speaker.institution),
+        _SpeakerSessions(events: speaker.events),
+      ],
+    );
+  }
+}
+
+/// Imagen del keynote speaker
+class _SpeakerImage extends StatelessWidget {
+  final String? photoUrl;
+
+  const _SpeakerImage({this.photoUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    if (photoUrl == null) return const SizedBox();
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppRadius.m),
+      child: AspectRatio(
+        aspectRatio: 4 / 3,
+        child: AppNetworkImage(
+          url: photoUrl!,
+          fit: BoxFit.cover,
+          placeholder: ColoredBox(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: Center(child: Icon(Icons.person_rounded, size: 64)),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Institución del keynote speaker
+class _SpeakerInstitution extends StatelessWidget {
+  final String? institution;
+
+  const _SpeakerInstitution({this.institution});
+
+  @override
+  Widget build(BuildContext context) {
+    if (institution == null) return const SizedBox();
+
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.m),
+      child: Row(
+        children: [
+          Icon(
+            Icons.business_rounded,
+            size: 16,
+            color: colors.onSurfaceVariant,
+          ),
+          const SizedBox(width: AppSpacing.s),
+          Expanded(
+            child: Text(
+              institution!,
+              style: textTheme.bodyMedium?.copyWith(
+                color: colors.onSurfaceVariant,
               ),
             ),
           ),
-
-        if (speaker.institution != null) ...[
-          const SizedBox(height: AppSpacing.m),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.business_rounded,
-                size: 16,
-                color: colors.onSurfaceVariant,
-              ),
-              const SizedBox(width: AppSpacing.s),
-              Expanded(
-                child: Text(
-                  speaker.institution!,
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ],
-          ),
         ],
+      ),
+    );
+  }
+}
 
-        if (speaker.events.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.l),
+/// Sesiones del keynote speaker
+class _SpeakerSessions extends StatelessWidget {
+  final List<SessionUIModel> events;
+
+  const _SpeakerSessions({required this.events});
+
+  @override
+  Widget build(BuildContext context) {
+    if (events.isEmpty) return const SizedBox();
+
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.l),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
             'Sessions',
             style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: AppSpacing.s),
-          ...speaker.events.map((event) => _SessionRow(event: event)),
+          ...events.map((session) => _SessionRow(session: session)),
         ],
-      ],
+      ),
     );
   }
 }
 
 /// Fila de evento en el detalle del keynote speaker.
 class _SessionRow extends StatelessWidget {
-  const _SessionRow({required this.event});
+  const _SessionRow({required this.session});
 
-  final Event event;
+  final SessionUIModel session;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final style = resolveTypeStyle(context, event.type);
-    final locale = Localizations.localeOf(context).languageCode;
+    final style = resolveTypeStyle(context, session.type);
 
     return InkWell(
-      onTap: () => showDetailSheet(context, event),
+      onTap: () => showDetailSheet(context, session.event),
       borderRadius: BorderRadius.circular(AppRadius.s),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
@@ -129,19 +166,16 @@ class _SessionRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    event.title.resolve(locale),
+                    session.title,
                     style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (event.filterDate != null || event.filterTime != null)
+                  if (session.formattedDateTime.isNotEmpty)
                     Text(
-                      [
-                        if (event.filterDate != null) event.filterDate!,
-                        if (event.filterTime != null) event.filterTime!,
-                      ].join(' · '),
+                      session.formattedDateTime,
                       style: textTheme.labelSmall?.copyWith(
                         color: colors.onSurfaceVariant,
                       ),

@@ -21,16 +21,15 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final Color cardBackground = Color.alphaBlend(
-      style.color.withValues(alpha: 0.12),
-      colors.surfaceContainerLow,
-    );
 
     return AppCard(
       onTap: onTap,
       borderRadius: AppRadius.l,
-      color: cardBackground,
       bordered: true,
+      color: Color.alphaBlend(
+        style.color.withValues(alpha: 0.12),
+        colors.surfaceContainerLow,
+      ),
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.m,
         vertical: AppSpacing.sm,

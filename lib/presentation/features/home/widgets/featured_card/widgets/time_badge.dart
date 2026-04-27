@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Etiqueta de tiempo
@@ -22,7 +23,7 @@ class TimeBadge extends StatelessWidget {
         time.toUpperCase(),
         style: const TextStyle(
           color: Colors.white,
-          fontSize: 10,
+          fontSize: AppTextSize.chip,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.5,
         ),
