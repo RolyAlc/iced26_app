@@ -2,848 +2,43 @@
   "metadata": {
     "event_id": "ICED26",
     "version": "1.0.0",
-    "generated_at": "2026-04-15T00:22:53.372479+00:00"
+    "environment": "dev",
+    "generated_at": "2026-04-24T15:10:21.275838",
+    "bundle_hash": "732cb0ef"
   },
-  "conference": {
-    "name": "Agency and Academic Development",
-    "conference_themes": [
-      {
-        "id": "sub-theme-1",
-        "name": {
-          "en": "Agency and Knowledge: Advancing Epistemologies, Innovation and Scholarship"
-        },
-        "description": {
-          "en": "This track examines how academic developers construct, share, and apply knowledge in interdisciplinary and collaborative contexts. It highlights the scholarly foundations of academic development and explores how reflection and innovation drive advancements in teaching, learning, and institutional practices. The track also addresses the importance of digital transformation, sustainability, and inclusivity in higher education, emphasizing how these factors shape knowledge development and professional practice."
-        },
-        "topics_include": [
-          {
-            "en": "The Scholarship of Academic Development as a recognised field of research"
-          },
-          {
-            "en": "Innovative formats to generate, organise, and share knowledge"
-          },
-          {
-            "en": "Interdisciplinary communities of practice, partnerships, and networks to promote epistemic agency"
-          },
-          {
-            "en": "Frameworks and reflective practices to shape professional identities and foster epistemological growth"
-          },
-          {
-            "en": "Critical examination on disruptions, such as artificial intelligence, and their impact on knowledge creation, curriculum development and student learning, from a sustainable and inclusive perspective"
-          }
-        ]
+  "config": {
+    "conference": {
+      "name": "ICED 2026 CONFERENCE",
+      "tagline": "Agency and Academic Development",
+      "location": "Salamanca, Spain",
+      "dates": "June 23-26, 2026"
+    },
+    "theme": {
+      "color": {
+        "primary": "0xFF75A49C",
+        "secondary": "0xFF927363",
+        "accent": "0xFFF88E5C",
+        "text": "0xFF000000"
       },
-      {
-        "id": "sub-theme-2",
-        "name": {
-          "en": "Agency and Strategy: Enhancing Teaching, Learning and Organizational Transformation"
-        },
-        "description": {
-          "en": "This track explores the intentional, strategic actions of academic developers as change agents and leaders in teaching, learning, and curriculum enhancement across institutional and systemic levels. It examines their role in shaping teaching cultures, contributing to policy making, fostering alignment between curricula and institutional goals, and advancing organizational learning practices. The track also highlights strategies for building agile and responsive academic development units that can adapt to evolving educational needs and systemic challenges."
-        },
-        "topics_include": [
-          {
-            "en": "Strategic initiatives to shape policies and programs for teaching, learning and curriculum enhancement, and especially the initial training for novice teachers"
-          },
-          {
-            "en": "Effective strategies for collaboration across centres, faculties, and departments"
-          },
-          {
-            "en": "Alignment of academic development initiatives with institutional policies and systemic priorities"
-          },
-          {
-            "en": "Feedback, evaluation, and continuous improvement practices to foster sustainable organisational learning"
-          },
-          {
-            "en": "Resilient academic development units to navigate systemic disruptions and societal shifts"
-          }
-        ]
+      "typography": {
+        "primary": "Capuche",
+        "secondary": "Lato",
+        "text": "Lato",
+        "accent": "Lato"
       },
-      {
-        "id": "sub-theme-3",
-        "name": {
-          "en": "Agency and Students: Empowering Learners and Transforming Curriculum"
-        },
-        "description": {
-          "en": "This track examines the role of academic developers and teachers in fostering learner agency and engagement in undergraduate, postgraduate, and continuing education programmes to drive curriculum innovation and transformation. It explores how participatory approaches to curriculum design are promoted, as well as programmes fostering inclusivity and sustainability. It also reflects on the active role of students as co-creators of curricula and learning experiences."
-        },
-        "topics_include": [
-          {
-            "en": "Student agency to enhance motivation, self-regulation, and engagement in learning"
-          },
-          {
-            "en": "Support to academic staff and teachers to promote student agency"
-          },
-          {
-            "en": "Partnerships between students and teachers to co-create meaningful and transformative learning experiences"
-          },
-          {
-            "en": "Institutional collaboration between students, teachers, and academic leaders to enrich curriculum design"
-          },
-          {
-            "en": "Design of competence-oriented, inclusive and sustainable curricula and university programmes that address societal and workforce needs"
-          }
-        ]
+      "logo": {
+        "url_path": "brand/logo_iced26_new2-1-1024x628.png",
+        "url_web": "https://iced26.es/wp-content/uploads/2023/05/logo_iced26_new2-1-1024x628.png",
+        "width": 1024,
+        "height": 628
       }
-    ]
-  },
-  "theme": {
-    "color": {
-      "primary": "#75A49C",
-      "secondary": "#927363",
-      "accent": "#F88E5C",
-      "text": "#000000"
-    },
-    "typography": {
-      "primary": "Capuche",
-      "secondary": "Lato",
-      "text": "Lato",
-      "accent": "Lato"
-    },
-    "logo": {
-      "url": "public/assets/logo_iced26_new2-1-1024x628.png",
-      "url_web": "https://iced26.es/wp-content/uploads/2023/05/logo_iced26_new2-1-1024x628.png",
-      "width": 1024,
-      "height": 628
     }
   },
   "collections": {
-    "days": [
-      {
-        "id": "day-1",
-        "date": "2026-06-23"
-      },
-      {
-        "id": "day-2",
-        "date": "2026-06-24"
-      },
-      {
-        "id": "day-3",
-        "date": "2026-06-25"
-      },
-      {
-        "id": "day-4",
-        "date": "2026-06-26"
-      }
-    ],
-    "events": [
-      {
-        "id": "evt-001",
-        "start": "2026-06-23T08:00:00+02:00",
-        "end": "2026-06-23T17:00:00+02:00",
-        "zoneId": "zone-1",
-        "type": "registration",
-        "lang": "en",
-        "title": {
-          "en": "Welcome & Registration"
-        },
-        "filter_date": "2026-06-23",
-        "filter_time": "08:00"
-      },
-      {
-        "id": "evt-002",
-        "start": "2026-06-23T08:30:00+02:00",
-        "end": "2026-06-23T08:45:00+02:00",
-        "duration_min": 15,
-        "roomId": "room-11",
-        "zoneId": "zone-1",
-        "type": "instructions",
-        "subtype": "plenary",
-        "lang": "en",
-        "title": {
-          "en": "Welcome and brief Pre-Conference Instructions"
-        },
-        "filter_date": "2026-06-23",
-        "filter_time": "08:30"
-      },
-      {
-        "id": "evt-003",
-        "start": "2026-06-23T09:00:00+02:00",
-        "end": "2026-06-23T12:00:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "A",
-        "lang": "en",
-        "title": {
-          "en": "A Great Teachers Retreat: A Model for Instructor Agency and Development"
-        },
-        "speakers": [
-          {
-            "personId": "p-1",
-            "role": "presenter"
-          },
-          {
-            "personId": "p-2",
-            "role": "presenter"
-          }
-        ],
-        "tags": [
-          "teacher-dev",
-          "agency"
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "09:00"
-      },
-      {
-        "id": "evt-004",
-        "start": "2026-06-23T09:00:00+02:00",
-        "end": "2026-06-23T12:00:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "A",
-        "lang": "en",
-        "title": {
-          "en": "Applying a Research-based Model to (re)Design High-impact Course Design Institutes"
-        },
-        "speakers": [
-          {
-            "personId": "p-3",
-            "role": "presenter"
-          },
-          {
-            "personId": "p-4",
-            "role": "presenter"
-          },
-          {
-            "personId": "p-5",
-            "role": "presenter"
-          },
-          {
-            "personId": "p-6",
-            "role": "presenter"
-          }
-        ],
-        "tags": [
-          "teacher-dev",
-          "agency"
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "09:00"
-      },
-      {
-        "id": "evt-005",
-        "start": "2026-06-23T12:00:00+02:00",
-        "end": "2026-06-23T13:00:00+02:00",
-        "duration_min": 60,
-        "zoneId": "zone-1",
-        "type": "break",
-        "subtype": "lunch",
-        "lang": "en",
-        "title": {
-          "en": "Coffee Break"
-        },
-        "filter_date": "2026-06-23",
-        "filter_time": "12:00"
-      },
-      {
-        "id": "evt-006",
-        "start": "2026-06-23T13:15:00+02:00",
-        "end": "2026-06-23T16:15:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "B",
-        "lang": "en",
-        "title": {
-          "en": "Inclusive Online Course Design and Teaching Best Practices: Fostering Instructor and Student Agency in the Digital Age"
-        },
-        "speakers": [
-          {
-            "personId": "p-7",
-            "role": "presenter"
-          }
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "13:15"
-      },
-      {
-        "id": "evt-007",
-        "start": "2026-06-23T13:15:00+02:00",
-        "end": "2026-06-23T16:15:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "B",
-        "lang": "en",
-        "title": {
-          "en": "Building Relationships and Promoting Agency Through Reflective Dialogue"
-        },
-        "speakers": [
-          {
-            "personId": "p-1",
-            "role": "presenter"
-          }
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "13:15"
-      },
-      {
-        "id": "evt-008",
-        "start": "2026-06-23T16:30:00+02:00",
-        "end": "2026-06-23T19:30:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "C",
-        "lang": "en",
-        "title": {
-          "en": "Internationalisation for Good: How to Sustainably Foster Global Perspectives as Academic Developers"
-        },
-        "speakers": [
-          {
-            "personId": "p-10",
-            "role": "presenter"
-          },
-          {
-            "personId": "p-11",
-            "role": "presenter"
-          },
-          {
-            "personId": "p-12",
-            "role": "presenter"
-          }
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "16:30"
-      },
-      {
-        "id": "evt-009",
-        "start": "2026-06-23T16:30:00+02:00",
-        "end": "2026-06-23T19:30:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "C",
-        "lang": "en",
-        "title": {
-          "en": "From Tools to Agency: Building AI Literacy for Academic Practice"
-        },
-        "speakers": [
-          {
-            "personId": "p-13",
-            "role": "presenter"
-          }
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "16:30"
-      },
-      {
-        "id": "evt-010",
-        "start": "2026-06-23T09:00:00+02:00",
-        "end": "2026-06-23T12:00:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "A",
-        "lang": "en",
-        "title": {
-          "en": "An Organizing Framework to develop Holistic Academic Development Programs"
-        },
-        "speakers": [
-          {
-            "personId": "p-16",
-            "role": "presenter"
-          }
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "09:00"
-      },
-      {
-        "id": "evt-011",
-        "start": "2026-06-23T16:30:00+02:00",
-        "end": "2026-06-23T19:30:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "C",
-        "lang": "en",
-        "title": {
-          "en": "From Participation to Strategic Impact—Multi-Level Evaluation for Centers for Teaching & Learning"
-        },
-        "speakers": [
-          {
-            "personId": "p-21",
-            "role": "presenter"
-          }
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "16:30"
-      },
-      {
-        "id": "evt-012",
-        "start": "2026-06-23T13:15:00+02:00",
-        "end": "2026-06-23T16:15:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "B",
-        "lang": "en",
-        "title": {
-          "en": "Implementing Trust-building Strategies in Academic Development Contexts"
-        },
-        "speakers": [
-          {
-            "personId": "p-17",
-            "role": "presenter"
-          },
-          {
-            "personId": "p-18",
-            "role": "presenter"
-          },
-          {
-            "personId": "p-19",
-            "role": "presenter"
-          }
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "13:15"
-      },
-      {
-        "id": "evt-013",
-        "start": "2026-06-23T13:15:00+02:00",
-        "end": "2026-06-23T16:15:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "B",
-        "lang": "en",
-        "title": {
-          "en": "Integrating Ethical Decision-Making as a Teachable Skill in Academic Development: A Dilemma-Based Approach"
-        },
-        "speakers": [
-          {
-            "personId": "p-20",
-            "role": "presenter"
-          }
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "13:15"
-      },
-      {
-        "id": "evt-014",
-        "start": "2026-06-23T09:00:00+02:00",
-        "end": "2026-06-23T12:00:00+02:00",
-        "duration_min": 180,
-        "zoneId": "zone-1",
-        "type": "workshop",
-        "subtype": "parallel",
-        "track": "A",
-        "lang": "en",
-        "title": {
-          "en": "Life-History Mandala Workshop: Understanding Educational Beliefs Through Life Histories"
-        },
-        "speakers": [
-          {
-            "personId": "p-14",
-            "role": "presenter"
-          },
-          {
-            "personId": "p-15",
-            "role": "presenter"
-          }
-        ],
-        "filter_date": "2026-06-23",
-        "filter_time": "09:00"
-      },
-      {
-        "id": "evt-015",
-        "start": "2026-06-24T09:00:00+02:00",
-        "end": "2026-06-24T09:30:00+02:00",
-        "duration_min": 30,
-        "zoneId": "zone-1",
-        "type": "opening",
-        "subtype": "ceremony",
-        "lang": "en",
-        "title": {
-          "en": "Opening Ceremony"
-        },
-        "filter_date": "2026-06-24",
-        "filter_time": "09:00"
-      },
-      {
-        "id": "evt-016",
-        "start": "2026-06-24T09:30:00+02:00",
-        "end": "2026-06-24T10:30:00+02:00",
-        "duration_min": 60,
-        "zoneId": "zone-1",
-        "type": "keynote",
-        "lang": "en",
-        "about_presentation_url": "https://iced26.es/wp-content/uploads/2025/12/Green_ICED26_Keynote_template3-v2.pdf",
-        "video_presentation_url": "https://www.youtube.com/watch?v=sfBwyQsjxNA",
-        "title": {
-          "en": "Agency, responsibility, and values-driven educational development"
-        },
-        "speakers": [
-          {
-            "personId": "p-22",
-            "role": "keynote speakers"
-          }
-        ],
-        "filter_date": "2026-06-24",
-        "filter_time": "09:30"
-      },
-      {
-        "id": "evt-017",
-        "start": "2026-06-24T10:30:00+02:00",
-        "end": "2026-06-24T11:00:00+02:00",
-        "duration_min": 30,
-        "type": "break",
-        "subtype": "coffee",
-        "lang": "en",
-        "title": {
-          "en": "Break - Claustro"
-        },
-        "filter_date": "2026-06-24",
-        "filter_time": "10:30"
-      },
-      {
-        "id": "evt-018",
-        "start": "2026-06-24T11:00:00+02:00",
-        "end": "2026-06-24T12:30:00+02:00",
-        "duration_min": 90,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "A",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions A"
-        },
-        "filter_date": "2026-06-24",
-        "filter_time": "11:00"
-      },
-      {
-        "id": "evt-019",
-        "start": "2026-06-24T12:45:00+02:00",
-        "end": "2026-06-24T13:45:00+02:00",
-        "duration_min": 60,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "B",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions B"
-        },
-        "filter_date": "2026-06-24",
-        "filter_time": "12:45"
-      },
-      {
-        "id": "evt-020",
-        "start": "2026-06-24T13:45:00+02:00",
-        "end": "2026-06-24T15:00:00+02:00",
-        "duration_min": 75,
-        "type": "break",
-        "subtype": "lunch",
-        "lang": "en",
-        "title": {
-          "en": "Lunch - Claustro"
-        },
-        "filter_date": "2026-06-24",
-        "filter_time": "13:45"
-      },
-      {
-        "id": "evt-021",
-        "start": "2026-06-24T15:00:00+02:00",
-        "end": "2026-06-24T16:00:00+02:00",
-        "duration_min": 60,
-        "type": "international_panel",
-        "lang": "en",
-        "title": {
-          "en": "International Panel"
-        },
-        "filter_date": "2026-06-24",
-        "filter_time": "15:00"
-      },
-      {
-        "id": "evt-022",
-        "start": "2026-06-24T16:15:00+02:00",
-        "end": "2026-06-24T17:15:00+02:00",
-        "duration_min": 60,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "C",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions C"
-        },
-        "filter_date": "2026-06-24",
-        "filter_time": "16:15"
-      },
-      {
-        "id": "evt-023",
-        "start": "2026-06-24T17:30:00+02:00",
-        "end": "2026-06-24T18:30:00+02:00",
-        "duration_min": 60,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "D",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions D"
-        },
-        "filter_date": "2026-06-24",
-        "filter_time": "17:30"
-      },
-      {
-        "id": "evt-024",
-        "start": "2026-06-24T18:30:00+02:00",
-        "end": "2026-06-24T20:00:00+02:00",
-        "type": "welcome",
-        "subtype": "reception",
-        "lang": "en",
-        "title": {
-          "en": "Welcome Reception"
-        },
-        "filter_date": "2026-06-24",
-        "filter_time": "18:30"
-      },
-      {
-        "id": "evt-025",
-        "start": "2026-06-25T09:00:00+02:00",
-        "end": "2026-06-25T10:30:00+02:00",
-        "duration_min": 90,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "E",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions E"
-        },
-        "filter_date": "2026-06-25",
-        "filter_time": "09:00"
-      },
-      {
-        "id": "evt-026",
-        "start": "2026-06-25T10:30:00+02:00",
-        "end": "2026-06-25T11:00:00+02:00",
-        "duration_min": 30,
-        "type": "break",
-        "lang": "en",
-        "title": {
-          "en": "Break - Claustro"
-        },
-        "filter_date": "2026-06-25",
-        "filter_time": "10:30"
-      },
-      {
-        "id": "evt-027",
-        "start": "2026-06-25T11:00:00+02:00",
-        "end": "2026-06-25T12:00:00+02:00",
-        "duration_min": 60,
-        "type": "keynote",
-        "subtype": "plenary",
-        "lang": "en",
-        "about_presentation_url": "https://iced26.es/wp-content/uploads/2025/12/Graham_ICED26.pdf",
-        "video_presentation_url": "https://www.youtube.com/watch?v=JjGRGywtLHE",
-        "title": {
-          "en": "Rewarding university teaching in academic careers"
-        },
-        "speakers": [
-          {
-            "personId": "p-23",
-            "role": "keynote speakers"
-          }
-        ],
-        "filter_date": "2026-06-25",
-        "filter_time": "11:00"
-      },
-      {
-        "id": "evt-028",
-        "start": "2026-06-25T12:15:00+02:00",
-        "end": "2026-06-25T13:45:00+02:00",
-        "duration_min": 90,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "F",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions F"
-        },
-        "filter_date": "2026-06-25",
-        "filter_time": "12:15"
-      },
-      {
-        "id": "evt-029",
-        "start": "2026-06-25T13:45:00+02:00",
-        "end": "2026-06-25T15:00:00+02:00",
-        "duration_min": 75,
-        "type": "break",
-        "subtype": "lunch",
-        "lang": "en",
-        "title": {
-          "en": "Lunch - Claustro"
-        },
-        "filter_date": "2026-06-25",
-        "filter_time": "13:45"
-      },
-      {
-        "id": "evt-030",
-        "start": "2026-06-25T15:00:00+02:00",
-        "end": "2026-06-25T16:00:00+02:00",
-        "duration_min": 60,
-        "type": "keynote",
-        "subtype": "plenary",
-        "lang": "en",
-        "about_presentation_url": "https://iced26.es/wp-content/uploads/2025/12/Zellweger_ICED26.pdf",
-        "video_presentation_url": "https://media.phzh.ch/Medium/View/182323?securekey=4379284174b3",
-        "title": {
-          "en": "Resourceful perspectives: Academic development for student and teacher agency"
-        },
-        "speakers": [
-          {
-            "personId": "p-24",
-            "role": "keynote speakers"
-          }
-        ],
-        "filter_date": "2026-06-25",
-        "filter_time": "15:00"
-      },
-      {
-        "id": "evt-031",
-        "start": "2026-06-25T16:15:00+02:00",
-        "end": "2026-06-25T17:15:00+02:00",
-        "duration_min": 60,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "G",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions G"
-        },
-        "filter_date": "2026-06-25",
-        "filter_time": "16:15"
-      },
-      {
-        "id": "evt-032",
-        "start": "2026-06-25T17:30:00+02:00",
-        "end": "2026-06-25T18:30:00+02:00",
-        "duration_min": 60,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "H",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions H"
-        },
-        "filter_date": "2026-06-25",
-        "filter_time": "17:30"
-      },
-      {
-        "id": "evt-033",
-        "start": "2026-06-25T20:00:00+02:00",
-        "end": "2026-06-25T22:00:00+02:00",
-        "type": "gala",
-        "subtype": "dinner",
-        "lang": "en",
-        "title": {
-          "en": "Gala Dinner"
-        },
-        "filter_date": "2026-06-25",
-        "filter_time": "20:00"
-      },
-      {
-        "id": "evt-034",
-        "start": "2026-06-26T08:15:00+02:00",
-        "end": "2026-06-26T09:15:00+02:00",
-        "duration_min": 60,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "I",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions I"
-        },
-        "filter_date": "2026-06-26",
-        "filter_time": "08:15"
-      },
-      {
-        "id": "evt-035",
-        "start": "2026-06-26T09:30:00+02:00",
-        "end": "2026-06-26T10:30:00+02:00",
-        "duration_min": 60,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "J",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions J"
-        },
-        "filter_date": "2026-06-26",
-        "filter_time": "09:30"
-      },
-      {
-        "id": "evt-036",
-        "start": "2026-06-26T10:30:00+02:00",
-        "end": "2026-06-26T11:00:00+02:00",
-        "duration_min": 30,
-        "type": "break",
-        "subtype": "coffee",
-        "lang": "en",
-        "title": {
-          "en": "Break - Claustro"
-        },
-        "filter_date": "2026-06-26",
-        "filter_time": "10:30"
-      },
-      {
-        "id": "evt-037",
-        "start": "2026-06-26T11:00:00+02:00",
-        "end": "2026-06-26T12:30:00+02:00",
-        "duration_min": 90,
-        "type": "sessions",
-        "subtype": "parallel",
-        "track": "K",
-        "lang": "en",
-        "title": {
-          "en": "Parallel Sessions K"
-        },
-        "filter_date": "2026-06-26",
-        "filter_time": "11:00"
-      },
-      {
-        "id": "evt-038",
-        "start": "2026-06-26T12:45:00+02:00",
-        "end": "2026-06-26T13:45:00+02:00",
-        "duration_min": 60,
-        "type": "presidents",
-        "subtype": "plenary",
-        "lang": "en",
-        "title": {
-          "en": "Presidents' Talks"
-        },
-        "filter_date": "2026-06-26",
-        "filter_time": "12:45"
-      },
-      {
-        "id": "evt-039",
-        "start": "2026-06-26T13:45:00+02:00",
-        "end": "2026-06-26T14:15:00+02:00",
-        "duration_min": 30,
-        "type": "closing",
-        "subtype": "plenary",
-        "lang": "en",
-        "title": {
-          "en": "Closing Remarks"
-        },
-        "filter_date": "2026-06-26",
-        "filter_time": "13:45"
-      }
-    ],
     "people": [
       {
         "id": "p-1",
-        "name": "Janel Seeley"
+        "name": "Restored"
       },
       {
         "id": "p-2",
@@ -925,168 +120,171 @@
         "id": "p-22",
         "name": "David A. Green",
         "institution": "Seattle University (USA)",
-        "photo_url": "https://iced26.es/wp-content/uploads/2025/10/2024-05-David-Green-256x300.jpg"
+        "photo_url": "https://icedonline.net/wp-content/uploads/2024/09/Green-1024x683.jpg",
+        "photo_path": "speakers/Green-1024x683.jpg"
       },
       {
         "id": "p-23",
         "name": "Ruth Graham",
         "institution": "Higher Education Consultant (UK)",
-        "photo_url": "https://iced26.es/wp-content/uploads/2025/11/Background-275x300.png"
+        "photo_url": "https://www.utoday.nl/media/cache/thumb_3x2_full/uploads/images/2018/week48/ruth%20graham.jpg",
+        "photo_path": "speakers/ruth_graham.jpg"
       },
       {
         "id": "p-24",
         "name": "Franciska Zellweger",
         "institution": "Zurich University of Teacher Education",
-        "photo_url": "https://iced26.es/wp-content/uploads/2025/12/franciska-zellweger-269x300.jpg"
+        "photo_url": "https://fh-ooe.at/assets/images/general/Die-FH-OOE/Hochschuldidaktik/Expertinnenforum-Hochschuldidaktik/2024/2022_08_17_Zellweger_Moser_Franziska_01-1222.jpg",
+        "photo_path": "speakers/Zellweger_Moser_Franziska.jpg"
       }
     ],
     "rooms": [
       {
         "id": "room-1",
+        "zoneId": "zone-1",
         "name": "AULA 1.2",
         "capacity": 42,
-        "zoneId": "zone-1",
         "session_style": "papers"
       },
       {
         "id": "room-2",
+        "zoneId": "zone-1",
         "name": "AULA 2.2",
         "capacity": 42,
-        "zoneId": "zone-1",
         "session_style": "papers"
       },
       {
         "id": "room-3",
+        "zoneId": "zone-1",
         "name": "AULA 2.4",
         "capacity": 34,
-        "zoneId": "zone-1",
         "session_style": "papers"
       },
       {
         "id": "room-4",
+        "zoneId": "zone-1",
         "name": "AULA 2.7",
         "capacity": 36,
-        "zoneId": "zone-1",
         "session_style": "papers"
       },
       {
         "id": "room-6",
+        "zoneId": "zone-2",
         "name": "CAPILLA",
         "capacity": 50,
-        "zoneId": "zone-2",
         "format": "hybrid"
       },
       {
         "id": "room-7",
+        "zoneId": "zone-2",
         "name": "SALA DE PINTURAS",
         "capacity": 180,
-        "zoneId": "zone-2",
         "format": "hybrid"
       },
       {
         "id": "room-8",
-        "name": "CLAUSTRO ALTO",
         "zoneId": "zone-2",
+        "name": "CLAUSTRO ALTO",
         "access": "semi-open"
       },
       {
         "id": "room-9",
+        "zoneId": "zone-2",
         "name": "SALON DEL ARZOBISPO",
         "capacity": 12,
-        "zoneId": "zone-2",
         "layout": "Mesa de comedor"
       },
       {
         "id": "room-10",
+        "zoneId": "zone-2",
         "name": "BIBLIOTECA",
         "capacity": 24,
-        "zoneId": "zone-2",
         "max_capacity": 30
       },
       {
         "id": "room-11",
+        "zoneId": "zone-1",
         "name": "AUDITORIO HOSPEDERIA",
         "capacity": 459,
-        "zoneId": "zone-1",
-        "overflow_room": "SALA MENOR",
-        "format": "hybrid"
+        "format": "hybrid",
+        "overflow_room": "SALA MENOR"
       },
       {
         "id": "room-12",
+        "zoneId": "zone-1",
         "name": "SALA MENOR",
         "capacity": 138,
-        "zoneId": "zone-1",
-        "overflow_room": "SALA MENOR",
-        "format": "hybrid"
+        "format": "hybrid",
+        "overflow_room": "SALA MENOR"
       },
       {
         "id": "room-13",
+        "zoneId": "zone-1",
         "name": "AULA 1.1",
         "capacity": 30,
-        "zoneId": "zone-1",
-        "session_style": "papers",
-        "format": "hybrid"
+        "format": "hybrid",
+        "session_style": "papers"
       },
       {
         "id": "room-14",
+        "zoneId": "zone-1",
         "name": "AULA 2.1",
         "capacity": 30,
-        "zoneId": "zone-1",
-        "session_style": "papers",
-        "format": "hybrid"
+        "format": "hybrid",
+        "session_style": "papers"
       },
       {
         "id": "room-15",
+        "zoneId": "zone-1",
         "name": "AULA 2.5",
         "capacity": 30,
-        "zoneId": "zone-1",
-        "session_style": "papers",
-        "format": "hybrid"
+        "format": "hybrid",
+        "session_style": "papers"
       },
       {
         "id": "room-16",
+        "zoneId": "zone-1",
         "name": "AULA 2.6",
         "capacity": 30,
-        "zoneId": "zone-1",
-        "session_style": "papers",
-        "format": "hybrid"
+        "format": "hybrid",
+        "session_style": "papers"
       },
       {
         "id": "room-17",
+        "zoneId": "zone-3",
         "name": "SALA PRESENTACIONES",
         "capacity": 50,
-        "zoneId": "zone-3",
-        "session_style": "symposia",
-        "format": "hybrid"
+        "format": "hybrid",
+        "session_style": "symposia"
       },
       {
         "id": "room-18",
+        "zoneId": "zone-3",
         "name": "AULA 11.2",
         "capacity": 30,
-        "zoneId": "zone-3",
-        "session_style": "papers",
-        "format": "hybrid"
+        "format": "hybrid",
+        "session_style": "papers"
       },
       {
         "id": "room-19",
+        "zoneId": "zone-3",
         "name": "AULA 11.3",
         "capacity": 30,
-        "zoneId": "zone-3",
-        "session_style": "papers",
-        "format": "hybrid"
+        "format": "hybrid",
+        "session_style": "papers"
       },
       {
         "id": "room-20",
+        "zoneId": "zone-3",
         "name": "SEMINARIO 12.1",
         "capacity": 12,
-        "zoneId": "zone-3",
         "session_style": "papers"
       },
       {
         "id": "room-21",
+        "zoneId": "zone-3",
         "name": "SEMINARIO 12.2",
         "capacity": 12,
-        "zoneId": "zone-3",
         "session_style": "papers"
       }
     ],
@@ -1116,121 +314,1008 @@
         }
       }
     ],
-    "socials": [
+    "events": [
       {
-        "id": "social-1"
+        "id": "evt-001",
+        "type": "registration",
+        "title": {
+          "en": "Welcome & Registration"
+        },
+        "zoneId": "zone-1",
+        "start": "2026-06-23T08:00:00+02:00",
+        "end": "2026-06-23T17:00:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "08:00"
+      },
+      {
+        "id": "evt-002",
+        "type": "instructions",
+        "subtype": "plenary",
+        "title": {
+          "en": "Welcome and brief Pre-Conference Instructions"
+        },
+        "zoneId": "zone-1",
+        "roomId": "room-11",
+        "duration_min": 15,
+        "start": "2026-06-23T08:30:00+02:00",
+        "end": "2026-06-23T08:45:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "08:30"
+      },
+      {
+        "id": "evt-003",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "A Great Teachers Retreat: A Model for Instructor Agency and Development"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T09:00:00+02:00",
+        "end": "2026-06-23T12:00:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-1",
+            "role": "presenter"
+          },
+          {
+            "personId": "p-2",
+            "role": "presenter"
+          }
+        ],
+        "tags": [
+          "teacher-dev",
+          "agency"
+        ],
+        "track": "A",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "09:00"
+      },
+      {
+        "id": "evt-004",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "Applying a Research-based Model to (re)Design High-impact Course Design Institutes"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T09:00:00+02:00",
+        "end": "2026-06-23T12:00:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-3",
+            "role": "presenter"
+          },
+          {
+            "personId": "p-4",
+            "role": "presenter"
+          },
+          {
+            "personId": "p-5",
+            "role": "presenter"
+          },
+          {
+            "personId": "p-6",
+            "role": "presenter"
+          }
+        ],
+        "tags": [
+          "teacher-dev",
+          "agency"
+        ],
+        "track": "A",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "09:00"
+      },
+      {
+        "id": "evt-005",
+        "type": "break",
+        "subtype": "lunch",
+        "title": {
+          "en": "Coffee Break"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 60,
+        "start": "2026-06-23T12:00:00+02:00",
+        "end": "2026-06-23T13:00:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "12:00"
+      },
+      {
+        "id": "evt-006",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "Inclusive Online Course Design and Teaching Best Practices: Fostering Instructor and Student Agency in the Digital Age"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T13:15:00+02:00",
+        "end": "2026-06-23T16:15:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-7",
+            "role": "presenter"
+          }
+        ],
+        "track": "B",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "13:15"
+      },
+      {
+        "id": "evt-007",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "Building Relationships and Promoting Agency Through Reflective Dialogue"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T13:15:00+02:00",
+        "end": "2026-06-23T16:15:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-1",
+            "role": "presenter"
+          }
+        ],
+        "track": "B",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "13:15"
+      },
+      {
+        "id": "evt-008",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "Internationalisation for Good: How to Sustainably Foster Global Perspectives as Academic Developers"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T16:30:00+02:00",
+        "end": "2026-06-23T19:30:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-10",
+            "role": "presenter"
+          },
+          {
+            "personId": "p-11",
+            "role": "presenter"
+          },
+          {
+            "personId": "p-12",
+            "role": "presenter"
+          }
+        ],
+        "track": "C",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "16:30"
+      },
+      {
+        "id": "evt-009",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "From Tools to Agency: Building AI Literacy for Academic Practice"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T16:30:00+02:00",
+        "end": "2026-06-23T19:30:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-13",
+            "role": "presenter"
+          }
+        ],
+        "track": "C",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "16:30"
+      },
+      {
+        "id": "evt-010",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "An Organizing Framework to develop Holistic Academic Development Programs"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T09:00:00+02:00",
+        "end": "2026-06-23T12:00:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-16",
+            "role": "presenter"
+          }
+        ],
+        "track": "A",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "09:00"
+      },
+      {
+        "id": "evt-011",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "From Participation to Strategic Impact—Multi-Level Evaluation for Centers for Teaching & Learning"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T16:30:00+02:00",
+        "end": "2026-06-23T19:30:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-21",
+            "role": "presenter"
+          }
+        ],
+        "track": "C",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "16:30"
+      },
+      {
+        "id": "evt-012",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "Implementing Trust-building Strategies in Academic Development Contexts"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T13:15:00+02:00",
+        "end": "2026-06-23T16:15:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-17",
+            "role": "presenter"
+          },
+          {
+            "personId": "p-18",
+            "role": "presenter"
+          },
+          {
+            "personId": "p-19",
+            "role": "presenter"
+          }
+        ],
+        "track": "B",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "13:15"
+      },
+      {
+        "id": "evt-013",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "Integrating Ethical Decision-Making as a Teachable Skill in Academic Development: A Dilemma-Based Approach"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T13:15:00+02:00",
+        "end": "2026-06-23T16:15:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-20",
+            "role": "presenter"
+          }
+        ],
+        "track": "B",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "13:15"
+      },
+      {
+        "id": "evt-014",
+        "type": "workshop",
+        "subtype": "parallel",
+        "title": {
+          "en": "Life-History Mandala Workshop: Understanding Educational Beliefs Through Life Histories"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 180,
+        "start": "2026-06-23T09:00:00+02:00",
+        "end": "2026-06-23T12:00:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-14",
+            "role": "presenter"
+          },
+          {
+            "personId": "p-15",
+            "role": "presenter"
+          }
+        ],
+        "track": "A",
+        "lang": "en",
+        "filter_date": "2026-06-23",
+        "filter_time": "09:00"
+      },
+      {
+        "id": "evt-015",
+        "type": "opening",
+        "subtype": "ceremony",
+        "title": {
+          "en": "Opening Ceremony"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 30,
+        "start": "2026-06-24T09:00:00+02:00",
+        "end": "2026-06-24T09:30:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-24",
+        "filter_time": "09:00"
+      },
+      {
+        "id": "evt-016",
+        "type": "keynote",
+        "title": {
+          "en": "Agency, responsibility, and values-driven educational development"
+        },
+        "zoneId": "zone-1",
+        "duration_min": 60,
+        "start": "2026-06-24T09:30:00+02:00",
+        "end": "2026-06-24T10:30:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-22",
+            "role": "keynote speakers"
+          }
+        ],
+        "lang": "en",
+        "about_presentation_url": "https://iced26.es/wp-content/uploads/2025/12/Green_ICED26_Keynote_template3-v2.pdf",
+        "video_presentation_url": "https://www.youtube.com/watch?v=sfBwyQsjxNA",
+        "filter_date": "2026-06-24",
+        "filter_time": "09:30"
+      },
+      {
+        "id": "evt-017",
+        "type": "break",
+        "subtype": "coffee",
+        "title": {
+          "en": "Break - Claustro"
+        },
+        "duration_min": 30,
+        "start": "2026-06-24T10:30:00+02:00",
+        "end": "2026-06-24T11:00:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-24",
+        "filter_time": "10:30"
+      },
+      {
+        "id": "evt-018",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions A"
+        },
+        "duration_min": 90,
+        "start": "2026-06-24T11:00:00+02:00",
+        "end": "2026-06-24T12:30:00+02:00",
+        "track": "A",
+        "lang": "en",
+        "filter_date": "2026-06-24",
+        "filter_time": "11:00"
+      },
+      {
+        "id": "evt-019",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions B"
+        },
+        "duration_min": 60,
+        "start": "2026-06-24T12:45:00+02:00",
+        "end": "2026-06-24T13:45:00+02:00",
+        "track": "B",
+        "lang": "en",
+        "filter_date": "2026-06-24",
+        "filter_time": "12:45"
+      },
+      {
+        "id": "evt-020",
+        "type": "break",
+        "subtype": "lunch",
+        "title": {
+          "en": "Lunch - Claustro"
+        },
+        "duration_min": 75,
+        "start": "2026-06-24T13:45:00+02:00",
+        "end": "2026-06-24T15:00:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-24",
+        "filter_time": "13:45"
+      },
+      {
+        "id": "evt-021",
+        "type": "international_panel",
+        "title": {
+          "en": "International Panel"
+        },
+        "duration_min": 60,
+        "start": "2026-06-24T15:00:00+02:00",
+        "end": "2026-06-24T16:00:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-24",
+        "filter_time": "15:00"
+      },
+      {
+        "id": "evt-022",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions C"
+        },
+        "duration_min": 60,
+        "start": "2026-06-24T16:15:00+02:00",
+        "end": "2026-06-24T17:15:00+02:00",
+        "track": "C",
+        "lang": "en",
+        "filter_date": "2026-06-24",
+        "filter_time": "16:15"
+      },
+      {
+        "id": "evt-023",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions D"
+        },
+        "duration_min": 60,
+        "start": "2026-06-24T17:30:00+02:00",
+        "end": "2026-06-24T18:30:00+02:00",
+        "track": "D",
+        "lang": "en",
+        "filter_date": "2026-06-24",
+        "filter_time": "17:30"
+      },
+      {
+        "id": "evt-024",
+        "type": "welcome",
+        "subtype": "reception",
+        "title": {
+          "en": "Welcome Reception"
+        },
+        "start": "2026-06-24T18:30:00+02:00",
+        "end": "2026-06-24T20:00:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-24",
+        "filter_time": "18:30"
+      },
+      {
+        "id": "evt-025",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions E"
+        },
+        "duration_min": 90,
+        "start": "2026-06-25T09:00:00+02:00",
+        "end": "2026-06-25T10:30:00+02:00",
+        "track": "E",
+        "lang": "en",
+        "filter_date": "2026-06-25",
+        "filter_time": "09:00"
+      },
+      {
+        "id": "evt-026",
+        "type": "break",
+        "title": {
+          "en": "Break - Claustro"
+        },
+        "duration_min": 30,
+        "start": "2026-06-25T10:30:00+02:00",
+        "end": "2026-06-25T11:00:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-25",
+        "filter_time": "10:30"
+      },
+      {
+        "id": "evt-027",
+        "type": "keynote",
+        "subtype": "plenary",
+        "title": {
+          "en": "Rewarding university teaching in academic careers"
+        },
+        "duration_min": 60,
+        "start": "2026-06-25T11:00:00+02:00",
+        "end": "2026-06-25T12:00:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-23",
+            "role": "keynote speakers"
+          }
+        ],
+        "lang": "en",
+        "about_presentation_url": "https://iced26.es/wp-content/uploads/2025/12/Graham_ICED26.pdf",
+        "video_presentation_url": "https://www.youtube.com/watch?v=JjGRGywtLHE",
+        "filter_date": "2026-06-25",
+        "filter_time": "11:00"
+      },
+      {
+        "id": "evt-028",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions F"
+        },
+        "duration_min": 90,
+        "start": "2026-06-25T12:15:00+02:00",
+        "end": "2026-06-25T13:45:00+02:00",
+        "track": "F",
+        "lang": "en",
+        "filter_date": "2026-06-25",
+        "filter_time": "12:15"
+      },
+      {
+        "id": "evt-029",
+        "type": "break",
+        "subtype": "lunch",
+        "title": {
+          "en": "Lunch - Claustro"
+        },
+        "duration_min": 75,
+        "start": "2026-06-25T13:45:00+02:00",
+        "end": "2026-06-25T15:00:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-25",
+        "filter_time": "13:45"
+      },
+      {
+        "id": "evt-030",
+        "type": "keynote",
+        "subtype": "plenary",
+        "title": {
+          "en": "Resourceful perspectives: Academic development for student and teacher agency"
+        },
+        "duration_min": 60,
+        "start": "2026-06-25T15:00:00+02:00",
+        "end": "2026-06-25T16:00:00+02:00",
+        "speakers": [
+          {
+            "personId": "p-24",
+            "role": "keynote speakers"
+          }
+        ],
+        "lang": "en",
+        "about_presentation_url": "https://iced26.es/wp-content/uploads/2025/12/Zellweger_ICED26.pdf",
+        "video_presentation_url": "https://media.phzh.ch/Medium/View/182323?securekey=4379284174b3",
+        "filter_date": "2026-06-25",
+        "filter_time": "15:00"
+      },
+      {
+        "id": "evt-031",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions G"
+        },
+        "duration_min": 60,
+        "start": "2026-06-25T16:15:00+02:00",
+        "end": "2026-06-25T17:15:00+02:00",
+        "track": "G",
+        "lang": "en",
+        "filter_date": "2026-06-25",
+        "filter_time": "16:15"
+      },
+      {
+        "id": "evt-032",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions H"
+        },
+        "duration_min": 60,
+        "start": "2026-06-25T17:30:00+02:00",
+        "end": "2026-06-25T18:30:00+02:00",
+        "track": "H",
+        "lang": "en",
+        "filter_date": "2026-06-25",
+        "filter_time": "17:30"
+      },
+      {
+        "id": "evt-033",
+        "type": "gala",
+        "subtype": "dinner",
+        "title": {
+          "en": "Gala Dinner"
+        },
+        "start": "2026-06-25T20:00:00+02:00",
+        "end": "2026-06-25T22:00:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-25",
+        "filter_time": "20:00"
+      },
+      {
+        "id": "evt-034",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions I"
+        },
+        "duration_min": 60,
+        "start": "2026-06-26T08:15:00+02:00",
+        "end": "2026-06-26T09:15:00+02:00",
+        "track": "I",
+        "lang": "en",
+        "filter_date": "2026-06-26",
+        "filter_time": "08:15"
+      },
+      {
+        "id": "evt-035",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions J"
+        },
+        "duration_min": 60,
+        "start": "2026-06-26T09:30:00+02:00",
+        "end": "2026-06-26T10:30:00+02:00",
+        "track": "J",
+        "lang": "en",
+        "filter_date": "2026-06-26",
+        "filter_time": "09:30"
+      },
+      {
+        "id": "evt-036",
+        "type": "break",
+        "subtype": "coffee",
+        "title": {
+          "en": "Break - Claustro"
+        },
+        "duration_min": 30,
+        "start": "2026-06-26T10:30:00+02:00",
+        "end": "2026-06-26T11:00:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-26",
+        "filter_time": "10:30"
+      },
+      {
+        "id": "evt-037",
+        "type": "sessions",
+        "subtype": "parallel",
+        "title": {
+          "en": "Parallel Sessions K"
+        },
+        "duration_min": 90,
+        "start": "2026-06-26T11:00:00+02:00",
+        "end": "2026-06-26T12:30:00+02:00",
+        "track": "K",
+        "lang": "en",
+        "filter_date": "2026-06-26",
+        "filter_time": "11:00"
+      },
+      {
+        "id": "evt-038",
+        "type": "presidents",
+        "subtype": "plenary",
+        "title": {
+          "en": "Presidents' Talks"
+        },
+        "duration_min": 60,
+        "start": "2026-06-26T12:45:00+02:00",
+        "end": "2026-06-26T13:45:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-26",
+        "filter_time": "12:45"
+      },
+      {
+        "id": "evt-039",
+        "type": "closing",
+        "subtype": "plenary",
+        "title": {
+          "en": "Closing Remarks"
+        },
+        "duration_min": 30,
+        "start": "2026-06-26T13:45:00+02:00",
+        "end": "2026-06-26T14:15:00+02:00",
+        "lang": "en",
+        "filter_date": "2026-06-26",
+        "filter_time": "13:45"
       }
     ],
-    "news": [
+    "days": [
       {
-        "id": "new-1",
-        "date_publish": "2026-06-23",
-        "title": {
-          "en": "CED26 CONFERENCE"
-        },
-        "content": {
-          "en": "Agency and Academic Development 24 - 26 June 2026."
-        },
-        "img_url": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
-        "web_url": "https://iced26.es/"
+        "id": "day-1",
+        "date": "2026-06-23"
+      },
+      {
+        "id": "day-2",
+        "date": "2026-06-24"
+      },
+      {
+        "id": "day-3",
+        "date": "2026-06-25"
+      },
+      {
+        "id": "day-4",
+        "date": "2026-06-26"
       }
     ],
     "submission_types": [
       {
         "id": "type-symposia",
         "name": "Symposia",
-        "duration_min": 90,
+        "lang": "en",
         "description": {
           "en": "Symposia offer an opportunity to present a series of coordinated contributions focused on a shared theme related to academic development. These sessions may bring together multiple perspectives, research findings, or practical innovations from different institutions, regions, or disciplines. Symposia sessions are directed by a chair, involving three to four presenters and one discussant. We welcome proposals that stimulate discussion, integrate theory and practice, and/or reflect international collaboration."
         },
+        "duration_min": 90,
         "schedule_description": {
           "en": "A symposium is scheduled for 90 minutes, allowing 15 minutes presentation time per speaker, 10 minutes for the discussant, and 20 minutes for open discussion."
-        },
-        "lang": "en"
+        }
       },
       {
         "id": "type-paper",
         "name": "Paper",
-        "duration_min": 90,
+        "lang": "en",
         "description": {
           "en": "Single paper sessions offer participants the opportunity to present and discuss completed or well-developed work. The conference organizers aim to group paper sessions according to theme or topic. Each session encourages the exchange of ideas and constructive feedback across projects with a shared focus. We welcome both: empirical papers, which must include data and results, and theoretical or conceptual papers, which provide evidence-informed analyses, literature-based frameworks, or critical reflections on relevant themes in academic development."
         },
+        "duration_min": 90,
         "schedule_description": {
           "en": "Paper sessions are scheduled for 90 minutes. Four presenters are given 15 minutes presentation time followed by 5 minutes for questions. At the end of all presentations there is a 10- minute open discussion."
-        },
-        "lang": "en"
+        }
       },
       {
         "id": "type-poster",
         "name": "Poster",
-        "duration_min": 90,
+        "lang": "en",
         "description": {
           "en": "Poster presentations offer a highly interactive format for sharing research, conceptual work, or practical initiatives in academic development. This format is ideal for fostering informal, focused dialogue and exchanging ideas with peers in a visual and engaging way. Each poster session includes several thematically linked contributions. The dynamic is as follows: each presenter gives a brief 5-minute overview of their poster to the audience gathered as a group. After all the authors’ brief presentations, an in-depth discussion between them and the audience follows, in an exhibition format, meaning participants can circulate and engage in deeper conversations with the presenters."
         },
+        "duration_min": 90,
         "schedule_description": {
           "en": "Poster sessions are scheduled for 90 minutes, following the format above. Materials for fixing posters will be provided."
-        },
-        "lang": "en"
+        }
       },
       {
         "id": "type-workshop",
         "name": "Workshop",
-        "duration_min": 90,
+        "lang": "en",
         "description": {
           "en": "Workshops offer participants focused, practice-oriented learning opportunities designed to develop new professional skills in academic development, teaching, leadership, and institutional transformation. They are intensive, hands-on professional development and grounded in evidence-based practices. Workshops should be participant-centered and designed to foster practical takeaways that attendees can apply in their own institutions or teaching contexts."
         },
+        "duration_min": 90,
         "schedule_description": {
           "en": "Workshops during the conference are scheduled for 90 minutes. At the Pre-Conference on June 23, prior to the official start of the ICED26 Conference, each workshop lasts 3 hours. They are offered as an optional add-on session."
-        },
-        "lang": "en"
+        }
       },
       {
         "id": "type-collaborative",
         "name": "Collaborative Space",
-        "duration_min": 60,
+        "lang": "en",
         "description": {
           "en": "A collaborative space is designed to support early-stage empirical or conceptual work, such as emerging research ideas or conceptual frameworks, work in progress, experiments with new tools, or initial reflections on practice. This space encourages constructive dialogue and potential collaboration, offering participants the opportunity to search for formative feedback, refine their ideas and explore partnerships."
         },
+        "duration_min": 60,
         "schedule_description": {
           "en": "Collaborative spaces are scheduled for 60 minutes. The person organising the collaborative space can organise the timing flexible and should be able to adapt the session to the number of attendees."
-        },
-        "lang": "en"
+        }
       },
       {
         "id": "type-iced-talks",
         "name": "ICED-Talks",
-        "duration_min": 60,
+        "lang": "en",
         "description": {
           "en": "Inspired by the renowned TED-Talks format, ICED-Talks offer a vibrant forum for dynamic intellectual exchange. In this session format, distinguished professionals in the field of academic development share their expertise through concise, impactful 10-minute presentations. Each talk is designed to communicate “ideas worth sharing” — whether through innovative concepts, thought-provoking perspectives, or forward-looking educational practices. The format encourages accessibility and engagement, aiming to spark reflection and dialogue among participants."
         },
+        "duration_min": 60,
         "schedule_description": {
           "en": "ICED-Talks are scheduled in 60-minute sessions, featuring four speakers. While slides are welcome, presenters are encouraged to use visual imagery over text to support their storytelling and message."
-        },
-        "lang": "en"
+        }
       },
       {
         "id": "type-key-notes",
         "name": "Key Notes",
-        "duration_min": 60,
+        "lang": "en",
         "description": {
           "en": ""
         },
+        "duration_min": 60,
         "schedule_description": {
           "en": ""
-        },
-        "lang": "en"
+        }
       },
       {
         "id": "type-doctoral-colloquium",
         "name": "Doctoral Colloquium",
-        "duration_min": 60,
+        "lang": "en",
         "description": {
           "en": ""
         },
+        "duration_min": 60,
         "schedule_description": {
           "en": ""
+        }
+      }
+    ],
+    "conference_themes": [
+      {
+        "id": "sub-theme-1",
+        "name": {
+          "en": "Agency and Knowledge: Advancing Epistemologies, Innovation and Scholarship"
         },
-        "lang": "en"
+        "description": {
+          "en": "This track examines how academic developers construct, share, and apply knowledge in interdisciplinary and collaborative contexts. It highlights the scholarly foundations of academic development and explores how reflection and innovation drive advancements in teaching, learning, and institutional practices. The track also addresses the importance of digital transformation, sustainability, and inclusivity in higher education, emphasizing how these factors shape knowledge development and professional practice."
+        },
+        "topics_include": [
+          {
+            "en": "The Scholarship of Academic Development as a recognised field of research"
+          },
+          {
+            "en": "Innovative formats to generate, organise, and share knowledge"
+          },
+          {
+            "en": "Interdisciplinary communities of practice, partnerships, and networks to promote epistemic agency"
+          },
+          {
+            "en": "Frameworks and reflective practices to shape professional identities and foster epistemological growth"
+          },
+          {
+            "en": "Critical examination on disruptions, such as artificial intelligence, and their impact on knowledge creation, curriculum development and student learning, from a sustainable and inclusive perspective"
+          }
+        ]
+      },
+      {
+        "id": "sub-theme-2",
+        "name": {
+          "en": "Agency and Strategy: Enhancing Teaching, Learning and Organizational Transformation"
+        },
+        "description": {
+          "en": "This track explores the intentional, strategic actions of academic developers as change agents and leaders in teaching, learning, and curriculum enhancement across institutional and systemic levels. It examines their role in shaping teaching cultures, contributing to policy making, fostering alignment between curricula and institutional goals, and advancing organizational learning practices. The track also highlights strategies for building agile and responsive academic development units that can adapt to evolving educational needs and systemic challenges."
+        },
+        "topics_include": [
+          {
+            "en": "Strategic initiatives to shape policies and programs for teaching, learning and curriculum enhancement, and especially the initial training for novice teachers"
+          },
+          {
+            "en": "Effective strategies for collaboration across centres, faculties, and departments"
+          },
+          {
+            "en": "Alignment of academic development initiatives with institutional policies and systemic priorities"
+          },
+          {
+            "en": "Feedback, evaluation, and continuous improvement practices to foster sustainable organisational learning"
+          },
+          {
+            "en": "Resilient academic development units to navigate systemic disruptions and societal shifts"
+          }
+        ]
+      },
+      {
+        "id": "sub-theme-3",
+        "name": {
+          "en": "Agency and Students: Empowering Learners and Transforming Curriculum"
+        },
+        "description": {
+          "en": "This track examines the role of academic developers and teachers in fostering learner agency and engagement in undergraduate, postgraduate, and continuing education programmes to drive curriculum innovation and transformation. It explores how participatory approaches to curriculum design are promoted, as well as programmes fostering inclusivity and sustainability. It also reflects on the active role of students as co-creators of curricula and learning experiences."
+        },
+        "topics_include": [
+          {
+            "en": "Student agency to enhance motivation, self-regulation, and engagement in learning"
+          },
+          {
+            "en": "Support to academic staff and teachers to promote student agency"
+          },
+          {
+            "en": "Partnerships between students and teachers to co-create meaningful and transformative learning experiences"
+          },
+          {
+            "en": "Institutional collaboration between students, teachers, and academic leaders to enrich curriculum design"
+          },
+          {
+            "en": "Design of competence-oriented, inclusive and sustainable curricula and university programmes that address societal and workforce needs"
+          }
+        ]
+      }
+    ],
+    "news": [
+      {
+        "id": "new-1",
+        "title": {
+          "en": "CED26 CONFERENCE"
+        },
+        "content": {
+          "en": "Agency and Academic Development 24 - 26 June 2026."
+        },
+        "date_publish": "2026-06-23",
+        "img_url": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "web_url": "https://iced26.es/"
+      },
+      {
+        "id": "new-2",
+        "title": {
+          "en": "CED26 CONFERENCE"
+        },
+        "content": {
+          "en": "Agency and Academic Development 24 - 26 June 2026."
+        },
+        "date_publish": "2026-06-23",
+        "img_url": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "web_url": "https://iced26.es/#keynote-speakers"
+      },
+      {
+        "id": "new-3",
+        "title": {
+          "en": "CED26 CONFERENCE"
+        },
+        "content": {
+          "en": "Agency and Academic Development 24 - 26 June 2026."
+        },
+        "date_publish": "2026-06-23",
+        "img_url": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "web_url": "https://iced26.es/"
+      },
+      {
+        "id": "new-4",
+        "title": {
+          "en": "CED26 CONFERENCE"
+        },
+        "content": {
+          "en": "Agency and Academic Development 24 - 26 June 2026."
+        },
+        "date_publish": "2026-06-23",
+        "img_url": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "web_url": "https://iced26.es/"
+      }
+    ],
+    "socials": [
+      {
+        "id": "social-1",
+        "title": {
+          "en": "Welcome Cocktail"
+        },
+        "description": {
+          "en": "Join us for a welcome drink at the conference venue."
+        },
+        "date": "2026-04-20",
+        "time": "19:00",
+        "location": {
+          "en": "Main Hall"
+        }
+      },
+      {
+        "id": "social-2",
+        "title": {
+          "en": "Conference Dinner"
+        },
+        "description": {
+          "en": "Gala dinner at the city castle."
+        },
+        "date": "2026-04-21",
+        "time": "21:00",
+        "location": {
+          "en": "City Castle"
+        }
+      },
+      {
+        "id": "social-3",
+        "title": {
+          "en": "Farewell Party"
+        },
+        "description": {
+          "en": "Say goodbye to your colleagues with some music and drinks."
+        },
+        "date": "2026-04-22",
+        "time": "22:00",
+        "location": {
+          "en": "Rooftop Bar"
+        }
       }
     ]
   }
