@@ -1,0 +1,33 @@
+import 'package:flutter/material.dart';
+
+import 'package:iced26/domain/entities/category.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/category_style_config.dart';
+
+/// Mapea una [Category] de dominio a una configuración de estilo de UI.
+class CategoryUiMapper {
+  static CategoryStyleConfig resolve(Category category) {
+    final name = category.name.toLowerCase();
+
+    if (name.contains('workshop')) {
+      return const CategoryStyleConfig(Icons.handyman, Colors.orange);
+    }
+
+    if (name.contains('paper')) {
+      return const CategoryStyleConfig(Icons.article, Colors.blue);
+    }
+
+    if (name.contains('poster')) {
+      return const CategoryStyleConfig(Icons.collections, Colors.green);
+    }
+
+    if (name.contains('talks')) {
+      return const CategoryStyleConfig(Icons.record_voice_over, Colors.red);
+    }
+
+    if (name.contains('symposia')) {
+      return const CategoryStyleConfig(Icons.forum, Colors.purple);
+    }
+
+    return const CategoryStyleConfig(Icons.grid_view, Colors.teal);
+  }
+}

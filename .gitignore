@@ -1,6 +1,9 @@
 # Bin
 00_*/
 
+# Database
+**.g.dart
+
 # Miscellaneous
 *.class
 *.log
@@ -46,3 +49,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
