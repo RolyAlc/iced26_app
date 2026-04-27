@@ -33,6 +33,7 @@ flutter:
     - assets/data/app_data.json
     - assets/brand/
     - assets/brand/iconApp/
+    - assets/speakers/
 flutter_icons:
   # Añadimos el logo como icono de la app.
   android: true
