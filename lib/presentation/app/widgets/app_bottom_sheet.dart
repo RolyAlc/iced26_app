@@ -78,19 +78,14 @@ class AppBottomSheet extends StatelessWidget {
     final statusBarHeight = mediaQuery.padding.top;
     final keyboardHeight = mediaQuery.viewInsets.bottom;
     final screenHeight = mediaQuery.size.height;
-    final bottomInset = keyboardHeight > 0
-        ? keyboardHeight
-        : mediaQuery.viewPadding.bottom;
-
     final ceilingMargin = (screenHeight * 0.10).clamp(
       statusBarHeight + 12,
       100.0,
     );
-
-    final availableHeight = screenHeight - ceilingMargin - bottomInset;
+    final availableHeight = screenHeight - ceilingMargin - keyboardHeight;
 
     return _BottomSheetLayout(
-      keyboardHeight: bottomInset,
+      keyboardHeight: keyboardHeight,
       availableHeight: availableHeight,
       screenHeight: screenHeight,
     );

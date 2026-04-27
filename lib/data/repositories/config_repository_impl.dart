@@ -6,6 +6,7 @@ import 'package:iced26/data/mappers/app_data_mapper.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/data/sources/local/json/local_json_service.dart';
+import 'package:iced26/domain/entities/app_data.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
 import 'package:iced26/core/services/logger/logger.dart';
@@ -61,7 +62,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Carga y mapea el JSON a modelo de dominio.
-  Future<dynamic> _loadAppData() async {
+  Future<AppData> _loadAppData() async {
     final jsonString = await _jsonService.loadAppDataJson();
     final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
 
@@ -81,7 +82,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta todos los datos en batch.
-  void _insertAllData(Batch batch, dynamic appData) {
+  void _insertAllData(Batch batch, AppData appData) {
     _insertDays(batch, appData);
     _insertSubmissionTypes(batch, appData);
     _insertRooms(batch, appData);
@@ -94,7 +95,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta los días en la tabla days.
-  void _insertDays(Batch batch, dynamic appData) {
+  void _insertDays(Batch batch, AppData appData) {
     batch.insertAll(
       _db.days,
       appData.collections.days.map(
@@ -105,7 +106,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta los tipos de submission en la tabla submissionTypes.
-  void _insertSubmissionTypes(Batch batch, dynamic appData) {
+  void _insertSubmissionTypes(Batch batch, AppData appData) {
     batch.insertAll(
       _db.submissionTypes,
       appData.collections.submissionTypes.map(
@@ -123,7 +124,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta las salas en la tabla rooms.
-  void _insertRooms(Batch batch, dynamic appData) {
+  void _insertRooms(Batch batch, AppData appData) {
     batch.insertAll(
       _db.rooms,
       appData.collections.rooms.map(
@@ -140,7 +141,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta las zonas en la tabla zones.
-  void _insertZones(Batch batch, dynamic appData) {
+  void _insertZones(Batch batch, AppData appData) {
     batch.insertAll(
       _db.zones,
       appData.collections.zones.map((z) {
@@ -160,7 +161,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta los eventos en la tabla events.
-  void _insertEvents(Batch batch, dynamic appData) {
+  void _insertEvents(Batch batch, AppData appData) {
     batch.insertAll(
       _db.events,
       appData.collections.events.map(
@@ -193,7 +194,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta las noticias en la tabla news.
-  void _insertNews(Batch batch, dynamic appData) {
+  void _insertNews(Batch batch, AppData appData) {
     batch.insertAll(
       _db.news,
       appData.collections.news.map(
@@ -211,7 +212,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta las actividades sociales en la tabla socialActivities.
-  void _insertSocialActivities(Batch batch, dynamic appData) {
+  void _insertSocialActivities(Batch batch, AppData appData) {
     batch.insertAll(
       _db.socialActivities,
       appData.collections.socials.map(
@@ -230,7 +231,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta las personas en la tabla people.
-  void _insertPeople(Batch batch, dynamic appData) {
+  void _insertPeople(Batch batch, AppData appData) {
     batch.insertAll(
       _db.people,
       appData.collections.people.map(
@@ -249,7 +250,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta la configuración del tema en la tabla appConfigs.
-  void _insertTheme(Batch batch, dynamic appData) {
+  void _insertTheme(Batch batch, AppData appData) {
     batch.insert(
       _db.appConfigs,
       AppConfigsCompanion.insert(

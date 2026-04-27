@@ -5,6 +5,7 @@ import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/widgets/app_navigation_bar.dart';
 import 'package:iced26/presentation/features/home/view/home_view.dart';
 import 'package:iced26/presentation/features/schedule/view/schedule_view.dart';
+import 'package:iced26/presentation/features/settings/view/settings_view.dart';
 import 'package:iced26/presentation/core/ui_engine/ui_metrics.dart';
 
 /// Shell principal de la aplicación que maneja la navegación entre pantallas.
@@ -36,12 +37,12 @@ class AppShell extends ConsumerWidget {
         extendBody: true,
         body: IndexedStack(
           index: currentIndex,
-          children: const [
-            HomeView(),
-            ScheduleView(),
-            Center(child: Text('Search (Próximamente)')),
-            Center(child: Text('Diary (Próximamente)')),
-            Center(child: Text('Settings (Próximamente)')),
+          children: [
+            const HomeView(),
+            const ScheduleView(),
+            const Center(child: Text('Search (Próximamente)')),
+            const Center(child: Text('Diary (Próximamente)')),
+            const SettingsView(),
           ],
         ),
         bottomNavigationBar: const AppNavigationBar(),

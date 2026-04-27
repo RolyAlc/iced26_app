@@ -108,11 +108,9 @@ class EventDetailContent extends ConsumerWidget {
   Widget _buildTitle(BuildContext context, String locale) {
     return Text(
       event.title.resolve(locale),
-      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-        fontWeight: FontWeight.w900,
-        height: 1.0,
-        letterSpacing: -1.0,
-      ),
+      style: Theme.of(
+        context,
+      ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900),
     );
   }
 
