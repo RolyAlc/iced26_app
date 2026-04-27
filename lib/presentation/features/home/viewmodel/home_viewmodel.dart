@@ -53,7 +53,9 @@ List<Event> _sortLiveAndNextEvents(List<Event> events, DateTime now) {
     final pb = _statusPriority(EventStatusResolver.resolve(b, now: now));
 
     // Primero por estado, luego por fecha de inicio
-    if (pa != pb) return pa.compareTo(pb);
+    if (pa != pb) {
+      return pa.compareTo(pb);
+    }
     return (a.startDate ?? maxDate).compareTo(b.startDate ?? maxDate);
   });
 
@@ -72,7 +74,9 @@ List<Event> _sortedByRelevance(List<Event> events) {
   final now = DateTime.now();
   final liveOrNext = _sortLiveAndNextEvents(events, now);
 
-  if (liveOrNext.isNotEmpty) return liveOrNext;
+  if (liveOrNext.isNotEmpty) {
+    return liveOrNext;
+  }
 
   return _sortByDateDescending(events);
 }
@@ -86,7 +90,9 @@ Map<String, Person> _buildPeopleIndex(List<Person> allPeople) {
 String? _resolveSpeakerPhoto(Event event, Map<String, Person> peopleById) {
   for (final id in event.speakerIds) {
     final photoUrl = peopleById[id]?.photoUrl;
-    if (photoUrl != null && photoUrl.isNotEmpty) return photoUrl;
+    if (photoUrl != null && photoUrl.isNotEmpty) {
+      return photoUrl;
+    }
   }
   return null;
 }

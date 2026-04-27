@@ -20,7 +20,9 @@ class HomeNewsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (_isEmpty()) return const SizedBox.shrink();
+    if (_isEmpty()) {
+      return const SizedBox.shrink();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,7 +173,9 @@ class HomeNewsSection extends StatelessWidget {
     try {
       final bool canLaunch = await canLaunchUrl(url);
 
-      if (!context.mounted) return;
+      if (!context.mounted) {
+        return;
+      }
 
       if (canLaunch) {
         await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -185,7 +189,9 @@ class HomeNewsSection extends StatelessWidget {
 
   /// Error UI al abrir enlace.
   void _showError(BuildContext context, String urlString) {
-    if (!context.mounted) return;
+    if (!context.mounted) {
+      return;
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Could not open the link: $urlString')),

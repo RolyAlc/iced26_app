@@ -46,7 +46,9 @@ class ConfigRepositoryImpl implements ConfigRepository {
         ..where((t) => t.key.equals('theme_config'));
 
       final result = await query.getSingleOrNull();
-      if (result == null) return const Success(null);
+      if (result == null) {
+        return const Success(null);
+      }
 
       final Map<String, dynamic> data =
           jsonDecode(result.value) as Map<String, dynamic>;

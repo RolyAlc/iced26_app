@@ -68,10 +68,10 @@ class GetHomeDataUseCase {
       socialActivities: (results.socials as Success<List<SocialActivity>>).data,
       subTypes: (results.subTypes as Success<List<SubmissionType>>).data,
     ));
-    }
+  }
 
-    /// Busca el primer fallo en los resultados.
-    Failure? _findFailure(
+  /// Busca el primer fallo en los resultados.
+  Failure? _findFailure(
     ({
       Result days,
       Result events,
@@ -83,7 +83,7 @@ class GetHomeDataUseCase {
       Result subTypes,
     })
     results,
-    ) {
+  ) {
     final allResults = [
       results.days,
       results.events,
@@ -102,5 +102,5 @@ class GetHomeDataUseCase {
     }
 
     return null;
-    }
+  }
 }

@@ -46,7 +46,9 @@ class _HomeFeaturedSectionState extends State<HomeFeaturedSection> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.featuredEvents.isEmpty) return const _FeaturedEmptyState();
+    if (widget.featuredEvents.isEmpty) {
+      return const _FeaturedEmptyState();
+    }
 
     final items = _items;
 

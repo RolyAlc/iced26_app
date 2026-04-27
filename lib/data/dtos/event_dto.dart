@@ -134,12 +134,18 @@ class EventDTO {
 
   /// Parsea una fecha y la convierte a la hora local.
   static DateTime? _parseDate(String? value) {
-    if (value == null) return null;
-    if (value.isEmpty) return null;
+    if (value == null) {
+      return null;
+    }
+    if (value.isEmpty) {
+      return null;
+    }
 
     final DateTime? parsed = DateTime.tryParse(value);
 
-    if (parsed == null) return null;
+    if (parsed == null) {
+      return null;
+    }
 
     return parsed.toLocal();
   }

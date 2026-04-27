@@ -44,7 +44,9 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.speakers.isEmpty) return const SizedBox.shrink();
+    if (widget.speakers.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Column(
       mainAxisSize: MainAxisSize.min,

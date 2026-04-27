@@ -190,7 +190,9 @@ class TypeIcon extends StatelessWidget {
       child: Icon(style.icon, color: style.color, size: 20),
     );
 
-    if (badge == null) return container;
+    if (badge == null) {
+      return container;
+    }
 
     return Stack(
       clipBehavior: Clip.none,

@@ -2,7 +2,7 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 
 /// Elemento de la lista del Schedule: evento individual, grupo de paralelas
-/// o separador de día (cuando se muestra vista multi-día por filtro activo).
+/// o separador de día.
 sealed class ScheduleItem {}
 
 class SingleEventItem extends ScheduleItem {
@@ -21,7 +21,7 @@ class ParallelGroupItem extends ScheduleItem {
   });
 }
 
-/// Separador visual entre días cuando el filtro multi-día está activo.
+/// Separador visual entre días.
 class DaySeparatorItem extends ScheduleItem {
   final String label;
   final String date;

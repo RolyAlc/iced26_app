@@ -17,7 +17,9 @@ class HomeSocialActivitiesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (socials.isEmpty) return const SizedBox.shrink();
+    if (socials.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) {

@@ -20,7 +20,9 @@ class FilterPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final homeData = ref.watch(homeViewModelProvider).valueOrNull;
-    if (homeData == null) return const SizedBox.shrink();
+    if (homeData == null) {
+      return const SizedBox.shrink();
+    }
 
     final filters = ref.watch(searchProvider.select((s) => s.filters));
     final data = _buildFilterData(homeData);
@@ -158,7 +160,9 @@ List<Widget> _buildStatusSection(SearchFilterState filters, Search notifier) {
 }
 
 List<Widget> _section(String label, List<Widget> chips) {
-  if (chips.isEmpty) return [];
+  if (chips.isEmpty) {
+    return [];
+  }
 
   return [
     _SectionLabel(label),

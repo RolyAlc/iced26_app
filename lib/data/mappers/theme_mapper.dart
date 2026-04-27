@@ -18,7 +18,9 @@ class ThemeMapper {
 
   /// Convierte un mapa dinámico en un mapa de Strings puro para colores
   static Map<String, String> _parseColors(dynamic rawColors) {
-    if (rawColors is! Map) return {};
+    if (rawColors is! Map) {
+      return {};
+    }
 
     return rawColors.map(
       (key, value) => MapEntry(key.toString(), value?.toString() ?? ''),
@@ -26,7 +28,9 @@ class ThemeMapper {
   }
 
   static Map<String, dynamic> _ensureMap(dynamic value) {
-    if (value is Map<String, dynamic>) return value;
+    if (value is Map<String, dynamic>) {
+      return value;
+    }
     return {};
   }
 }

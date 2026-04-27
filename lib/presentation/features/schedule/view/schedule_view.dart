@@ -9,6 +9,7 @@ import 'package:iced26/presentation/features/schedule/view/widgets/event_card.da
 import 'package:iced26/presentation/features/schedule/view/widgets/parallel_block.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
+import 'package:iced26/presentation/helpers/date_helper.dart';
 import 'package:iced26/presentation/widgets/app_page.dart';
 
 /// Vista principal del schedule.
@@ -27,7 +28,6 @@ class ScheduleView extends ConsumerWidget {
 }
 
 /// Contenido principal del schedule.
-/// SRP: solo coordina estado + composición UI.
 class _ScheduleContent extends ConsumerWidget {
   const _ScheduleContent({required this.state});
 
@@ -56,7 +56,7 @@ class _ScheduleContent extends ConsumerWidget {
   }
 }
 
-/// Estado derivado de UI (separación de lógica vs vista)
+/// Estado derivado de UI.
 class _ScheduleUiState {
   _ScheduleUiState({
     required this.selectedDayIndex,
@@ -73,7 +73,9 @@ class _ScheduleUiState {
   final int sectionsLength;
 
   int get safeDayIndex {
-    if (sectionsLength == 0) return 0;
+    if (sectionsLength == 0) {
+      return 0;
+    }
     return selectedDayIndex.clamp(0, sectionsLength - 1);
   }
 
@@ -88,7 +90,7 @@ class _ScheduleUiState {
   }
 }
 
-/// Body separado (SRP: render de lista)
+/// Cuerpo del schedule.
 class _ScheduleBody extends StatelessWidget {
   const _ScheduleBody({required this.uiState});
 
@@ -106,7 +108,7 @@ class _ScheduleBody extends StatelessWidget {
   }
 }
 
-/// Builder de items (elimina switch del build principal)
+/// Builder de items.
 class _ScheduleItemBuilder {
   static Widget build(ScheduleItem item) {
     return switch (item) {
@@ -120,31 +122,12 @@ class _ScheduleItemBuilder {
   }
 }
 
+/// Separador de días.
 class _DaySeparator extends StatelessWidget {
   const _DaySeparator({required this.label, required this.date});
 
   final String label;
   final String date;
-
-  String _formatDate() {
-    final dt = DateTime.tryParse(date);
-    if (dt == null) return label;
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '$label · ${months[dt.month - 1]} ${dt.day}';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +137,7 @@ class _DaySeparator extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            _formatDate(),
+            DateHelper.formatShortDate(date),
             style: theme.textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.primary,
@@ -172,7 +155,7 @@ class _DaySeparator extends StatelessWidget {
   }
 }
 
-/// Header refactorizado (sin lógica en build principal)
+/// Header refactorizado.
 class _ScheduleHeader extends StatelessWidget {
   const _ScheduleHeader({
     required this.categories,
@@ -209,29 +192,6 @@ class _ScheduleHeader extends StatelessWidget {
       onFavoritesToggle: () =>
           ref.read(showOnlyFavoritesProvider.notifier).update((v) => !v),
     );
-  }
-
-  /// Formatea la fecha a un formato legible para la UI
-  String _formatTabLabel(String date) {
-    final dt = DateTime.tryParse(date);
-    if (dt == null) return date;
-
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-
-    return '${months[dt.month - 1]} ${dt.day}';
   }
 
   @override
@@ -275,7 +235,7 @@ class _ScheduleHeader extends StatelessWidget {
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                   tabs: sections
-                      .map((s) => Tab(text: _formatTabLabel(s.date)))
+                      .map((s) => Tab(text: DateHelper.formatShortDate(s.date)))
                       .toList(),
                 ),
               ),

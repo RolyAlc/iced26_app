@@ -142,7 +142,9 @@ class _AppPageState extends ConsumerState<AppPage> {
 
   /// Altura expandida del header: medida real → fallback prop → fallback global.
   double _resolveExpandedHeaderHeight() {
-    if (_headerHeight > 0) return _headerHeight;
+    if (_headerHeight > 0) {
+      return _headerHeight;
+    }
     return widget.headerFallbackHeight ?? AppLayout.pageHeaderFallbackHeight;
   }
 

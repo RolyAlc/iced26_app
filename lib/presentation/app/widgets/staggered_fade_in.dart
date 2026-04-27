@@ -73,7 +73,9 @@ class _StaggeredFadeInState extends State<StaggeredFadeIn>
   /// Construye el widget de animación escalonada.
   @override
   Widget build(BuildContext context) {
-    if (!StaggeredFadeIn.kEnabled) return widget.child;
+    if (!StaggeredFadeIn.kEnabled) {
+      return widget.child;
+    }
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(position: _slideAnimation, child: widget.child),

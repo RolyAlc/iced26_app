@@ -22,7 +22,7 @@ class CollectionsMapper {
     return Collections(
       days: _toListOf(rawDays, DayMapper.fromMap),
       events: _toListOf(rawEvents, EventMapper.fromMap),
-      people: _toListOf(rawPeople, PersonMapper.fromMap),
+      people: _toListOf(rawPeople, PeopleMapper.fromMap),
       rooms: _toListOf(rawRooms, RoomMapper.fromMap),
       zones: _toListOf(rawZones, ZoneMapper.fromMap),
       submissionTypes: _toListOf(rawSubTypes, SubmissionTypeMapper.fromMap),

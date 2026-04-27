@@ -48,9 +48,13 @@ class AppPageFlexibleSpace extends StatelessWidget {
   }
 
   double _computeProgress(FlexibleSpaceBarSettings? settings) {
-    if (settings == null) return 0.0;
+    if (settings == null) {
+      return 0.0;
+    }
     final range = settings.maxExtent - settings.minExtent;
-    if (range <= 0) return 1.0;
+    if (range <= 0) {
+      return 1.0;
+    }
     return 1.0 -
         ((settings.currentExtent - settings.minExtent) / range).clamp(0.0, 1.0);
   }

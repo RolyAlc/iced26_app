@@ -4,7 +4,9 @@ class DateHelper {
   /// Si la fecha no es válida, devuelve el string original.
   static String formatShortDate(String date) {
     final dt = DateTime.tryParse(date);
-    if (dt == null) return date;
+    if (dt == null) {
+      return date;
+    }
 
     const months = [
       'Jan',

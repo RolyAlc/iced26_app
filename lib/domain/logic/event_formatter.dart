@@ -33,7 +33,9 @@ class EventFormatter {
   }
 
   String _formatTime(DateTime? time) {
-    if (time == null) return 'N/A';
+    if (time == null) {
+      return 'N/A';
+    }
     final hour = time.hour.toString().padLeft(2, '0');
     final minute = time.minute.toString().padLeft(2, '0');
 

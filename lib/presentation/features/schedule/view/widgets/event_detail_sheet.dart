@@ -27,7 +27,9 @@ class EventDetailContent extends ConsumerWidget {
   const EventDetailContent({super.key, required this.event});
 
   String? _duration() {
-    if (event.startDate == null || event.endDate == null) return null;
+    if (event.startDate == null || event.endDate == null) {
+      return null;
+    }
     final duration = const EventFormatter().formatDuration(
       event.startDate,
       event.endDate,

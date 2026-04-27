@@ -143,7 +143,7 @@ class _ResultsSection extends StatelessWidget {
   }
 }
 
-/// Encapsula lógica de decisión de UI (SRP fuerte)
+/// Encapsula lógica de decisión de UI.
 class _SearchResultBuilder {
   Widget build({
     required BuildContext context,

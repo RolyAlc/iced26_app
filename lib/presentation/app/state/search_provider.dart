@@ -64,7 +64,9 @@ class Search extends _$Search {
   SearchState build() => SearchState();
 
   void performSearch(String text) {
-    if (text == state.query) return;
+    if (text == state.query) {
+      return;
+    }
 
     state = SearchState(
       query: text,
@@ -184,7 +186,9 @@ class Search extends _$Search {
   }
 
   String getRoomName(String? roomId) {
-    if (roomId == null) return 'No room';
+    if (roomId == null) {
+      return 'No room';
+    }
 
     final rooms = ref.read(homeViewModelProvider).value?.allRooms ?? [];
 
@@ -204,7 +208,9 @@ class Search extends _$Search {
 
   List<Event> _computeResults(String query, SearchFilterState filters) {
     final homeData = ref.read(homeViewModelProvider).value;
-    if (homeData == null) return [];
+    if (homeData == null) {
+      return [];
+    }
 
     List<Event> events = homeData.allEvents;
 
@@ -212,7 +218,9 @@ class Search extends _$Search {
       events = _applyTextSearch(events, query);
     }
 
-    if (!filters.isActive) return events;
+    if (!filters.isActive) {
+      return events;
+    }
 
     return events.where((e) => _matchesFilters(e, filters)).toList();
   }
@@ -236,7 +244,9 @@ class Search extends _$Search {
 
   bool _matchesFilters(Event e, SearchFilterState f) {
     if (f.selectedDay != null) {
-      if (e.startDate == null) return false;
+      if (e.startDate == null) {
+        return false;
+      }
 
       if (!e.startDate!.toIso8601String().startsWith(f.selectedDay!)) {
         return false;

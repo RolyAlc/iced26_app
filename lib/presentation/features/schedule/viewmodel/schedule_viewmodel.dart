@@ -25,11 +25,6 @@ final showOnlyFavoritesProvider = StateProvider<bool>((ref) => false);
 const _parallelTypes = {EventType.sessions, EventType.workshop};
 
 /// Busca todos los eventos paralelos al [event] dado dentro de [events].
-///
-/// Se consideran paralelos aquellos que:
-/// - No han sido procesados aún ([processedIds])
-/// - Tienen el mismo [startDate]
-/// - Tienen el mismo [type]
 List<Event> _findParallelEvents({
   required Event event,
   required List<Event> events,
@@ -44,9 +39,6 @@ List<Event> _findParallelEvents({
 }
 
 /// Convierte una lista de eventos paralelos en un [ScheduleItem].
-///
-/// Si hay más de uno, devuelve un [ParallelGroupItem].
-/// Si solo hay uno, devuelve un [SingleEventItem].
 ScheduleItem _buildItemFromParallels({
   required Event event,
   required List<Event> parallels,
@@ -71,8 +63,7 @@ void _markAsProcessed({
   }
 }
 
-/// Agrupa eventos con mismo [startDate] y mismo [type] en [ParallelGroupItem].
-/// El resto quedan como [SingleEventItem].
+/// Agrupa eventos con mismo [startDate] y mismo [type].
 List<ScheduleItem> _groupEvents(List<Event> events) {
   final items = <ScheduleItem>[];
   final processedIds = <String>{};
@@ -127,7 +118,9 @@ List<Event> _filterEventsByDay({
   required String dayDate,
 }) {
   return events.where((event) {
-    if (event.startDate == null) return false;
+    if (event.startDate == null) {
+      return false;
+    }
     return event.startDate!.toIso8601String().startsWith(dayDate);
   }).toList();
 }
@@ -205,18 +198,18 @@ List<ScheduleItem> _filterByFavorites({
 /// Calcula el índice de día seguro: si no hay secciones devuelve 0,
 /// si el índice supera el rango lo recorta al máximo posible.
 int _safeDay({required int dayIndex, required int sectionCount}) {
-  if (sectionCount == 0) return 0;
+  if (sectionCount == 0) {
+    return 0;
+  }
   return dayIndex.clamp(0, sectionCount - 1);
 }
 
 /// Devuelve los [ScheduleItem] visibles aplicando los filtros activos.
-///
-/// Si hay categoría o favoritos activos → muestra todos los días con
-/// [DaySeparatorItem] como separador entre ellos.
-/// Si no hay filtro → muestra solo el día seleccionado.
 final visibleItemsProvider = Provider<List<ScheduleItem>>((ref) {
   final state = ref.watch(scheduleViewModelProvider).valueOrNull;
-  if (state == null || state.sections.isEmpty) return [];
+  if (state == null || state.sections.isEmpty) {
+    return [];
+  }
 
   final dayIndex = ref.watch(selectedDayIndexProvider);
   final category = ref.watch(selectedScheduleCategoryProvider);
@@ -251,7 +244,6 @@ final visibleItemsProvider = Provider<List<ScheduleItem>>((ref) {
 });
 
 /// ViewModel para la pantalla de Schedule.
-/// Única responsabilidad: orquestar la carga de datos y construir [ScheduleState].
 @riverpod
 class ScheduleViewModel extends _$ScheduleViewModel {
   // [:: Futuro] Obtener locale dinámico desde configuración del usuario

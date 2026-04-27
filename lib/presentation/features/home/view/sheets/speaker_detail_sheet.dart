@@ -47,7 +47,9 @@ class _SpeakerImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (photoUrl == null) return const SizedBox();
+    if (photoUrl == null) {
+      return const SizedBox();
+    }
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.m),
@@ -74,7 +76,9 @@ class _SpeakerInstitution extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (institution == null) return const SizedBox();
+    if (institution == null) {
+      return const SizedBox();
+    }
 
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -111,7 +115,9 @@ class _SpeakerSessions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (events.isEmpty) return const SizedBox();
+    if (events.isEmpty) {
+      return const SizedBox();
+    }
 
     final textTheme = Theme.of(context).textTheme;
 

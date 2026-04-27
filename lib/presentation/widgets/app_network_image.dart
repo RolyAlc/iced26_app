@@ -25,7 +25,9 @@ class AppNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (url.isEmpty) return _fallback(context);
+    if (url.isEmpty) {
+      return _fallback(context);
+    }
 
     if (_isAsset) {
       return Image.asset(
@@ -44,7 +46,9 @@ class AppNetworkImage extends StatelessWidget {
       fit: fit,
       errorBuilder: (_, _, _) => _fallback(context),
       loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
+        if (loadingProgress == null) {
+          return child;
+        }
         final colors = Theme.of(context).colorScheme;
         return SizedBox(
           width: width,
@@ -62,7 +66,9 @@ class AppNetworkImage extends StatelessWidget {
 
   /// Fallback si la URL está vacía o la carga falla.
   Widget _fallback(BuildContext context) {
-    if (placeholder != null) return placeholder!;
+    if (placeholder != null) {
+      return placeholder!;
+    }
     final colors = Theme.of(context).colorScheme;
     return Container(
       width: width,

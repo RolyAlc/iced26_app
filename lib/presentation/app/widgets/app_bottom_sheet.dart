@@ -166,7 +166,9 @@ class AppBottomSheet extends StatelessWidget {
   }
 
   Widget _buildActions() {
-    if (actions == null) return const SizedBox.shrink();
+    if (actions == null) {
+      return const SizedBox.shrink();
+    }
 
     return Padding(
       padding: _contentPadding,

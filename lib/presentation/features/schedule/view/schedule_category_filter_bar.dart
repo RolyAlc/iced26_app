@@ -5,7 +5,6 @@ import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/presentation/helpers/event_type_style.dart';
 
 /// Barra de filtros de categoria para la pantalla Schedule.
-/// El chip "My Schedule" aparece primero si se proveen los callbacks de favoritos.
 class ScheduleCategoryFilterBar extends StatelessWidget {
   const ScheduleCategoryFilterBar({
     super.key,
@@ -18,7 +17,6 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
 
   final List<EventType> categories;
   final EventType? selected;
-
   final ValueChanged<EventType?> onSelect;
   final VoidCallback onFavoritesTap;
   final bool isFavoritesMode;
