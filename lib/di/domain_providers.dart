@@ -1,42 +1,141 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/data_providers.dart';
+import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/domain/entities/my_schedule_item.dart';
+import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/usecases/get_home_data_use_case.dart';
 import 'package:iced26/domain/usecases/get_schedule_data_use_case.dart';
-import 'package:iced26/domain/usecases/watch_favorites_use_case.dart';
+import 'package:iced26/domain/usecases/clear_favorites_use_case.dart';
 import 'package:iced26/domain/usecases/toggle_favorite_use_case.dart';
+import 'package:iced26/domain/usecases/watch_favorites_use_case.dart';
+import 'package:iced26/domain/usecases/toggle_presentation_favorite_use_case.dart';
+import 'package:iced26/domain/usecases/watch_presentation_favorites_use_case.dart';
 
 part 'domain_providers.g.dart';
 
-/// Provee el caso de uso para obtener los datos de la Home.
+/// Provee el caso de uso para obtener los datos de la página de inicio.
 @riverpod
-GetHomeDataUseCase getHomeDataUseCase(GetHomeDataUseCaseRef ref) {
+GetHomeDataUseCase getHomeDataUseCase(Ref ref) {
   final scheduleRepo = ref.watch(scheduleRepositoryProvider);
   final homeRepo = ref.watch(homeRepositoryProvider);
   return GetHomeDataUseCase(scheduleRepo, homeRepo);
 }
 
-/// Provee el caso de uso para obtener los datos de Schedule.
+/// Provee el caso de uso para obtener los datos de la página de horarios.
 @riverpod
-GetScheduleDataUseCase getScheduleDataUseCase(GetScheduleDataUseCaseRef ref) {
+GetScheduleDataUseCase getScheduleDataUseCase(Ref ref) {
   final scheduleRepo = ref.watch(scheduleRepositoryProvider);
   return GetScheduleDataUseCase(scheduleRepo);
 }
 
-/// Provee el caso de uso para observar favoritos en tiempo real.
+/// Provee el caso de uso para observar los favoritos.
 @riverpod
-WatchFavoritesUseCase watchFavoritesUseCase(WatchFavoritesUseCaseRef ref) {
+WatchFavoritesUseCase watchFavoritesUseCase(Ref ref) {
   return WatchFavoritesUseCase(ref.watch(favoritesRepositoryProvider));
 }
 
-/// Provee el caso de uso para alternar un favorito.
+/// Provee el caso de uso para alternar los favoritos.
 @riverpod
-ToggleFavoriteUseCase toggleFavoriteUseCase(ToggleFavoriteUseCaseRef ref) {
+ToggleFavoriteUseCase toggleFavoriteUseCase(Ref ref) {
   return ToggleFavoriteUseCase(ref.watch(favoritesRepositoryProvider));
 }
 
-/// IDs de eventos marcados como favoritos (stream reactivo desde Drift).
+/// Provee el caso de uso para limpiar los favoritos.
 @riverpod
-Stream<Set<String>> favoriteIds(FavoriteIdsRef ref) {
+ClearFavoritesUseCase clearFavoritesUseCase(Ref ref) {
+  return ClearFavoritesUseCase(ref.watch(favoritesRepositoryProvider));
+}
+
+/// Provee el stream de IDs de eventos favoritos.
+@riverpod
+Stream<Set<String>> favoriteIds(Ref ref) {
   return ref.watch(watchFavoritesUseCaseProvider).execute();
+}
+
+/// Provee el caso de uso para observar las presentaciones favoritas.
+@riverpod
+WatchPresentationFavoritesUseCase watchPresentationFavoritesUseCase(Ref ref) {
+  return WatchPresentationFavoritesUseCase(
+    ref.watch(presentationFavoritesRepositoryProvider),
+  );
+}
+
+/// Provee el caso de uso para alternar las presentaciones favoritas.
+@riverpod
+TogglePresentationFavoriteUseCase togglePresentationFavoriteUseCase(Ref ref) {
+  return TogglePresentationFavoriteUseCase(
+    ref.watch(presentationFavoritesRepositoryProvider),
+  );
+}
+
+/// Provee el stream de IDs de presentaciones favoritas.
+@riverpod
+Stream<Set<String>> presentationFavoriteIds(Ref ref) {
+  return ref.watch(watchPresentationFavoritesUseCaseProvider).execute();
+}
+
+/// Provee las presentaciones agrupadas por sessionBlockId.
+@riverpod
+Future<Map<String, List<Presentation>>> presentationsForSlot(
+  Ref ref,
+  List<String> blockIds,
+) async {
+  final result = await ref
+      .watch(scheduleRepositoryProvider)
+      .getPresentationsByBlockIds(blockIds);
+  final list = result is Success<List<Presentation>>
+      ? result.data
+      : <Presentation>[];
+  final grouped = <String, List<Presentation>>{};
+  for (final p in list) {
+    if (p.sessionBlockId != null) {
+      grouped.putIfAbsent(p.sessionBlockId!, () => []).add(p);
+    }
+  }
+  return grouped;
+}
+
+/// Provee los items de "My Schedule" ordenados por tiempo.
+@riverpod
+Future<List<MyScheduleItem>> myScheduleItems(Ref ref) async {
+  final eventIds = ref.watch(favoriteIdsProvider).value ?? {};
+  final presentationIds =
+      ref.watch(presentationFavoriteIdsProvider).value ?? {};
+  final repo = ref.watch(scheduleRepositoryProvider);
+
+  final eventsResult = await repo.getEventsByIds(eventIds.toList());
+  final presentationsResult = await repo.getPresentationsByIds(
+    presentationIds.toList(),
+  );
+
+  final events = eventsResult is Success<List<Event>>
+      ? eventsResult.data
+      : <Event>[];
+  final presentations = presentationsResult is Success<List<Presentation>>
+      ? presentationsResult.data
+      : <Presentation>[];
+
+  final items = <MyScheduleItem>[
+    ...events.map(SavedEventItem.new),
+    ...presentations.map(SavedPresentationItem.new),
+  ];
+
+  items.sort(
+    (a, b) =>
+        (a.sortTime ?? DateTime(9999)).compareTo(b.sortTime ?? DateTime(9999)),
+  );
+  return items;
+}
+
+/// Provee el índice de personas por ID.
+@riverpod
+Future<Map<String, Person>> allPeopleIndex(Ref ref) async {
+  final result = await ref.watch(scheduleRepositoryProvider).getAllPeople();
+  if (result is! Success<List<Person>>) {
+    return {};
+  }
+  return {for (final p in result.data) p.id: p};
 }

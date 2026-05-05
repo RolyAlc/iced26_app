@@ -5,7 +5,7 @@ part 'core_providers.g.dart';
 
 /// Proveedor de la base de datos local.
 @riverpod
-AppDatabase appDatabase(AppDatabaseRef ref) {
+AppDatabase appDatabase(Ref ref) {
   final db = AppDatabase();
   ref.onDispose(() => db.close());
   return db;

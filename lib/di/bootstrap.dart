@@ -5,13 +5,11 @@ import 'package:iced26/di/data_providers.dart';
 
 part 'bootstrap.g.dart';
 
-/// Provee el bootstrap (inicialización de datos) de la aplicación.
-/// Devuelve un result que puede ser null o un error.
+/// Provee el bootstrap (inicialización) de la aplicación.
+/// Devuelve null si todo es correcto o lanza una excepción si hay un error.
 @riverpod
-Future<void> bootstrap(BootstrapRef ref) async {
-  // Observamos el repositorio de configuración.
+Future<void> bootstrap(Ref ref) async {
   final configRepo = ref.watch(configRepositoryProvider);
-  // Inicializamos los datos de la aplicación si no existen.
   final result = await configRepo.initializeDataIfNeeded();
 
   return switch (result) {
