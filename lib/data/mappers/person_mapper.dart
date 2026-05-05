@@ -26,7 +26,7 @@ class PeopleMapper {
     );
   }
 
-  /// Construye una instancia de [Person] desde la base de datos (Drift).
+  /// Convierte una instancia de [Person] desde la base de datos (Drift).
   static Person fromDrift(PersonTable data) {
     return Person(
       id: data.id,
@@ -39,34 +39,34 @@ class PeopleMapper {
     );
   }
 
-  /// Extrae y normaliza el ID.
+  /// Helper para extraer el ID y normalizarlo.
   static String _parseId(Map<String, dynamic> json) {
     return json['id']?.toString() ?? '';
   }
 
-  /// Extrae y traduce el nombre usando I18nMapper.
+  /// Helper para extraer y traducir el nombre usando I18nMapper.
   static I18nStr _parseName(Map<String, dynamic> json) {
-    final rawName = json['name'] ?? json['full_name'];
+    final rawName = json['name'] ?? json['fullName'];
     return I18nMapper.fromRaw(rawName);
   }
 
-  /// Extrae un string opcional de forma segura.
+  /// Helper para extraer un string opcional de forma segura.
   static String? _parseString(Map<String, dynamic> json, String key) {
     final value = json[key];
     return value?.toString();
   }
 
-  /// Construye la URL de la foto según prioridad.
+  /// Helper para construir la URL de la foto según prioridad.
   static String? _parsePhotoUrl(Map<String, dynamic> json) {
     final String? localPath = _buildLocalPhotoPath(json);
-    final String? remoteUrl = _parseString(json, 'photo_url');
+    final String? remoteUrl = _parseString(json, 'photoUrl');
 
     return localPath ?? remoteUrl;
   }
 
-  /// Construye la ruta local de la imagen si existe.
+  /// Helper para construir la ruta local de la imagen si existe.
   static String? _buildLocalPhotoPath(Map<String, dynamic> json) {
-    final photoPath = json['photo_path'];
+    final photoPath = json['photoPath'];
     if (photoPath == null) {
       return null;
     }

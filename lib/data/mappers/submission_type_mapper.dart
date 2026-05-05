@@ -5,13 +5,14 @@ import 'package:iced26/domain/entities/submission_type.dart';
 
 /// Mapper de submission types de JSON (categorias).
 class SubmissionTypeMapper {
+  /// Convierte un mapa JSON en una entidad 'SubmissionType'.
   static SubmissionType fromMap(Map<String, dynamic> json) {
-    final dynamic rawDuration = json['duration_min'];
+    final dynamic rawDuration = json['durationMin'];
     final String id = json['id']?.toString() ?? '';
     final I18nStr name = I18nMapper.fromRaw(json['name']);
     final I18nStr description = I18nMapper.fromRaw(json['description']);
     final I18nStr scheduleDescription = I18nMapper.fromRaw(
-      json['schedule_description'],
+      json['scheduleDescription'],
     );
     final String lang = json['lang']?.toString() ?? '';
 
@@ -27,7 +28,7 @@ class SubmissionTypeMapper {
     );
   }
 
-  /// Convierte un registro de la base de datos (Drift) a una entidad.
+  /// Convierte una instancia de [SubmissionType] desde la base de datos (Drift).
   static SubmissionType fromDrift(SubmissionTypeTable data) {
     return SubmissionType(
       id: data.id,

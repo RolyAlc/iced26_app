@@ -19,7 +19,7 @@ class SocialActivityMapper {
     final I18nStr location = map['location'] != null
         ? I18nMapper.fromRaw(map['location'])
         : I18nStr({'en': 'Conference Venue'});
-    final String imgUrl = map['img_url']?.toString() ?? '';
+    final String imgUrl = map['imgUrl']?.toString() ?? '';
 
     return SocialActivity(
       id: id,
