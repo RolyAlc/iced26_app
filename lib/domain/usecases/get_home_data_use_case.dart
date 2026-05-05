@@ -7,15 +7,20 @@ import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/zone.dart';
 import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 
+// TODO: revisar complejidad
+
+/// Tipo de dato que representa la información necesaria para la pantalla Home.
 typedef HomeDataResult = ({
   List<Day> days,
   List<Event> allEvents,
   List<Room> allRooms,
   List<Zone> allZones,
   List<Person> allPeople,
+  List<Presentation> keynotePresentations,
   List<NewsItem> news,
   List<SocialActivity> socialActivities,
   List<SubmissionType> subTypes,
@@ -36,6 +41,9 @@ class GetHomeDataUseCase {
       rooms: _scheduleRepo.getAllRooms(),
       zones: _scheduleRepo.getAllZones(),
       people: _scheduleRepo.getAllPeople(),
+      keynotePresentations: _scheduleRepo.getPresentationsByType(
+        'keynote_speaker',
+      ),
       news: _homeRepo.getAllNews(),
       socials: _homeRepo.getAllSocialActivities(),
       subTypes: _homeRepo.getAllSubmissionTypes(),
@@ -47,6 +55,7 @@ class GetHomeDataUseCase {
       rooms: await futures.rooms,
       zones: await futures.zones,
       people: await futures.people,
+      keynotePresentations: await futures.keynotePresentations,
       news: await futures.news,
       socials: await futures.socials,
       subTypes: await futures.subTypes,
@@ -58,12 +67,15 @@ class GetHomeDataUseCase {
       return Failure<HomeDataResult>(failure.message);
     }
 
+    // Envolver los datos en Success
     return Success((
       days: (results.days as Success<List<Day>>).data,
       allEvents: (results.events as Success<List<Event>>).data,
       allRooms: (results.rooms as Success<List<Room>>).data,
       allZones: (results.zones as Success<List<Zone>>).data,
       allPeople: (results.people as Success<List<Person>>).data,
+      keynotePresentations:
+          (results.keynotePresentations as Success<List<Presentation>>).data,
       news: (results.news as Success<List<NewsItem>>).data,
       socialActivities: (results.socials as Success<List<SocialActivity>>).data,
       subTypes: (results.subTypes as Success<List<SubmissionType>>).data,
@@ -78,6 +90,7 @@ class GetHomeDataUseCase {
       Result rooms,
       Result zones,
       Result people,
+      Result keynotePresentations,
       Result news,
       Result socials,
       Result subTypes,
@@ -90,6 +103,7 @@ class GetHomeDataUseCase {
       results.rooms,
       results.zones,
       results.people,
+      results.keynotePresentations,
       results.news,
       results.socials,
       results.subTypes,
