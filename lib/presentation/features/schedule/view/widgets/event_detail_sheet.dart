@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
@@ -22,10 +21,12 @@ void showDetailSheet(BuildContext context, Event event) {
 }
 
 /// Contenido principal del detalle del evento.
+/// Devuelve null si el evento no está en favoritos.
 class EventDetailContent extends ConsumerWidget {
   final Event event;
   const EventDetailContent({super.key, required this.event});
 
+  /// Devuelve la duración del evento.
   String? _duration() {
     if (event.startDate == null || event.endDate == null) {
       return null;
@@ -34,7 +35,12 @@ class EventDetailContent extends ConsumerWidget {
       event.startDate,
       event.endDate,
     );
-    return duration == '0m' ? null : duration;
+
+    if (duration == '0m') {
+      return null;
+    }
+
+    return duration;
   }
 
   @override
@@ -44,7 +50,7 @@ class EventDetailContent extends ConsumerWidget {
     final duration = _duration();
     final isFavorite = ref.watch(
       favoriteIdsProvider.select(
-        (ids) => ids.valueOrNull?.contains(event.id) ?? false,
+        (ids) => ids.value?.contains(event.id) ?? false,
       ),
     );
 
@@ -58,11 +64,6 @@ class EventDetailContent extends ConsumerWidget {
         const SizedBox(height: AppSpacing.l),
         _buildAttributesGrid(context, duration),
         const SizedBox(height: AppSpacing.l),
-        if (event.aboutPresentationUrl != null ||
-            event.videoPresentationUrl != null) ...[
-          _buildResources(context),
-          const SizedBox(height: AppSpacing.l),
-        ],
         _buildFavoriteButton(context, ref, isFavorite),
       ],
     );
@@ -163,55 +164,13 @@ class EventDetailContent extends ConsumerWidget {
                 child: _AttributeCell(
                   icon: Icons.translate_rounded,
                   label: 'Language',
-                  value: event.lang?.toUpperCase() ?? '--',
+                  value: event.defaultLang?.toUpperCase() ?? '--',
                 ),
               ),
             ],
           ),
         ],
       ),
-    );
-  }
-
-  /// Sección de recursos del evento.
-  Widget _buildResources(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Resources'.toUpperCase(),
-          style: theme.textTheme.labelMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.primary,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.s),
-        if (event.aboutPresentationUrl != null)
-          _ActionLink(
-            icon: Icons.description_outlined,
-            label: 'About this presentation',
-            onTap: () => launchUrl(
-              Uri.parse(event.aboutPresentationUrl!),
-              mode: LaunchMode.externalApplication,
-            ),
-          ),
-        if (event.videoPresentationUrl != null)
-          Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.s),
-            child: SizedBox(
-              width: double.infinity,
-              child: FilledButton.tonalIcon(
-                onPressed: () => launchUrl(
-                  Uri.parse(event.videoPresentationUrl!),
-                  mode: LaunchMode.externalApplication,
-                ),
-                icon: const Icon(Icons.play_circle_fill_rounded),
-                label: const Text('Watch recording'),
-              ),
-            ),
-          ),
-      ],
     );
   }
 
@@ -288,50 +247,6 @@ class _AttributeCell extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-/// Enlace de acción estilizado.
-class _ActionLink extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _ActionLink({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadius.s),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: theme.colorScheme.onSurfaceVariant),
-            const SizedBox(width: AppSpacing.s),
-            Expanded(
-              child: Text(
-                label,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
-            Icon(
-              Icons.chevron_right_rounded,
-              size: 16,
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

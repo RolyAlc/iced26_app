@@ -4,13 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
+import 'package:iced26/presentation/features/my_schedule/view/my_schedule_view.dart';
 import 'package:iced26/presentation/features/schedule/view/schedule_category_filter_bar.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/parallel_block.dart';
+import 'package:iced26/presentation/features/schedule/view/widgets/session_slot_block.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 import 'package:iced26/presentation/helpers/date_helper.dart';
 import 'package:iced26/presentation/widgets/app_page.dart';
+
+// TODO: revisar
 
 /// Vista principal del schedule.
 class ScheduleView extends ConsumerWidget {
@@ -35,98 +38,86 @@ class _ScheduleContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final uiState = _ScheduleUiState.fromRef(ref, state);
+    final topTab = ref.watch(scheduleTopTabProvider);
+    final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
+    final showFavorites = ref.watch(showOnlyFavoritesProvider);
+    final visibleItems = ref.watch(visibleItemsProvider);
+    final safeDayIndex = ref.watch(safeDayIndexProvider);
+    final isFiltered = selectedCategory != null || showFavorites;
+    final isMySchedule = topTab == 1;
 
     return DefaultTabController(
       length: state.sections.length,
-      initialIndex: uiState.safeDayIndex,
+      initialIndex: safeDayIndex,
       child: AppPage(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-        header: _ScheduleHeader.fromState(
-          state: state,
-          uiState: uiState,
-          ref: ref,
+        header: _ScheduleHeader(
+          topTab: topTab,
+          onTopTabSelect: (i) =>
+              ref.read(scheduleTopTabProvider.notifier).select(i),
+          categories: state.categories,
+          selectedCategory: selectedCategory,
+          onCategorySelect: (cat) =>
+              ref.read(selectedScheduleCategoryProvider.notifier).select(cat),
+          sections: state.sections,
+          onDaySelect: (index) =>
+              ref.read(selectedDayIndexProvider.notifier).set(index),
+          showFavorites: showFavorites,
+          onFavoritesToggle: () =>
+              ref.read(showOnlyFavoritesProvider.notifier).toggle(),
+          isFiltered: isFiltered,
+          isMySchedule: isMySchedule,
         ),
         children: [
           const SizedBox(height: AppSpacing.m),
-          _ScheduleBody(uiState: uiState),
+          if (isMySchedule)
+            const MyScheduleContent()
+          else
+            _ScheduleBody(
+              visibleItems: visibleItems,
+              isFiltered: isFiltered,
+              showFavorites: showFavorites,
+            ),
         ],
       ),
     );
   }
 }
 
-/// Estado derivado de UI.
-class _ScheduleUiState {
-  _ScheduleUiState({
-    required this.selectedDayIndex,
-    required this.selectedCategory,
-    required this.showFavorites,
-    required this.visibleItems,
-    required this.sectionsLength,
-  });
-
-  final int selectedDayIndex;
-  final EventType? selectedCategory;
-  final bool showFavorites;
-  final List<ScheduleItem> visibleItems;
-  final int sectionsLength;
-
-  int get safeDayIndex {
-    if (sectionsLength == 0) {
-      return 0;
-    }
-    return selectedDayIndex.clamp(0, sectionsLength - 1);
-  }
-
-  static _ScheduleUiState fromRef(WidgetRef ref, ScheduleState state) {
-    return _ScheduleUiState(
-      selectedDayIndex: ref.watch(selectedDayIndexProvider),
-      selectedCategory: ref.watch(selectedScheduleCategoryProvider),
-      showFavorites: ref.watch(showOnlyFavoritesProvider),
-      visibleItems: ref.watch(visibleItemsProvider),
-      sectionsLength: state.sections.length,
-    );
-  }
-}
-
 /// Cuerpo del schedule.
 class _ScheduleBody extends StatelessWidget {
-  const _ScheduleBody({required this.uiState});
+  const _ScheduleBody({
+    required this.visibleItems,
+    required this.isFiltered,
+    required this.showFavorites,
+  });
 
-  final _ScheduleUiState uiState;
+  final List<ScheduleItem> visibleItems;
+  final bool isFiltered;
+  final bool showFavorites;
 
   @override
   Widget build(BuildContext context) {
-    if (uiState.showFavorites && uiState.visibleItems.isEmpty) {
-      return const _EmptyFavorites();
+    if (visibleItems.isEmpty && isFiltered) {
+      return showFavorites ? const _EmptyFavorites() : const _EmptyFilter();
     }
 
-    return Column(
-      children: uiState.visibleItems.map(_ScheduleItemBuilder.build).toList(),
-    );
+    return Column(children: visibleItems.map(_buildScheduleItem).toList());
   }
 }
 
-/// Builder de items.
-class _ScheduleItemBuilder {
-  static Widget build(ScheduleItem item) {
-    return switch (item) {
-      SingleEventItem(:final event) => EventCard(event: event),
-      ParallelGroupItem() => ParallelBlock(group: item),
-      DaySeparatorItem(:final label, :final date) => _DaySeparator(
-        label: label,
-        date: date,
-      ),
-    };
-  }
+Widget _buildScheduleItem(ScheduleItem item) {
+  return switch (item) {
+    SingleEventItem(:final event) => EventCard(event: event),
+    SessionSlotItem() => SessionSlotBlock(item: item),
+    DaySeparatorItem(:final date) => _DaySeparator(date: date),
+  };
 }
 
 /// Separador de días.
 class _DaySeparator extends StatelessWidget {
-  const _DaySeparator({required this.label, required this.date});
+  const _DaySeparator({required this.date});
 
-  final String label;
   final String date;
 
   @override
@@ -155,9 +146,14 @@ class _DaySeparator extends StatelessWidget {
   }
 }
 
-/// Header refactorizado.
+/// Texto de cabecera de la pantalla Schedule.
+const _kScheduleTitle = 'Schedule';
+
+/// Header de la pantalla Schedule.
 class _ScheduleHeader extends StatelessWidget {
   const _ScheduleHeader({
+    required this.topTab,
+    required this.onTopTabSelect,
     required this.categories,
     required this.selectedCategory,
     required this.onCategorySelect,
@@ -165,8 +161,12 @@ class _ScheduleHeader extends StatelessWidget {
     required this.onDaySelect,
     required this.showFavorites,
     required this.onFavoritesToggle,
+    required this.isFiltered,
+    required this.isMySchedule,
   });
 
+  final int topTab;
+  final ValueChanged<int> onTopTabSelect;
   final List<EventType> categories;
   final EventType? selectedCategory;
   final ValueChanged<EventType?> onCategorySelect;
@@ -174,30 +174,13 @@ class _ScheduleHeader extends StatelessWidget {
   final ValueChanged<int> onDaySelect;
   final bool showFavorites;
   final VoidCallback onFavoritesToggle;
-
-  static Widget fromState({
-    required ScheduleState state,
-    required _ScheduleUiState uiState,
-    required WidgetRef ref,
-  }) {
-    return _ScheduleHeader(
-      categories: state.categories,
-      selectedCategory: uiState.selectedCategory,
-      onCategorySelect: (cat) =>
-          ref.read(selectedScheduleCategoryProvider.notifier).state = cat,
-      sections: state.sections,
-      onDaySelect: (index) =>
-          ref.read(selectedDayIndexProvider.notifier).state = index,
-      showFavorites: uiState.showFavorites,
-      onFavoritesToggle: () =>
-          ref.read(showOnlyFavoritesProvider.notifier).update((v) => !v),
-    );
-  }
+  final bool isFiltered;
+  final bool isMySchedule;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isFiltered = selectedCategory != null || showFavorites;
+    final colors = theme.colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,85 +188,192 @@ class _ScheduleHeader extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-          child: Text(
-            'Schedule',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          child: _TopTabBar(selected: topTab, onSelect: onTopTabSelect),
         ),
-        if (sections.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.s),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-            child: AnimatedOpacity(
-              opacity: isFiltered ? 0.35 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: IgnorePointer(
-                ignoring: isFiltered,
-                child: TabBar(
-                  onTap: onDaySelect,
-                  isScrollable: true,
-                  tabAlignment: TabAlignment.start,
-                  padding: EdgeInsets.zero,
-                  labelStyle: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    color: theme.colorScheme.primary,
-                  ),
-                  unselectedLabelStyle: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.normal,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  tabs: sections
-                      .map((s) => Tab(text: DateHelper.formatShortDate(s.date)))
-                      .toList(),
-                ),
-              ),
+        if (!isMySchedule) ...[
+          if (sections.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.s),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+              child: isFiltered
+                  ? Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          size: 12,
+                          color: colors.outline,
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Text(
+                          'Viewing all days',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: colors.outline,
+                          ),
+                        ),
+                      ],
+                    )
+                  : TabBar(
+                      onTap: onDaySelect,
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      padding: EdgeInsets.zero,
+                      labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: colors.primary,
+                      ),
+                      unselectedLabelStyle: theme.textTheme.bodyMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.normal,
+                            color: colors.onSurfaceVariant,
+                          ),
+                      tabs: sections
+                          .map(
+                            (s) =>
+                                Tab(text: DateHelper.formatShortDate(s.date)),
+                          )
+                          .toList(),
+                    ),
             ),
-          ),
-        ],
-        if (categories.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.xs),
-          ScheduleCategoryFilterBar(
-            categories: categories,
-            selected: selectedCategory,
-            onSelect: onCategorySelect,
-            isFavoritesMode: showFavorites,
-            onFavoritesTap: onFavoritesToggle,
-          ),
+          ],
+          if (categories.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            ScheduleCategoryFilterBar(
+              categories: categories,
+              selected: selectedCategory,
+              onSelect: onCategorySelect,
+              isFavoritesMode: showFavorites,
+              onFavoritesTap: onFavoritesToggle,
+            ),
+          ],
         ],
       ],
     );
   }
 }
 
-/// Empty state
-class _EmptyFavorites extends StatelessWidget {
-  const _EmptyFavorites();
+/// Tap bar superior.
+class _TopTabBar extends StatelessWidget {
+  final int selected;
+  final ValueChanged<int> onSelect;
+
+  const _TopTabBar({required this.selected, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
+    return Row(
+      children: [
+        _TopTab(
+          label: _kScheduleTitle,
+          isSelected: selected == 0,
+          onTap: () => onSelect(0),
+          theme: theme,
+          colors: colors,
+        ),
+        const SizedBox(width: AppSpacing.m),
+        _TopTab(
+          label: 'My Schedule',
+          isSelected: selected == 1,
+          onTap: () => onSelect(1),
+          theme: theme,
+          colors: colors,
+        ),
+      ],
+    );
+  }
+}
+
+/// Tap de la tap bar superior.
+class _TopTab extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final ThemeData theme;
+  final ColorScheme colors;
+
+  const _TopTab({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    required this.theme,
+    required this.colors,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+        child: Text(
+          label,
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: isSelected ? colors.onSurface : colors.outline,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Estado cuando el schedule está vacío debido a filtros.
+class _EmptyFilter extends StatelessWidget {
+  const _EmptyFilter();
+
+  @override
+  Widget build(BuildContext context) => _EmptyState(
+    icon: Icons.search_off_rounded,
+    title: 'No sessions match your filters',
+    subtitle: 'Try a different category or clear the filter',
+  );
+}
+
+/// Estado cuando My Schedule está vacío.
+class _EmptyFavorites extends StatelessWidget {
+  const _EmptyFavorites();
+
+  @override
+  Widget build(BuildContext context) => _EmptyState(
+    icon: Icons.bookmark_border,
+    title: 'No saved sessions yet',
+    subtitle: 'Tap the bookmark on any session to save it',
+  );
+}
+
+/// Estado genérico de Schedule vacío.
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
       child: Column(
         children: [
-          Icon(
-            Icons.bookmark_border,
-            size: 48,
-            color: theme.colorScheme.outlineVariant,
-          ),
+          Icon(icon, size: 48, color: theme.colorScheme.outlineVariant),
           const SizedBox(height: AppSpacing.m),
           Text(
-            'No saved sessions yet',
+            title,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Tap the bookmark on any session to save it',
+            subtitle,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.outline,
             ),

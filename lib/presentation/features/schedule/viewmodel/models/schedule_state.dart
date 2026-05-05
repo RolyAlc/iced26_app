@@ -1,24 +1,21 @@
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_type.dart';
+import 'package:iced26/domain/entities/session_block.dart';
 
-/// Elemento de la lista del Schedule: evento individual, grupo de paralelas
-/// o separador de día.
+/// Base item para cada elemento de la schedule
 sealed class ScheduleItem {}
 
+/// Evento único que no está en un bloque de sesión
 class SingleEventItem extends ScheduleItem {
   final Event event;
   SingleEventItem(this.event);
 }
 
-class ParallelGroupItem extends ScheduleItem {
-  final List<Event> events;
-  final DateTime startDate;
-  final EventType type;
-  ParallelGroupItem({
-    required this.events,
-    required this.startDate,
-    required this.type,
-  });
+/// Slot N1 con sus bloques de sesión N2 (tracks paralelos).
+class SessionSlotItem extends ScheduleItem {
+  final Event event;
+  final List<SessionBlock> blocks;
+  SessionSlotItem({required this.event, required this.blocks});
 }
 
 /// Separador visual entre días.

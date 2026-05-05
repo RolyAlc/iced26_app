@@ -32,58 +32,38 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
     );
   }
 
+  /// Construye los chips de categoria.
   List<Widget> _buildChips(BuildContext context, ColorScheme colors) {
     return [
-      _favoritesChip(colors),
+      _CategoryChip(
+        label: 'My Schedule',
+        icon: isFavoritesMode ? Icons.bookmark : Icons.bookmark_border,
+        color: colors.tertiary,
+        selected: isFavoritesMode,
+        onTap: onFavoritesTap,
+      ),
       const SizedBox(width: AppSpacing.xs),
-      _allChip(colors),
-      ..._categoryChips(context, colors),
+      _CategoryChip(
+        label: 'All',
+        icon: Icons.apps_rounded,
+        color: colors.primary,
+        selected: !isFavoritesMode && selected == null,
+        onTap: () => onSelect(null),
+      ),
+      ...categories.expand((cat) {
+        final style = resolveTypeStyle(context, cat);
+        return [
+          const SizedBox(width: AppSpacing.xs),
+          _CategoryChip(
+            label: cat.label,
+            icon: style.icon,
+            color: style.color,
+            selected: !isFavoritesMode && selected == cat,
+            onTap: () => onSelect(cat),
+          ),
+        ];
+      }),
     ];
-  }
-
-  Widget _favoritesChip(ColorScheme colors) {
-    return _CategoryChip(
-      label: 'My Schedule',
-      icon: isFavoritesMode ? Icons.bookmark : Icons.bookmark_border,
-      color: colors.tertiary,
-      selected: isFavoritesMode,
-      onTap: onFavoritesTap,
-    );
-  }
-
-  Widget _allChip(ColorScheme colors) {
-    return _CategoryChip(
-      label: 'All',
-      icon: Icons.apps_rounded,
-      color: colors.primary,
-      selected: !isFavoritesMode && selected == null,
-      onTap: () => onSelect(null),
-    );
-  }
-
-  List<Widget> _categoryChips(BuildContext context, ColorScheme colors) {
-    return categories.map((cat) {
-      final style = resolveTypeStyle(context, cat);
-
-      return Padding(
-        padding: const EdgeInsets.only(left: AppSpacing.xs),
-        child: _CategoryChip(
-          label: cat.label,
-          icon: style.icon,
-          color: style.color,
-          selected: !isFavoritesMode && selected == cat,
-          onTap: () => _handleCategoryTap(cat),
-        ),
-      );
-    }).toList();
-  }
-
-  void _handleCategoryTap(EventType cat) {
-    if (selected == cat) {
-      onSelect(null);
-    } else {
-      onSelect(cat);
-    }
   }
 }
 
