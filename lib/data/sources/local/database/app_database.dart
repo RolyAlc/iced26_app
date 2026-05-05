@@ -10,13 +10,11 @@ import 'package:iced26/domain/entities/i18n_str.dart';
 
 part 'app_database.g.dart';
 
-// TODO: Consultar con los datos del json y los mappers.
-
-/// Convertidor de I18nStr a String y viceversa.
+/// Conversor de [I18nStr] a String (JSON) y viceversa.
 class I18nConverter extends TypeConverter<I18nStr, String> {
   const I18nConverter();
 
-  /// Convierte un String a I18nStr.
+  /// Convierte String a [I18nStr].
   @override
   I18nStr fromSql(String fromDb) {
     final Map<String, dynamic> json =
@@ -24,14 +22,13 @@ class I18nConverter extends TypeConverter<I18nStr, String> {
     return I18nStr(json.map((key, value) => MapEntry(key, value.toString())));
   }
 
-  /// Convierte un I18nStr a String.
   @override
   String toSql(I18nStr value) {
     return jsonEncode(value.values);
   }
 }
 
-/// Tabla de días.
+/// Tabla de días
 @DataClassName('DayTable')
 class Days extends Table {
   TextColumn get id => text()();
@@ -42,7 +39,7 @@ class Days extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Tabla de rooms.
+/// Tabla de salas
 @DataClassName('RoomTable')
 class Rooms extends Table {
   TextColumn get id => text()();
@@ -55,16 +52,25 @@ class Rooms extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Tabla de eventos.
+/// Tabla de zonas
+@DataClassName('ZoneTable')
+class Zones extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text()();
+  TextColumn get lang => text().nullable()();
+  TextColumn get description => text().nullable().map(const I18nConverter())();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// N1 — schedule slot
 @DataClassName('EventTable')
 class Events extends Table {
   TextColumn get id => text()();
   TextColumn get title => text().map(const I18nConverter())();
-  // 'subtitle' almacena el campo 'abstract' del contrato (renombrado en entidad a abstract_)
-  TextColumn get subtitle => text().nullable().map(const I18nConverter())();
   TextColumn get description => text().nullable()();
   TextColumn get subtype => text().nullable()();
-  TextColumn get track => text().nullable()();
   TextColumn get tagsJson => text().nullable()();
   IntColumn get durationMin => integer().nullable()();
   DateTimeColumn get startDate => dateTime().nullable()();
@@ -72,10 +78,57 @@ class Events extends Table {
   TextColumn get zoneId => text().nullable()();
   TextColumn get roomId => text().nullable().references(Rooms, #id)();
   TextColumn get type => text()();
-  TextColumn get lang => text().nullable()();
+  TextColumn get defaultLang => text().nullable()();
   TextColumn get filterDate => text().nullable()();
   TextColumn get filterTime => text().nullable()();
-  TextColumn get speakerIdsJson => text().nullable()();
+  TextColumn get speakersJson => text().nullable()();
+  TextColumn get slotLabel => text().nullable()();
+  TextColumn get parentId => text().nullable()();
+  TextColumn get extraRoomsJson => text().nullable()();
+  TextColumn get submissionFormatsJson => text().nullable()();
+  TextColumn get externalRef => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// N2 — session block
+@DataClassName('SessionBlockTable')
+class SessionBlocks extends Table {
+  TextColumn get id => text()();
+  TextColumn get parentId => text()();
+  TextColumn get roomId => text().nullable()();
+  TextColumn get track => text().nullable()();
+  TextColumn get title => text().nullable().map(const I18nConverter())();
+  DateTimeColumn get startDate => dateTime().nullable()();
+  DateTimeColumn get endDate => dateTime().nullable()();
+  TextColumn get submissionFormatsJson => text().nullable()();
+  TextColumn get defaultLang => text().nullable()();
+  TextColumn get externalRef => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// N3 — presentation
+@DataClassName('PresentationTable')
+class Presentations extends Table {
+  TextColumn get id => text()();
+  TextColumn get type => text()();
+  TextColumn get subtype => text().nullable()();
+  TextColumn get sessionBlockId => text().nullable()();
+  TextColumn get title => text().nullable().map(const I18nConverter())();
+  TextColumn get abstract_ => text().nullable().map(const I18nConverter())();
+  TextColumn get description => text().nullable()();
+  TextColumn get submissionRef => text().nullable()();
+  IntColumn get durationMin => integer().nullable()();
+  DateTimeColumn get startDate => dateTime().nullable()();
+  DateTimeColumn get endDate => dateTime().nullable()();
+  TextColumn get speakersJson => text().nullable()();
+  TextColumn get tagsJson => text().nullable()();
+  TextColumn get track => text().nullable()();
+  TextColumn get defaultLang => text().nullable()();
+  TextColumn get externalRef => text().nullable()();
   TextColumn get aboutPresentationUrl => text().nullable()();
   TextColumn get videoPresentationUrl => text().nullable()();
 
@@ -83,7 +136,7 @@ class Events extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Tabla de news.
+/// Noticias
 @DataClassName('NewsTable')
 class News extends Table {
   TextColumn get id => text()();
@@ -97,7 +150,7 @@ class News extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Tabla de social activities.
+/// Actividades sociales
 @DataClassName('SocialActivityTable')
 class SocialActivities extends Table {
   TextColumn get id => text()();
@@ -112,7 +165,7 @@ class SocialActivities extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Tabla de personas de la conferencia (speakers, organizadores...).
+/// Personas
 @DataClassName('PersonTable')
 class People extends Table {
   TextColumn get id => text()();
@@ -127,7 +180,7 @@ class People extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Tabla de configuración de la aplicación.
+/// Configuración de la aplicación
 @DataClassName('AppConfigTable')
 class AppConfigs extends Table {
   TextColumn get key => text()();
@@ -137,7 +190,7 @@ class AppConfigs extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-/// Tabla de favoritos del usuario.
+/// Favoritos de eventos
 @DataClassName('FavoriteTable')
 class Favorites extends Table {
   TextColumn get eventId => text()();
@@ -148,19 +201,18 @@ class Favorites extends Table {
   Set<Column> get primaryKey => {eventId};
 }
 
-/// Tabla de zonas de la conferencia.
-@DataClassName('ZoneTable')
-class Zones extends Table {
-  TextColumn get id => text()();
-  TextColumn get name => text()();
-  TextColumn get lang => text().nullable()();
-  TextColumn get description => text().nullable().map(const I18nConverter())();
+/// Favoritos de presentaciones
+@DataClassName('SavedPresentationTable')
+class SavedPresentations extends Table {
+  TextColumn get presentationId => text()();
+  DateTimeColumn get savedAt =>
+      dateTime().clientDefault(() => DateTime.now())();
 
   @override
-  Set<Column> get primaryKey => {id};
+  Set<Column> get primaryKey => {presentationId};
 }
 
-/// Tabla de tipos de presentación.
+/// Tipos de submission
 @DataClassName('SubmissionTypeTable')
 class SubmissionTypes extends Table {
   TextColumn get id => text()();
@@ -174,42 +226,41 @@ class SubmissionTypes extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Base de datos de la aplicación.
+/// Base de datos con las tablas
 @DriftDatabase(
   tables: [
     Days,
     Rooms,
     Zones,
     Events,
+    SessionBlocks,
+    Presentations,
     News,
     SocialActivities,
     AppConfigs,
     SubmissionTypes,
     Favorites,
     People,
+    SavedPresentations,
   ],
 )
-/// Implementación de la base de datos.
+/// Base de datos con las tablas.
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
-  // TODO: Añadir un ADR para versionado de la base de datos.
-  // TODO: Es necesario?¿
-  /// Versionado de la base de datos.
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 13; // version actual
 
-  /// Estrategia de migración.
+  /// Estrategia de migración
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
       if (from < 7) {
-        await m.addColumn(events, events.speakerIdsJson);
+        await m.addColumn(events, events.speakersJson);
       }
       if (from < 8) {
         await m.addColumn(events, events.description);
         await m.addColumn(events, events.subtype);
-        await m.addColumn(events, events.track);
         await m.addColumn(events, events.tagsJson);
         await m.addColumn(events, events.durationMin);
       }
@@ -218,18 +269,24 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(people, people.title);
         await m.addColumn(people, people.bio);
       }
-      if (from < 10) {
-        await m.addColumn(events, events.aboutPresentationUrl);
-        await m.addColumn(events, events.videoPresentationUrl);
-      }
       if (from < 11) {
         await m.createTable(zones);
+      }
+      if (from < 12) {
+        // Events table restructured: drop and recreate to apply column changes.
+        await customStatement('DROP TABLE IF EXISTS "events"');
+        await m.createTable(events);
+        await m.createTable(sessionBlocks);
+        await m.createTable(presentations);
+      }
+      if (from < 13) {
+        await m.createTable(savedPresentations);
       }
     },
   );
 }
 
-/// Abre la conexión a la base de datos.
+/// Abre la base de datos
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();

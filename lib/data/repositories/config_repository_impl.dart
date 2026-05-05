@@ -71,6 +71,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
 
   /// Limpia las tablas antes de insertar datos.
   Future<void> _resetTables() async {
+    await _db.delete(_db.presentations).go();
+    await _db.delete(_db.sessionBlocks).go();
     await _db.delete(_db.events).go();
     await _db.delete(_db.news).go();
     await _db.delete(_db.socialActivities).go();
@@ -88,6 +90,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
     _insertRooms(batch, appData);
     _insertZones(batch, appData);
     _insertEvents(batch, appData);
+    _insertSessionBlocks(batch, appData);
+    _insertPresentations(batch, appData);
     _insertNews(batch, appData);
     _insertSocialActivities(batch, appData);
     _insertPeople(batch, appData);
@@ -160,7 +164,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
     );
   }
 
-  /// Inserta los eventos en la tabla events.
+  /// Inserta los eventos (N1) en la tabla events.
   void _insertEvents(Batch batch, AppData appData) {
     batch.insertAll(
       _db.events,
@@ -168,10 +172,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
         (e) => EventsCompanion.insert(
           id: e.id,
           title: e.title,
-          subtitle: Value(e.abstract_),
           description: Value(e.description),
           subtype: Value(e.subtype),
-          track: Value(e.track),
           tagsJson: Value(e.tags.isEmpty ? null : jsonEncode(e.tags)),
           durationMin: Value(e.durationMin),
           startDate: Value(e.startDate),
@@ -179,14 +181,93 @@ class ConfigRepositoryImpl implements ConfigRepository {
           zoneId: Value(e.zoneId),
           roomId: Value(e.roomId),
           type: e.type.jsonValue,
-          lang: Value(e.lang),
+          defaultLang: Value(e.defaultLang),
           filterDate: Value(e.filterDate),
           filterTime: Value(e.filterTime),
-          speakerIdsJson: Value(
-            e.speakerIds.isEmpty ? null : jsonEncode(e.speakerIds),
+          speakersJson: Value(
+            e.speakers.isEmpty
+                ? null
+                : jsonEncode(
+                    e.speakers
+                        .map((s) => {'personId': s.personId, 'role': s.role})
+                        .toList(),
+                  ),
           ),
-          aboutPresentationUrl: Value(e.aboutPresentationUrl),
-          videoPresentationUrl: Value(e.videoPresentationUrl),
+          slotLabel: Value(e.slotLabel),
+          parentId: Value(e.parentId),
+          extraRoomsJson: Value(
+            e.extraRooms.isEmpty ? null : jsonEncode(e.extraRooms),
+          ),
+          submissionFormatsJson: Value(
+            e.submissionFormats.isEmpty
+                ? null
+                : jsonEncode(e.submissionFormats),
+          ),
+          externalRef: Value(e.externalRef),
+        ),
+      ),
+      mode: InsertMode.insertOrReplace,
+    );
+  }
+
+  /// Inserta los bloques de sesión (N2) en la tabla sessionBlocks.
+  void _insertSessionBlocks(Batch batch, AppData appData) {
+    batch.insertAll(
+      _db.sessionBlocks,
+      appData.collections.sessionBlocks.map(
+        (sb) => SessionBlocksCompanion.insert(
+          id: sb.id,
+          parentId: sb.parentId,
+          roomId: Value(sb.roomId),
+          track: Value(sb.track),
+          title: Value(sb.title),
+          startDate: Value(sb.startDate),
+          endDate: Value(sb.endDate),
+          submissionFormatsJson: Value(
+            sb.submissionFormats.isEmpty
+                ? null
+                : jsonEncode(sb.submissionFormats),
+          ),
+          defaultLang: Value(sb.defaultLang),
+          externalRef: Value(sb.externalRef),
+        ),
+      ),
+      mode: InsertMode.insertOrReplace,
+    );
+  }
+
+  /// Inserta las presentaciones (N3) en la tabla presentations.
+  void _insertPresentations(Batch batch, AppData appData) {
+    batch.insertAll(
+      _db.presentations,
+      appData.collections.presentations.map(
+        (pr) => PresentationsCompanion.insert(
+          id: pr.id,
+          type: pr.type,
+          subtype: Value(pr.subtype),
+          sessionBlockId: Value(pr.sessionBlockId),
+          title: Value(pr.title),
+          abstract_: Value(pr.abstract_),
+          description: Value(pr.description),
+          submissionRef: Value(pr.submissionRef),
+          durationMin: Value(pr.durationMin),
+          startDate: Value(pr.startDate),
+          endDate: Value(pr.endDate),
+          speakersJson: Value(
+            pr.speakers.isEmpty
+                ? null
+                : jsonEncode(
+                    pr.speakers
+                        .map((s) => {'personId': s.personId, 'role': s.role})
+                        .toList(),
+                  ),
+          ),
+          tagsJson: Value(pr.tags.isEmpty ? null : jsonEncode(pr.tags)),
+          track: Value(pr.track),
+          defaultLang: Value(pr.defaultLang),
+          externalRef: Value(pr.externalRef),
+          aboutPresentationUrl: Value(pr.aboutPresentationUrl),
+          videoPresentationUrl: Value(pr.videoPresentationUrl),
         ),
       ),
       mode: InsertMode.insertOrReplace,

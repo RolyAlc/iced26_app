@@ -7,6 +7,7 @@ class FavoritesRepositoryImpl implements FavoritesRepository {
 
   FavoritesRepositoryImpl(this._db);
 
+  /// Observa los favoritos.
   @override
   Stream<Set<String>> watchFavoriteIds() {
     return _db
@@ -15,6 +16,11 @@ class FavoritesRepositoryImpl implements FavoritesRepository {
         .map((rows) => rows.map((r) => r.eventId).toSet());
   }
 
+  /// Limpia todos los favoritos.
+  @override
+  Future<void> clearAllFavorites() => _db.delete(_db.favorites).go();
+
+  /// Alterna el estado de favorito de un evento.
   @override
   Future<void> toggleFavorite(String eventId) async {
     final existing = await (_db.select(

@@ -3,12 +3,16 @@ import 'package:iced26/data/mappers/day_mapper.dart';
 import 'package:iced26/data/mappers/event/event_mapper.dart';
 import 'package:iced26/data/mappers/person_mapper.dart';
 import 'package:iced26/data/mappers/room_mapper.dart';
+import 'package:iced26/data/mappers/presentation/presentation_mapper.dart';
+import 'package:iced26/data/mappers/session_block/session_block_mapper.dart';
 import 'package:iced26/data/mappers/zone_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/room.dart';
+import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/entities/zone.dart';
 import 'package:iced26/domain/repositories/schedule_repository.dart';
 import 'package:iced26/core/services/logger/logger.dart';
@@ -63,6 +67,66 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
     return _guard(() async {
       final results = await _db.select(_db.events).get();
       return results.map((e) => EventMapper.fromDrift(e)).toList();
+    });
+  }
+
+  /// Obtiene todos los bloques de sesión (N2).
+  @override
+  Future<Result<List<SessionBlock>>> getAllSessionBlocks() async {
+    return _guard(() async {
+      final results = await _db.select(_db.sessionBlocks).get();
+      return results.map((e) => SessionBlockMapper.fromDrift(e)).toList();
+    });
+  }
+
+  /// Obtiene las presentaciones (N3) para los bloques indicados.
+  @override
+  Future<Result<List<Presentation>>> getPresentationsByBlockIds(
+    List<String> blockIds,
+  ) async {
+    return _guard(() async {
+      if (blockIds.isEmpty) return [];
+      final results = await (_db.select(
+        _db.presentations,
+      )..where((t) => t.sessionBlockId.isIn(blockIds))).get();
+      return results.map((e) => PresentationMapper.fromDrift(e)).toList();
+    });
+  }
+
+  /// Obtiene las presentaciones (N3) de un tipo concreto.
+  @override
+  Future<Result<List<Presentation>>> getPresentationsByType(String type) async {
+    return _guard(() async {
+      final results = await (_db.select(
+        _db.presentations,
+      )..where((t) => t.type.equals(type))).get();
+      return results.map((e) => PresentationMapper.fromDrift(e)).toList();
+    });
+  }
+
+  /// Obtiene eventos por sus IDs.
+  @override
+  Future<Result<List<Event>>> getEventsByIds(List<String> ids) async {
+    return _guard(() async {
+      if (ids.isEmpty) return [];
+      final results = await (_db.select(
+        _db.events,
+      )..where((t) => t.id.isIn(ids))).get();
+      return results.map((e) => EventMapper.fromDrift(e)).toList();
+    });
+  }
+
+  /// Obtiene presentaciones (N3) por sus IDs.
+  @override
+  Future<Result<List<Presentation>>> getPresentationsByIds(
+    List<String> ids,
+  ) async {
+    return _guard(() async {
+      if (ids.isEmpty) return [];
+      final results = await (_db.select(
+        _db.presentations,
+      )..where((t) => t.id.isIn(ids))).get();
+      return results.map((e) => PresentationMapper.fromDrift(e)).toList();
     });
   }
 

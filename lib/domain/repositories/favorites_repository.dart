@@ -5,4 +5,7 @@ abstract class FavoritesRepository {
 
   /// Alterna el estado favorito de un evento (añade si no existe, elimina si existe).
   Future<void> toggleFavorite(String eventId);
+
+  /// Elimina todos los favoritos del usuario.
+  Future<void> clearAllFavorites();
 }
