@@ -24,11 +24,11 @@ class NewsDTO {
     return NewsDTO(
       id: map['id']?.toString() ?? '',
       datePublish:
-          map['date_publish']?.toString() ?? map['date']?.toString() ?? '',
+          map['datePublish']?.toString() ?? map['date']?.toString() ?? '',
       title: map['title'],
       content: map['content'],
-      imgUrl: map['img_url']?.toString() ?? '',
-      webUrl: map['web_url']?.toString() ?? '',
+      imgUrl: map['imgUrl']?.toString() ?? '',
+      webUrl: map['webUrl']?.toString() ?? '',
     );
   }
 

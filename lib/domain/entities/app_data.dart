@@ -27,6 +27,8 @@ class AppData {
       collections: Collections(
         days: [],
         events: [],
+        sessionBlocks: [],
+        presentations: [],
         people: [],
         rooms: [],
         zones: [],

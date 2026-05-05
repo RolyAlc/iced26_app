@@ -21,6 +21,7 @@ enum EventType {
     'workshop' => workshop,
     'sessions' => sessions,
     'keynote' => keynote,
+    'keynote_speaker' => keynote,
     'break' => break_,
     'welcome' => welcome,
     'opening' => opening,
