@@ -4,6 +4,8 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/core/ui_engine/ui_metrics.dart';
 import 'package:iced26/presentation/widgets/app_page_header_delegate.dart';
 
+// TODO: Revisar y mejorar la complejidad del code
+
 /// Contenedor maestro que gestiona el layout de una página completa.
 class AppPage extends ConsumerStatefulWidget {
   final List<Widget> children;
@@ -25,7 +27,10 @@ class AppPage extends ConsumerStatefulWidget {
     this.backgroundColor,
     this.headerFallbackHeight,
     this.collapsedHeaderFallbackHeight,
-  });
+  }) : assert(
+         collapsedHeaderFallbackHeight == null || collapsedHeader != null,
+         'collapsedHeaderFallbackHeight requires collapsedHeader',
+       );
 
   @override
   ConsumerState<AppPage> createState() => _AppPageState();
@@ -60,7 +65,6 @@ class _AppPageState extends ConsumerState<AppPage> {
 
   @override
   Widget build(BuildContext context) {
-    final topInset = MediaQuery.of(context).padding.top;
     final bottomInset = _resolveBottomInset();
     final bgColor = _resolveBackgroundColor(context);
 
@@ -69,14 +73,14 @@ class _AppPageState extends ConsumerState<AppPage> {
       child: Material(
         color: bgColor,
         child: widget.useSlivers
-            ? _buildSliverLayout(context, topInset, bgColor)
-            : _buildNormalLayout(context, bottomInset),
+            ? _buildSliverLayout(context, bgColor)
+            : _buildNormalLayout(bottomInset),
       ),
     );
   }
 
   /// Layout normal para cuando no se usan slivers.
-  Widget _buildNormalLayout(BuildContext context, double bottomInset) {
+  Widget _buildNormalLayout(double bottomInset) {
     return Column(
       children: [
         widget.header ?? const SizedBox.shrink(),
@@ -92,11 +96,7 @@ class _AppPageState extends ConsumerState<AppPage> {
   }
 
   /// Layout con slivers para cuando se usa [CustomScrollView].
-  Widget _buildSliverLayout(
-    BuildContext context,
-    double topInset,
-    Color bgColor,
-  ) {
+  Widget _buildSliverLayout(BuildContext context, Color bgColor) {
     return CustomScrollView(
       primary: false,
       clipBehavior: Clip.hardEdge,
@@ -136,7 +136,7 @@ class _AppPageState extends ConsumerState<AppPage> {
   Widget _buildSliverContent() {
     return SliverPadding(
       padding: widget.padding ?? EdgeInsets.zero,
-      sliver: SliverList(delegate: SliverChildListDelegate(widget.children)),
+      sliver: SliverList.list(children: widget.children),
     );
   }
 

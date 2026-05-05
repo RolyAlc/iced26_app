@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Tarjeta base de la aplicación.
 class AppCard extends StatelessWidget {
@@ -30,7 +31,7 @@ class AppCard extends StatelessWidget {
     super.key,
     required this.child,
     this.onTap,
-    this.borderRadius = 24,
+    this.borderRadius = AppRadius.m,
     this.color,
     this.elevation = 0,
     this.padding,

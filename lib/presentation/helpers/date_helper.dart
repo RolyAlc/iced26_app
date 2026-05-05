@@ -25,4 +25,25 @@ class DateHelper {
 
     return '${months[dt.month - 1]} ${dt.day}';
   }
+
+  /// Formatea un [DateTime] a hora en formato "HH:mm". Devuelve '' si es null.
+  static String formatTime(DateTime? dt) {
+    if (dt == null) {
+      return '';
+    }
+    final String timeFormated =
+        '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+
+    return timeFormated;
+  }
+
+  /// Formatea un rango horario "HH:mm–HH:mm". Si solo hay inicio, devuelve solo ese.
+  static String formatTimeRange(DateTime? start, DateTime? end) {
+    final s = formatTime(start);
+    if (s.isEmpty) {
+      return '';
+    }
+    final e = formatTime(end);
+    return e.isEmpty ? s : '$s-$e';
+  }
 }

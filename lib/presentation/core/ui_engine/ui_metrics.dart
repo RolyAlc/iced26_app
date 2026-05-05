@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+
+part 'ui_metrics.g.dart';
 
 /// Notificación que burbujea cambios en las dimensiones de componentes clave de la UI.
 class UIMetricsNotification extends Notification {
@@ -23,7 +26,13 @@ class UIMetrics {
 }
 
 /// Provider que centraliza las métricas de la UI capturadas dinámicamente.
-final uiMetricsProvider = StateProvider<UIMetrics>((ref) => const UIMetrics());
+@riverpod
+class UiMetrics extends _$UiMetrics {
+  @override
+  UIMetrics build() => const UIMetrics();
+  void updateNavBarHeight(double height) =>
+      state = state.copyWith(navBarHeight: height);
+}
 
 /// Widget que añade un espacio al final de un [CustomScrollView] para asegurar
 /// que el contenido sea visible por encima de componentes flotantes (como la NavBar).
