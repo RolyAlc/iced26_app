@@ -8,6 +8,7 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
@@ -20,19 +21,16 @@ import 'package:iced26/presentation/mappers/event_ui_mapper.dart';
 
 part 'home_viewmodel.g.dart';
 
-/// Locale usado para resolver textos multilingüe.
+// Locale usado para resolver textos multilingüe.
 /// [:: Futuro] Obtener dinámicamente desde configuración del usuario.
 const _locale = 'en';
-
-/// Etiqueta de cabecera de la pantalla principal.
 const _headerLabel = 'Welcome to ICED26';
-
-/// Número máximo de eventos destacados a mostrar.
+// Número máximo de eventos destacados a mostrar.
 const _maxFeaturedEvents = 5;
 
 // TODO: Analizar
-/// Asigna una prioridad numérica al estado del evento para ordenación.
-/// Menor número = mayor relevancia en la UI.
+// Asigna una prioridad numérica al estado del evento para ordenación.
+// Menor número = mayor relevancia en la UI.
 int _statusPriority(EventStatus s) => switch (s) {
   EventStatus.live => 0,
   EventStatus.next => 1,
@@ -88,7 +86,7 @@ Map<String, Person> _buildPeopleIndex(List<Person> allPeople) {
 
 /// Devuelve la [photoUrl] del primer speaker con foto válida, o null.
 String? _resolveSpeakerPhoto(Event event, Map<String, Person> peopleById) {
-  for (final id in event.speakerIds) {
+  for (final id in event.speakers.map((s) => s.personId)) {
     final photoUrl = peopleById[id]?.photoUrl;
     if (photoUrl != null && photoUrl.isNotEmpty) {
       return photoUrl;
@@ -122,7 +120,7 @@ List<SessionUIModel> _buildSpeakerSessions({
   required List<Event> keynoteEvents,
 }) {
   return keynoteEvents
-      .where((e) => e.speakerIds.contains(speaker.id))
+      .where((e) => e.speakers.any((s) => s.personId == speaker.id))
       .map(
         (e) => SessionUIModel(
           type: e.type,
@@ -138,7 +136,13 @@ List<SessionUIModel> _buildSpeakerSessions({
 KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
   required Person speaker,
   required List<Event> keynoteEvents,
+  required List<Presentation> keynotePresentations,
 }) {
+  final presentation = keynotePresentations.cast<Presentation?>().firstWhere(
+    (p) => p!.speakers.any((s) => s.personId == speaker.id),
+    orElse: () => null,
+  );
+
   return KeynoteSpeakerUIModel(
     id: speaker.id,
     name: speaker.name.resolve(_locale),
@@ -148,23 +152,34 @@ KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
       speaker: speaker,
       keynoteEvents: keynoteEvents,
     ),
+    presentation: presentation,
   );
 }
 
 /// Construye la lista de [KeynoteSpeakerUIModel] para la pantalla Home.
 List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
+  required List<Presentation> keynotePresentations,
   required List<Event> allEvents,
   required List<Person> allPeople,
 }) {
+  final peopleById = {for (final p in allPeople) p.id: p};
   final keynoteEvents = allEvents
       .where((e) => e.type == EventType.keynote)
       .toList();
 
-  return allPeople
-      .where((p) => keynoteEvents.any((e) => e.speakerIds.contains(p.id)))
+  final speakerIds = keynotePresentations
+      .expand((p) => p.speakers.map((s) => s.personId))
+      .toSet();
+
+  return speakerIds
+      .map((id) => peopleById[id])
+      .whereType<Person>()
       .map(
-        (p) =>
-            _buildKeynoteSpeakerModel(speaker: p, keynoteEvents: keynoteEvents),
+        (p) => _buildKeynoteSpeakerModel(
+          speaker: p,
+          keynoteEvents: keynoteEvents,
+          keynotePresentations: keynotePresentations,
+        ),
       )
       .toList();
 }
@@ -205,6 +220,7 @@ class HomeViewModel extends _$HomeViewModel {
         peopleById: peopleById,
       ),
       keynoteSpeakers: _buildKeynoteSpeakers(
+        keynotePresentations: data.keynotePresentations,
         allEvents: data.allEvents,
         allPeople: data.allPeople,
       ),

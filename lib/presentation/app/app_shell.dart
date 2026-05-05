@@ -20,15 +20,12 @@ class AppShell extends ConsumerWidget {
     /// Notifica los cambios de métricas de la UI.
     return NotificationListener<UIMetricsNotification>(
       onNotification: (notification) {
-        final metricsNotifier = ref.read(uiMetricsProvider.notifier);
-
         if (notification.navBarHeight != null) {
           if (ref.read(uiMetricsProvider).navBarHeight !=
               notification.navBarHeight) {
-            metricsNotifier.update(
-              (state) =>
-                  state.copyWith(navBarHeight: notification.navBarHeight),
-            );
+            ref
+                .read(uiMetricsProvider.notifier)
+                .updateNavBarHeight(notification.navBarHeight!);
           }
         }
         return true;

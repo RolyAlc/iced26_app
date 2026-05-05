@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
 import 'package:iced26/presentation/helpers/event_type_style.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
+import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail_sheet.dart';
 import 'package:iced26/presentation/widgets/app_network_image.dart';
 
 /// Abre el detalle de un keynote speaker en un bottom sheet.
@@ -34,6 +36,8 @@ class _SpeakerDetailContent extends StatelessWidget {
         _SpeakerImage(photoUrl: speaker.photoUrl),
         _SpeakerInstitution(institution: speaker.institution),
         _SpeakerSessions(events: speaker.events),
+        if (speaker.presentation != null)
+          _PresentationRow(presentation: speaker.presentation!),
       ],
     );
   }
@@ -132,6 +136,76 @@ class _SpeakerSessions extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.s),
           ...events.map((session) => _SessionRow(session: session)),
+        ],
+      ),
+    );
+  }
+}
+
+/// Fila tappable que abre el detalle completo de la presentación del speaker.
+class _PresentationRow extends StatelessWidget {
+  final Presentation presentation;
+
+  const _PresentationRow({required this.presentation});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final locale = Localizations.localeOf(context).languageCode;
+    final title =
+        presentation.title?.resolve(locale) ?? presentation.externalRef ?? '—';
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.l),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Presentation',
+            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: AppSpacing.s),
+          InkWell(
+            onTap: () => showPresentationDetail(context, presentation),
+            borderRadius: BorderRadius.circular(AppRadius.s),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: colors.primaryContainer,
+                      borderRadius: BorderRadius.circular(AppRadius.s),
+                    ),
+                    child: Icon(
+                      Icons.slideshow_rounded,
+                      size: 18,
+                      color: colors.onPrimaryContainer,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 20,
+                    color: colors.onSurfaceVariant,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

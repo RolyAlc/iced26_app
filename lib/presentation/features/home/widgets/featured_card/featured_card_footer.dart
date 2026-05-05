@@ -14,7 +14,7 @@ class FeaturedCardFooter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favoriteIds = ref.watch(
-      favoriteIdsProvider.select((ids) => ids.valueOrNull ?? <String>{}),
+      favoriteIdsProvider.select((ids) => ids.value ?? <String>{}),
     );
     final isSaved = favoriteIds.contains(event.id);
 

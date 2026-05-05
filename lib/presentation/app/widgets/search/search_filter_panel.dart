@@ -19,7 +19,7 @@ class FilterPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final homeData = ref.watch(homeViewModelProvider).valueOrNull;
+    final homeData = ref.watch(homeViewModelProvider).value;
     if (homeData == null) {
       return const SizedBox.shrink();
     }
@@ -46,6 +46,7 @@ class FilterPanel extends ConsumerWidget {
   }
 }
 
+/// Datos para el panel de filtros.
 class _FilterData {
   final List<({String date, String label})> days;
   final List<EventType> types;
@@ -71,6 +72,7 @@ _FilterData _buildFilterData(HomeState homeData) {
   );
 }
 
+/// Construye la sección de días.
 List<Widget> _buildDaySection(
   List<({String date, String label})> days,
   SearchFilterState filters,
@@ -88,6 +90,7 @@ List<Widget> _buildDaySection(
   );
 }
 
+/// Construye la sección de tipos.
 List<Widget> _buildTypeSection(
   List<EventType> types,
   SearchFilterState filters,
@@ -105,6 +108,7 @@ List<Widget> _buildTypeSection(
   );
 }
 
+/// Construye la sección de zonas.
 List<Widget> _buildZoneSection(
   List<Zone> zones,
   SearchFilterState filters,
@@ -122,6 +126,7 @@ List<Widget> _buildZoneSection(
   );
 }
 
+/// Construye la sección de duraciones.
 List<Widget> _buildDurationSection(
   List<int> durations,
   SearchFilterState filters,
@@ -139,6 +144,7 @@ List<Widget> _buildDurationSection(
   );
 }
 
+/// Construye la sección de estados.
 List<Widget> _buildStatusSection(SearchFilterState filters, Search notifier) {
   return _section('Status', [
     _FilterChip(
@@ -159,6 +165,7 @@ List<Widget> _buildStatusSection(SearchFilterState filters, Search notifier) {
   ]);
 }
 
+/// Construye una sección.
 List<Widget> _section(String label, List<Widget> chips) {
   if (chips.isEmpty) {
     return [];
@@ -172,6 +179,7 @@ List<Widget> _section(String label, List<Widget> chips) {
   ];
 }
 
+/// Extrae los días de los eventos.
 List<({String date, String label})> _extractDays(List<Event> events) {
   final seen = <String>{};
   final days = <({String date, String label})>[];
@@ -190,18 +198,21 @@ List<({String date, String label})> _extractDays(List<Event> events) {
   return days;
 }
 
+/// Extrae los tipos de los eventos.
 List<EventType> _extractTypes(List<Event> events) {
   final types = events.map((e) => e.type).toSet().toList();
   types.sort((a, b) => a.label.compareTo(b.label));
   return types;
 }
 
+/// Extrae las zonas de los eventos.
 List<Zone> _extractZones(HomeState homeData) {
   final zones = homeData.allZones.toList();
   zones.sort((a, b) => a.name.resolve('und').compareTo(b.name.resolve('und')));
   return zones;
 }
 
+/// Extrae las duraciones de los eventos.
 List<int> _extractDurations(List<Event> events) {
   final durations = events
       .map((e) => e.durationMin)
@@ -213,6 +224,7 @@ List<int> _extractDurations(List<Event> events) {
   return durations;
 }
 
+/// Etiqueta de sección.
 class _SectionLabel extends StatelessWidget {
   final String label;
 
@@ -233,6 +245,7 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
+/// Filtro genérico.
 class _FilterChip extends StatelessWidget {
   final String label;
   final bool selected;
@@ -268,6 +281,7 @@ class _FilterChip extends StatelessWidget {
   }
 }
 
+/// Chip para filtrar por tipo de evento.
 class _TypeFilterChip extends StatelessWidget {
   final EventType type;
   final bool selected;

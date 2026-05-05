@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/di/bootstrap.dart';
+import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/widgets/app_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Vista de ajustes de la aplicación.
 class SettingsView extends StatelessWidget {
@@ -10,7 +14,7 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage(
       header: _SettingsHeader(),
-      children: const [
+      children: [
         _SettingsSection(
           title: 'Appearance',
           items: [
@@ -47,20 +51,7 @@ class SettingsView extends StatelessWidget {
         SizedBox(height: AppSpacing.m),
         _SettingsSection(
           title: 'Data',
-          items: [
-            _SettingsItem(
-              icon: Icons.refresh_rounded,
-              title: 'Reload data',
-              subtitle: 'Update the programme from the bundle',
-              trailing: _ComingSoonBadge(),
-            ),
-            _SettingsItem(
-              icon: Icons.bookmark_remove_outlined,
-              title: 'Clear favourites',
-              subtitle: 'Remove all saved events',
-              trailing: _ComingSoonBadge(),
-            ),
-          ],
+          items: [_ReloadDataItem(), _ClearFavouritesItem()],
         ),
         SizedBox(height: AppSpacing.m),
         _SettingsSection(
@@ -68,8 +59,8 @@ class SettingsView extends StatelessWidget {
           items: [
             _SettingsItem(
               icon: Icons.info_outline_rounded,
-              title: 'ICED 2026',
-              subtitle: 'Valencia, Spain',
+              title: 'ICED 26',
+              subtitle: 'Salamanca, Spain',
             ),
             _SettingsItem(
               icon: Icons.smartphone_rounded,
@@ -79,7 +70,11 @@ class SettingsView extends StatelessWidget {
             _SettingsItem(
               icon: Icons.language_rounded,
               title: 'Official website',
-              subtitle: 'iced2026.org',
+              subtitle: 'iced26.es',
+              onTap: () => launchUrl(
+                Uri.parse('https://iced26.es'),
+                mode: LaunchMode.externalApplication,
+              ),
             ),
           ],
         ),
@@ -166,18 +161,114 @@ class _SettingsSection extends StatelessWidget {
   }
 }
 
+/// Item de "Reload data" con diálogo de confirmación.
+class _ReloadDataItem extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return _SettingsItem(
+      icon: Icons.refresh_rounded,
+      title: 'Reload data',
+      subtitle: 'Update the programme from the bundle',
+      onTap: () => _confirmReload(context, ref),
+    );
+  }
+
+  Future<void> _confirmReload(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Reload data?'),
+        content: const Text(
+          'The programme will be refreshed from the bundled data. Your favourites will be kept.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Reload'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      ref.invalidate(bootstrapProvider);
+    }
+  }
+}
+
+/// Item de "Clear favourites" con conteo reactivo y diálogo de confirmación.
+class _ClearFavouritesItem extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final count = ref
+        .watch(favoriteIdsProvider)
+        .when(data: (ids) => ids.length, loading: () => 0, error: (_, _) => 0);
+    final hasItems = count > 0;
+
+    return _SettingsItem(
+      icon: Icons.bookmark_remove_outlined,
+      title: 'Clear favourites',
+      subtitle: switch (count) {
+        0 => 'No saved events',
+        1 => '1 saved event',
+        _ => '$count saved events',
+      },
+      enabled: hasItems,
+      onTap: hasItems ? () => _confirmClear(context, ref, count) : null,
+    );
+  }
+
+  Future<void> _confirmClear(
+    BuildContext context,
+    WidgetRef ref,
+    int count,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Clear favourites?'),
+        content: Text(
+          'Remove all $count saved ${count == 1 ? 'event' : 'events'}? This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Clear all'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await ref.read(clearFavoritesUseCaseProvider).execute();
+    }
+  }
+}
+
 /// Item individual de ajuste.
 class _SettingsItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final String? subtitle;
   final Widget? trailing;
+  final VoidCallback? onTap;
+  final bool enabled;
 
   const _SettingsItem({
     required this.icon,
     required this.title,
     this.subtitle,
     this.trailing,
+    this.onTap,
+    this.enabled = true,
   });
 
   @override
@@ -185,11 +276,16 @@ class _SettingsItem extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     return ListTile(
+      enabled: enabled,
       leading: Icon(icon, color: colors.onSurfaceVariant),
       title: Text(title),
       subtitle: subtitle != null ? Text(subtitle!) : null,
-      trailing: trailing ?? const Icon(Icons.chevron_right_rounded, size: 20),
-      onTap: null,
+      trailing:
+          trailing ??
+          (onTap != null
+              ? const Icon(Icons.chevron_right_rounded, size: 20)
+              : null),
+      onTap: onTap,
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
 
 /// Modelo de presentación de un keynote speaker.
@@ -7,6 +8,7 @@ class KeynoteSpeakerUIModel {
   final String? institution;
   final String? photoUrl;
   final List<SessionUIModel> events;
+  final Presentation? presentation;
 
   const KeynoteSpeakerUIModel({
     required this.id,
@@ -14,5 +16,6 @@ class KeynoteSpeakerUIModel {
     this.institution,
     this.photoUrl,
     this.events = const [],
+    this.presentation,
   });
 }

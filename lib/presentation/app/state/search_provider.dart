@@ -10,6 +10,8 @@ import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart'
 
 part 'search_provider.g.dart';
 
+// TODO: Revisar los '||' de forma general.
+
 /// Filtros activos en la búsqueda.
 class SearchFilterState {
   final String? selectedDay;
@@ -28,6 +30,7 @@ class SearchFilterState {
     this.selectedDurations = const {},
   });
 
+  /// True si hay algún filtro activo.
   bool get isActive =>
       selectedDay != null ||
       selectedTypes.isNotEmpty ||
@@ -36,6 +39,7 @@ class SearchFilterState {
       selectedZones.isNotEmpty ||
       selectedDurations.isNotEmpty;
 
+  /// Número de filtros activos.
   int get activeCount =>
       (selectedDay != null ? 1 : 0) +
       selectedTypes.length +
@@ -58,11 +62,13 @@ class SearchState {
   }) : filters = filters ?? const SearchFilterState();
 }
 
+/// Provider para la búsqueda.
 @riverpod
 class Search extends _$Search {
   @override
   SearchState build() => SearchState();
 
+  /// Ejecuta la búsqueda por texto.
   void performSearch(String text) {
     if (text == state.query) {
       return;
@@ -75,6 +81,7 @@ class Search extends _$Search {
     );
   }
 
+  /// Actualiza los filtros de la búsqueda.
   void updateFilters(SearchFilterState filters) {
     state = SearchState(
       query: state.query,
@@ -83,6 +90,7 @@ class Search extends _$Search {
     );
   }
 
+  /// Cambia el filtro de día.
   void toggleDay(String date) {
     final f = state.filters;
     updateFilters(
@@ -97,6 +105,7 @@ class Search extends _$Search {
     );
   }
 
+  /// Cambia el filtro de tipo.
   void toggleType(EventType type) {
     final f = state.filters;
     updateFilters(
@@ -111,6 +120,7 @@ class Search extends _$Search {
     );
   }
 
+  /// Cambia el filtro de idioma.
   void toggleLanguage(String lang) {
     final f = state.filters;
     updateFilters(
@@ -125,6 +135,7 @@ class Search extends _$Search {
     );
   }
 
+  /// Cambia el filtro de estado.
   void toggleStatus(EventStatus status) {
     final f = state.filters;
     updateFilters(
@@ -139,6 +150,7 @@ class Search extends _$Search {
     );
   }
 
+  /// Cambia el filtro de zona.
   void toggleZone(String zoneId) {
     final f = state.filters;
     updateFilters(
@@ -153,6 +165,7 @@ class Search extends _$Search {
     );
   }
 
+  /// Cambia el filtro de duración.
   void toggleDuration(int minutes) {
     final f = state.filters;
     updateFilters(
@@ -167,8 +180,10 @@ class Search extends _$Search {
     );
   }
 
+  /// Limpia todos los filtros.
   void clearFilters() => updateFilters(const SearchFilterState());
 
+  /// Limpia la búsqueda.
   void clear() {
     state = SearchState();
   }
@@ -185,6 +200,7 @@ class Search extends _$Search {
     return Set.unmodifiable(result);
   }
 
+  /// Obtiene el nombre de la sala por su ID.
   String getRoomName(String? roomId) {
     if (roomId == null) {
       return 'No room';
@@ -206,6 +222,7 @@ class Search extends _$Search {
     return room.name.resolve('en');
   }
 
+  /// Computa los resultados de la búsqueda.
   List<Event> _computeResults(String query, SearchFilterState filters) {
     final homeData = ref.read(homeViewModelProvider).value;
     if (homeData == null) {
@@ -225,6 +242,7 @@ class Search extends _$Search {
     return events.where((e) => _matchesFilters(e, filters)).toList();
   }
 
+  /// Aplica la búsqueda por texto.
   List<Event> _applyTextSearch(List<Event> events, String query) {
     final q = query.toLowerCase();
 
@@ -232,9 +250,8 @@ class Search extends _$Search {
 
     for (final e in events) {
       final title = e.title.resolve('en').toLowerCase();
-      final abstract_ = e.abstract_?.resolve('en').toLowerCase() ?? '';
 
-      if (title.contains(q) || abstract_.contains(q)) {
+      if (title.contains(q)) {
         result.add(e);
       }
     }
@@ -242,6 +259,7 @@ class Search extends _$Search {
     return result;
   }
 
+  /// Filtra los eventos según los filtros activos.
   bool _matchesFilters(Event e, SearchFilterState f) {
     if (f.selectedDay != null) {
       if (e.startDate == null) {
@@ -258,7 +276,7 @@ class Search extends _$Search {
     }
 
     if (f.selectedLanguages.isNotEmpty &&
-        !f.selectedLanguages.contains(e.lang ?? '')) {
+        !f.selectedLanguages.contains(e.defaultLang ?? '')) {
       return false;
     }
 
