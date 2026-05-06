@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/core/ui_engine/ui_metrics.dart';
 import 'package:iced26/presentation/widgets/app_page_header_delegate.dart';
 
-// TODO: Revisar y mejorar la complejidad del code
-
 /// Contenedor maestro que gestiona el layout de una página completa.
-class AppPage extends ConsumerStatefulWidget {
+class AppPage extends StatefulWidget {
   final List<Widget> children;
   final Widget? header;
   final Widget? collapsedHeader;
-  final bool useSlivers;
   final EdgeInsets? padding;
   final Color? backgroundColor;
   final double? headerFallbackHeight;
@@ -22,7 +18,6 @@ class AppPage extends ConsumerStatefulWidget {
     required this.children,
     this.header,
     this.collapsedHeader,
-    this.useSlivers = true,
     this.padding,
     this.backgroundColor,
     this.headerFallbackHeight,
@@ -33,70 +28,36 @@ class AppPage extends ConsumerStatefulWidget {
        );
 
   @override
-  ConsumerState<AppPage> createState() => _AppPageState();
+  State<AppPage> createState() => _AppPageState();
 }
 
-class _AppPageState extends ConsumerState<AppPage> {
-  /// Medición del header de **esta** página (local, no global: evita conflictos con [IndexedStack]).
+class _AppPageState extends State<AppPage> {
   // TODO: Mejorar medición del header.
   double _headerHeight = 0;
 
-  /// Color de fondo efectivo: prop del widget o color de superficie del tema.
-  Color _resolveBackgroundColor(BuildContext context) =>
-      widget.backgroundColor ?? Theme.of(context).colorScheme.surface;
-
-  /// Padding inferior: sólo aplica en modo normal (no sliver).
-  double _resolveBottomInset() =>
-      widget.useSlivers ? 0.0 : ref.watch(uiMetricsProvider).navBarHeight;
-
-  /// Actualiza [_headerHeight] sólo si el cambio supera el umbral de 0.5 px.
   void _onHeaderHeightChanged(double newHeight) {
     if ((newHeight - _headerHeight).abs() > 0.5) {
       setState(() => _headerHeight = newHeight);
     }
   }
 
-  /// Escucha [UIMetricsNotification] y delega el cambio a [_onHeaderHeightChanged].
-  bool _handleMetricsNotification(UIMetricsNotification notification) {
-    final height = notification.headerHeight;
-    if (height != null) _onHeaderHeightChanged(height);
-    return false; // No absorber la notificación.
-  }
-
   @override
   Widget build(BuildContext context) {
-    final bottomInset = _resolveBottomInset();
-    final bgColor = _resolveBackgroundColor(context);
+    final bgColor =
+        widget.backgroundColor ?? Theme.of(context).colorScheme.surface;
 
     return NotificationListener<UIMetricsNotification>(
-      onNotification: _handleMetricsNotification,
-      child: Material(
-        color: bgColor,
-        child: widget.useSlivers
-            ? _buildSliverLayout(context, bgColor)
-            : _buildNormalLayout(bottomInset),
-      ),
+      onNotification: (notification) {
+        final height = notification.headerHeight;
+        if (height != null) _onHeaderHeightChanged(height);
+        return false;
+      },
+      child: Material(color: bgColor, child: _buildSliverLayout(bgColor)),
     );
   }
 
-  /// Layout normal para cuando no se usan slivers.
-  Widget _buildNormalLayout(double bottomInset) {
-    return Column(
-      children: [
-        widget.header ?? const SizedBox.shrink(),
-        Expanded(
-          child: ListView(
-            primary: false,
-            padding: _resolveContentPadding(bottomInset),
-            children: widget.children,
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// Layout con slivers para cuando se usa [CustomScrollView].
-  Widget _buildSliverLayout(BuildContext context, Color bgColor) {
+  /// Construye el layout basado en slivers.
+  Widget _buildSliverLayout(Color bgColor) {
     return CustomScrollView(
       primary: false,
       clipBehavior: Clip.hardEdge,
@@ -148,11 +109,8 @@ class _AppPageState extends ConsumerState<AppPage> {
     return widget.headerFallbackHeight ?? AppLayout.pageHeaderFallbackHeight;
   }
 
-  /// Altura colapsada del header: fallback prop → igual que la expandida.
-  double _resolveCollapsedHeaderHeight() =>
-      widget.collapsedHeaderFallbackHeight ?? _resolveExpandedHeaderHeight();
-
-  /// Padding del contenido en modo normal, añadiendo el inset inferior.
-  EdgeInsets _resolveContentPadding(double bottomInset) =>
-      (widget.padding ?? EdgeInsets.zero).copyWith(bottom: bottomInset);
+  double _resolveCollapsedHeaderHeight() {
+    return widget.collapsedHeaderFallbackHeight ??
+        _resolveExpandedHeaderHeight();
+  }
 }

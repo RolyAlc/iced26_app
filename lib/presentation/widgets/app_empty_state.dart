@@ -1,26 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 
-/// Un widget para mostrar estados vacíos o de error de forma consistente.
-///
-/// Permite mostrar un icono/ilustración, un título y un mensaje.
+/// Widget para mostrar estados vacíos o de error de forma consistente.
 class AppEmptyState extends StatelessWidget {
-  /// El icono o ilustración principal a mostrar.
   final Widget? illustration;
-
-  /// El título principal del estado vacío/error.
   final String title;
-
-  /// El mensaje descriptivo debajo del título.
   final String message;
-
-  /// Widget opcional para una acción principal (ej. un botón "Recargar").
   final Widget? actionButton;
-
-  /// El espaciado vertical entre los elementos.
   final double spacing;
-
-  /// El padding interno del widget.
   final EdgeInsetsGeometry padding;
 
   const AppEmptyState({
@@ -52,7 +40,7 @@ class AppEmptyState extends StatelessWidget {
           ] else ...[
             // Icono por defecto si no se proporciona ilustración
             Icon(
-              Icons.info_outline_rounded, // Icono genérico de información
+              AppIcons.info,
               size: 60,
               color: colors.primary.withValues(alpha: 0.6),
             ),
