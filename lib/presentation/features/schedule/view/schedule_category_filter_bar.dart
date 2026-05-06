@@ -29,6 +29,7 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
     );
   }
 
+  /// Construye los chips de filtro.
   List<Widget> _buildChips(BuildContext context, ColorScheme colors) {
     return [
       _CategoryChip(

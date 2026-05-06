@@ -1,4 +1,4 @@
-import '../../core/errors/result.dart';
+import 'package:iced26/core/errors/result.dart';
 
 /// Contrato base que todos los repositorios deben respetar.
 /// Usa el tipo genérico [T] para la entidad que maneja.
