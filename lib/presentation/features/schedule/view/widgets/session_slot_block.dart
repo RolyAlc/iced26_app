@@ -7,6 +7,7 @@ import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail_sheet.dart';
 import 'package:iced26/presentation/helpers/date_helper.dart';
@@ -65,7 +66,7 @@ class SessionSlotBlock extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Icon(Icons.expand_more, color: theme.colorScheme.outline),
+              Icon(AppIcons.expandMore, color: theme.colorScheme.outline),
             ],
           ),
         ),
@@ -253,7 +254,10 @@ class _PresentationTile extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                 )
               : null,
-          trailing: Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+          trailing: Icon(
+            AppIcons.chevronRight,
+            color: theme.colorScheme.outline,
+          ),
           onTap: () => showPresentationDetail(context, presentation),
         ),
         Divider(

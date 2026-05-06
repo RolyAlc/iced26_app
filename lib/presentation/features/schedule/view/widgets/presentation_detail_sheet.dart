@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
@@ -343,7 +344,7 @@ class _LinkButtons extends StatelessWidget {
         if (aboutUrl != null)
           OutlinedButton.icon(
             onPressed: () => _open(aboutUrl!),
-            icon: Icon(Icons.description_outlined, size: 18),
+            icon: Icon(AppIcons.info, size: 18),
             label: Text('About the presentation'),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.primary,
@@ -354,7 +355,7 @@ class _LinkButtons extends StatelessWidget {
         if (videoUrl != null)
           OutlinedButton.icon(
             onPressed: () => _open(videoUrl!),
-            icon: Icon(Icons.play_circle_outline, size: 18),
+            icon: Icon(AppIcons.playCircleOutline, size: 18),
             label: Text('Watch video'),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.primary,
@@ -381,7 +382,7 @@ class _PresentationBookmarkButton extends ConsumerWidget {
 
     return IconButton(
       icon: Icon(
-        isFavorite ? Icons.bookmark : Icons.bookmark_outline,
+        isFavorite ? AppIcons.bookmarkOn : AppIcons.bookmarkOutline,
         color: isFavorite ? colors.primary : colors.onSurfaceVariant,
         size: 22,
       ),

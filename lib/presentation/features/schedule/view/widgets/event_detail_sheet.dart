@@ -7,6 +7,7 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/helpers/event_type_style.dart';
 import 'package:iced26/presentation/widgets/event_status_chip.dart';
@@ -130,14 +131,14 @@ class EventDetailContent extends ConsumerWidget {
             children: [
               Expanded(
                 child: _AttributeCell(
-                  icon: Icons.access_time_filled_rounded,
+                  icon: AppIcons.accessTime,
                   label: 'Time',
                   value: event.filterTime ?? '--:--',
                 ),
               ),
               Expanded(
                 child: _AttributeCell(
-                  icon: Icons.meeting_room_rounded,
+                  icon: AppIcons.meetingRoom,
                   label: 'Room',
                   value: event.roomId ?? 'TBA',
                 ),
@@ -155,14 +156,14 @@ class EventDetailContent extends ConsumerWidget {
             children: [
               Expanded(
                 child: _AttributeCell(
-                  icon: Icons.timelapse_rounded,
+                  icon: AppIcons.duration,
                   label: 'Duration',
                   value: duration ?? '--',
                 ),
               ),
               Expanded(
                 child: _AttributeCell(
-                  icon: Icons.translate_rounded,
+                  icon: AppIcons.translate,
                   label: 'Language',
                   value: event.defaultLang?.toUpperCase() ?? '--',
                 ),
@@ -191,7 +192,7 @@ class EventDetailContent extends ConsumerWidget {
         ),
         onPressed: () =>
             ref.read(toggleFavoriteUseCaseProvider).execute(event.id),
-        icon: Icon(isFavorite ? Icons.bookmark : Icons.bookmark_add_rounded),
+        icon: Icon(isFavorite ? AppIcons.bookmarkOn : AppIcons.bookmarkAdd),
         label: Text(
           isFavorite ? 'Saved to my schedule' : 'Add to my schedule',
           style: const TextStyle(fontWeight: FontWeight.bold),

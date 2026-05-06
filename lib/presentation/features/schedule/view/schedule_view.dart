@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_type.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/features/my_schedule/view/my_schedule_view.dart';
 import 'package:iced26/presentation/features/schedule/view/schedule_category_filter_bar.dart';
@@ -40,11 +41,10 @@ class _ScheduleContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final topTab = ref.watch(scheduleTopTabProvider);
     final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
-    final showFavorites = ref.watch(showOnlyFavoritesProvider);
     final visibleItems = ref.watch(visibleItemsProvider);
     final safeDayIndex = ref.watch(safeDayIndexProvider);
-    final isFiltered = selectedCategory != null || showFavorites;
-    final isMySchedule = topTab == 1;
+    final isFiltered = selectedCategory != null;
+    final isMySchedule = topTab == ScheduleTab.mySchedule;
 
     return DefaultTabController(
       length: state.sections.length,
@@ -53,8 +53,8 @@ class _ScheduleContent extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
         header: _ScheduleHeader(
           topTab: topTab,
-          onTopTabSelect: (i) =>
-              ref.read(scheduleTopTabProvider.notifier).select(i),
+          onTopTabSelect: (tab) =>
+              ref.read(scheduleTopTabProvider.notifier).select(tab),
           categories: state.categories,
           selectedCategory: selectedCategory,
           onCategorySelect: (cat) =>
@@ -62,9 +62,6 @@ class _ScheduleContent extends ConsumerWidget {
           sections: state.sections,
           onDaySelect: (index) =>
               ref.read(selectedDayIndexProvider.notifier).set(index),
-          showFavorites: showFavorites,
-          onFavoritesToggle: () =>
-              ref.read(showOnlyFavoritesProvider.notifier).toggle(),
           isFiltered: isFiltered,
           isMySchedule: isMySchedule,
         ),
@@ -73,11 +70,7 @@ class _ScheduleContent extends ConsumerWidget {
           if (isMySchedule)
             const MyScheduleContent()
           else
-            _ScheduleBody(
-              visibleItems: visibleItems,
-              isFiltered: isFiltered,
-              showFavorites: showFavorites,
-            ),
+            _ScheduleBody(visibleItems: visibleItems, isFiltered: isFiltered),
         ],
       ),
     );
@@ -86,20 +79,15 @@ class _ScheduleContent extends ConsumerWidget {
 
 /// Cuerpo del schedule.
 class _ScheduleBody extends StatelessWidget {
-  const _ScheduleBody({
-    required this.visibleItems,
-    required this.isFiltered,
-    required this.showFavorites,
-  });
+  const _ScheduleBody({required this.visibleItems, required this.isFiltered});
 
   final List<ScheduleItem> visibleItems;
   final bool isFiltered;
-  final bool showFavorites;
 
   @override
   Widget build(BuildContext context) {
     if (visibleItems.isEmpty && isFiltered) {
-      return showFavorites ? const _EmptyFavorites() : const _EmptyFilter();
+      return const _EmptyFilter();
     }
 
     return Column(children: visibleItems.map(_buildScheduleItem).toList());
@@ -159,21 +147,17 @@ class _ScheduleHeader extends StatelessWidget {
     required this.onCategorySelect,
     required this.sections,
     required this.onDaySelect,
-    required this.showFavorites,
-    required this.onFavoritesToggle,
     required this.isFiltered,
     required this.isMySchedule,
   });
 
-  final int topTab;
-  final ValueChanged<int> onTopTabSelect;
+  final ScheduleTab topTab;
+  final ValueChanged<ScheduleTab> onTopTabSelect;
   final List<EventType> categories;
   final EventType? selectedCategory;
   final ValueChanged<EventType?> onCategorySelect;
   final List<ScheduleDaySection> sections;
   final ValueChanged<int> onDaySelect;
-  final bool showFavorites;
-  final VoidCallback onFavoritesToggle;
   final bool isFiltered;
   final bool isMySchedule;
 
@@ -199,7 +183,7 @@ class _ScheduleHeader extends StatelessWidget {
                   ? Row(
                       children: [
                         Icon(
-                          Icons.calendar_today_outlined,
+                          AppIcons.calendarOutline,
                           size: 12,
                           color: colors.outline,
                         ),
@@ -241,8 +225,6 @@ class _ScheduleHeader extends StatelessWidget {
               categories: categories,
               selected: selectedCategory,
               onSelect: onCategorySelect,
-              isFavoritesMode: showFavorites,
-              onFavoritesTap: onFavoritesToggle,
             ),
           ],
         ],
@@ -253,8 +235,8 @@ class _ScheduleHeader extends StatelessWidget {
 
 /// Tap bar superior.
 class _TopTabBar extends StatelessWidget {
-  final int selected;
-  final ValueChanged<int> onSelect;
+  final ScheduleTab selected;
+  final ValueChanged<ScheduleTab> onSelect;
 
   const _TopTabBar({required this.selected, required this.onSelect});
 
@@ -267,16 +249,16 @@ class _TopTabBar extends StatelessWidget {
       children: [
         _TopTab(
           label: _kScheduleTitle,
-          isSelected: selected == 0,
-          onTap: () => onSelect(0),
+          isSelected: selected == ScheduleTab.timeline,
+          onTap: () => onSelect(ScheduleTab.timeline),
           theme: theme,
           colors: colors,
         ),
         const SizedBox(width: AppSpacing.m),
         _TopTab(
           label: 'My Schedule',
-          isSelected: selected == 1,
-          onTap: () => onSelect(1),
+          isSelected: selected == ScheduleTab.mySchedule,
+          onTap: () => onSelect(ScheduleTab.mySchedule),
           theme: theme,
           colors: colors,
         ),
@@ -326,21 +308,9 @@ class _EmptyFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _EmptyState(
-    icon: Icons.search_off_rounded,
+    icon: AppIcons.searchOff,
     title: 'No sessions match your filters',
     subtitle: 'Try a different category or clear the filter',
-  );
-}
-
-/// Estado cuando My Schedule está vacío.
-class _EmptyFavorites extends StatelessWidget {
-  const _EmptyFavorites();
-
-  @override
-  Widget build(BuildContext context) => _EmptyState(
-    icon: Icons.bookmark_border,
-    title: 'No saved sessions yet',
-    subtitle: 'Tap the bookmark on any session to save it',
   );
 }
 

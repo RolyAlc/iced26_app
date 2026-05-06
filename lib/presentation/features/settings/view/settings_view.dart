@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/bootstrap.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/widgets/app_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,18 +20,18 @@ class SettingsView extends StatelessWidget {
           title: 'Appearance',
           items: [
             _SettingsItem(
-              icon: Icons.text_fields_rounded,
+              icon: AppIcons.textField,
               title: 'Text size',
               subtitle: 'Medium',
             ),
             _SettingsItem(
-              icon: Icons.contrast_rounded,
+              icon: AppIcons.contrast,
               title: 'High contrast',
               subtitle: 'Black & white, no colour',
               trailing: _ComingSoonBadge(),
             ),
             _SettingsItem(
-              icon: Icons.dark_mode_outlined,
+              icon: AppIcons.darkTheme,
               title: 'Theme',
               subtitle: 'System',
             ),
@@ -41,7 +42,7 @@ class SettingsView extends StatelessWidget {
           title: 'Language',
           items: [
             _SettingsItem(
-              icon: Icons.translate_rounded,
+              icon: AppIcons.translate,
               title: 'App language',
               subtitle: 'English',
               trailing: _ComingSoonBadge(),
@@ -58,17 +59,17 @@ class SettingsView extends StatelessWidget {
           title: 'About',
           items: [
             _SettingsItem(
-              icon: Icons.info_outline_rounded,
+              icon: AppIcons.info,
               title: 'ICED 26',
               subtitle: 'Salamanca, Spain',
             ),
             _SettingsItem(
-              icon: Icons.smartphone_rounded,
+              icon: AppIcons.smartphone,
               title: 'Version',
               subtitle: '—',
             ),
             _SettingsItem(
-              icon: Icons.language_rounded,
+              icon: AppIcons.language,
               title: 'Official website',
               subtitle: 'iced26.es',
               onTap: () => launchUrl(
@@ -166,7 +167,7 @@ class _ReloadDataItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return _SettingsItem(
-      icon: Icons.refresh_rounded,
+      icon: AppIcons.refresh,
       title: 'Reload data',
       subtitle: 'Update the programme from the bundle',
       onTap: () => _confirmReload(context, ref),
@@ -210,7 +211,7 @@ class _ClearFavouritesItem extends ConsumerWidget {
     final hasItems = count > 0;
 
     return _SettingsItem(
-      icon: Icons.bookmark_remove_outlined,
+      icon: AppIcons.bookmarkRemove,
       title: 'Clear favourites',
       subtitle: switch (count) {
         0 => 'No saved events',
@@ -282,9 +283,7 @@ class _SettingsItem extends StatelessWidget {
       subtitle: subtitle != null ? Text(subtitle!) : null,
       trailing:
           trailing ??
-          (onTap != null
-              ? const Icon(Icons.chevron_right_rounded, size: 20)
-              : null),
+          (onTap != null ? const Icon(AppIcons.chevronRight, size: 20) : null),
       onTap: onTap,
     );
   }

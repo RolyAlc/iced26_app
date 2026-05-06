@@ -5,6 +5,7 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/widgets/app_card.dart';
@@ -126,7 +127,7 @@ class _ChevronIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Icon(
-      Icons.chevron_right,
+      AppIcons.chevronRight,
       color: Theme.of(context).colorScheme.outline,
       size: 20,
     );
@@ -146,7 +147,7 @@ class _BookmarkButton extends ConsumerWidget {
 
     return IconButton(
       icon: Icon(
-        isFavorite ? Icons.bookmark : Icons.bookmark_outline,
+        isFavorite ? AppIcons.bookmarkOn : AppIcons.bookmarkOff,
         color: isFavorite ? colors.primary : colors.onSurfaceVariant,
         size: 20,
       ),

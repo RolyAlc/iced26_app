@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_type.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/helpers/event_type_style.dart';
 
 /// Barra de filtros de categoria para la pantalla Schedule.
@@ -11,15 +12,11 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
     required this.categories,
     required this.selected,
     required this.onSelect,
-    required this.onFavoritesTap,
-    required this.isFavoritesMode,
   });
 
   final List<EventType> categories;
   final EventType? selected;
   final ValueChanged<EventType?> onSelect;
-  final VoidCallback onFavoritesTap;
-  final bool isFavoritesMode;
 
   @override
   Widget build(BuildContext context) {
@@ -32,22 +29,13 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
     );
   }
 
-  /// Construye los chips de categoria.
   List<Widget> _buildChips(BuildContext context, ColorScheme colors) {
     return [
       _CategoryChip(
-        label: 'My Schedule',
-        icon: isFavoritesMode ? Icons.bookmark : Icons.bookmark_border,
-        color: colors.tertiary,
-        selected: isFavoritesMode,
-        onTap: onFavoritesTap,
-      ),
-      const SizedBox(width: AppSpacing.xs),
-      _CategoryChip(
         label: 'All',
-        icon: Icons.apps_rounded,
+        icon: AppIcons.apps,
         color: colors.primary,
-        selected: !isFavoritesMode && selected == null,
+        selected: selected == null,
         onTap: () => onSelect(null),
       ),
       ...categories.expand((cat) {
@@ -58,7 +46,7 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
             label: cat.label,
             icon: style.icon,
             color: style.color,
-            selected: !isFavoritesMode && selected == cat,
+            selected: selected == cat,
             onTap: () => onSelect(cat),
           ),
         ];

@@ -11,41 +11,50 @@ import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_
 
 part 'schedule_viewmodel.g.dart';
 
-/// Tab superior de Schedule: 0 = Schedule, 1 = My Schedule.
+/// Tabs del header superior de Schedule.
+enum ScheduleTab { timeline, mySchedule }
+
 @riverpod
 class ScheduleTopTab extends _$ScheduleTopTab {
   @override
-  int build() => 0;
-  void select(int index) => state = index;
+  ScheduleTab build() {
+    return ScheduleTab.timeline;
+  }
+
+  void select(ScheduleTab tab) {
+    state = tab;
+  }
 }
 
 /// Día activo como índice de tab. 0 = primer día.
 @riverpod
 class SelectedDayIndex extends _$SelectedDayIndex {
   @override
-  int build() => 0;
-  void set(int value) => state = value;
+  int build() {
+    return 0;
+  }
+
+  void set(int value) {
+    state = value;
+  }
 }
 
 /// Categoría activa como filtro. `null` = sin filtro (mostrar todo).
 @riverpod
 class SelectedScheduleCategory extends _$SelectedScheduleCategory {
   @override
-  EventType? build() => null;
+  EventType? build() {
+    return null;
+  }
 
-  void set(EventType? value) => state = value;
+  void set(EventType? value) {
+    state = value;
+  }
 
   /// Selecciona [cat] o lo deselecciona si ya estaba activo. `null` limpia el filtro.
-  void select(EventType? cat) =>
-      state = (cat != null && state == cat) ? null : cat;
-}
-
-/// Muestra solo los eventos guardados en favoritos.
-@riverpod
-class ShowOnlyFavorites extends _$ShowOnlyFavorites {
-  @override
-  bool build() => false;
-  void toggle() => state = !state;
+  void select(EventType? cat) {
+    state = (cat != null && state == cat) ? null : cat;
+  }
 }
 
 /// Indexa los bloques de sesión por su `parentId` (N1 event id).
@@ -159,20 +168,6 @@ List<ScheduleItem> _filterByCategory({
   }).toList();
 }
 
-/// Filtra [items] para mostrar solo los que tienen al menos un evento favorito.
-List<ScheduleItem> _filterByFavorites({
-  required List<ScheduleItem> items,
-  required Set<String> favIds,
-}) {
-  return items.where((item) {
-    return switch (item) {
-      SingleEventItem(:final event) => favIds.contains(event.id),
-      SessionSlotItem(:final event) => favIds.contains(event.id),
-      DaySeparatorItem() => false,
-    };
-  }).toList();
-}
-
 /// Índice del día activo ajustado al rango válido de secciones.
 final safeDayIndexProvider = Provider<int>((ref) {
   final state = ref.watch(scheduleViewModelProvider).value;
@@ -192,21 +187,11 @@ final visibleItemsProvider = Provider<List<ScheduleItem>>((ref) {
 
   final dayIndex = ref.watch(selectedDayIndexProvider);
   final category = ref.watch(selectedScheduleCategoryProvider);
-  final showFavorites = ref.watch(showOnlyFavoritesProvider);
-  final favIds = ref.watch(favoriteIdsProvider).value ?? const <String>{};
 
-  final isFiltered = category != null || showFavorites;
-
-  if (isFiltered) {
+  if (category != null) {
     final result = <ScheduleItem>[];
     for (final section in state.sections) {
-      var items = section.items;
-      if (category != null) {
-        items = _filterByCategory(items: items, category: category);
-      }
-      if (showFavorites) {
-        items = _filterByFavorites(items: items, favIds: favIds);
-      }
+      final items = _filterByCategory(items: section.items, category: category);
       if (items.isNotEmpty) {
         result.add(DaySeparatorItem(label: section.title, date: section.date));
         result.addAll(items);
