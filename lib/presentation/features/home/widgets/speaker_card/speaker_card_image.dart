@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/widgets/app_network_image.dart';
 
 /// Imagen de fondo del speaker (ocupa toda la card).
@@ -18,7 +19,7 @@ class SpeakerCardImage extends StatelessWidget {
         color: colors.surfaceContainerHighest,
         child: Center(
           child: Icon(
-            Icons.person_rounded,
+            AppIcons.person,
             size: 48,
             color: colors.onSurfaceVariant.withValues(alpha: 0.4),
           ),

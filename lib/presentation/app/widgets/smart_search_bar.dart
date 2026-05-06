@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/widgets/search/search_modal.dart';
@@ -101,6 +102,7 @@ class _SearchBarVisualContainer extends StatelessWidget {
     );
   }
 
+  /// Obtiene el color scheme del tema.
   ColorScheme _getColors(BuildContext context) {
     return Theme.of(context).colorScheme;
   }
@@ -111,18 +113,22 @@ class _SearchBarVisualContainer extends StatelessWidget {
     horizontal: AppSpacing.m,
   );
 
+  /// Construye el icono de búsqueda.
   Widget _buildSearchIcon(ColorScheme colors) {
-    return Icon(Icons.search_rounded, color: colors.primary);
+    return Icon(AppIcons.search, color: colors.primary);
   }
 
+  /// Espaciado entre el icono de búsqueda y el placeholder.
   Widget _buildSpacing() {
     return const SizedBox(width: AppSpacing.sm);
   }
 
+  /// Placeholder de la barra de búsqueda.
   Widget _buildPlaceholderText() {
     return const Expanded(child: Text('Search sessions, authors, rooms...'));
   }
 
+  /// Botón de filtros.
   Widget _buildFilterButton(ColorScheme colors) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -134,6 +140,7 @@ class _SearchBarVisualContainer extends StatelessWidget {
     );
   }
 
+  /// Construye la decoración de la barra de búsqueda.
   BoxDecoration _buildDecoration(ColorScheme colors) {
     return BoxDecoration(
       color: _buildBackgroundColor(colors),
@@ -142,6 +149,7 @@ class _SearchBarVisualContainer extends StatelessWidget {
     );
   }
 
+  /// Color de fondo de la barra de búsqueda.
   Color _buildBackgroundColor(ColorScheme colors) {
     return Color.alphaBlend(
       colors.primary.withValues(alpha: 0.08),
@@ -165,13 +173,15 @@ class _FilterIcon extends StatelessWidget {
     );
   }
 
+  /// Construye el icono de filtro.
   Widget _buildIcon() {
     return Icon(
-      Icons.tune_rounded,
+      AppIcons.filter,
       color: isActive ? colors.primary : colors.secondary,
     );
   }
 
+  /// Punto rojo que indica que hay filtros activos.
   Widget _buildActiveDot() {
     return Positioned(
       top: -3,

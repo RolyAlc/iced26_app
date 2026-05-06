@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/services/logger/logger.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Header expresivo de búsqueda con filtros integrados
-/// Combina un 'SearchBar' moderno con 'FilterChips' para una experiencia
-/// de búsqueda avanzada.
 class ExpressiveSearchHeader extends StatelessWidget {
   const ExpressiveSearchHeader({super.key});
 
@@ -19,16 +18,16 @@ class ExpressiveSearchHeader extends StatelessWidget {
               return SearchBar(
                 controller: controller,
                 hintText: "Search events...",
-                leading: const Icon(Icons.search, size: 20),
+                leading: const Icon(AppIcons.search, size: 20),
                 onTap: () => controller.openView(),
                 elevation: const WidgetStatePropertyAll(AppElevation.low),
                 side: const WidgetStatePropertyAll(BorderSide.none),
                 shape: const WidgetStatePropertyAll(StadiumBorder()),
                 trailing: [
                   IconButton(
-                    icon: const Icon(Icons.tune),
+                    icon: const Icon(AppIcons.filter),
                     onPressed: () {
-                      AppLogger.d("Abrir filtros avanzados");
+                      AppLogger.d("Open advanced filters");
                     },
                   ),
                 ],
@@ -38,7 +37,7 @@ class ExpressiveSearchHeader extends StatelessWidget {
               // Sugerencias dinámicas basadas en el texto
               return [
                 ListTile(
-                  leading: const Icon(Icons.history),
+                  leading: const Icon(AppIcons.history),
                   title: Text(
                     controller.text.isEmpty
                         ? 'Recent searches'
@@ -58,13 +57,13 @@ class ExpressiveSearchHeader extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: [
-              _buildFilterChip(context, "Time", Icons.access_time),
+              _buildFilterChip(context, "Time", AppIcons.time),
               const SizedBox(width: 8),
-              _buildFilterChip(context, "Location", Icons.location_on),
+              _buildFilterChip(context, "Location", AppIcons.locationOn),
               const SizedBox(width: 8),
-              _buildFilterChip(context, "Type", Icons.category),
+              _buildFilterChip(context, "Type", AppIcons.category),
               const SizedBox(width: 8),
-              _buildFilterChip(context, "More", Icons.more_horiz),
+              _buildFilterChip(context, "More", AppIcons.moreHoriz),
             ],
           ),
         ),
@@ -72,13 +71,14 @@ class ExpressiveSearchHeader extends StatelessWidget {
     );
   }
 
+  /// Construye un filtro circular.
   Widget _buildFilterChip(BuildContext context, String label, IconData icon) {
     final theme = Theme.of(context);
     return FilterChip(
       label: Text(label),
       avatar: Icon(icon, size: 16),
       onSelected: (bool selected) {
-        AppLogger.d('Filtro "$label" seleccionado: $selected');
+        AppLogger.d('Filter "$label" selected: $selected');
       },
       shape: const StadiumBorder(),
       showCheckmark: false,

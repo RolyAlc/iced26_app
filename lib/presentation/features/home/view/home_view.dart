@@ -5,6 +5,7 @@ import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/bootstrap.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/app/widgets/loading_screen.dart';
 import 'package:iced26/presentation/app/widgets/smart_search_bar.dart';
@@ -125,7 +126,7 @@ class _HomeContent extends ConsumerWidget {
         emptyChild: const AppEmptyState(
           title: 'No news available',
           message: 'Check back later for the latest updates.',
-          illustration: Icon(Icons.newspaper_rounded, size: 60),
+          illustration: Icon(AppIcons.news, size: 60),
         ),
       ),
     );
@@ -145,7 +146,7 @@ class _HomeContent extends ConsumerWidget {
           child: AppEmptyState(
             title: 'No social activities found',
             message: 'Check back later for upcoming events.',
-            illustration: Icon(Icons.celebration_rounded, size: 60),
+            illustration: Icon(AppIcons.social, size: 60),
           ),
         ),
       ),
@@ -192,7 +193,7 @@ class _HomeExpandedHeader extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.calendar_month_outlined,
+                        AppIcons.calendarOutline,
                         size: 14,
                         color: colorScheme.primary,
                       ),

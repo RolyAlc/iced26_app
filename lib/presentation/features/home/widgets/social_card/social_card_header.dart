@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Header visual de la card (icono + fondo).
 class SocialCardHeader extends StatelessWidget {
@@ -10,7 +11,7 @@ class SocialCardHeader extends StatelessWidget {
     return CircleAvatar(
       radius: 20,
       backgroundColor: colors.tertiary.withValues(alpha: 0.15),
-      child: Icon(Icons.celebration_rounded, color: colors.tertiary, size: 20),
+      child: Icon(AppIcons.social, color: colors.tertiary, size: 20),
     );
   }
 }

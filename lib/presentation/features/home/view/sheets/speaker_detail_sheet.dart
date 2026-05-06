@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/presentation.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
@@ -64,7 +65,7 @@ class _SpeakerImage extends StatelessWidget {
           fit: BoxFit.cover,
           placeholder: ColoredBox(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            child: Center(child: Icon(Icons.person_rounded, size: 64)),
+            child: Center(child: Icon(AppIcons.person, size: 64)),
           ),
         ),
       ),
@@ -91,11 +92,7 @@ class _SpeakerInstitution extends StatelessWidget {
       padding: const EdgeInsets.only(top: AppSpacing.m),
       child: Row(
         children: [
-          Icon(
-            Icons.business_rounded,
-            size: 16,
-            color: colors.onSurfaceVariant,
-          ),
+          Icon(AppIcons.business, size: 16, color: colors.onSurfaceVariant),
           const SizedBox(width: AppSpacing.s),
           Expanded(
             child: Text(
@@ -181,7 +178,7 @@ class _PresentationRow extends StatelessWidget {
                       borderRadius: BorderRadius.circular(AppRadius.s),
                     ),
                     child: Icon(
-                      Icons.slideshow_rounded,
+                      AppIcons.slideshow,
                       size: 18,
                       color: colors.onPrimaryContainer,
                     ),
@@ -198,7 +195,7 @@ class _PresentationRow extends StatelessWidget {
                     ),
                   ),
                   Icon(
-                    Icons.chevron_right_rounded,
+                    AppIcons.chevronRight,
                     size: 20,
                     color: colors.onSurfaceVariant,
                   ),
@@ -264,7 +261,7 @@ class _SessionRow extends StatelessWidget {
               ),
             ),
             Icon(
-              Icons.chevron_right_rounded,
+              AppIcons.chevronRight,
               size: 20,
               color: colors.onSurfaceVariant,
             ),

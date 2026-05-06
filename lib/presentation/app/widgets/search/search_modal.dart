@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/widgets/search/search_filter_bar.dart';
 import 'package:iced26/presentation/app/widgets/search/search_filter_panel.dart';
 
@@ -57,6 +59,7 @@ class SearchModalBodyState extends ConsumerState<SearchModalBody> {
     );
   }
 
+  /// Togglea la expansión de filtros
   void _toggleFilters() {
     setState(() {
       _filtersExpanded = !_filtersExpanded;
@@ -154,7 +157,7 @@ class _SearchResultBuilder {
       return const SearchHelper(
         title: 'Explore',
         subtitle: 'Search by text, or filter by day, type and language.',
-        icon: Icons.auto_awesome_outlined,
+        icon: AppIcons.empty,
       );
     }
 
@@ -162,7 +165,7 @@ class _SearchResultBuilder {
       return const SearchHelper(
         title: 'No results',
         subtitle: 'Try adjusting your search or filters.',
-        icon: Icons.search_off_rounded,
+        icon: AppIcons.searchEmpty,
       );
     }
 
@@ -190,7 +193,7 @@ class _ResultsList extends StatelessWidget {
     return ListView.builder(
       itemCount: results.length,
       itemBuilder: (context, index) {
-        return ResultTile(event: results[index], notifier: notifier);
+        return ResultTile(event: results[index]);
       },
     );
   }
@@ -216,7 +219,7 @@ class SearchInputField extends StatelessWidget {
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: 'Type Author, Title or Room...',
-        prefixIcon: Icon(Icons.search_rounded, color: colors.primary),
+        prefixIcon: Icon(AppIcons.search, color: colors.primary),
         filled: true,
         fillColor: colors.surfaceContainerLow,
         border: OutlineInputBorder(
@@ -225,7 +228,7 @@ class SearchInputField extends StatelessWidget {
         ),
         suffixIcon: query.isNotEmpty
             ? IconButton(
-                icon: const Icon(Icons.close_rounded),
+                icon: const Icon(AppIcons.close),
                 onPressed: () => onChanged(''),
               )
             : null,
@@ -293,27 +296,28 @@ class SearchHelper extends StatelessWidget {
 }
 
 /// Tile para mostrar un resultado de la búsqueda
-class ResultTile extends StatelessWidget {
+class ResultTile extends ConsumerWidget {
   final Event event;
-  final Search notifier;
 
-  const ResultTile({super.key, required this.event, required this.notifier});
+  const ResultTile({super.key, required this.event});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).colorScheme;
+    final roomsIndex = ref.watch(allRoomsIndexProvider).value ?? {};
+    final roomName = roomsIndex[event.roomId]?.name.resolve('en') ?? 'No room';
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       leading: CircleAvatar(
         backgroundColor: colors.primaryContainer.withValues(alpha: 0.2),
-        child: Icon(Icons.event_rounded, color: colors.primary, size: 20),
+        child: Icon(AppIcons.event, color: colors.primary, size: 20),
       ),
       title: Text(
         event.title.resolve('en'),
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
-      subtitle: Text(notifier.getRoomName(event.roomId)),
+      subtitle: Text(roomName),
       onTap: () => Navigator.pop(context),
     );
   }

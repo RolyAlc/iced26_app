@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/helpers/date_helper.dart';
 
 /// Barra de filtros.
@@ -152,6 +153,7 @@ class _CollapsedFilterBar extends StatelessWidget {
   };
 }
 
+/// Botón de limpiar filtros
 class _ClearAllButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isErrorStyle;
@@ -164,7 +166,7 @@ class _ClearAllButton extends StatelessWidget {
 
     return TextButton.icon(
       onPressed: onPressed,
-      icon: const Icon(Icons.close_rounded, size: 14),
+      icon: const Icon(AppIcons.close, size: 14),
       label: const Text('Clear all'),
       style: TextButton.styleFrom(
         foregroundColor: isErrorStyle ? colors.error : colors.onSurfaceVariant,
@@ -215,6 +217,7 @@ class _FilterToggleButton extends StatelessWidget {
     );
   }
 
+  /// Construye la decoración del botón
   BoxDecoration _buildDecoration(ColorScheme colors, bool isActive) {
     return BoxDecoration(
       color: isActive
@@ -229,14 +232,16 @@ class _FilterToggleButton extends StatelessWidget {
     );
   }
 
+  /// Construye el icono del botón
   Widget _buildIcon(ColorScheme colors, bool isActive) {
     return Icon(
-      Icons.tune_rounded,
+      AppIcons.filter,
       size: 16,
       color: isActive ? colors.primary : colors.onSurfaceVariant,
     );
   }
 
+  /// Construye el texto del botón
   Widget _buildText(ColorScheme colors, bool isActive) {
     return Text(
       isActive ? 'Filters ($count)' : 'Filters',
@@ -248,11 +253,10 @@ class _FilterToggleButton extends StatelessWidget {
     );
   }
 
+  /// Construye la flecha del botón
   Widget _buildArrow(ColorScheme colors, bool isActive) {
     return Icon(
-      isExpanded
-          ? Icons.keyboard_arrow_up_rounded
-          : Icons.keyboard_arrow_down_rounded,
+      isExpanded ? AppIcons.collapse : AppIcons.expand,
       size: 16,
       color: isActive ? colors.primary : colors.onSurfaceVariant,
     );
@@ -291,6 +295,7 @@ class _ActiveChip extends StatelessWidget {
     );
   }
 
+  /// Construye el label del chip
   Widget _buildLabel(ColorScheme colors) {
     return Text(
       label,
@@ -302,10 +307,11 @@ class _ActiveChip extends StatelessWidget {
     );
   }
 
+  /// Construye el icono de remover del chip
   Widget _buildRemoveIcon(ColorScheme colors) {
     return GestureDetector(
       onTap: onRemove,
-      child: Icon(Icons.close_rounded, size: 14, color: colors.primary),
+      child: Icon(AppIcons.close, size: 14, color: colors.primary),
     );
   }
 }

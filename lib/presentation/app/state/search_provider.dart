@@ -3,14 +3,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/event_type.dart';
-import 'package:iced26/domain/entities/i18n_str.dart';
-import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 
 part 'search_provider.g.dart';
 
-// TODO: Revisar los '||' de forma general.
+// TODO: Comprobar if anidados
 
 /// Filtros activos en la búsqueda.
 class SearchFilterState {
@@ -47,6 +45,88 @@ class SearchFilterState {
       selectedStatuses.length +
       selectedZones.length +
       selectedDurations.length;
+
+  /// Activa o desactiva el filtro de día.
+  SearchFilterState withToggledDay(String date) {
+    return SearchFilterState(
+      selectedDay: selectedDay == date ? null : date,
+      selectedTypes: selectedTypes,
+      selectedLanguages: selectedLanguages,
+      selectedStatuses: selectedStatuses,
+      selectedZones: selectedZones,
+      selectedDurations: selectedDurations,
+    );
+  }
+
+  /// Activa o desactiva un tipo de evento.
+  SearchFilterState withToggledType(EventType type) {
+    return SearchFilterState(
+      selectedDay: selectedDay,
+      selectedTypes: _toggleSet(selectedTypes, type),
+      selectedLanguages: selectedLanguages,
+      selectedStatuses: selectedStatuses,
+      selectedZones: selectedZones,
+      selectedDurations: selectedDurations,
+    );
+  }
+
+  /// Activa o desactiva un idioma.
+  SearchFilterState withToggledLanguage(String lang) {
+    return SearchFilterState(
+      selectedDay: selectedDay,
+      selectedTypes: selectedTypes,
+      selectedLanguages: _toggleSet(selectedLanguages, lang),
+      selectedStatuses: selectedStatuses,
+      selectedZones: selectedZones,
+      selectedDurations: selectedDurations,
+    );
+  }
+
+  /// Activa o desactiva un estado de evento.
+  SearchFilterState withToggledStatus(EventStatus status) {
+    return SearchFilterState(
+      selectedDay: selectedDay,
+      selectedTypes: selectedTypes,
+      selectedLanguages: selectedLanguages,
+      selectedStatuses: _toggleSet(selectedStatuses, status),
+      selectedZones: selectedZones,
+      selectedDurations: selectedDurations,
+    );
+  }
+
+  /// Activa o desactiva una zona.
+  SearchFilterState withToggledZone(String zoneId) {
+    return SearchFilterState(
+      selectedDay: selectedDay,
+      selectedTypes: selectedTypes,
+      selectedLanguages: selectedLanguages,
+      selectedStatuses: selectedStatuses,
+      selectedZones: _toggleSet(selectedZones, zoneId),
+      selectedDurations: selectedDurations,
+    );
+  }
+
+  /// Activa o desactiva una duración.
+  SearchFilterState withToggledDuration(int minutes) {
+    return SearchFilterState(
+      selectedDay: selectedDay,
+      selectedTypes: selectedTypes,
+      selectedLanguages: selectedLanguages,
+      selectedStatuses: selectedStatuses,
+      selectedZones: selectedZones,
+      selectedDurations: _toggleSet(selectedDurations, minutes),
+    );
+  }
+}
+
+Set<T> _toggleSet<T>(Set<T> original, T value) {
+  final result = Set<T>.from(original);
+  if (result.contains(value)) {
+    result.remove(value);
+  } else {
+    result.add(value);
+  }
+  return Set.unmodifiable(result);
 }
 
 /// State de la búsqueda.
@@ -66,14 +146,15 @@ class SearchState {
 @riverpod
 class Search extends _$Search {
   @override
-  SearchState build() => SearchState();
+  SearchState build() {
+    return SearchState();
+  }
 
   /// Ejecuta la búsqueda por texto.
   void performSearch(String text) {
     if (text == state.query) {
       return;
     }
-
     state = SearchState(
       query: text,
       results: _computeResults(text, state.filters),
@@ -92,134 +173,42 @@ class Search extends _$Search {
 
   /// Cambia el filtro de día.
   void toggleDay(String date) {
-    final f = state.filters;
-    updateFilters(
-      SearchFilterState(
-        selectedDay: f.selectedDay == date ? null : date,
-        selectedTypes: f.selectedTypes,
-        selectedLanguages: f.selectedLanguages,
-        selectedStatuses: f.selectedStatuses,
-        selectedZones: f.selectedZones,
-        selectedDurations: f.selectedDurations,
-      ),
-    );
+    updateFilters(state.filters.withToggledDay(date));
   }
 
   /// Cambia el filtro de tipo.
   void toggleType(EventType type) {
-    final f = state.filters;
-    updateFilters(
-      SearchFilterState(
-        selectedDay: f.selectedDay,
-        selectedTypes: _toggleSet(f.selectedTypes, type),
-        selectedLanguages: f.selectedLanguages,
-        selectedStatuses: f.selectedStatuses,
-        selectedZones: f.selectedZones,
-        selectedDurations: f.selectedDurations,
-      ),
-    );
+    updateFilters(state.filters.withToggledType(type));
   }
 
   /// Cambia el filtro de idioma.
   void toggleLanguage(String lang) {
-    final f = state.filters;
-    updateFilters(
-      SearchFilterState(
-        selectedDay: f.selectedDay,
-        selectedTypes: f.selectedTypes,
-        selectedLanguages: _toggleSet(f.selectedLanguages, lang),
-        selectedStatuses: f.selectedStatuses,
-        selectedZones: f.selectedZones,
-        selectedDurations: f.selectedDurations,
-      ),
-    );
+    updateFilters(state.filters.withToggledLanguage(lang));
   }
 
   /// Cambia el filtro de estado.
   void toggleStatus(EventStatus status) {
-    final f = state.filters;
-    updateFilters(
-      SearchFilterState(
-        selectedDay: f.selectedDay,
-        selectedTypes: f.selectedTypes,
-        selectedLanguages: f.selectedLanguages,
-        selectedStatuses: _toggleSet(f.selectedStatuses, status),
-        selectedZones: f.selectedZones,
-        selectedDurations: f.selectedDurations,
-      ),
-    );
+    updateFilters(state.filters.withToggledStatus(status));
   }
 
   /// Cambia el filtro de zona.
   void toggleZone(String zoneId) {
-    final f = state.filters;
-    updateFilters(
-      SearchFilterState(
-        selectedDay: f.selectedDay,
-        selectedTypes: f.selectedTypes,
-        selectedLanguages: f.selectedLanguages,
-        selectedStatuses: f.selectedStatuses,
-        selectedZones: _toggleSet(f.selectedZones, zoneId),
-        selectedDurations: f.selectedDurations,
-      ),
-    );
+    updateFilters(state.filters.withToggledZone(zoneId));
   }
 
   /// Cambia el filtro de duración.
   void toggleDuration(int minutes) {
-    final f = state.filters;
-    updateFilters(
-      SearchFilterState(
-        selectedDay: f.selectedDay,
-        selectedTypes: f.selectedTypes,
-        selectedLanguages: f.selectedLanguages,
-        selectedStatuses: f.selectedStatuses,
-        selectedZones: f.selectedZones,
-        selectedDurations: _toggleSet(f.selectedDurations, minutes),
-      ),
-    );
+    updateFilters(state.filters.withToggledDuration(minutes));
   }
 
   /// Limpia todos los filtros.
-  void clearFilters() => updateFilters(const SearchFilterState());
+  void clearFilters() {
+    updateFilters(const SearchFilterState());
+  }
 
-  /// Limpia la búsqueda.
+  /// Limpia la búsqueda completa.
   void clear() {
     state = SearchState();
-  }
-
-  Set<T> _toggleSet<T>(Set<T> original, T value) {
-    final result = Set<T>.from(original);
-
-    if (result.contains(value)) {
-      result.remove(value);
-    } else {
-      result.add(value);
-    }
-
-    return Set.unmodifiable(result);
-  }
-
-  /// Obtiene el nombre de la sala por su ID.
-  String getRoomName(String? roomId) {
-    if (roomId == null) {
-      return 'No room';
-    }
-
-    final rooms = ref.read(homeViewModelProvider).value?.allRooms ?? [];
-
-    final room = rooms.firstWhere(
-      (r) => r.id == roomId,
-      orElse: () => Room(
-        id: '',
-        name: I18nStr({'en': 'Room $roomId'}),
-        capacity: null,
-        zoneId: '',
-        sessionStyle: '',
-      ),
-    );
-
-    return room.name.resolve('en');
   }
 
   /// Computa los resultados de la búsqueda.
@@ -229,7 +218,7 @@ class Search extends _$Search {
       return [];
     }
 
-    List<Event> events = homeData.allEvents;
+    var events = homeData.allEvents;
 
     if (query.isNotEmpty) {
       events = _applyTextSearch(events, query);
@@ -242,21 +231,12 @@ class Search extends _$Search {
     return events.where((e) => _matchesFilters(e, filters)).toList();
   }
 
-  /// Aplica la búsqueda por texto.
+  /// Aplica el filtro de texto a los eventos.
   List<Event> _applyTextSearch(List<Event> events, String query) {
     final q = query.toLowerCase();
-
-    final List<Event> result = [];
-
-    for (final e in events) {
-      final title = e.title.resolve('en').toLowerCase();
-
-      if (title.contains(q)) {
-        result.add(e);
-      }
-    }
-
-    return result;
+    return events
+        .where((e) => e.title.resolve('en').toLowerCase().contains(q))
+        .toList();
   }
 
   /// Filtra los eventos según los filtros activos.
@@ -265,7 +245,6 @@ class Search extends _$Search {
       if (e.startDate == null) {
         return false;
       }
-
       if (!e.startDate!.toIso8601String().startsWith(f.selectedDay!)) {
         return false;
       }

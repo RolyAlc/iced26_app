@@ -22,23 +22,22 @@ import 'package:iced26/presentation/mappers/event_ui_mapper.dart';
 part 'home_viewmodel.g.dart';
 
 // Locale usado para resolver textos multilingüe.
-/// [:: Futuro] Obtener dinámicamente desde configuración del usuario.
-const _locale = 'en';
-const _headerLabel = 'Welcome to ICED26';
-// Número máximo de eventos destacados a mostrar.
-const _maxFeaturedEvents = 5;
+// TODO: Obtener dinámicamente desde configuración del usuario.
+const _kLocale = 'en';
+const _kHeaderLabel = 'Welcome to ICED26';
+const _kMaxFeaturedEvents = 5;
+final _kMaxDate = DateTime(9999);
+final _kMinDate = DateTime(0);
 
-// TODO: Analizar
 // Asigna una prioridad numérica al estado del evento para ordenación.
 // Menor número = mayor relevancia en la UI.
-int _statusPriority(EventStatus s) => switch (s) {
-  EventStatus.live => 0,
-  EventStatus.next => 1,
-  EventStatus.ended => 2,
-};
-
-final maxDate = DateTime(9999);
-final minDate = DateTime(0);
+int _statusPriority(EventStatus s) {
+  return switch (s) {
+    EventStatus.live => 0,
+    EventStatus.next => 1,
+    EventStatus.ended => 2,
+  };
+}
 
 /// Filtra y ordena los eventos que NO han terminado (live o next).
 List<Event> _sortLiveAndNextEvents(List<Event> events, DateTime now) {
@@ -50,11 +49,10 @@ List<Event> _sortLiveAndNextEvents(List<Event> events, DateTime now) {
     final pa = _statusPriority(EventStatusResolver.resolve(a, now: now));
     final pb = _statusPriority(EventStatusResolver.resolve(b, now: now));
 
-    // Primero por estado, luego por fecha de inicio
     if (pa != pb) {
       return pa.compareTo(pb);
     }
-    return (a.startDate ?? maxDate).compareTo(b.startDate ?? maxDate);
+    return (a.startDate ?? _kMaxDate).compareTo(b.startDate ?? _kMaxDate);
   });
 
   return liveOrNext;
@@ -62,9 +60,11 @@ List<Event> _sortLiveAndNextEvents(List<Event> events, DateTime now) {
 
 /// Ordena todos los [events] en orden cronológico inverso (post-conferencia).
 List<Event> _sortByDateDescending(List<Event> events) {
-  return [
-    ...events,
-  ]..sort((a, b) => (b.startDate ?? minDate).compareTo(a.startDate ?? minDate));
+  final sorted = [...events];
+  sorted.sort((a, b) {
+    return (b.startDate ?? _kMinDate).compareTo(a.startDate ?? _kMinDate);
+  });
+  return sorted;
 }
 
 /// Devuelve los eventos ordenados por relevancia: live → next → ended.
@@ -98,7 +98,7 @@ String? _resolveSpeakerPhoto(Event event, Map<String, Person> peopleById) {
 /// Devuelve el nombre de la sala de [event] buscando en [allRooms].
 String _resolveRoomName(Event event, List<Room> allRooms) {
   final room = allRooms.firstWhereOrNull((r) => r.id == event.roomId);
-  return room?.name.resolve(_locale) ?? 'Unknown Room';
+  return room?.name.resolve(_kLocale) ?? 'Unknown Room';
 }
 
 /// Construye la lista de [EventUIModel] para los eventos destacados.
@@ -107,7 +107,8 @@ List<EventUIModel> _buildFeaturedEvents({
   required List<Room> allRooms,
   required Map<String, Person> peopleById,
 }) {
-  return _sortedByRelevance(allEvents).take(_maxFeaturedEvents).map((event) {
+  final topEvents = _sortedByRelevance(allEvents).take(_kMaxFeaturedEvents);
+  return topEvents.map((event) {
     final roomName = _resolveRoomName(event, allRooms);
     final imageUrl = _resolveSpeakerPhoto(event, peopleById);
     return EventUIMapper.fromEntity(event, roomName, imageUrl: imageUrl);
@@ -124,7 +125,7 @@ List<SessionUIModel> _buildSpeakerSessions({
       .map(
         (e) => SessionUIModel(
           type: e.type,
-          title: e.title.resolve(_locale),
+          title: e.title.resolve(_kLocale),
           formattedDateTime: e.formattedDateTime,
           event: e,
         ),
@@ -138,14 +139,13 @@ KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
   required List<Event> keynoteEvents,
   required List<Presentation> keynotePresentations,
 }) {
-  final presentation = keynotePresentations.cast<Presentation?>().firstWhere(
-    (p) => p!.speakers.any((s) => s.personId == speaker.id),
-    orElse: () => null,
+  final presentation = keynotePresentations.firstWhereOrNull(
+    (p) => p.speakers.any((s) => s.personId == speaker.id),
   );
 
   return KeynoteSpeakerUIModel(
     id: speaker.id,
-    name: speaker.name.resolve(_locale),
+    name: speaker.name.resolve(_kLocale),
     institution: speaker.institution,
     photoUrl: speaker.photoUrl,
     events: _buildSpeakerSessions(
@@ -171,23 +171,21 @@ List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
       .expand((p) => p.speakers.map((s) => s.personId))
       .toSet();
 
-  return speakerIds
-      .map((id) => peopleById[id])
-      .whereType<Person>()
-      .map(
-        (p) => _buildKeynoteSpeakerModel(
-          speaker: p,
-          keynoteEvents: keynoteEvents,
-          keynotePresentations: keynotePresentations,
-        ),
-      )
-      .toList();
+  final speakers = speakerIds.map((id) => peopleById[id]).whereType<Person>();
+
+  return speakers.map((speaker) {
+    return _buildKeynoteSpeakerModel(
+      speaker: speaker,
+      keynoteEvents: keynoteEvents,
+      keynotePresentations: keynotePresentations,
+    );
+  }).toList();
 }
 
 /// Construye la lista de [Category] a partir de los subtipos del evento.
 List<Category> _buildCategories(List<SubmissionType> subTypes) {
   return subTypes
-      .map((st) => Category(name: st.name.resolve(_locale)))
+      .map((st) => Category(name: st.name.resolve(_kLocale)))
       .toList();
 }
 
@@ -227,7 +225,7 @@ class HomeViewModel extends _$HomeViewModel {
       categories: _buildCategories(data.subTypes),
       news: data.news,
       socialActivities: data.socialActivities,
-      headerInfoLabel: _headerLabel,
+      headerInfoLabel: _kHeaderLabel,
     );
   }
 }

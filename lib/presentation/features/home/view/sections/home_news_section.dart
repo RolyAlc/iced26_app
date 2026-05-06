@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:iced26/core/constants/assets.dart';
-import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:iced26/core/constants/assets.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card_variant.dart';
@@ -113,7 +114,7 @@ class HomeNewsSection extends StatelessWidget {
         Navigator.pop(context);
         _launchURL(context, item.webUrl);
       },
-      icon: const Icon(Icons.open_in_new_rounded, size: 18),
+      icon: const Icon(AppIcons.openInNew, size: 18),
       label: const Text('Read full article'),
       style: FilledButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),

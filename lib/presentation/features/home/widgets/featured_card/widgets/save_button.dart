@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Botón de guardar evento — icono bookmark.
 class SaveButton extends StatelessWidget {
@@ -14,7 +15,7 @@ class SaveButton extends StatelessWidget {
     return IconButton(
       onPressed: onTap,
       icon: Icon(
-        isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+        isSaved ? AppIcons.bookmarkOn : AppIcons.bookmarkOutline,
         color: isSaved ? colors.primary : colors.onSurfaceVariant,
       ),
     );

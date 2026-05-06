@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Pie de card (acción secundaria / navegación).
 class SocialCardFooter extends StatelessWidget {
@@ -12,7 +13,7 @@ class SocialCardFooter extends StatelessWidget {
 
     return Row(
       children: [
-        Icon(Icons.arrow_forward_rounded, size: 14, color: colors.tertiary),
+        Icon(AppIcons.arrowForward, size: 14, color: colors.tertiary),
         const SizedBox(width: AppSpacing.xs),
         Text(
           'View details',

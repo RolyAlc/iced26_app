@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/featured_card/widgets/info_row.dart';
 import 'package:iced26/presentation/features/home/widgets/featured_card/widgets/save_button.dart';
@@ -46,7 +48,7 @@ class _EventInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InfoRow(
-          icon: Icons.meeting_room_outlined,
+          icon: AppIcons.meetingRoomOutline,
           text: event.room,
           color: colors.primary,
           style: theme.textTheme.bodySmall?.copyWith(
@@ -56,7 +58,7 @@ class _EventInfo extends StatelessWidget {
         ),
         const SizedBox(height: 2),
         InfoRow(
-          icon: Icons.schedule_outlined,
+          icon: AppIcons.scheduleOutline,
           text: event.duration,
           color: colors.primary,
           style: theme.textTheme.bodySmall?.copyWith(

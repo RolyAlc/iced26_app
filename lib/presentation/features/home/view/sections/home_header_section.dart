@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/assets.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Sección de encabezado scrollable — logo + icono de búsqueda.
 class HomeHeaderSection extends StatelessWidget {
@@ -25,7 +26,7 @@ class HomeHeaderSection extends StatelessWidget {
           Image.asset(Assets.logoIced26, height: 48, fit: BoxFit.contain),
           IconButton(
             onPressed: onSearchTap,
-            icon: Icon(Icons.search_rounded, color: colorScheme.primary),
+            icon: Icon(AppIcons.search, color: colorScheme.primary),
             style: IconButton.styleFrom(
               backgroundColor: colorScheme.primary.withValues(alpha: 0.08),
               shape: RoundedRectangleBorder(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/services/logger/logger.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Sección de chips de filtro horizontal para la pantalla de inicio.
 class HomeFilterChipsSection extends StatelessWidget {
@@ -15,13 +16,13 @@ class HomeFilterChipsSection extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(
           children: [
-            _buildFilterChip(context, 'Time', Icons.access_time),
+            _buildFilterChip(context, 'Time', AppIcons.time),
             const SizedBox(width: 8),
-            _buildFilterChip(context, 'Location', Icons.location_on),
+            _buildFilterChip(context, 'Location', AppIcons.locationOn),
             const SizedBox(width: 8),
-            _buildFilterChip(context, 'Type', Icons.category),
+            _buildFilterChip(context, 'Type', AppIcons.category),
             const SizedBox(width: 8),
-            _buildFilterChip(context, 'More', Icons.tune),
+            _buildFilterChip(context, 'More', AppIcons.filter),
           ],
         ),
       ),

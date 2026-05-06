@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/view/sheets/speaker_detail_sheet.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/speaker_card.dart';
@@ -17,6 +18,7 @@ class HomeKeynoteSection extends StatefulWidget {
   State<HomeKeynoteSection> createState() => _HomeKeynoteSectionState();
 }
 
+/// Estado de la sección de keynote speakers.
 class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
   late final PageController _controller;
   int _currentPage = 0;
@@ -30,6 +32,7 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
     _controller.addListener(_onScroll);
   }
 
+  /// Libera los recursos del controlador.
   @override
   void dispose() {
     _controller.removeListener(_onScroll);
@@ -37,6 +40,7 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
     super.dispose();
   }
 
+  /// Maneja el scroll del carousel.
   void _onScroll() {
     final page = _controller.page?.round() ?? 0;
     if (page != _currentPage) setState(() => _currentPage = page);
@@ -62,6 +66,7 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
     );
   }
 
+  /// Construye el carousel de keynote speakers.
   Widget _buildCarousel() {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -102,7 +107,7 @@ class _ViewAllButton extends StatelessWidget {
 
     return TextButton.icon(
       onPressed: onTap,
-      icon: Icon(Icons.people_outline_rounded, size: 18, color: colors.primary),
+      icon: Icon(AppIcons.peopleOutline, size: 18, color: colors.primary),
       label: Text(
         'Ver todos los ponentes',
         style: TextStyle(color: colors.primary),
