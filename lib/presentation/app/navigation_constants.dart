@@ -1,49 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
+
+/// Secciones principales de la app.
+enum AppFeature { home, schedule, search, diary, settings }
 
 /// Define una pestaña de navegación principal.
-///
-/// [isAction] marca items que disparan una acción en lugar de navegar
-/// (p.ej. abrir el buscador). Nunca aparecen como "seleccionados".
 class NavigationItem {
+  final AppFeature feature;
   final IconData icon;
   final IconData selectedIcon;
   final String label;
-  final bool isAction;
 
   const NavigationItem({
+    required this.feature,
     required this.icon,
     required this.selectedIcon,
     required this.label,
-    this.isAction = false,
   });
+
+  bool get isAction => feature == AppFeature.search;
 }
 
 /// Lista de pestañas de navegación principales.
 const List<NavigationItem> mainNavigationItems = [
   NavigationItem(
-    icon: Icons.home_outlined,
-    selectedIcon: Icons.home_filled,
+    feature: AppFeature.home,
+    icon: AppIcons.homeOff,
+    selectedIcon: AppIcons.homeOn,
     label: 'Home',
   ),
   NavigationItem(
-    icon: Icons.calendar_month_outlined,
-    selectedIcon: Icons.calendar_month,
+    feature: AppFeature.schedule,
+    icon: AppIcons.scheduleOff,
+    selectedIcon: AppIcons.scheduleOn,
     label: 'Schedule',
   ),
   NavigationItem(
-    icon: Icons.search_outlined,
-    selectedIcon: Icons.search,
+    feature: AppFeature.search,
+    icon: AppIcons.searchOff,
+    selectedIcon: AppIcons.searchOn,
     label: 'Search',
-    isAction: true,
   ),
   NavigationItem(
-    icon: Icons.bookmark_outline,
-    selectedIcon: Icons.bookmark,
+    feature: AppFeature.diary,
+    icon: AppIcons.diaryOff,
+    selectedIcon: AppIcons.diaryOn,
     label: 'Diary',
   ),
   NavigationItem(
-    icon: Icons.settings_outlined,
-    selectedIcon: Icons.settings,
+    feature: AppFeature.settings,
+    icon: AppIcons.settingsOff,
+    selectedIcon: AppIcons.settingsOn,
     label: 'Settings',
   ),
 ];

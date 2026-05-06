@@ -1,19 +1,20 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:iced26/presentation/app/navigation_constants.dart';
 
 part 'navigation_provider.g.dart';
 
-/// Provider para la navegación entre las secciones.
+/// Provider para la navegación entre las secciones principales de la app.
 @Riverpod(keepAlive: true)
 class Navigation extends _$Navigation {
   @override
-  int build() {
-    return 0;
+  AppFeature build() {
+    return AppFeature.home;
   }
 
-  /// Establece el índice de la sección actual.
-  void setIndex(int index) {
-    if (state != index) {
-      state = index;
+  /// Selecciona una nueva sección principal.
+  void select(AppFeature feature) {
+    if (state != feature) {
+      state = feature;
     }
   }
 }

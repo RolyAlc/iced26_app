@@ -5,6 +5,7 @@ import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/widgets/app_navigation_bar.dart';
 import 'package:iced26/presentation/features/home/view/home_view.dart';
 import 'package:iced26/presentation/features/schedule/view/schedule_view.dart';
+import 'package:iced26/presentation/features/diary/view/diary_view.dart';
 import 'package:iced26/presentation/features/settings/view/settings_view.dart';
 import 'package:iced26/presentation/core/ui_engine/ui_metrics.dart';
 
@@ -15,9 +16,8 @@ class AppShell extends ConsumerWidget {
   /// Construye el shell principal con la navegación entre pantallas.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(navigationProvider);
+    final currentFeature = ref.watch(navigationProvider);
 
-    /// Notifica los cambios de métricas de la UI.
     return NotificationListener<UIMetricsNotification>(
       onNotification: (notification) {
         if (notification.navBarHeight != null) {
@@ -33,12 +33,12 @@ class AppShell extends ConsumerWidget {
       child: Scaffold(
         extendBody: true,
         body: IndexedStack(
-          index: currentIndex,
+          index: currentFeature.index,
           children: [
             const HomeView(),
             const ScheduleView(),
             const Center(child: Text('Search (Próximamente)')),
-            const Center(child: Text('Diary (Próximamente)')),
+            const DiaryView(),
             const SettingsView(),
           ],
         ),

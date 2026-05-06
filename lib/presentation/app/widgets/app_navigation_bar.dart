@@ -21,7 +21,7 @@ class AppNavigationBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(navigationProvider);
+    final currentFeature = ref.watch(navigationProvider);
     final notifier = ref.read(navigationProvider.notifier);
     final searchNotifier = ref.read(searchProvider.notifier);
     final bottomInset = MediaQuery.of(context).padding.bottom;
@@ -40,15 +40,15 @@ class AppNavigationBar extends ConsumerWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              for (final (index, item) in mainNavigationItems.indexed)
+              for (final item in mainNavigationItems)
                 _NavigationItem(
                   label: item.label,
                   icon: item.icon,
                   selectedIcon: item.selectedIcon,
-                  isSelected: item.isAction ? false : currentIndex == index,
+                  isSelected: !item.isAction && currentFeature == item.feature,
                   onTap: item.isAction
                       ? () => SmartSearchBar.open(context, searchNotifier)
-                      : () => notifier.setIndex(index),
+                      : () => notifier.select(item.feature),
                 ),
             ],
           ),
@@ -58,6 +58,7 @@ class AppNavigationBar extends ConsumerWidget {
   }
 }
 
+/// Contenedor con efecto glassmorphism.
 class _GlassContainer extends StatelessWidget {
   const _GlassContainer({required this.child, required this.height});
 
@@ -92,6 +93,7 @@ class _GlassContainer extends StatelessWidget {
   }
 }
 
+/// Elemento de la barra de navegación.
 class _NavigationItem extends StatelessWidget {
   const _NavigationItem({
     required this.label,
