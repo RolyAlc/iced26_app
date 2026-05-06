@@ -135,7 +135,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   Future<Result<List<Person>>> getAllPeople() async {
     return _guard(() async {
       final results = await _db.select(_db.people).get();
-      return results.map((p) => PeopleMapper.fromDrift(p)).toList();
+      return results.map((p) => PersonMapper.fromDrift(p)).toList();
     });
   }
 }

@@ -22,6 +22,7 @@ class I18nConverter extends TypeConverter<I18nStr, String> {
     return I18nStr(json.map((key, value) => MapEntry(key, value.toString())));
   }
 
+  /// Convierte [I18nStr] a String (JSON).
   @override
   String toSql(I18nStr value) {
     return jsonEncode(value.values);
@@ -212,6 +213,16 @@ class SavedPresentations extends Table {
   Set<Column> get primaryKey => {presentationId};
 }
 
+/// Notas personales del diario del usuario
+@DataClassName('DiaryNoteTable')
+class DiaryNotes extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get content => text()();
+  DateTimeColumn get createdAt =>
+      dateTime().clientDefault(() => DateTime.now())();
+}
+
 /// Tipos de submission
 @DataClassName('SubmissionTypeTable')
 class SubmissionTypes extends Table {
@@ -242,6 +253,7 @@ class SubmissionTypes extends Table {
     Favorites,
     People,
     SavedPresentations,
+    DiaryNotes,
   ],
 )
 /// Base de datos con las tablas.
@@ -249,12 +261,13 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 13; // version actual
+  int get schemaVersion => 14;
 
   /// Estrategia de migración
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
+      // TODO: Revisar estragia de migración
       if (from < 7) {
         await m.addColumn(events, events.speakersJson);
       }
@@ -281,6 +294,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 13) {
         await m.createTable(savedPresentations);
+      }
+      if (from < 14) {
+        await m.createTable(diaryNotes);
       }
     },
   );

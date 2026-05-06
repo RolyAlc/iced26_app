@@ -5,11 +5,13 @@ import 'package:iced26/domain/repositories/home_repository.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
 import 'package:iced26/domain/repositories/favorites_repository.dart';
 import 'package:iced26/domain/repositories/presentation_favorites_repository.dart';
+import 'package:iced26/domain/repositories/diary_repository.dart';
 import 'package:iced26/data/repositories/schedule_repository_impl.dart';
 import 'package:iced26/data/repositories/home_repository_impl.dart';
 import 'package:iced26/data/repositories/config_repository_impl.dart';
 import 'package:iced26/data/repositories/favorites_repository_impl.dart';
 import 'package:iced26/data/repositories/presentation_favorites_repository_impl.dart';
+import 'package:iced26/data/repositories/diary_repository_impl.dart';
 import 'package:iced26/data/sources/local/json/local_json_service.dart';
 import 'package:iced26/di/core_providers.dart';
 
@@ -49,4 +51,11 @@ FavoritesRepository favoritesRepository(Ref ref) {
 PresentationFavoritesRepository presentationFavoritesRepository(Ref ref) {
   final db = ref.watch(appDatabaseProvider);
   return PresentationFavoritesRepositoryImpl(db);
+}
+
+/// Provee el repositorio del diario personal.
+@riverpod
+DiaryRepository diaryRepository(Ref ref) {
+  final db = ref.watch(appDatabaseProvider);
+  return DiaryRepositoryImpl(db);
 }

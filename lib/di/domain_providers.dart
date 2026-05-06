@@ -6,6 +6,7 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
+import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/usecases/get_home_data_use_case.dart';
 import 'package:iced26/domain/usecases/get_schedule_data_use_case.dart';
 import 'package:iced26/domain/usecases/clear_favorites_use_case.dart';
@@ -13,6 +14,10 @@ import 'package:iced26/domain/usecases/toggle_favorite_use_case.dart';
 import 'package:iced26/domain/usecases/watch_favorites_use_case.dart';
 import 'package:iced26/domain/usecases/toggle_presentation_favorite_use_case.dart';
 import 'package:iced26/domain/usecases/watch_presentation_favorites_use_case.dart';
+import 'package:iced26/domain/usecases/watch_diary_notes_use_case.dart';
+import 'package:iced26/domain/usecases/save_diary_note_use_case.dart';
+import 'package:iced26/domain/usecases/delete_diary_note_use_case.dart';
+import 'package:iced26/domain/entities/diary_note.dart';
 
 part 'domain_providers.g.dart';
 
@@ -138,4 +143,38 @@ Future<Map<String, Person>> allPeopleIndex(Ref ref) async {
     return {};
   }
   return {for (final p in result.data) p.id: p};
+}
+
+/// Provee el caso de uso para observar las notas del diario.
+@riverpod
+WatchDiaryNotesUseCase watchDiaryNotesUseCase(Ref ref) {
+  return WatchDiaryNotesUseCase(ref.watch(diaryRepositoryProvider));
+}
+
+/// Provee el caso de uso para guardar una nota del diario.
+@riverpod
+SaveDiaryNoteUseCase saveDiaryNoteUseCase(Ref ref) {
+  return SaveDiaryNoteUseCase(ref.watch(diaryRepositoryProvider));
+}
+
+/// Provee el caso de uso para eliminar una nota del diario.
+@riverpod
+DeleteDiaryNoteUseCase deleteDiaryNoteUseCase(Ref ref) {
+  return DeleteDiaryNoteUseCase(ref.watch(diaryRepositoryProvider));
+}
+
+/// Stream reactivo con todas las notas del diario.
+@riverpod
+Stream<List<DiaryNote>> diaryNotes(Ref ref) {
+  return ref.watch(watchDiaryNotesUseCaseProvider).execute();
+}
+
+/// Provee el índice de salas por ID.
+@riverpod
+Future<Map<String, Room>> allRoomsIndex(Ref ref) async {
+  final result = await ref.watch(scheduleRepositoryProvider).getAllRooms();
+  if (result is! Success<List<Room>>) {
+    return {};
+  }
+  return {for (final r in result.data) r.id: r};
 }
