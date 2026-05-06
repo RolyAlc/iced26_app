@@ -42,14 +42,22 @@ class AppBrandColors {
 /// Clase que construye el tema.
 /// Usa el método [_generate] para generar el tema desde los colores de la marca.
 class AppTheme {
-  /// Tema por defecto (Light)
+  /// Tema claro.
   static ThemeData get lightTheme => _generate(
     primary: AppBrandColors.primary,
     secondary: AppBrandColors.secondary,
     accent: AppBrandColors.accent,
   );
 
-  /// Construye el tema desde la entidad de configuración.
+  /// Tema oscuro.
+  static ThemeData get darkTheme => _generate(
+    primary: AppBrandColors.primary,
+    secondary: AppBrandColors.secondary,
+    accent: AppBrandColors.accent,
+    brightness: Brightness.dark,
+  );
+
+  /// Crea un [ThemeData] a partir de una [ThemeConfig].
   static ThemeData fromThemeConfig(ThemeConfig config) {
     return _generate(
       primary: config.colors['primary']?.toColor() ?? AppBrandColors.primary,
@@ -59,20 +67,22 @@ class AppTheme {
     );
   }
 
-  /// Genera el tema desde los colores de la marca.
+  /// Genera el tema.
   static ThemeData _generate({
     required Color primary,
     required Color secondary,
     required Color accent,
+    Brightness brightness = Brightness.light,
   }) {
     final scheme = ColorScheme.fromSeed(
       seedColor: primary,
       secondary: secondary,
       tertiary: accent,
-      surface: AppBrandColors.surface,
+      surface: brightness == Brightness.light ? AppBrandColors.surface : null,
+      brightness: brightness,
     );
 
-    final textTheme = _buildTextTheme();
+    final textTheme = _buildTextTheme(brightness: brightness);
 
     return ThemeData(
       useMaterial3: true,
@@ -87,12 +97,12 @@ class AppTheme {
   }
 
   // TODO: Mirar si en 'styles.json' existe la posibilidad de sacar y mapear
-  // para que no haya que 'this.copyWith' y podamos hacer 'this' como en
-  // app_config.dart.
-  /// Genera el text theme.
-  static TextTheme _buildTextTheme() {
-    final base = GoogleFonts.latoTextTheme();
-    final display = GoogleFonts.outfitTextTheme();
+  static TextTheme _buildTextTheme({Brightness brightness = Brightness.light}) {
+    final seed = brightness == Brightness.dark
+        ? ThemeData.dark().textTheme
+        : ThemeData.light().textTheme;
+    final base = GoogleFonts.latoTextTheme(seed);
+    final display = GoogleFonts.outfitTextTheme(seed);
     return base.copyWith(
       displayLarge: display.displayLarge,
       headlineMedium: display.headlineMedium,

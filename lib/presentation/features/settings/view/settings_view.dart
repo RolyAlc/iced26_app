@@ -3,14 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/bootstrap.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/widgets/app_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Vista de ajustes de la aplicación.
+/// Vista de ajustes.
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
+  /// Construye la vista de ajustes.
   @override
   Widget build(BuildContext context) {
     return AppPage(
@@ -30,11 +32,7 @@ class SettingsView extends StatelessWidget {
               subtitle: 'Black & white, no colour',
               trailing: _ComingSoonBadge(),
             ),
-            _SettingsItem(
-              icon: AppIcons.darkTheme,
-              title: 'Theme',
-              subtitle: 'System',
-            ),
+            _ThemeItem(),
           ],
         ),
         SizedBox(height: AppSpacing.m),
@@ -174,6 +172,7 @@ class _ReloadDataItem extends ConsumerWidget {
     );
   }
 
+  /// Muestra un diálogo de confirmación para recargar los datos.
   Future<void> _confirmReload(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -223,6 +222,7 @@ class _ClearFavouritesItem extends ConsumerWidget {
     );
   }
 
+  /// Mejora: usar un helper para el diálogo
   Future<void> _confirmClear(
     BuildContext context,
     WidgetRef ref,
@@ -254,7 +254,33 @@ class _ClearFavouritesItem extends ConsumerWidget {
   }
 }
 
-/// Item individual de ajuste.
+class _ThemeItem extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).colorScheme;
+    final mode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
+
+    return ListTile(
+      leading: Icon(AppIcons.darkTheme, color: colors.onSurfaceVariant),
+      title: const Text('Theme'),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: AppSpacing.xs),
+        child: SegmentedButton<ThemeMode>(
+          showSelectedIcon: false,
+          segments: const [
+            ButtonSegment(value: ThemeMode.system, label: Text('System')),
+            ButtonSegment(value: ThemeMode.light, label: Text('Light')),
+            ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
+          ],
+          selected: {mode},
+          onSelectionChanged: (modes) =>
+              ref.read(themeModeProvider.notifier).setMode(modes.first),
+        ),
+      ),
+    );
+  }
+}
+
 class _SettingsItem extends StatelessWidget {
   final IconData icon;
   final String title;

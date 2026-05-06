@@ -84,6 +84,7 @@ class _DiaryBody extends ConsumerWidget {
     ref.read(diaryFocusedMonthProvider.notifier).set(day);
   }
 
+  /// Mejora: encapsular interacción con providers
   void _onPageChanged(WidgetRef ref, DateTime month) {
     ref.read(diaryFocusedMonthProvider.notifier).set(month);
   }
@@ -153,7 +154,15 @@ class _DiaryCalendar extends StatelessWidget {
 
   /// Mejora: extraer estilo
   CalendarStyle _calendarStyle(ColorScheme colors) {
+    final defaultText = TextStyle(color: colors.onSurface);
+    final mutedText = TextStyle(color: colors.onSurface.withValues(alpha: 0.4));
+
     return CalendarStyle(
+      defaultTextStyle: defaultText,
+      weekendTextStyle: defaultText,
+      outsideTextStyle: mutedText,
+      disabledTextStyle: mutedText,
+      selectedTextStyle: TextStyle(color: colors.onPrimary),
       selectedDecoration: BoxDecoration(
         color: colors.primary,
         shape: BoxShape.circle,

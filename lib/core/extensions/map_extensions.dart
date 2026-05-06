@@ -1,4 +1,4 @@
-/// Extensiones para Map<String, dynamic>
+/// Extensiones para `Map<String, dynamic>`
 extension MapX on Map<String, dynamic> {
   /// Obtiene un String de un mapa
   String getString(String key, [String fallback = '']) {

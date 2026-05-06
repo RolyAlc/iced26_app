@@ -6,6 +6,7 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/theme/app_theme.dart';
 import 'package:iced26/presentation/app/widgets/loading_screen.dart';
 import 'package:iced26/di/bootstrap.dart';
+import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
 import 'package:iced26/presentation/app/state/theme_provider.dart';
 
 const _kAppTitle = 'ICED26';
@@ -22,10 +23,14 @@ class MyApp extends ConsumerWidget {
     final isReady = bootstrapAsync.hasValue && themeAsync.hasValue;
     final hasError = bootstrapAsync.hasError || themeAsync.hasError;
 
+    final themeModeAsync = ref.watch(themeModeProvider);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: _kAppTitle,
       theme: themeAsync.value ?? AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeModeAsync.value ?? ThemeMode.system,
       home: switch ((isReady, hasError)) {
         (_, true) => const _StartupErrorScreen(),
         (true, _) => const AppShell(),
