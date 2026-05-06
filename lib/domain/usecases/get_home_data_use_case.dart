@@ -11,9 +11,9 @@ import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 
-// TODO: revisar complejidad
+const _kKeynoteType = 'keynote_speaker';
 
-/// Tipo de dato que representa la información necesaria para la pantalla Home.
+/// Datos necesarios para la pantalla Home.
 typedef HomeDataResult = ({
   List<Day> days,
   List<Event> allEvents,
@@ -26,7 +26,7 @@ typedef HomeDataResult = ({
   List<SubmissionType> subTypes,
 });
 
-/// Caso de uso: Obtener toda la información necesaria para la pantalla Home.
+/// Caso de uso: obtiene toda la información necesaria para la pantalla Home.
 class GetHomeDataUseCase {
   final ScheduleRepository _scheduleRepo;
   final HomeRepository _homeRepo;
@@ -34,87 +34,65 @@ class GetHomeDataUseCase {
   GetHomeDataUseCase(this._scheduleRepo, this._homeRepo);
 
   Future<Result<HomeDataResult>> execute() async {
-    // Ejecutamos en paralelo pero tipado
-    final futures = (
-      days: _scheduleRepo.getAllDays(),
-      events: _scheduleRepo.getAllEvents(),
-      rooms: _scheduleRepo.getAllRooms(),
-      zones: _scheduleRepo.getAllZones(),
-      people: _scheduleRepo.getAllPeople(),
-      keynotePresentations: _scheduleRepo.getPresentationsByType(
-        'keynote_speaker',
-      ),
-      news: _homeRepo.getAllNews(),
-      socials: _homeRepo.getAllSocialActivities(),
-      subTypes: _homeRepo.getAllSubmissionTypes(),
-    );
+    // Lanzamos todas las peticiones a la vez (concurrente).
+    final daysF = _scheduleRepo.getAllDays();
+    final eventsF = _scheduleRepo.getAllEvents();
+    final roomsF = _scheduleRepo.getAllRooms();
+    final zonesF = _scheduleRepo.getAllZones();
+    final peopleF = _scheduleRepo.getAllPeople();
+    final keynotesF = _scheduleRepo.getPresentationsByType(_kKeynoteType);
+    final newsF = _homeRepo.getAllNews();
+    final socialsF = _homeRepo.getAllSocialActivities();
+    final subTypesF = _homeRepo.getAllSubmissionTypes();
 
-    final results = (
-      days: await futures.days,
-      events: await futures.events,
-      rooms: await futures.rooms,
-      zones: await futures.zones,
-      people: await futures.people,
-      keynotePresentations: await futures.keynotePresentations,
-      news: await futures.news,
-      socials: await futures.socials,
-      subTypes: await futures.subTypes,
-    );
+    // Recogemos los resultados.
+    final days = await daysF;
+    final events = await eventsF;
+    final rooms = await roomsF;
+    final zones = await zonesF;
+    final people = await peopleF;
+    final keynotes = await keynotesF;
+    final news = await newsF;
+    final socials = await socialsF;
+    final subTypes = await subTypesF;
 
-    // Validación de errores con contexto
-    final failure = _findFailure(results);
+    // En caso de que falle, devolvemos el primer error.
+    final failure = _firstFailure([
+      days,
+      events,
+      rooms,
+      zones,
+      people,
+      keynotes,
+      news,
+      socials,
+      subTypes,
+    ]);
+
     if (failure != null) {
       return Failure<HomeDataResult>(failure.message);
     }
 
-    // Envolver los datos en Success
     return Success((
-      days: (results.days as Success<List<Day>>).data,
-      allEvents: (results.events as Success<List<Event>>).data,
-      allRooms: (results.rooms as Success<List<Room>>).data,
-      allZones: (results.zones as Success<List<Zone>>).data,
-      allPeople: (results.people as Success<List<Person>>).data,
-      keynotePresentations:
-          (results.keynotePresentations as Success<List<Presentation>>).data,
-      news: (results.news as Success<List<NewsItem>>).data,
-      socialActivities: (results.socials as Success<List<SocialActivity>>).data,
-      subTypes: (results.subTypes as Success<List<SubmissionType>>).data,
+      days: (days as Success<List<Day>>).data,
+      allEvents: (events as Success<List<Event>>).data,
+      allRooms: (rooms as Success<List<Room>>).data,
+      allZones: (zones as Success<List<Zone>>).data,
+      allPeople: (people as Success<List<Person>>).data,
+      keynotePresentations: (keynotes as Success<List<Presentation>>).data,
+      news: (news as Success<List<NewsItem>>).data,
+      socialActivities: (socials as Success<List<SocialActivity>>).data,
+      subTypes: (subTypes as Success<List<SubmissionType>>).data,
     ));
   }
 
-  /// Busca el primer fallo en los resultados.
-  Failure? _findFailure(
-    ({
-      Result days,
-      Result events,
-      Result rooms,
-      Result zones,
-      Result people,
-      Result keynotePresentations,
-      Result news,
-      Result socials,
-      Result subTypes,
-    })
-    results,
-  ) {
-    final allResults = [
-      results.days,
-      results.events,
-      results.rooms,
-      results.zones,
-      results.people,
-      results.keynotePresentations,
-      results.news,
-      results.socials,
-      results.subTypes,
-    ];
-
-    for (final result in allResults) {
+  /// Devuelve el primer [Failure] de la lista, o null si todos son [Success].
+  Failure? _firstFailure(List<Result> results) {
+    for (final result in results) {
       if (result is Failure) {
-        return Failure(result.message);
+        return result;
       }
     }
-
     return null;
   }
 }
