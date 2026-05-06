@@ -5,18 +5,22 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 
 /// Extensión para convertir texto a color.
+/// Returns: El color en formato ARGB.
 extension ColorParser on String {
   Color? toColor() {
     final hex = replaceFirst('#', '');
+    final buffer = StringBuffer();
+    final value = int.tryParse(buffer.toString(), radix: 16);
+
     if (hex.length != 6 && hex.length != 8) {
       return null;
     }
 
-    final buffer = StringBuffer();
-    if (hex.length == 6) buffer.write('ff');
+    if (hex.length == 6) {
+      buffer.write('ff');
+    }
     buffer.write(hex);
 
-    final value = int.tryParse(buffer.toString(), radix: 16);
     if (value == null) {
       return null;
     }
@@ -25,8 +29,7 @@ extension ColorParser on String {
   }
 }
 
-// TODO: M3 expression soportar colores deribados de los colores Brand (como flat, contrastes, etc...)?¿
-// TODO: Exportar desde el JSON.
+// TODO: Mirar si en 'app_data.json' existe la posibilidad de sacar
 /// Centraliza los colores constantes de la marca.
 class AppBrandColors {
   static const Color primary = Color(0xFF75A49C);
@@ -79,15 +82,14 @@ class AppTheme {
       cardTheme: _buildCardTheme(scheme),
       chipTheme: _buildChipTheme(scheme, textTheme),
       searchBarTheme: _buildSearchBarTheme(scheme),
-      visualDensity:
-          VisualDensity.adaptivePlatformDensity, // Added for consistent spacing
+      visualDensity: VisualDensity.adaptivePlatformDensity,
     );
   }
 
+  // TODO: Mirar si en 'styles.json' existe la posibilidad de sacar y mapear
+  // para que no haya que 'this.copyWith' y podamos hacer 'this' como en
+  // app_config.dart.
   /// Genera el text theme.
-  // Fuentes definidas en styles.json > typography: primary="Lato", secondary="Lato".
-  // Outfit cubre los estilos de display (no incluido en el contrato).
-  // Si cambia la fuente en el JSON, actualizar aquí también.
   static TextTheme _buildTextTheme() {
     final base = GoogleFonts.latoTextTheme();
     final display = GoogleFonts.outfitTextTheme();

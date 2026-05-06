@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/domain/entities/event_type.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
+
+// TODO: Mirar return switch
 
 /// Estilo visual de un tipo de evento.
 class EventTypeStyle {
@@ -12,18 +15,27 @@ class EventTypeStyle {
 EventTypeStyle resolveTypeStyle(BuildContext context, EventType type) {
   final cs = Theme.of(context).colorScheme;
   return switch (type) {
-    EventType.keynote => EventTypeStyle(Icons.mic, cs.primary),
-    EventType.workshop => EventTypeStyle(Icons.build, cs.secondary),
-    EventType.sessions => EventTypeStyle(Icons.forum, cs.tertiary),
-    EventType.break_ => EventTypeStyle(Icons.local_cafe, cs.outline),
-    EventType.opening => EventTypeStyle(Icons.celebration, cs.primary),
-    EventType.closing => EventTypeStyle(Icons.flag, cs.primary),
-    EventType.gala => EventTypeStyle(Icons.wine_bar, cs.tertiary),
-    EventType.welcome => EventTypeStyle(Icons.waving_hand, cs.tertiary),
-    EventType.registration => EventTypeStyle(Icons.how_to_reg, cs.secondary),
-    EventType.instructions => EventTypeStyle(Icons.info_outline, cs.secondary),
-    EventType.internationalPanel => EventTypeStyle(Icons.language, cs.tertiary),
-    EventType.presidents => EventTypeStyle(Icons.workspace_premium, cs.primary),
-    EventType.unknown => EventTypeStyle(Icons.event, cs.secondary),
+    EventType.keynote => EventTypeStyle(AppIcons.mic, cs.primary),
+    EventType.workshop => EventTypeStyle(AppIcons.workshop, cs.secondary),
+    EventType.sessions => EventTypeStyle(AppIcons.sessions, cs.tertiary),
+    EventType.break_ => EventTypeStyle(AppIcons.coffee, cs.outline),
+    EventType.opening => EventTypeStyle(AppIcons.celebration, cs.primary),
+    EventType.closing => EventTypeStyle(AppIcons.flag, cs.primary),
+    EventType.gala => EventTypeStyle(AppIcons.wineBar, cs.tertiary),
+    EventType.welcome => EventTypeStyle(AppIcons.wavingHand, cs.tertiary),
+    EventType.registration => EventTypeStyle(
+      AppIcons.registration,
+      cs.secondary,
+    ),
+    EventType.instructions => EventTypeStyle(AppIcons.info, cs.secondary),
+    EventType.internationalPanel => EventTypeStyle(
+      AppIcons.language,
+      cs.tertiary,
+    ),
+    EventType.presidents => EventTypeStyle(
+      AppIcons.workspacePremium,
+      cs.primary,
+    ),
+    EventType.unknown => EventTypeStyle(AppIcons.event, cs.secondary),
   };
 }
