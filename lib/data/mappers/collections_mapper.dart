@@ -1,56 +1,45 @@
+import 'package:iced26/core/extensions/map_extensions.dart';
 import 'package:iced26/data/mappers/day_mapper.dart';
 import 'package:iced26/data/mappers/event/event_mapper.dart';
 import 'package:iced26/data/mappers/home/news_mapper.dart';
+import 'package:iced26/data/mappers/home/social_activity_mapper.dart';
 import 'package:iced26/data/mappers/person_mapper.dart';
 import 'package:iced26/data/mappers/presentation/presentation_mapper.dart';
 import 'package:iced26/data/mappers/room_mapper.dart';
-import 'package:iced26/data/mappers/home/social_activity_mapper.dart';
 import 'package:iced26/data/mappers/session_block/session_block_mapper.dart';
 import 'package:iced26/data/mappers/submission_type_mapper.dart';
 import 'package:iced26/data/mappers/zone_mapper.dart';
 import 'package:iced26/domain/entities/collections.dart';
 
-/// Mapper para colecciones de datos
-class CollectionsMapper {
+abstract final class CollectionsMapper {
   static Collections fromMap(Map<String, dynamic> map) {
-    final List rawDays = map['days'] ?? [];
-    final List rawEvents = map['programSlots'] ?? [];
-    final List rawSessionBlocks = map['sessionBlocks'] ?? [];
-    final List rawPresentations = map['presentations'] ?? [];
-    final List rawPeople = map['people'] ?? [];
-    final List rawRooms = map['rooms'] ?? [];
-    final List rawZones = map['zones'] ?? [];
-    final List rawSubTypes = map['submissionTypes'] ?? [];
-    final List rawSocials = map['socials'] ?? [];
-    final List rawNews = map['news'] ?? [];
-
     return Collections(
-      days: _toListOf(rawDays, DayMapper.fromMap),
-      events: _toListOf(rawEvents, EventMapper.fromMap),
-      sessionBlocks: _toListOf(rawSessionBlocks, SessionBlockMapper.fromMap),
-      presentations: _toListOf(rawPresentations, PresentationMapper.fromMap),
-      people: _toListOf(rawPeople, PeopleMapper.fromMap),
-      rooms: _toListOf(rawRooms, RoomMapper.fromMap),
-      zones: _toListOf(rawZones, ZoneMapper.fromMap),
-      submissionTypes: _toListOf(rawSubTypes, SubmissionTypeMapper.fromMap),
-      socials: _toListOf(rawSocials, SocialActivityMapper.fromMap),
-      news: _toListOf(rawNews, NewsMapper.fromMap),
+      days: _toListOf(map.getList('days'), DayMapper.fromMap),
+      events: _toListOf(map.getList('programSlots'), EventMapper.fromMap),
+      sessionBlocks: _toListOf(
+        map.getList('sessionBlocks'),
+        SessionBlockMapper.fromMap,
+      ),
+      presentations: _toListOf(
+        map.getList('presentations'),
+        PresentationMapper.fromMap,
+      ),
+      people: _toListOf(map.getList('people'), PersonMapper.fromMap),
+      rooms: _toListOf(map.getList('rooms'), RoomMapper.fromMap),
+      zones: _toListOf(map.getList('zones'), ZoneMapper.fromMap),
+      submissionTypes: _toListOf(
+        map.getList('submissionTypes'),
+        SubmissionTypeMapper.fromMap,
+      ),
+      socials: _toListOf(map.getList('socials'), SocialActivityMapper.fromMap),
+      news: _toListOf(map.getList('news'), NewsMapper.fromMap),
     );
   }
 
-  /// Helper para mapear listas de entidades
   static List<T> _toListOf<T>(
-    List rawList,
+    List raw,
     T Function(Map<String, dynamic>) mapper,
   ) {
-    return rawList.map((item) => mapper(_castToMap(item))).toList();
-  }
-
-  /// Helper para castear items a mapas
-  static Map<String, dynamic> _castToMap(dynamic item) {
-    if (item is Map<String, dynamic>) {
-      return item;
-    }
-    return <String, dynamic>{};
+    return raw.whereType<Map<String, dynamic>>().map(mapper).toList();
   }
 }

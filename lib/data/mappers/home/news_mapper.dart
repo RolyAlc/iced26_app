@@ -2,21 +2,28 @@ import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/data/dtos/news_dto.dart';
 import 'package:iced26/domain/entities/new.dart';
 
-/// Mapper datos de 'news' del JSON en una instancia de NewsItem.
-class NewsMapper {
+/// Mapper para [NewsItem]
+abstract final class NewsMapper {
+  /// Crea un [NewsItem] a partir de un mapa
   static NewsItem fromMap(Map<String, dynamic> map) {
     return NewsDTO.fromMap(map).toEntity();
   }
 
-  /// Convierte un registro de la base de datos (Drift) a una entidad.
+  /// Crea un [NewsItem] a partir de [NewsTable]
   static NewsItem fromDrift(NewsTable data) {
+    final date = DateTime.tryParse(data.date);
+    if (date == null) {
+      throw StateError(
+        'NewsMapper.fromDrift: fecha inválida en id=${data.id} (value="${data.date}")',
+      );
+    }
     return NewsItem(
       id: data.id,
       title: data.title,
       content: data.content,
       imgUrl: data.imgUrl,
       webUrl: data.webUrl,
-      datePublish: DateTime.tryParse(data.date) ?? DateTime.now(),
+      datePublish: date,
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/data/mappers/i18n_mapper.dart';
 
-/// DTO para la noticia.
+/// DTO para noticias.
 class NewsDTO {
   final String id;
   final String datePublish;
@@ -19,7 +19,7 @@ class NewsDTO {
     required this.webUrl,
   });
 
-  /// Crea un DTO desde un Map (JSON o DB row).
+  /// Crea un [NewsDTO] a partir de un mapa.
   factory NewsDTO.fromMap(Map<String, dynamic> map) {
     return NewsDTO(
       id: map['id']?.toString() ?? '',
@@ -32,11 +32,17 @@ class NewsDTO {
     );
   }
 
-  /// Convierte el DTO en una Entity del dominio.
+  /// Convierte un [NewsDTO] a [NewsItem].
   NewsItem toEntity() {
+    final date = DateTime.tryParse(datePublish);
+    if (date == null) {
+      throw StateError(
+        'NewsDTO.toEntity: fecha inválida en id=$id (value="$datePublish")',
+      );
+    }
     return NewsItem(
       id: id,
-      datePublish: DateTime.tryParse(datePublish) ?? DateTime.now(),
+      datePublish: date,
       title: I18nMapper.fromRaw(title),
       content: I18nMapper.fromRaw(content),
       imgUrl: imgUrl,

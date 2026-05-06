@@ -1,18 +1,14 @@
+import 'package:iced26/core/extensions/map_extensions.dart';
 import 'package:iced26/domain/entities/metadata.dart';
 
-/// Mapper para convertir el JSON de los metadatos en una instancia de 'Metadata'.
-/// Devuelve un objeto 'Metadata' con los campos correctamente parseados.
-class MetadataMapper {
+/// Mapper para [Metadata]
+abstract final class MetadataMapper {
+  /// Crea un [Metadata] a partir de un mapa
   static Metadata fromMap(Map<String, dynamic> json) {
-    // Extraemos con valores por defecto para evitar nulos
-    final String eventId = json['event_id']?.toString() ?? '';
-    final String version = json['version']?.toString() ?? '';
-    final String generatedAt = json['generated_at']?.toString() ?? '';
-
     return Metadata(
-      eventId: eventId,
-      version: version,
-      generatedAt: generatedAt,
+      eventId: json.getString('event_id'),
+      version: json.getString('version'),
+      generatedAt: json.getString('generated_at'),
     );
   }
 }

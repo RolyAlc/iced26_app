@@ -1,39 +1,34 @@
 import 'dart:convert';
 
+import 'package:iced26/core/extensions/map_extensions.dart';
 import 'package:iced26/data/mappers/collections_mapper.dart';
 import 'package:iced26/data/mappers/conference_mapper.dart';
 import 'package:iced26/data/mappers/metadata_mapper.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/domain/entities/app_data.dart';
 
-/// Mapper para convertir el JSON de la aplicación en una instancia de AppData.
-class AppDataMapper {
-  /// Convierte un string JSON en una instancia de AppData.
+/// Mapper para AppData.
+abstract final class AppDataMapper {
+  /// Crea un [AppData] a partir de un json string.
   static AppData fromJsonString(String source) {
     return fromRaw(jsonDecode(source));
   }
 
-  /// Convierte un objeto dinámico en una instancia de AppData.
+  /// Crea un [AppData] a partir de un mapa.
   static AppData fromRaw(dynamic decodedRaw) {
-    final Map<String, dynamic> jsonMap = _castToMap(decodedRaw);
-    final metadataMap = _castToMap(jsonMap['metadata']);
-    final conferenceMap = _castToMap(jsonMap['conference']);
-    final themeMap = _castToMap(jsonMap['theme']);
-    final collectionsMap = _castToMap(jsonMap['collections']);
+    final Map<String, dynamic> json = decodedRaw is Map<String, dynamic>
+        ? decodedRaw
+        : const {};
+    final metadata = MetadataMapper.fromMap(json.getMap('metadata'));
+    final conference = ConferenceMapper.fromMap(json.getMap('conference'));
+    final theme = ThemeMapper.fromMap(json.getMap('theme'));
+    final collections = CollectionsMapper.fromMap(json.getMap('collections'));
 
     return AppData(
-      metadata: MetadataMapper.fromMap(metadataMap),
-      conference: ConferenceMapper.fromMap(conferenceMap),
-      theme: ThemeMapper.fromMap(themeMap),
-      collections: CollectionsMapper.fromMap(collectionsMap),
+      metadata: metadata,
+      conference: conference,
+      theme: theme,
+      collections: collections,
     );
-  }
-
-  /// Convierte un objeto dinámico a un mapa de strings y dinámicos.
-  static Map<String, dynamic> _castToMap(dynamic value) {
-    if (value != null && value is Map<String, dynamic>) {
-      return value;
-    }
-    return <String, dynamic>{};
   }
 }

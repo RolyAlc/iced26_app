@@ -1,38 +1,29 @@
-import 'package:iced26/data/sources/local/database/app_database.dart';
+import 'package:iced26/core/extensions/map_extensions.dart';
 import 'package:iced26/data/mappers/i18n_mapper.dart';
+import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 
-// TODO: JSON no coincide (fuente de la verdad)
-/// Mapper de datos de actividades sociales.
-class SocialActivityMapper {
-  static SocialActivity fromMap(Map<String, dynamic> map) {
-    final String id = map['id']?.toString() ?? '';
-    final I18nStr title = map['title'] != null
-        ? I18nMapper.fromRaw(map['title'])
-        : I18nStr({'en': 'Social Event'});
-    final I18nStr description = map['description'] != null
-        ? I18nMapper.fromRaw(map['description'])
-        : I18nStr({'en': 'Social activity for participants.'});
-    final String date = map['date']?.toString() ?? '';
-    final String time = map['time']?.toString() ?? '';
-    final I18nStr location = map['location'] != null
-        ? I18nMapper.fromRaw(map['location'])
-        : I18nStr({'en': 'Conference Venue'});
-    final String imgUrl = map['imgUrl']?.toString() ?? '';
+/// Mapper para [SocialActivity]
+abstract final class SocialActivityMapper {
+  static const _kFallbackTitle = 'Social event';
+  static const _kFallbackDescription = 'Social activity for participants.';
+  static const _kFallbackLocation = 'Conference venue';
 
+  /// Crea un [SocialActivity] a partir de un mapa
+  static SocialActivity fromMap(Map<String, dynamic> map) {
     return SocialActivity(
-      id: id,
-      title: title,
-      description: description,
-      date: date,
-      time: time,
-      location: location,
-      imgUrl: imgUrl,
+      id: map.getString('id'),
+      title: _i18n(map['title'], _kFallbackTitle),
+      description: _i18n(map['description'], _kFallbackDescription),
+      date: map.getString('date'),
+      time: map.getString('time'),
+      location: _i18n(map['location'], _kFallbackLocation),
+      imgUrl: map.getString('imgUrl'),
     );
   }
 
-  /// Convierte un registro de la base de datos (Drift) a una entidad.
+  /// Crea un [SocialActivity] a partir de [SocialActivityTable]
   static SocialActivity fromDrift(SocialActivityTable data) {
     return SocialActivity(
       id: data.id,
@@ -43,5 +34,13 @@ class SocialActivityMapper {
       location: data.location,
       imgUrl: data.imgUrl,
     );
+  }
+
+  /// Crea un [I18nStr] a partir de un [Map] con un fallback
+  static I18nStr _i18n(dynamic value, String fallback) {
+    if (value == null) {
+      return I18nStr({'en': fallback});
+    }
+    return I18nMapper.fromRaw(value);
   }
 }

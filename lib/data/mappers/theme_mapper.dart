@@ -1,36 +1,25 @@
+import 'package:iced26/core/extensions/map_extensions.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 
-/// Mapper para convertir el JSON de la configuración de tema en una instancia de 'ThemeConfig'.
-/// Devuelve un objeto 'ThemeConfig' con los campos correctamente parseados.
-class ThemeMapper {
+/// Mapper para [ThemeConfig]
+abstract final class ThemeMapper {
+  /// Crea un [ThemeConfig] a partir de un mapa
   static ThemeConfig fromMap(Map<String, dynamic> json) {
     final dynamic rawColors = json['color'] ?? json['colors'];
-    final dynamic rawTypography = json['typography'];
-    final dynamic rawLogo = json['logo'];
-    final Map<String, String> processedColors = _parseColors(rawColors);
+    final colors = _parseColors(rawColors);
+    final typography = json.getMap('typography');
+    final logo = json.getMap('logo');
 
-    return ThemeConfig(
-      colors: processedColors,
-      typography: _ensureMap(rawTypography),
-      logo: _ensureMap(rawLogo),
-    );
+    return ThemeConfig(colors: colors, typography: typography, logo: logo);
   }
 
-  /// Convierte un mapa dinámico en un mapa de Strings puro para colores
+  /// Parsea los colores a partir de un [Map]
   static Map<String, String> _parseColors(dynamic rawColors) {
     if (rawColors is! Map) {
-      return {};
+      return const {};
     }
-
     return rawColors.map(
       (key, value) => MapEntry(key.toString(), value?.toString() ?? ''),
     );
-  }
-
-  static Map<String, dynamic> _ensureMap(dynamic value) {
-    if (value is Map<String, dynamic>) {
-      return value;
-    }
-    return {};
   }
 }

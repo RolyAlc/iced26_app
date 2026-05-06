@@ -1,28 +1,28 @@
-import 'package:iced26/data/sources/local/database/app_database.dart';
+import 'package:iced26/core/extensions/map_extensions.dart';
 import 'package:iced26/data/mappers/i18n_mapper.dart';
-import 'package:iced26/domain/entities/i18n_str.dart';
+import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/room.dart';
 
-/// Mapper para convertir el JSON de una sala en una instancia de 'Room'.
-class RoomMapper {
-  /// Convierte un mapa JSON en una entidad 'Room'.
+/// Mapper para [Room]
+abstract final class RoomMapper {
+  /// Crea un [Room] a partir de un mapa
   static Room fromMap(Map<String, dynamic> json) {
-    final String id = json['id']?.toString() ?? '';
-    final I18nStr name = I18nMapper.fromRaw(json['name'] ?? json['title']);
-    final dynamic rawCapacity = json['capacity'];
-    final String? zoneId = json['zoneId']?.toString();
-    final String? sessionStyle = json['sessionStyle']?.toString();
+    final id = json.getString('id');
+    final name = I18nMapper.fromRaw(json['name'] ?? json['title']);
+    final capacity = json.getInt('capacity');
+    final zoneId = json.getStringOrNull('zoneId');
+    final sessionStyle = json.getStringOrNull('sessionStyle');
 
     return Room(
       id: id,
       name: name,
-      capacity: rawCapacity is int ? rawCapacity : int.tryParse('$rawCapacity'),
+      capacity: capacity,
       zoneId: zoneId,
       sessionStyle: sessionStyle,
     );
   }
 
-  /// Convierte un registro de la base de datos (Drift) a una entidad.
+  /// Crea un [Room] a partir de [RoomTable]
   static Room fromDrift(RoomTable data) {
     return Room(
       id: data.id,
