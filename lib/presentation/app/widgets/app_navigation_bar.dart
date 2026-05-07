@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,11 +8,10 @@ import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/widgets/smart_search_bar.dart';
 import 'package:iced26/presentation/core/ui_engine/ui_metrics.dart';
 
-const double _glassBackgroundOpacity = 0.8;
-const double _glassBorderOpacity = 0.5;
 const double _selectedItemBackgroundOpacity = 0.1;
+const double _shadowOpacity = 0.08;
+const double _shadowBlurRadius = 12.0;
 
-/// Widget que representa la barra de navegación con efecto glassmorphism.
 class AppNavigationBar extends ConsumerWidget {
   const AppNavigationBar({super.key});
 
@@ -35,7 +33,7 @@ class AppNavigationBar extends ConsumerWidget {
           top: AppSpacing.l,
           bottom: AppSpacing.l + bottomInset,
         ),
-        child: _GlassContainer(
+        child: _NavContainer(
           height: barHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -58,9 +56,8 @@ class AppNavigationBar extends ConsumerWidget {
   }
 }
 
-/// Contenedor con efecto glassmorphism.
-class _GlassContainer extends StatelessWidget {
-  const _GlassContainer({required this.child, required this.height});
+class _NavContainer extends StatelessWidget {
+  const _NavContainer({required this.child, required this.height});
 
   final Widget child;
   final double height;
@@ -69,26 +66,21 @@ class _GlassContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.l),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          height: height,
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest.withValues(
-              alpha: _glassBackgroundOpacity,
-            ),
-            borderRadius: BorderRadius.circular(AppRadius.l),
-            border: Border.all(
-              color: colorScheme.outlineVariant.withValues(
-                alpha: _glassBorderOpacity,
-              ),
-            ),
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(AppRadius.l),
+        border: Border.all(color: colorScheme.outlineVariant),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: _shadowOpacity),
+            blurRadius: _shadowBlurRadius,
+            offset: const Offset(0, 4),
           ),
-          child: child,
-        ),
+        ],
       ),
+      child: child,
     );
   }
 }
