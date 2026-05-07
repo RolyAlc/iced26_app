@@ -247,20 +247,24 @@ class _TopTabBar extends StatelessWidget {
 
     return Row(
       children: [
-        _TopTab(
-          label: _kScheduleTitle,
-          isSelected: selected == ScheduleTab.timeline,
-          onTap: () => onSelect(ScheduleTab.timeline),
-          theme: theme,
-          colors: colors,
+        Flexible(
+          child: _TopTab(
+            label: _kScheduleTitle,
+            isSelected: selected == ScheduleTab.timeline,
+            onTap: () => onSelect(ScheduleTab.timeline),
+            theme: theme,
+            colors: colors,
+          ),
         ),
         const SizedBox(width: AppSpacing.m),
-        _TopTab(
-          label: 'My Schedule',
-          isSelected: selected == ScheduleTab.mySchedule,
-          onTap: () => onSelect(ScheduleTab.mySchedule),
-          theme: theme,
-          colors: colors,
+        Flexible(
+          child: _TopTab(
+            label: 'My Schedule',
+            isSelected: selected == ScheduleTab.mySchedule,
+            onTap: () => onSelect(ScheduleTab.mySchedule),
+            theme: theme,
+            colors: colors,
+          ),
         ),
       ],
     );
@@ -292,6 +296,8 @@ class _TopTab extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: AppSpacing.xs),
         child: Text(
           label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: isSelected ? colors.onSurface : colors.outline,
