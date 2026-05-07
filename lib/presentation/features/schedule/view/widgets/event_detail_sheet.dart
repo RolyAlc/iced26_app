@@ -22,7 +22,6 @@ void showDetailSheet(BuildContext context, Event event) {
 }
 
 /// Contenido principal del detalle del evento.
-/// Devuelve null si el evento no está en favoritos.
 class EventDetailContent extends ConsumerWidget {
   final Event event;
   const EventDetailContent({super.key, required this.event});
@@ -55,7 +54,6 @@ class EventDetailContent extends ConsumerWidget {
       ),
     );
 
-    // Orquesta el orden de los elementos que se muestran en el detalle.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -70,13 +68,16 @@ class EventDetailContent extends ConsumerWidget {
     );
   }
 
-  /// Header que muestra el tipo de evento y su estado.
   Widget _buildTypeHeader(BuildContext context, EventStatus status) {
+    final theme = Theme.of(context);
     final style = resolveTypeStyle(context, event.type);
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.xs,
+          ),
           decoration: BoxDecoration(
             color: style.color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(AppRadius.s),
@@ -85,13 +86,12 @@ class EventDetailContent extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(style.icon, size: 12, color: style.color),
-              const SizedBox(width: 6),
+              const SizedBox(width: AppSpacing.xs),
               Text(
                 event.type.label.toUpperCase(),
-                style: TextStyle(
+                style: theme.textTheme.labelSmall?.copyWith(
                   color: style.color,
                   fontWeight: FontWeight.w800,
-                  fontSize: 10,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -220,7 +220,7 @@ class _AttributeCell extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(AppSpacing.s),
           decoration: BoxDecoration(
             color: theme.colorScheme.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,

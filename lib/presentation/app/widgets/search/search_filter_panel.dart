@@ -259,7 +259,8 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
     return FilterChip(
       label: Text(label),
@@ -272,8 +273,7 @@ class _FilterChip extends StatelessWidget {
           : BorderSide(color: colors.outlineVariant),
       backgroundColor: colors.surfaceContainerLow,
       selectedColor: colors.primary.withValues(alpha: 0.12),
-      labelStyle: TextStyle(
-        fontSize: 13,
+      labelStyle: theme.textTheme.labelMedium?.copyWith(
         fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
         color: selected ? colors.primary : colors.onSurface,
       ),
@@ -295,7 +295,8 @@ class _TypeFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     final style = resolveTypeStyle(context, type);
 
     return FilterChip(
@@ -314,8 +315,7 @@ class _TypeFilterChip extends StatelessWidget {
           : BorderSide(color: colors.outlineVariant),
       backgroundColor: colors.surfaceContainerLow,
       selectedColor: style.color.withValues(alpha: 0.12),
-      labelStyle: TextStyle(
-        fontSize: 13,
+      labelStyle: theme.textTheme.labelMedium?.copyWith(
         fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
         color: selected ? style.color : colors.onSurface,
       ),

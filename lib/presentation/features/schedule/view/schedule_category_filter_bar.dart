@@ -74,7 +74,8 @@ class _CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
     return FilterChip(
       label: Text(label),
@@ -92,8 +93,7 @@ class _CategoryChip extends StatelessWidget {
           : BorderSide(color: colors.outlineVariant),
       backgroundColor: colors.surfaceContainerLow,
       selectedColor: color.withValues(alpha: 0.12),
-      labelStyle: TextStyle(
-        fontSize: 13,
+      labelStyle: theme.textTheme.labelMedium?.copyWith(
         fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
         color: selected ? color : colors.onSurface,
       ),

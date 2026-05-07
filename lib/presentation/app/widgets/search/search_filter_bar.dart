@@ -22,7 +22,7 @@ class FilterBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filters = _getFilters(ref);
+    final filters = ref.watch(searchProvider.select((s) => s.filters));
     final count = filters.activeCount;
 
     if (isExpanded) {
@@ -41,17 +41,12 @@ class FilterBar extends ConsumerWidget {
       onToggle: onToggle,
     );
   }
-
-  /// Obtiene estado de filtros
-  dynamic _getFilters(WidgetRef ref) {
-    return ref.watch(searchProvider.select((s) => s.filters));
-  }
 }
 
 /// Filtros expandidos.
 class _ExpandedFilterBar extends StatelessWidget {
   final int count;
-  final dynamic filters;
+  final SearchFilterState filters;
   final Search notifier;
   final VoidCallback onToggle;
 
@@ -78,7 +73,7 @@ class _ExpandedFilterBar extends StatelessWidget {
 /// Filtros colapsados.
 class _CollapsedFilterBar extends StatelessWidget {
   final int count;
-  final dynamic filters;
+  final SearchFilterState filters;
   final Search notifier;
   final VoidCallback onToggle;
 
@@ -107,11 +102,9 @@ class _CollapsedFilterBar extends StatelessWidget {
     );
   }
 
-  /// Construye lista de chips activos
-  List<Widget> _buildActiveChips(dynamic filters, Search notifier) {
+  List<Widget> _buildActiveChips(SearchFilterState filters, Search notifier) {
     final List<Widget> chips = [];
 
-    /// Día
     if (filters.selectedDay != null) {
       chips.add(_spacing());
       chips.add(
@@ -122,7 +115,6 @@ class _CollapsedFilterBar extends StatelessWidget {
       );
     }
 
-    /// Tipos
     for (final t in filters.selectedTypes) {
       chips.add(_spacing());
       chips.add(
@@ -130,7 +122,6 @@ class _CollapsedFilterBar extends StatelessWidget {
       );
     }
 
-    /// Estados
     for (final s in filters.selectedStatuses) {
       chips.add(_spacing());
       chips.add(
@@ -191,7 +182,8 @@ class _FilterToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     final isActive = count > 0;
 
     return GestureDetector(
@@ -208,7 +200,7 @@ class _FilterToggleButton extends StatelessWidget {
           children: [
             _buildIcon(colors, isActive),
             const SizedBox(width: AppSpacing.xs),
-            _buildText(colors, isActive),
+            _buildText(theme.textTheme, colors, isActive),
             const SizedBox(width: AppSpacing.xs),
             _buildArrow(colors, isActive),
           ],
@@ -217,7 +209,6 @@ class _FilterToggleButton extends StatelessWidget {
     );
   }
 
-  /// Construye la decoración del botón
   BoxDecoration _buildDecoration(ColorScheme colors, bool isActive) {
     return BoxDecoration(
       color: isActive
@@ -232,7 +223,6 @@ class _FilterToggleButton extends StatelessWidget {
     );
   }
 
-  /// Construye el icono del botón
   Widget _buildIcon(ColorScheme colors, bool isActive) {
     return Icon(
       AppIcons.filter,
@@ -241,19 +231,16 @@ class _FilterToggleButton extends StatelessWidget {
     );
   }
 
-  /// Construye el texto del botón
-  Widget _buildText(ColorScheme colors, bool isActive) {
+  Widget _buildText(TextTheme textTheme, ColorScheme colors, bool isActive) {
     return Text(
       isActive ? 'Filters ($count)' : 'Filters',
-      style: TextStyle(
-        fontSize: 13,
+      style: textTheme.labelMedium?.copyWith(
         fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
         color: isActive ? colors.primary : colors.onSurface,
       ),
     );
   }
 
-  /// Construye la flecha del botón
   Widget _buildArrow(ColorScheme colors, bool isActive) {
     return Icon(
       isExpanded ? AppIcons.collapse : AppIcons.expand,
@@ -272,7 +259,8 @@ class _ActiveChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -287,27 +275,24 @@ class _ActiveChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildLabel(colors),
-          const SizedBox(width: 4),
+          _buildLabel(theme.textTheme, colors),
+          const SizedBox(width: AppSpacing.xs),
           _buildRemoveIcon(colors),
         ],
       ),
     );
   }
 
-  /// Construye el label del chip
-  Widget _buildLabel(ColorScheme colors) {
+  Widget _buildLabel(TextTheme textTheme, ColorScheme colors) {
     return Text(
       label,
-      style: TextStyle(
-        fontSize: 13,
+      style: textTheme.labelMedium?.copyWith(
         fontWeight: FontWeight.w600,
         color: colors.primary,
       ),
     );
   }
 
-  /// Construye el icono de remover del chip
   Widget _buildRemoveIcon(ColorScheme colors) {
     return GestureDetector(
       onTap: onRemove,
