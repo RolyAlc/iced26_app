@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/core/constants/text_size_preference.dart';
 import 'package:iced26/di/bootstrap.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/presentation/app/state/text_size_provider.dart';
 import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/widgets/app_page.dart';
@@ -21,11 +23,7 @@ class SettingsView extends StatelessWidget {
         _SettingsSection(
           title: 'Appearance',
           items: [
-            _SettingsItem(
-              icon: AppIcons.textField,
-              title: 'Text size',
-              subtitle: 'Medium',
-            ),
+            _TextSizeItem(),
             _SettingsItem(
               icon: AppIcons.contrast,
               title: 'High contrast',
@@ -222,7 +220,6 @@ class _ClearFavouritesItem extends ConsumerWidget {
     );
   }
 
-  /// Mejora: usar un helper para el diálogo
   Future<void> _confirmClear(
     BuildContext context,
     WidgetRef ref,
@@ -251,6 +248,33 @@ class _ClearFavouritesItem extends ConsumerWidget {
     if (confirmed == true) {
       await ref.read(clearFavoritesUseCaseProvider).execute();
     }
+  }
+}
+
+class _TextSizeItem extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).colorScheme;
+    final pref = ref.watch(textSizeProvider).value ?? TextSizePreference.medium;
+
+    return ListTile(
+      leading: Icon(AppIcons.textField, color: colors.onSurfaceVariant),
+      title: const Text('Text size'),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: AppSpacing.xs),
+        child: SegmentedButton<TextSizePreference>(
+          showSelectedIcon: false,
+          segments: [
+            for (final p in TextSizePreference.values)
+              ButtonSegment(value: p, label: Text(p.label)),
+          ],
+          selected: {pref},
+          onSelectionChanged: (prefs) {
+            ref.read(textSizeProvider.notifier).setPreference(prefs.first);
+          },
+        ),
+      ),
+    );
   }
 }
 

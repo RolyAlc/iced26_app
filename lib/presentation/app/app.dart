@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iced26/core/constants/text_size_preference.dart';
 import 'package:iced26/presentation/app/app_shell.dart';
+import 'package:iced26/presentation/app/state/text_size_provider.dart';
+import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
+import 'package:iced26/presentation/app/state/theme_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/theme/app_theme.dart';
 import 'package:iced26/presentation/app/widgets/loading_screen.dart';
 import 'package:iced26/di/bootstrap.dart';
-import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
-import 'package:iced26/presentation/app/state/theme_provider.dart';
 
 const _kAppTitle = 'ICED26';
 
@@ -24,6 +26,7 @@ class MyApp extends ConsumerWidget {
     final hasError = bootstrapAsync.hasError || themeAsync.hasError;
 
     final themeModeAsync = ref.watch(themeModeProvider);
+    final textSizeAsync = ref.watch(textSizeProvider);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -31,6 +34,15 @@ class MyApp extends ConsumerWidget {
       theme: themeAsync.value ?? AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeModeAsync.value ?? ThemeMode.system,
+      builder: (context, child) {
+        final pref = textSizeAsync.value ?? TextSizePreference.medium;
+        return MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(pref.scaleFactor)),
+          child: child!,
+        );
+      },
       home: switch ((isReady, hasError)) {
         (_, true) => const _StartupErrorScreen(),
         (true, _) => const AppShell(),
