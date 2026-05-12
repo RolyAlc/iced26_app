@@ -11,22 +11,25 @@ dependencies:
   collection: ^1.19.1
   url_launcher: ^6.3.2
   google_fonts: ^8.0.2
-  flutter_riverpod: ^2.5.1
-  riverpod_annotation: ^2.3.5
+  flutter_riverpod: ^3.3.1
+  riverpod_annotation: ^4.0.2
   drift: ^2.16.0
-  sqlite3_flutter_libs: ^0.5.21
+  sqlite3_flutter_libs: ^0.5.24
   path_provider: ^2.1.2
   path: ^1.9.0
   logger: ^2.7.0
   flutter_svg: ^2.2.4
+  table_calendar: ^3.1.3
+  shared_preferences: ^2.3.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
-  riverpod_generator: ^2.4.0
+  riverpod_generator: ^4.0.3
   drift_dev: ^2.16.0
   build_runner: ^2.4.8
+
 flutter:
   uses-material-design: true
   assets:
@@ -34,11 +37,13 @@ flutter:
     - assets/brand/
     - assets/brand/iconApp/
     - assets/speakers/
+
 flutter_icons:
   # Añadimos el logo como icono de la app.
   android: true
   ios: true
-  image_path: "assets/data/brand/logo_iced26_new2-1-1024x628.png"
+  image_path: "assets/brand/logo_iced26_new2-1-1024x628.png"
+
 analyzer:
   strong-mode:
     implicit-casts: false
