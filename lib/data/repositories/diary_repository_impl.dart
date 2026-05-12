@@ -24,12 +24,16 @@ class DiaryRepositoryImpl implements DiaryRepository {
   Future<void> saveNote({
     int? id,
     required DateTime date,
+    String? title,
     required String content,
+    int? colorIndex,
   }) async {
     final day = DateTime(date.year, date.month, date.day);
     final companion = DiaryNotesCompanion(
       date: Value(day),
+      title: Value(title),
       content: Value(content),
+      colorIndex: colorIndex != null ? Value(colorIndex) : const Value.absent(),
     );
 
     if (id == null) {

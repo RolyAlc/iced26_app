@@ -40,4 +40,7 @@ abstract class ScheduleRepository {
 
   /// Obtiene todas las personas de la conferencia.
   Future<Result<List<Person>>> getAllPeople();
+
+  /// Necesario para construir el índice inverso por ponente sin depender de blockIds.
+  Future<Result<List<Presentation>>> getAllPresentations();
 }

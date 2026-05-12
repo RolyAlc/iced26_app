@@ -218,7 +218,9 @@ class SavedPresentations extends Table {
 class DiaryNotes extends Table {
   IntColumn get id => integer().autoIncrement()();
   DateTimeColumn get date => dateTime()();
+  TextColumn get title => text().nullable()();
   TextColumn get content => text()();
+  IntColumn get colorIndex => integer().withDefault(const Constant(0))();
   DateTimeColumn get createdAt =>
       dateTime().clientDefault(() => DateTime.now())();
 }
@@ -261,7 +263,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 14;
+  int get schemaVersion => 15;
 
   /// Estrategia de migración
   @override
@@ -297,6 +299,10 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 14) {
         await m.createTable(diaryNotes);
+      }
+      if (from < 15) {
+        await m.addColumn(diaryNotes, diaryNotes.title);
+        await m.addColumn(diaryNotes, diaryNotes.colorIndex);
       }
     },
   );

@@ -10,8 +10,16 @@ class SaveDiaryNoteUseCase {
   Future<void> execute({
     int? id,
     required DateTime date,
+    String? title,
     required String content,
+    int? colorIndex,
   }) {
-    return _repo.saveNote(id: id, date: date, content: content);
+    return _repo.saveNote(
+      id: id,
+      date: date,
+      title: title,
+      content: content,
+      colorIndex: colorIndex,
+    );
   }
 }

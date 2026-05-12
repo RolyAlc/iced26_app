@@ -8,8 +8,6 @@ import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart'
 
 part 'search_provider.g.dart';
 
-// TODO: Comprobar if anidados
-
 /// Filtros activos en la búsqueda.
 class SearchFilterState {
   final String? selectedDay;
@@ -129,7 +127,7 @@ Set<T> _toggleSet<T>(Set<T> original, T value) {
   return Set.unmodifiable(result);
 }
 
-/// State de la búsqueda.
+/// State de la búsqueda — los resultados de personas se computan en la UI para poder watchear el provider async.
 class SearchState {
   final String query;
   final List<Event> results;
@@ -157,7 +155,7 @@ class Search extends _$Search {
     }
     state = SearchState(
       query: text,
-      results: _computeResults(text, state.filters),
+      results: _computeEvents(text, state.filters),
       filters: state.filters,
     );
   }
@@ -166,7 +164,7 @@ class Search extends _$Search {
   void updateFilters(SearchFilterState filters) {
     state = SearchState(
       query: state.query,
-      results: _computeResults(state.query, filters),
+      results: _computeEvents(state.query, filters),
       filters: filters,
     );
   }
@@ -211,8 +209,7 @@ class Search extends _$Search {
     state = SearchState();
   }
 
-  /// Computa los resultados de la búsqueda.
-  List<Event> _computeResults(String query, SearchFilterState filters) {
+  List<Event> _computeEvents(String query, SearchFilterState filters) {
     final homeData = ref.read(homeViewModelProvider).value;
     if (homeData == null) {
       return [];
@@ -224,18 +221,20 @@ class Search extends _$Search {
       events = _applyTextSearch(events, query);
     }
 
-    if (!filters.isActive) {
-      return events;
+    if (filters.isActive) {
+      events = events.where((e) => _matchesFilters(e, filters)).toList();
     }
 
-    return events.where((e) => _matchesFilters(e, filters)).toList();
+    return events;
   }
 
-  /// Aplica el filtro de texto a los eventos.
+  /// Busca en todos los valores i18n del título para no depender del locale del dispositivo.
   List<Event> _applyTextSearch(List<Event> events, String query) {
     final q = query.toLowerCase();
     return events
-        .where((e) => e.title.resolve('en').toLowerCase().contains(q))
+        .where(
+          (e) => e.title.values.values.any((v) => v.toLowerCase().contains(q)),
+        )
         .toList();
   }
 

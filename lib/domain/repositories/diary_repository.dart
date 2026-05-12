@@ -9,7 +9,9 @@ abstract class DiaryRepository {
   Future<void> saveNote({
     int? id,
     required DateTime date,
+    String? title,
     required String content,
+    int? colorIndex,
   });
 
   /// Elimina una nota por su ID.

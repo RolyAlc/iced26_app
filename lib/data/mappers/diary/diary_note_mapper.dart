@@ -8,7 +8,9 @@ class DiaryNoteMapper {
     return DiaryNote(
       id: data.id,
       date: date,
+      title: data.title,
       content: data.content,
+      colorIndex: data.colorIndex,
       createdAt: data.createdAt,
     );
   }

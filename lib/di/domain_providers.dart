@@ -178,3 +178,21 @@ Future<Map<String, Room>> allRoomsIndex(Ref ref) async {
   }
   return {for (final r in result.data) r.id: r};
 }
+
+/// Índice inverso para listar las presentaciones de un ponente sin escanear toda la lista en cada tap.
+@riverpod
+Future<Map<String, List<Presentation>>> presentationsByPersonId(Ref ref) async {
+  final result = await ref
+      .watch(scheduleRepositoryProvider)
+      .getAllPresentations();
+  final list = result is Success<List<Presentation>>
+      ? result.data
+      : <Presentation>[];
+  final index = <String, List<Presentation>>{};
+  for (final p in list) {
+    for (final s in p.speakers) {
+      index.putIfAbsent(s.personId, () => []).add(p);
+    }
+  }
+  return index;
+}

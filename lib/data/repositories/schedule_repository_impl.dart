@@ -138,4 +138,13 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
       return results.map((p) => PersonMapper.fromDrift(p)).toList();
     });
   }
+
+  /// Obtiene todas las presentaciones (N3) de la conferencia.
+  @override
+  Future<Result<List<Presentation>>> getAllPresentations() async {
+    return _guard(() async {
+      final results = await _db.select(_db.presentations).get();
+      return results.map((e) => PresentationMapper.fromDrift(e)).toList();
+    });
+  }
 }
