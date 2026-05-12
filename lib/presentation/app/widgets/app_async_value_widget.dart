@@ -4,9 +4,6 @@ import 'package:iced26/presentation/app/widgets/error_screen.dart';
 import 'package:iced26/presentation/app/widgets/loading_screen.dart';
 
 /// Widget genérico para manejar estados asíncronos ('AsyncValue') de forma estándar en toda la aplicación.
-///
-/// Este widget facilita la visualización de estados de carga, errores o datos finales,
-/// reduciendo código duplicado en las vistas.
 class AppAsyncValueWidget<T> extends StatelessWidget {
   final AsyncValue<T> asyncValue;
   final Widget Function(T) data;

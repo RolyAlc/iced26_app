@@ -8,12 +8,23 @@ enum TextSizePreference {
 
   final double scaleFactor;
 
+  // Etiqueta corta para usos compactos (chips, badges).
   String get label {
     return switch (this) {
       TextSizePreference.small => 'S',
       TextSizePreference.medium => 'M',
       TextSizePreference.large => 'L',
       TextSizePreference.xl => 'XL',
+    };
+  }
+
+  // Nombre completo para el picker y subtítulos.
+  String get displayName {
+    return switch (this) {
+      TextSizePreference.small => 'Small',
+      TextSizePreference.medium => 'Medium',
+      TextSizePreference.large => 'Large',
+      TextSizePreference.xl => 'Extra Large',
     };
   }
 }

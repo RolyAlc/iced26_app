@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/app/navigation_constants.dart';
 import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
@@ -24,6 +25,10 @@ class AppNavigationBar extends ConsumerWidget {
     final searchNotifier = ref.read(searchProvider.notifier);
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
+    final today = DateTime.now();
+    final notes = ref.watch(diaryNotesProvider).value ?? [];
+    final hasDiaryBadge = notes.any((n) => DateUtils.isSameDay(n.date, today));
+
     return UIMetricsReporter(
       onReportNavBar: (size) => size.height,
       child: Padding(
@@ -31,7 +36,7 @@ class AppNavigationBar extends ConsumerWidget {
           left: AppSpacing.l,
           right: AppSpacing.l,
           top: AppSpacing.l,
-          bottom: AppSpacing.l + bottomInset,
+          bottom: AppSpacing.s + bottomInset,
         ),
         child: _NavContainer(
           height: barHeight,
@@ -44,6 +49,7 @@ class AppNavigationBar extends ConsumerWidget {
                   icon: item.icon,
                   selectedIcon: item.selectedIcon,
                   isSelected: !item.isAction && currentFeature == item.feature,
+                  showBadge: item.feature == AppFeature.diary && hasDiaryBadge,
                   onTap: item.isAction
                       ? () => SmartSearchBar.open(context, searchNotifier)
                       : () => notifier.select(item.feature),
@@ -85,7 +91,6 @@ class _NavContainer extends StatelessWidget {
   }
 }
 
-/// Elemento de la barra de navegación.
 class _NavigationItem extends StatelessWidget {
   const _NavigationItem({
     required this.label,
@@ -93,12 +98,14 @@ class _NavigationItem extends StatelessWidget {
     required this.selectedIcon,
     required this.isSelected,
     required this.onTap,
+    this.showBadge = false,
   });
 
   final String label;
   final IconData icon;
   final IconData selectedIcon;
   final bool isSelected;
+  final bool showBadge;
   final VoidCallback onTap;
 
   @override
@@ -112,7 +119,7 @@ class _NavigationItem extends StatelessWidget {
       child: AnimatedContainer(
         duration: AppDuration.medium,
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.m,
+          horizontal: AppSpacing.s,
           vertical: AppSpacing.s,
         ),
         decoration: BoxDecoration(
@@ -126,18 +133,24 @@ class _NavigationItem extends StatelessWidget {
           curve: Curves.easeInOut,
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                isSelected ? selectedIcon : icon,
-                color: isSelected
-                    ? activeColor
-                    : theme.colorScheme.onSurfaceVariant,
+              Badge(
+                isLabelVisible: showBadge,
+                child: Icon(
+                  isSelected ? selectedIcon : icon,
+                  color: isSelected
+                      ? activeColor
+                      : theme.colorScheme.onSurfaceVariant,
+                ),
               ),
               AnimatedSwitcher(
                 duration: AppDuration.fast,
                 child: isSelected
                     ? Text(
                         label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: activeColor,
                           fontWeight: FontWeight.bold,

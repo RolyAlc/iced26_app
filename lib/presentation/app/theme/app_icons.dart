@@ -18,10 +18,14 @@ abstract final class AppIcons {
   static const search = Icons.search_rounded;
   static const searchEmpty = Icons.search_off_rounded;
   static const filter = Icons.tune_rounded;
+  static const arrowBack = Icons.arrow_back_rounded;
   static const close = Icons.close_rounded;
+  static const delete = Icons.delete_rounded;
+  static const deleteOutline = Icons.delete_outline_rounded;
   static const expand = Icons.keyboard_arrow_down_rounded;
   static const collapse = Icons.keyboard_arrow_up_rounded;
   static const expandMore = Icons.expand_more_rounded;
+  static const chevronLeft = Icons.chevron_left_rounded;
   static const chevronRight = Icons.chevron_right_rounded;
   static const arrowForward = Icons.arrow_forward_rounded;
   static const openInNew = Icons.open_in_new_rounded;
@@ -82,8 +86,9 @@ abstract final class AppIcons {
 
   // --- Configuración ---
   static const textField = Icons.text_fields_rounded;
-  static const contrast = Icons.contrast_rounded;
   static const darkTheme = Icons.dark_mode_outlined;
+  static const lightTheme = Icons.light_mode_outlined;
+  static const systemTheme = Icons.brightness_auto_outlined;
   static const translate = Icons.translate_rounded;
   static const smartphone = Icons.smartphone_rounded;
   static const language = Icons.language_rounded;

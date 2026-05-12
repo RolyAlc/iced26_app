@@ -2,6 +2,8 @@
 /// Guía detallada en: docs/design_system.md
 library;
 
+import 'package:flutter/material.dart';
+
 /// Animaciones (AppDuration)
 class AppDuration {
   static const fast = Duration(milliseconds: 200);
@@ -48,4 +50,29 @@ class AppRadius {
   static const double m = 20.0;
   static const double container = 28.0;
   static const double l = 32.0;
+  static const double full = 100.0;
+}
+
+/// Colores de notas (Mood Tags)
+class AppNoteColors {
+  static const List<Color> palette = [
+    Colors.transparent, // Default
+    Color(0xFF64B5F6), // Blue - Focus
+    Color(0xFF81C784), // Green - Success
+    Color(0xFFFFD54F), // Amber - Idea
+    Color(0xFFBA68C8), // Purple - Mood
+  ];
+
+  static const List<String> labels = [
+    'None',
+    'Focus',
+    'Success',
+    'Idea',
+    'Mood',
+  ];
+
+  static Color getColor(int index) {
+    if (index < 0 || index >= palette.length) return palette[0];
+    return palette[index];
+  }
 }

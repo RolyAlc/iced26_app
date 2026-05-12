@@ -4,52 +4,38 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 
-/// Extensión para convertir texto a color.
-/// Returns: El color en formato ARGB.
 extension ColorParser on String {
+  // Prefija 'ff' en hex de 6 chars para que Color() reciba ARGB completo.
   Color? toColor() {
     final hex = replaceFirst('#', '');
+    if (hex.length != 6 && hex.length != 8) return null;
+
     final buffer = StringBuffer();
-    final value = int.tryParse(buffer.toString(), radix: 16);
-
-    if (hex.length != 6 && hex.length != 8) {
-      return null;
-    }
-
-    if (hex.length == 6) {
-      buffer.write('ff');
-    }
+    if (hex.length == 6) buffer.write('ff');
     buffer.write(hex);
 
-    if (value == null) {
-      return null;
-    }
+    final value = int.tryParse(buffer.toString(), radix: 16);
+    if (value == null) return null;
 
     return Color(value);
   }
 }
 
-// TODO: Mirar si en 'app_data.json' existe la posibilidad de sacar
-/// Centraliza los colores constantes de la marca.
+// Colores fijos de marca usados como semilla y fallback cuando el JSON no los sobreescribe.
 class AppBrandColors {
   static const Color primary = Color(0xFF75A49C);
   static const Color secondary = Color(0xFF927363);
   static const Color accent = Color(0xFFF88E5C);
   static const Color surface = Color(0xFFFCFCFC);
-  static const Color navIndicator = Color(0xFF7DA097);
 }
 
-/// Clase que construye el tema.
-/// Usa el método [_generate] para generar el tema desde los colores de la marca.
 class AppTheme {
-  /// Tema claro.
   static ThemeData get lightTheme => _generate(
     primary: AppBrandColors.primary,
     secondary: AppBrandColors.secondary,
     accent: AppBrandColors.accent,
   );
 
-  /// Tema oscuro.
   static ThemeData get darkTheme => _generate(
     primary: AppBrandColors.primary,
     secondary: AppBrandColors.secondary,
@@ -57,7 +43,24 @@ class AppTheme {
     brightness: Brightness.dark,
   );
 
-  /// Crea un [ThemeData] a partir de una [ThemeConfig].
+  // contrastLevel 1.0 = WCAG AAA. El OS activa estos temas automáticamente
+  // desde Accesibilidad — la app no necesita ningún control manual.
+  static ThemeData get highContrastTheme => _generate(
+    primary: AppBrandColors.primary,
+    secondary: AppBrandColors.secondary,
+    accent: AppBrandColors.accent,
+    contrastLevel: 1.0,
+  );
+
+  static ThemeData get highContrastDarkTheme => _generate(
+    primary: AppBrandColors.primary,
+    secondary: AppBrandColors.secondary,
+    accent: AppBrandColors.accent,
+    brightness: Brightness.dark,
+    contrastLevel: 1.0,
+  );
+
+  // Los colores del JSON sobreescriben los de marca; fallback si faltan claves.
   static ThemeData fromThemeConfig(ThemeConfig config) {
     return _generate(
       primary: config.colors['primary']?.toColor() ?? AppBrandColors.primary,
@@ -67,19 +70,21 @@ class AppTheme {
     );
   }
 
-  /// Genera el tema.
   static ThemeData _generate({
     required Color primary,
     required Color secondary,
     required Color accent,
     Brightness brightness = Brightness.light,
+    double contrastLevel = 0.0,
   }) {
     final scheme = ColorScheme.fromSeed(
       seedColor: primary,
       secondary: secondary,
       tertiary: accent,
+      // Surface fija en light para evitar que fromSeed calcule un tinte verdoso.
       surface: brightness == Brightness.light ? AppBrandColors.surface : null,
       brightness: brightness,
+      contrastLevel: contrastLevel,
     );
 
     final textTheme = _buildTextTheme(brightness: brightness);
@@ -96,7 +101,7 @@ class AppTheme {
     );
   }
 
-  // TODO: Mirar si en 'styles.json' existe la posibilidad de sacar y mapear
+  // Sin seed de brightness, GoogleFonts genera texto oscuro en dark mode.
   static TextTheme _buildTextTheme({Brightness brightness = Brightness.light}) {
     final seed = brightness == Brightness.dark
         ? ThemeData.dark().textTheme
@@ -110,7 +115,7 @@ class AppTheme {
     );
   }
 
-  /// Genera el card theme.
+  // Tinte sutil de primary sobre surface — evita fondo neutro sin color de marca.
   static CardThemeData _buildCardTheme(ColorScheme scheme) {
     return CardThemeData(
       elevation: AppElevation.none,
@@ -124,7 +129,6 @@ class AppTheme {
     );
   }
 
-  /// Genera el search bar theme.
   static SearchBarThemeData _buildSearchBarTheme(ColorScheme scheme) {
     return SearchBarThemeData(
       elevation: const WidgetStatePropertyAll(AppElevation.none),
@@ -143,7 +147,6 @@ class AppTheme {
     );
   }
 
-  /// Genera el chip theme.
   static ChipThemeData _buildChipTheme(
     ColorScheme scheme,
     TextTheme textTheme,
