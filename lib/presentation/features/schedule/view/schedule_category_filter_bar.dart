@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_type.dart';
@@ -86,7 +87,10 @@ class _CategoryChip extends StatelessWidget {
       ),
       selected: selected,
       showCheckmark: false,
-      onSelected: (_) => onTap(),
+      onSelected: (_) {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
       shape: const StadiumBorder(),
       side: selected
           ? BorderSide(color: color.withValues(alpha: 0.4))

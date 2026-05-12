@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/text_size_preference.dart';
 import 'package:iced26/presentation/app/app_shell.dart';
 import 'package:iced26/presentation/app/state/text_size_provider.dart';
@@ -33,7 +34,11 @@ class MyApp extends ConsumerWidget {
       title: _kAppTitle,
       theme: themeAsync.value ?? AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
+      highContrastTheme: AppTheme.highContrastTheme,
+      highContrastDarkTheme: AppTheme.highContrastDarkTheme,
       themeMode: themeModeAsync.value ?? ThemeMode.system,
+      themeAnimationDuration: AppDuration.medium,
+      themeAnimationCurve: Curves.easeInOut,
       builder: (context, child) {
         final pref = textSizeAsync.value ?? TextSizePreference.medium;
         return MediaQuery(
