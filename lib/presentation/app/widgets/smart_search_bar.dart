@@ -3,11 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
-import 'package:iced26/presentation/app/widgets/search/search_modal.dart';
+import 'package:iced26/presentation/app/widgets/search/search_modal_body.dart';
 
-/// Barra de búsqueda inteligente.
 class SmartSearchBar extends ConsumerWidget {
   final Search searchNotifier;
 
@@ -15,65 +13,85 @@ class SmartSearchBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFilterActive = _getIsFilterActive(ref);
+    final isFilterActive = ref.watch(
+      searchProvider.select((s) => s.filters.isActive),
+    );
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: _borderRadius,
-        onTap: () => _handleOpenSearch(context),
+        borderRadius: BorderRadius.circular(AppRadius.l),
+        onTap: () => open(context, searchNotifier),
         child: _SearchBarVisualContainer(
           isFilterActive: isFilterActive,
-          onFilterTap: () => _handleOpenFilters(context),
+          onFilterTap: () => open(context, searchNotifier, expandFilters: true),
         ),
       ),
     );
   }
 
-  /// Obtiene si hay filtros activos desde el provider
-  bool _getIsFilterActive(WidgetRef ref) {
-    return ref.watch(searchProvider.select((s) => s.filters.isActive));
-  }
-
-  /// Maneja apertura estándar del buscador
-  void _handleOpenSearch(BuildContext context) {
-    open(context, searchNotifier);
-  }
-
-  /// Maneja apertura con filtros expandidos
-  void _handleOpenFilters(BuildContext context) {
-    open(context, searchNotifier, expandFilters: true);
-  }
-
-  static BorderRadius get _borderRadius {
-    return BorderRadius.circular(AppRadius.l);
-  }
-
-  /// Abre el modal de búsqueda
   static void open(
     BuildContext context,
     Search notifier, {
     bool expandFilters = false,
   }) {
-    AppBottomSheet.show(
-      context: context,
-      title: 'Search ICED26',
-      isFullHeight: true,
-      scrollable: false,
-      child: _buildSearchModal(notifier, expandFilters),
-    );
-  }
-
-  /// Construye el contenido del modal
-  static Widget _buildSearchModal(Search notifier, bool expandFilters) {
-    return SearchModalBody(
-      notifier: notifier,
-      initiallyExpandedFilters: expandFilters,
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, _) =>
+            _SearchScreen(notifier: notifier, expandFilters: expandFilters),
+        transitionsBuilder: (context, animation, _, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOut,
+          );
+          return FadeTransition(
+            opacity: curved,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 0.04),
+                end: Offset.zero,
+              ).animate(curved),
+              child: child,
+            ),
+          );
+        },
+        transitionDuration: AppDuration.medium,
+        reverseTransitionDuration: AppDuration.fast,
+      ),
     );
   }
 }
 
-/// Contenedor visual de la barra de búsqueda.
+class _SearchScreen extends StatelessWidget {
+  final Search notifier;
+  final bool expandFilters;
+
+  const _SearchScreen({required this.notifier, required this.expandFilters});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.l,
+            AppSpacing.m,
+            AppSpacing.l,
+            AppSpacing.m,
+          ),
+          child: SearchModalBody(
+            notifier: notifier,
+            initiallyExpandedFilters: expandFilters,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _SearchBarVisualContainer extends StatelessWidget {
   final bool isFilterActive;
   final VoidCallback onFilterTap;
@@ -83,82 +101,45 @@ class _SearchBarVisualContainer extends StatelessWidget {
     required this.onFilterTap,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    final colors = _getColors(context);
-
-    return Container(
-      height: _height,
-      padding: _padding,
-      decoration: _buildDecoration(colors),
-      child: Row(
-        children: [
-          _buildSearchIcon(colors),
-          _buildSpacing(),
-          _buildPlaceholderText(),
-          _buildFilterButton(colors),
-        ],
-      ),
-    );
-  }
-
-  /// Obtiene el color scheme del tema.
-  ColorScheme _getColors(BuildContext context) {
-    return Theme.of(context).colorScheme;
-  }
-
   static const double _height = 56;
-
   static const EdgeInsets _padding = EdgeInsets.symmetric(
     horizontal: AppSpacing.m,
   );
 
-  /// Construye el icono de búsqueda.
-  Widget _buildSearchIcon(ColorScheme colors) {
-    return Icon(AppIcons.search, color: colors.primary);
-  }
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
 
-  /// Espaciado entre el icono de búsqueda y el placeholder.
-  Widget _buildSpacing() {
-    return const SizedBox(width: AppSpacing.sm);
-  }
-
-  /// Placeholder de la barra de búsqueda.
-  Widget _buildPlaceholderText() {
-    return const Expanded(child: Text('Search sessions, authors, rooms...'));
-  }
-
-  /// Botón de filtros.
-  Widget _buildFilterButton(ColorScheme colors) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onFilterTap,
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xs),
-        child: _FilterIcon(isActive: isFilterActive, colors: colors),
+    return Container(
+      height: _height,
+      padding: _padding,
+      decoration: BoxDecoration(
+        color: Color.alphaBlend(
+          colors.primary.withValues(alpha: 0.08),
+          colors.surface,
+        ),
+        borderRadius: BorderRadius.circular(AppRadius.l),
+        border: Border.all(color: colors.outlineVariant, width: 1.2),
       ),
-    );
-  }
-
-  /// Construye la decoración de la barra de búsqueda.
-  BoxDecoration _buildDecoration(ColorScheme colors) {
-    return BoxDecoration(
-      color: _buildBackgroundColor(colors),
-      borderRadius: BorderRadius.circular(AppRadius.l),
-      border: Border.all(color: colors.outlineVariant, width: 1.2),
-    );
-  }
-
-  /// Color de fondo de la barra de búsqueda.
-  Color _buildBackgroundColor(ColorScheme colors) {
-    return Color.alphaBlend(
-      colors.primary.withValues(alpha: 0.08),
-      colors.surface,
+      child: Row(
+        children: [
+          Icon(AppIcons.search, color: colors.primary),
+          const SizedBox(width: AppSpacing.sm),
+          const Expanded(child: Text('Search sessions, authors, rooms...')),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onFilterTap,
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.xs),
+              child: _FilterIcon(isActive: isFilterActive, colors: colors),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-/// Icono de filtros con indicador de estado.
 class _FilterIcon extends StatelessWidget {
   final bool isActive;
   final ColorScheme colors;
@@ -169,31 +150,25 @@ class _FilterIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
-      children: [_buildIcon(), if (isActive) _buildActiveDot()],
-    );
-  }
-
-  /// Construye el icono de filtro.
-  Widget _buildIcon() {
-    return Icon(
-      AppIcons.filter,
-      color: isActive ? colors.primary : colors.secondary,
-    );
-  }
-
-  /// Punto rojo que indica que hay filtros activos.
-  Widget _buildActiveDot() {
-    return Positioned(
-      top: -3,
-      right: -3,
-      child: Container(
-        width: 8,
-        height: 8,
-        decoration: BoxDecoration(
-          color: colors.primary,
-          shape: BoxShape.circle,
+      children: [
+        Icon(
+          AppIcons.filter,
+          color: isActive ? colors.primary : colors.secondary,
         ),
-      ),
+        if (isActive)
+          Positioned(
+            top: -3,
+            right: -3,
+            child: Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: colors.primary,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
