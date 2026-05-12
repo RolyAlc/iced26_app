@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
+import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/domain/entities/presentation.dart';
+import 'package:iced26/domain/entities/speaker_entry.dart';
 import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/helpers/event_type_style.dart';
 import 'package:iced26/presentation/widgets/event_status_chip.dart';
+import 'package:iced26/presentation/widgets/app_button.dart';
+import 'package:iced26/presentation/widgets/speaker_avatar.dart';
+import 'package:iced26/presentation/widgets/speaker_detail_sheet.dart';
 
 /// Muestra el detalle de un evento en un bottom sheet con estética Vision 2026.
 void showDetailSheet(BuildContext context, Event event) {
@@ -26,7 +33,7 @@ class EventDetailContent extends ConsumerWidget {
   final Event event;
   const EventDetailContent({super.key, required this.event});
 
-  /// Devuelve la duración del evento.
+  /// duración como '0m' indica que los datos de fechas son iguales — no aporta info al usuario.
   String? _duration() {
     if (event.startDate == null || event.endDate == null) {
       return null;
@@ -54,6 +61,10 @@ class EventDetailContent extends ConsumerWidget {
       ),
     );
 
+    final people = ref.watch(allPeopleIndexProvider).value ?? {};
+    final presentationsByPerson =
+        ref.watch(presentationsByPersonIdProvider).value ?? {};
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -62,6 +73,14 @@ class EventDetailContent extends ConsumerWidget {
         _buildTitle(context, locale),
         const SizedBox(height: AppSpacing.l),
         _buildAttributesGrid(context, duration),
+        if (event.speakers.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.l),
+          _SpeakerSection(
+            speakers: event.speakers,
+            people: people,
+            presentationsByPerson: presentationsByPerson,
+          ),
+        ],
         const SizedBox(height: AppSpacing.l),
         _buildFavoriteButton(context, ref, isFavorite),
       ],
@@ -106,7 +125,6 @@ class EventDetailContent extends ConsumerWidget {
     );
   }
 
-  /// Titulo del evento.
   Widget _buildTitle(BuildContext context, String locale) {
     return Text(
       event.title.resolve(locale),
@@ -175,29 +193,109 @@ class EventDetailContent extends ConsumerWidget {
     );
   }
 
-  /// Boton para guardar o no un evento.
   Widget _buildFavoriteButton(
     BuildContext context,
     WidgetRef ref,
     bool isFavorite,
   ) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: FilledButton.icon(
-        style: FilledButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.m),
+    return AppButton(
+      onPressed: () {
+        HapticFeedback.lightImpact();
+        ref.read(toggleFavoriteUseCaseProvider).execute(event.id);
+      },
+      icon: isFavorite ? AppIcons.bookmarkOn : AppIcons.bookmarkAdd,
+      label: isFavorite ? 'Saved to my schedule' : 'Add to my schedule',
+    );
+  }
+}
+
+/// Sección de ponentes del evento — solo visible cuando el JSON incluye speakers.
+class _SpeakerSection extends StatelessWidget {
+  const _SpeakerSection({
+    required this.speakers,
+    required this.people,
+    required this.presentationsByPerson,
+  });
+
+  final List<SpeakerEntry> speakers;
+  final Map<String, Person> people;
+  final Map<String, List<Presentation>> presentationsByPerson;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final locale = Localizations.localeOf(context).languageCode;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Speakers',
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.8,
           ),
         ),
-        onPressed: () =>
-            ref.read(toggleFavoriteUseCaseProvider).execute(event.id),
-        icon: Icon(isFavorite ? AppIcons.bookmarkOn : AppIcons.bookmarkAdd),
-        label: Text(
-          isFavorite ? 'Saved to my schedule' : 'Add to my schedule',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
+        const SizedBox(height: AppSpacing.s),
+        ...speakers.map((s) {
+          final person = people[s.personId];
+          final name = person?.name.resolve(locale) ?? s.personId;
+          final institution = person?.institution;
+          final speakerPresentations = presentationsByPerson[s.personId] ?? [];
+          final canTap = person != null;
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.s),
+            child: InkWell(
+              onTap: canTap
+                  ? () {
+                      showSpeakerDetail(context, person, speakerPresentations);
+                    }
+                  : null,
+              borderRadius: BorderRadius.circular(AppRadius.s),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppSpacing.xs,
+                  horizontal: AppSpacing.xs,
+                ),
+                child: Row(
+                  children: [
+                    SpeakerAvatar(person: person, name: name),
+                    const SizedBox(width: AppSpacing.m),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          if (institution != null)
+                            Text(
+                              institution,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (canTap)
+                      Icon(
+                        AppIcons.chevronRight,
+                        size: 16,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 }

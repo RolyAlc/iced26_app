@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/bootstrap.dart';
+import 'package:iced26/presentation/app/navigation_constants.dart';
+import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
@@ -76,15 +78,15 @@ class _HomeContent extends ConsumerWidget {
         ),
         headerFallbackHeight: _expandedHeaderHeight,
         collapsedHeaderFallbackHeight: _collapsedHeaderHeight,
-        children: _buildSections(state),
+        children: _buildSections(state, ref),
       ),
     );
   }
 
   /// Devuelve la lista ordenada de secciones de la Home.
-  List<Widget> _buildSections(HomeState state) {
+  List<Widget> _buildSections(HomeState state, WidgetRef ref) {
     return [
-      _buildFeaturedSection(state),
+      _buildFeaturedSection(state, ref),
       if (state.keynoteSpeakers.isNotEmpty) _buildKeynoteSection(state),
       _buildNewsSection(state),
       _buildSocialSection(state),
@@ -92,13 +94,17 @@ class _HomeContent extends ConsumerWidget {
   }
 
   /// Carrusel horizontal de eventos destacados.
-  Widget _buildFeaturedSection(HomeState state) {
+  Widget _buildFeaturedSection(HomeState state, WidgetRef ref) {
     return _AnimatedSection(
       delay: const Duration(milliseconds: 200),
       child: AppSection(
         title: 'Featured sessions',
         edgeToEdge: true,
-        child: HomeFeaturedSection(featuredEvents: state.featuredEvents),
+        child: HomeFeaturedSection(
+          featuredEvents: state.featuredEvents,
+          onExploreTap: () =>
+              ref.read(navigationProvider.notifier).select(AppFeature.schedule),
+        ),
       ),
     );
   }

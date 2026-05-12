@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/domain/entities/presentation.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail_sheet.dart';
+import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
 import 'package:iced26/presentation/helpers/date_helper.dart';
 import 'package:iced26/presentation/widgets/app_card.dart';
 import 'package:iced26/presentation/widgets/slot_time_label.dart';
@@ -79,18 +81,21 @@ class SavedPresentationCard extends ConsumerWidget {
               ),
               IconButton(
                 icon: Icon(
-                  isFavorite ? Icons.bookmark : Icons.bookmark_outline,
+                  isFavorite ? AppIcons.bookmarkOn : AppIcons.bookmarkOutline,
                   color: isFavorite ? colors.primary : colors.onSurfaceVariant,
                   size: 20,
                 ),
-                onPressed: () => ref
-                    .read(togglePresentationFavoriteUseCaseProvider)
-                    .execute(presentation.id),
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  ref
+                      .read(togglePresentationFavoriteUseCaseProvider)
+                      .execute(presentation.id);
+                },
                 visualDensity: VisualDensity.compact,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               ),
-              Icon(Icons.chevron_right, color: colors.outline, size: 20),
+              Icon(AppIcons.chevronRight, color: colors.outline, size: 20),
             ],
           ),
         ),

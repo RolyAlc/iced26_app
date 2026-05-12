@@ -8,7 +8,7 @@ import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speak
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
 import 'package:iced26/presentation/helpers/event_type_style.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail_sheet.dart';
+import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
 import 'package:iced26/presentation/widgets/app_network_image.dart';
 
 /// Abre el detalle de un keynote speaker en un bottom sheet.

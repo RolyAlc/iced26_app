@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/featured_card/featured_card.dart';
+import 'package:iced26/presentation/widgets/app_card.dart';
 import 'package:iced26/presentation/widgets/app_dots_indicator.dart';
 
 /// Sección de eventos destacados — carousel con snap, peek y dots.
 class HomeFeaturedSection extends StatefulWidget {
-  const HomeFeaturedSection({super.key, required this.featuredEvents});
+  const HomeFeaturedSection({
+    super.key,
+    required this.featuredEvents,
+    required this.onExploreTap,
+  });
 
   final List<EventUIModel> featuredEvents;
+  final VoidCallback onExploreTap;
 
   @override
   State<HomeFeaturedSection> createState() => _HomeFeaturedSectionState();
@@ -52,13 +59,15 @@ class _HomeFeaturedSectionState extends State<HomeFeaturedSection> {
 
     final items = _items;
 
+    final totalCount = items.length + 1;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildCarousel(items),
-        if (items.length > 1) ...[
+        if (totalCount > 1) ...[
           const SizedBox(height: AppSpacing.m),
-          AppDotsIndicator(count: items.length, current: _currentPage),
+          AppDotsIndicator(count: totalCount, current: _currentPage),
         ],
       ],
     );
@@ -74,16 +83,72 @@ class _HomeFeaturedSectionState extends State<HomeFeaturedSection> {
           height: cardHeight,
           child: PageView.builder(
             controller: _controller,
-            itemCount: items.length,
+            itemCount: items.length + 1,
             itemBuilder: (context, index) {
+              final child = index == items.length
+                  ? _ExploreMoreCard(onTap: widget.onExploreTap)
+                  : FeaturedCard(event: items[index]);
+
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s),
-                child: FeaturedCard(event: items[index]),
+                child: child,
               );
             },
           ),
         );
       },
+    );
+  }
+}
+
+class _ExploreMoreCard extends StatelessWidget {
+  const _ExploreMoreCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return AppCard(
+      onTap: onTap,
+      borderRadius: AppRadius.container,
+      color: colors.primaryContainer,
+      padding: const EdgeInsets.all(AppSpacing.m),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(AppIcons.scheduleOn, size: 40, color: colors.onPrimaryContainer),
+          const SizedBox(height: AppSpacing.m),
+          Text(
+            'Explore all sessions',
+            style: textTheme.titleMedium?.copyWith(
+              color: colors.onPrimaryContainer,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.s),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'View schedule',
+                style: textTheme.labelMedium?.copyWith(
+                  color: colors.onPrimaryContainer.withValues(alpha: 0.8),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Icon(
+                AppIcons.arrowForward,
+                size: 16,
+                color: colors.onPrimaryContainer.withValues(alpha: 0.8),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

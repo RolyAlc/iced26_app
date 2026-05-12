@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
@@ -151,7 +152,10 @@ class _BookmarkButton extends ConsumerWidget {
         color: isFavorite ? colors.primary : colors.onSurfaceVariant,
         size: 20,
       ),
-      onPressed: () => ref.read(toggleFavoriteUseCaseProvider).execute(eventId),
+      onPressed: () {
+        HapticFeedback.lightImpact();
+        ref.read(toggleFavoriteUseCaseProvider).execute(eventId);
+      },
       visualDensity: VisualDensity.compact,
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(minWidth: 32, minHeight: 32),

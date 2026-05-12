@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
 import 'package:iced26/presentation/features/my_schedule/view/widgets/saved_presentation_card.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
@@ -86,7 +87,7 @@ class _EmptyMySchedule extends StatelessWidget {
       child: Column(
         children: [
           Icon(
-            Icons.bookmark_border,
+            AppIcons.bookmarkOff,
             size: 48,
             color: theme.colorScheme.outlineVariant,
           ),

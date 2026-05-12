@@ -90,16 +90,16 @@ class _ScheduleBody extends StatelessWidget {
       return const _EmptyFilter();
     }
 
-    return Column(children: visibleItems.map(_buildScheduleItem).toList());
+    return Column(children: visibleItems.map(_buildItem).toList());
   }
-}
 
-Widget _buildScheduleItem(ScheduleItem item) {
-  return switch (item) {
-    SingleEventItem(:final event) => EventCard(event: event),
-    SessionSlotItem() => SessionSlotBlock(item: item),
-    DaySeparatorItem(:final date) => _DaySeparator(date: date),
-  };
+  static Widget _buildItem(ScheduleItem item) {
+    return switch (item) {
+      SingleEventItem(:final event) => EventCard(event: event),
+      SessionSlotItem() => SessionSlotBlock(item: item),
+      DaySeparatorItem(:final date) => _DaySeparator(date: date),
+    };
+  }
 }
 
 /// Separador de días.
