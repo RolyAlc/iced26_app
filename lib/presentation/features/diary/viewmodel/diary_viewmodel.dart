@@ -27,7 +27,7 @@ Future<Map<DateTime, List<Event>>> diaryConferenceEvents(Ref ref) async {
   return map;
 }
 
-/// Fecha seleccionada en el calendario del diario.
+// Estado inicial = hoy normalizado (sin hora) para que isSameDay funcione correctamente.
 @riverpod
 class SelectedDiaryDate extends _$SelectedDiaryDate {
   @override
@@ -36,13 +36,17 @@ class SelectedDiaryDate extends _$SelectedDiaryDate {
     return DateTime(now.year, now.month, now.day);
   }
 
-  /// Selecciona una fecha en el calendario del diario.
   void select(DateTime date) {
     state = DateTime(date.year, date.month, date.day);
   }
+
+  void selectToday() {
+    final now = DateTime.now();
+    state = DateTime(now.year, now.month, now.day);
+  }
 }
 
-/// Mes visible en el calendario (usado por TableCalendar como focusedDay).
+// focusedDay de TableCalendar — controla el mes/semana visible en el calendario.
 @riverpod
 class DiaryFocusedMonth extends _$DiaryFocusedMonth {
   @override
@@ -50,7 +54,6 @@ class DiaryFocusedMonth extends _$DiaryFocusedMonth {
     return DateTime.now();
   }
 
-  /// Establece el mes visible en el calendario.
   void set(DateTime date) {
     state = date;
   }
