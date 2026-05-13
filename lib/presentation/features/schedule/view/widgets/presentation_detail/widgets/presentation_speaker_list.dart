@@ -5,8 +5,8 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
-import 'package:iced26/presentation/widgets/speaker_avatar.dart';
-import 'package:iced26/presentation/widgets/speaker_detail_sheet.dart';
+import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
+import 'package:iced26/presentation/shared/widgets/speaker_detail_sheet.dart';
 
 /// Lista de ponentes de la presentación — cada fila abre el detalle del ponente.
 class PresentationSpeakerList extends StatelessWidget {

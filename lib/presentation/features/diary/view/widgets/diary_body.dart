@@ -7,8 +7,8 @@ import 'package:iced26/presentation/features/diary/view/widgets/diary_calendar.d
 import 'package:iced26/presentation/features/diary/view/widgets/diary_day_content.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_error.dart';
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
-import 'package:iced26/presentation/helpers/diary_helpers.dart';
-import 'package:iced26/presentation/widgets/app_card.dart';
+import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
+import 'package:iced26/presentation/shared/widgets/app_card.dart';
 
 /// Mismos límites que DiaryCalendar — evitan navegar a días fuera del rango del congreso.
 final _kFirstDay = DateTime(2025, 1, 1);

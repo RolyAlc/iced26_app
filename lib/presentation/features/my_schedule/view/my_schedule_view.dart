@@ -7,7 +7,7 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
 import 'package:iced26/presentation/features/my_schedule/view/widgets/saved_presentation_card.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
-import 'package:iced26/presentation/widgets/app_page.dart';
+import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
 /// Vista standalone de My Schedule (con AppPage propio).
 /// Usada cuando My Schedule ocupa una pantalla completa.

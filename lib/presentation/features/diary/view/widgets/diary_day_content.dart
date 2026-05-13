@@ -7,8 +7,8 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_event_tile.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_note_card.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/diary_note_editor_sheet.dart';
-import 'package:iced26/presentation/helpers/date_helper.dart';
-import 'package:iced26/presentation/helpers/diary_helpers.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
 
 /// Contenido del día seleccionado en el diario.
 class DiaryDayContent extends StatelessWidget {

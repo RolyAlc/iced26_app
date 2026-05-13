@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/widgets/app_page.dart';
+import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
 /// Vista de ajustes de la app.
 class SettingsView extends StatelessWidget {

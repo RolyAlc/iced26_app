@@ -4,7 +4,7 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/speaker_card/speaker_card_content.dart';
 import 'package:iced26/presentation/features/home/widgets/speaker_card/speaker_card_image.dart';
-import 'package:iced26/presentation/widgets/app_card.dart';
+import 'package:iced26/presentation/shared/widgets/app_card.dart';
 
 /// Tarjeta de keynote speaker — foto full-bleed con overlay degradado.
 class SpeakerCard extends StatelessWidget {

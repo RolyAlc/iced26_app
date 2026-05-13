@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
-import 'package:iced26/presentation/widgets/app_card.dart';
+import 'package:iced26/presentation/shared/widgets/app_card.dart';
 import 'package:iced26/presentation/features/home/widgets/social_card/social_card_content.dart';
 import 'package:iced26/presentation/features/home/widgets/social_card/social_card_footer.dart';
 import 'package:iced26/presentation/features/home/widgets/social_card/social_card_header.dart';

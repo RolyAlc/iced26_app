@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/presentation/helpers/date_helper.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
 /// Header del editor que muestra la fecha y el botón de cerrar.
 class DiaryEditorHeader extends StatelessWidget {

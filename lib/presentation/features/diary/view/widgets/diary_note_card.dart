@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/helpers/date_helper.dart';
-import 'package:iced26/presentation/widgets/app_card.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:iced26/presentation/shared/widgets/app_card.dart';
 
 /// Card que muestra una nota del diario y permite editarla o eliminarla.
 class DiaryNoteCard extends StatelessWidget {

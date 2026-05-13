@@ -3,7 +3,7 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/zone.dart';
 import 'package:iced26/domain/entities/day.dart';
-import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/social_activity.dart';

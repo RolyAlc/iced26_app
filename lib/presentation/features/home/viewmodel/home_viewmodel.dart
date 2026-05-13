@@ -13,11 +13,11 @@ import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/domain/usecases/get_home_data_use_case.dart';
-import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
-import 'package:iced26/presentation/mappers/event_ui_mapper.dart';
+import 'package:iced26/presentation/features/home/viewmodel/mappers/event_ui_mapper.dart';
 
 part 'home_viewmodel.g.dart';
 

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_body.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_fab.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_header.dart';
-import 'package:iced26/presentation/widgets/app_page.dart';
+import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
 class DiaryView extends ConsumerWidget {
   const DiaryView({super.key});

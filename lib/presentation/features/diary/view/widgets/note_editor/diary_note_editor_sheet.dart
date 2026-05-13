@@ -9,7 +9,7 @@ import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widg
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_header.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_inputs.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_section_label.dart';
-import 'package:iced26/presentation/widgets/app_button.dart';
+import 'package:iced26/presentation/shared/widgets/app_button.dart';
 
 /// Sheet para editar o crear una nota del diario.
 class DiaryNoteEditorSheet extends ConsumerStatefulWidget {

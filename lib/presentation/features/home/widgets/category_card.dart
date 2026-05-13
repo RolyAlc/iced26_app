@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/category_style_config.dart';
-import 'package:iced26/presentation/widgets/app_card.dart';
+import 'package:iced26/presentation/shared/widgets/app_card.dart';
 
 /// Tarjeta individual para cada categoría.
 class CategoryCard extends StatelessWidget {

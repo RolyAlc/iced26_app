@@ -5,8 +5,8 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/helpers/date_helper.dart';
-import 'package:iced26/presentation/helpers/diary_helpers.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
 
 /// Calendario del diario donde se pueden ver las notas y eventos.
 class DiaryCalendar extends StatefulWidget {

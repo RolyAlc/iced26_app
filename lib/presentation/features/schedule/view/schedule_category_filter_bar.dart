@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/helpers/event_type_style.dart';
+import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 
 /// Barra de filtros de categoria para la pantalla Schedule.
 class ScheduleCategoryFilterBar extends StatelessWidget {

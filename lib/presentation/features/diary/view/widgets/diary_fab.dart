@@ -5,7 +5,7 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/diary_note_editor_sheet.dart';
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
-import 'package:iced26/presentation/core/ui_engine/ui_metrics.dart';
+import 'package:iced26/presentation/app/ui_metrics.dart';
 
 /// Botón flotante para agregar una nota al diario.
 class DiaryFab extends ConsumerWidget {

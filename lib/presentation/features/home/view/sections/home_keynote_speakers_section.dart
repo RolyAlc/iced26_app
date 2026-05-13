@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/features/home/view/sheets/speaker_detail_sheet.dart';
+import 'package:iced26/presentation/features/home/view/sheets/keynote_speaker_detail_sheet.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/speaker_card.dart';
-import 'package:iced26/presentation/widgets/app_dots_indicator.dart';
+import 'package:iced26/presentation/shared/widgets/app_dots_indicator.dart';
 
 /// Sección de keynote speakers — carousel con peek + dots + CTA opcional.
 class HomeKeynoteSection extends StatefulWidget {
@@ -84,7 +84,7 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s),
                 child: SpeakerCard(
                   speaker: speaker,
-                  onTap: () => showSpeakerDetailSheet(context, speaker),
+                  onTap: () => showKeynoteSpeakerDetail(context, speaker),
                 ),
               );
             },

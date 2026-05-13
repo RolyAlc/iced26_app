@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/featured_card/widgets/event_image.dart';
 import 'package:iced26/presentation/features/home/widgets/featured_card/widgets/time_badge.dart';
-import 'package:iced26/presentation/widgets/event_status_chip.dart';
+import 'package:iced26/presentation/shared/widgets/event_status_chip.dart';
 
 /// Contenido principal de la tarjeta de evento destacado.
 class FeaturedCardContent extends StatelessWidget {

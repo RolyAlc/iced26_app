@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/featured_card/widgets/info_row.dart';
 import 'package:iced26/presentation/features/home/widgets/featured_card/widgets/save_button.dart';
 

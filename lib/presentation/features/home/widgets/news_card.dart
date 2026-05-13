@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card_variant.dart';
-import 'package:iced26/presentation/widgets/app_card.dart';
-import 'package:iced26/presentation/widgets/app_network_image.dart';
+import 'package:iced26/presentation/shared/widgets/app_card.dart';
+import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
 
 /// Tarjeta de noticia.
 class NewsCard extends StatelessWidget {

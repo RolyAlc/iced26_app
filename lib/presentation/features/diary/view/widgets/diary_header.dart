@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
-import 'package:iced26/presentation/helpers/diary_helpers.dart';
+import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
 
 /// Header de la vista del diario con el título y un botón para volver al día actual.
 class DiaryHeader extends ConsumerWidget {

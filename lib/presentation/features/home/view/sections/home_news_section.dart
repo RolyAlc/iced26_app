@@ -7,8 +7,8 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card_variant.dart';
-import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
-import 'package:iced26/presentation/widgets/app_network_image.dart';
+import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
+import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
 import 'package:iced26/core/services/logger/logger.dart';
 
 /// Sección de noticias con bottom sheet de detalle.

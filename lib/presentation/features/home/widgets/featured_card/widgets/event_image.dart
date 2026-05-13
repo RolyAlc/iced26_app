@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/presentation/features/event/viewmodel/models/event_ui_model.dart';
-import 'package:iced26/presentation/widgets/app_network_image.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
+import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
 
 /// Evento imagen destacada
 class EventImage extends StatelessWidget {

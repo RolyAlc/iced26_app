@@ -7,9 +7,9 @@ import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
-import 'package:iced26/presentation/helpers/date_helper.dart';
-import 'package:iced26/presentation/widgets/app_card.dart';
-import 'package:iced26/presentation/widgets/slot_time_label.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:iced26/presentation/shared/widgets/app_card.dart';
+import 'package:iced26/presentation/shared/widgets/slot_time_label.dart';
 
 /// Tarjeta para mostrar una presentación guardada dentro de la pantalla 'My Schedule'.
 class SavedPresentationCard extends ConsumerWidget {

@@ -9,7 +9,7 @@ import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
 import 'package:iced26/presentation/app/state/theme_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/theme/app_theme.dart';
-import 'package:iced26/presentation/app/widgets/loading_screen.dart';
+import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
 import 'package:iced26/di/bootstrap.dart';
 
 const _kAppTitle = 'ICED26';
