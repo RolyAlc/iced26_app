@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
+import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 
 /// Sheet genérico de ponente — reutilizable desde cualquier punto de entrada de la app.
@@ -58,7 +57,6 @@ class _SpeakerHeader extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SpeakerAvatar(person: person, name: name, radius: 28),
         const SizedBox(width: AppSpacing.m),

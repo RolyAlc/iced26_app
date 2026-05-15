@@ -17,7 +17,7 @@ class ExpressiveSearchHeader extends StatelessWidget {
             builder: (context, controller) {
               return SearchBar(
                 controller: controller,
-                hintText: "Search events...",
+                hintText: 'Search events...',
                 leading: const Icon(AppIcons.search, size: 20),
                 onTap: () => controller.openView(),
                 elevation: const WidgetStatePropertyAll(AppElevation.low),
@@ -27,7 +27,7 @@ class ExpressiveSearchHeader extends StatelessWidget {
                   IconButton(
                     icon: const Icon(AppIcons.filter),
                     onPressed: () {
-                      AppLogger.d("Open advanced filters");
+                      AppLogger.d('Open advanced filters');
                     },
                   ),
                 ],
@@ -57,13 +57,13 @@ class ExpressiveSearchHeader extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: [
-              _buildFilterChip(context, "Time", AppIcons.time),
+              _buildFilterChip(context, 'Time', AppIcons.time),
               const SizedBox(width: 8),
-              _buildFilterChip(context, "Location", AppIcons.locationOn),
+              _buildFilterChip(context, 'Location', AppIcons.locationOn),
               const SizedBox(width: 8),
-              _buildFilterChip(context, "Type", AppIcons.category),
+              _buildFilterChip(context, 'Type', AppIcons.category),
               const SizedBox(width: 8),
-              _buildFilterChip(context, "More", AppIcons.moreHoriz),
+              _buildFilterChip(context, 'More', AppIcons.moreHoriz),
             ],
           ),
         ),

@@ -5,12 +5,12 @@ sealed class Result<T> {
 
 /// [Success] representa un resultado exitoso.
 class Success<T> extends Result<T> {
-  final T data;
   const Success(this.data);
+  final T data;
 }
 
 /// [Failure] representa un resultado fallido.
 class Failure<T> extends Result<T> {
-  final String message;
   const Failure(this.message);
+  final String message;
 }

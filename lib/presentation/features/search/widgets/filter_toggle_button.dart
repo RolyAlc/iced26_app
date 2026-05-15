@@ -6,16 +6,15 @@ import 'package:iced26/presentation/features/search/widgets/chip_container.dart'
 
 /// Botón reutilizable para activar y desactivar filtros
 class FilterToggleButton extends StatelessWidget {
-  final int count;
-  final bool isExpanded;
-  final VoidCallback onTap;
-
   const FilterToggleButton({
     super.key,
     required this.count,
     required this.isExpanded,
     required this.onTap,
   });
+  final int count;
+  final bool isExpanded;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

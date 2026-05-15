@@ -3,12 +3,11 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:iced26/domain/entities/note_color.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
-
 import 'package:iced26/data/sources/local/database/note_color_converter.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
+import 'package:iced26/domain/entities/note_color.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
 
@@ -197,8 +196,7 @@ class AppConfigs extends Table {
 @DataClassName('FavoriteTable')
 class Favorites extends Table {
   TextColumn get eventId => text()();
-  DateTimeColumn get savedAt =>
-      dateTime().clientDefault(() => DateTime.now())();
+  DateTimeColumn get savedAt => dateTime().clientDefault(DateTime.now)();
 
   @override
   Set<Column> get primaryKey => {eventId};
@@ -208,8 +206,7 @@ class Favorites extends Table {
 @DataClassName('SavedPresentationTable')
 class SavedPresentations extends Table {
   TextColumn get presentationId => text()();
-  DateTimeColumn get savedAt =>
-      dateTime().clientDefault(() => DateTime.now())();
+  DateTimeColumn get savedAt => dateTime().clientDefault(DateTime.now)();
 
   @override
   Set<Column> get primaryKey => {presentationId};
@@ -225,8 +222,7 @@ class DiaryNotes extends Table {
   IntColumn get colorIndex => integer()
       .withDefault(const Constant(0))
       .map(const NoteColorConverter())();
-  DateTimeColumn get createdAt =>
-      dateTime().clientDefault(() => DateTime.now())();
+  DateTimeColumn get createdAt => dateTime().clientDefault(DateTime.now)();
 }
 
 /// Tipos de submission

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 /// Etiqueta reutilizable que muestra la hora de un slot y resalta si está en vivo.
 class SlotTimeLabel extends StatelessWidget {
+  const SlotTimeLabel({super.key, required this.time, this.isLive = false});
   final String time;
   final bool isLive;
-
-  const SlotTimeLabel({super.key, required this.time, this.isLive = false});
 
   @override
   Widget build(BuildContext context) {

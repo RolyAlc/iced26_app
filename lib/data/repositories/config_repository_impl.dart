@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'package:drift/drift.dart';
 
+import 'package:drift/drift.dart';
 import 'package:iced26/core/errors/result.dart';
+import 'package:iced26/core/services/logger/logger.dart';
 import 'package:iced26/data/mappers/app_data_mapper.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/data/mappers/zone_mapper.dart';
@@ -10,14 +11,12 @@ import 'package:iced26/data/sources/local/json/local_json_service.dart';
 import 'package:iced26/domain/entities/app_data.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
-import 'package:iced26/core/services/logger/logger.dart';
 
 /// Repositorio para la gestión de la configuración.
 class ConfigRepositoryImpl implements ConfigRepository {
+  ConfigRepositoryImpl(this._db, this._jsonService);
   final AppDatabase _db;
   final LocalJsonService _jsonService;
-
-  ConfigRepositoryImpl(this._db, this._jsonService);
 
   /// Sincroniza los datos de la aplicación desde el JSON bundled.
   @override

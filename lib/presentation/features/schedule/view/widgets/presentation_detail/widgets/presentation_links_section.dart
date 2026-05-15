@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:iced26/core/constants/design_tokens.dart';
-
 /// enlaza a recursos externos del JSON — usa url_launcher para salir de la app.
 class PresentationLinkButtons extends StatelessWidget {
+  const PresentationLinkButtons({super.key, this.aboutUrl, this.videoUrl});
   final String? aboutUrl;
   final String? videoUrl;
-
-  const PresentationLinkButtons({super.key, this.aboutUrl, this.videoUrl});
 
   Future<void> _open(String url) async {
     final uri = Uri.tryParse(url);
@@ -28,8 +26,8 @@ class PresentationLinkButtons extends StatelessWidget {
             onPressed: () {
               _open(aboutUrl!);
             },
-            icon: Icon(AppIcons.info, size: 18),
-            label: Text('About the presentation'),
+            icon: const Icon(AppIcons.info, size: 18),
+            label: const Text('About the presentation'),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.primary,
               side: BorderSide(color: theme.colorScheme.outline),
@@ -41,8 +39,8 @@ class PresentationLinkButtons extends StatelessWidget {
             onPressed: () {
               _open(videoUrl!);
             },
-            icon: Icon(AppIcons.playCircleOutline, size: 18),
-            label: Text('Watch video'),
+            icon: const Icon(AppIcons.playCircleOutline, size: 18),
+            label: const Text('Watch video'),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.primary,
               side: BorderSide(color: theme.colorScheme.outline),

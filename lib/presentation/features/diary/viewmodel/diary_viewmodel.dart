@@ -1,9 +1,8 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:table_calendar/table_calendar.dart';
-
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/data_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 part 'diary_viewmodel.g.dart';
 

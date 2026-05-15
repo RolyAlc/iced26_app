@@ -9,9 +9,8 @@ import 'package:iced26/presentation/features/home/widgets/featured_card/widgets/
 
 /// Pie de la tarjeta de evento destacado.
 class FeaturedCardFooter extends ConsumerWidget {
-  final EventUIModel event;
-
   const FeaturedCardFooter({super.key, required this.event});
+  final EventUIModel event;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,9 +34,8 @@ class FeaturedCardFooter extends ConsumerWidget {
 
 /// Información del evento (sala y duración).
 class _EventInfo extends StatelessWidget {
-  final EventUIModel event;
-
   const _EventInfo({required this.event});
+  final EventUIModel event;
 
   @override
   Widget build(BuildContext context) {

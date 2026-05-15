@@ -9,8 +9,6 @@ class AppLogger {
       methodCount: 0, // No ensucia la consola con el stacktrace
       errorMethodCount: 5, // Si hay un error, sí queremos ver qué pasó
       lineLength: 50, // Líneas más cortas, más legibles
-      colors: true, // Colores para identificar niveles
-      printEmojis: true, // Emojis visuales
     ),
   );
 

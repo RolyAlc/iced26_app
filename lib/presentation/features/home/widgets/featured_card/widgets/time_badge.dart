@@ -4,9 +4,8 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Etiqueta de tiempo
 class TimeBadge extends StatelessWidget {
-  final String time;
-
   const TimeBadge({super.key, required this.time});
+  final String time;
 
   @override
   Widget build(BuildContext context) {

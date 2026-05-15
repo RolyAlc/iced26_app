@@ -1,15 +1,8 @@
-import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/data/mappers/i18n_mapper.dart';
+import 'package:iced26/domain/entities/new.dart';
 
 /// DTO para noticias.
 class NewsDTO {
-  final String id;
-  final String datePublish;
-  final dynamic title;
-  final dynamic content;
-  final String imgUrl;
-  final String webUrl;
-
   NewsDTO({
     required this.id,
     required this.datePublish,
@@ -31,6 +24,12 @@ class NewsDTO {
       webUrl: map['webUrl']?.toString() ?? '',
     );
   }
+  final String id;
+  final String datePublish;
+  final dynamic title;
+  final dynamic content;
+  final String imgUrl;
+  final String webUrl;
 
   /// Convierte un [NewsDTO] a [NewsItem].
   NewsItem toEntity() {

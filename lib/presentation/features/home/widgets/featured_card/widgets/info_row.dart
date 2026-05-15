@@ -3,11 +3,6 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Row con icono y texto para mostrar información del evento.
 class InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  final TextStyle? style;
-  final Color color;
-
   const InfoRow({
     super.key,
     required this.icon,
@@ -15,6 +10,10 @@ class InfoRow extends StatelessWidget {
     required this.color,
     this.style,
   });
+  final IconData icon;
+  final String text;
+  final TextStyle? style;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {

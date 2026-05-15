@@ -2,17 +2,6 @@ import 'package:iced26/domain/entities/i18n_str.dart';
 
 /// Entidad que representa un bloque de sesiones
 class SessionBlock {
-  final String id;
-  final String parentId;
-  final String? roomId;
-  final String? track;
-  final I18nStr? title;
-  final DateTime? startDate;
-  final DateTime? endDate;
-  final List<String> submissionFormats;
-  final String? defaultLang;
-  final String? externalRef;
-
   const SessionBlock({
     required this.id,
     required this.parentId,
@@ -25,4 +14,14 @@ class SessionBlock {
     this.defaultLang,
     this.externalRef,
   });
+  final String id;
+  final String parentId;
+  final String? roomId;
+  final String? track;
+  final I18nStr? title;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final List<String> submissionFormats;
+  final String? defaultLang;
+  final String? externalRef;
 }

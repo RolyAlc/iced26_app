@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'ui_metrics.g.dart';
 
 /// Notificación que burbujea cambios en las dimensiones de componentes clave de la UI.
 class UIMetricsNotification extends Notification {
+  UIMetricsNotification({this.navBarHeight, this.headerHeight});
   final double? navBarHeight;
   final double? headerHeight;
-
-  UIMetricsNotification({this.navBarHeight, this.headerHeight});
 }
 
 /// Estado que almacena métricas globales de la interfaz (solo lo compartido entre pantallas).
 class UIMetrics {
-  final double navBarHeight;
-
   const UIMetrics({this.navBarHeight = 0.0});
+  final double navBarHeight;
 
   UIMetrics copyWith({double? navBarHeight}) {
     return UIMetrics(navBarHeight: navBarHeight ?? this.navBarHeight);
@@ -37,9 +34,8 @@ class UiMetrics extends _$UiMetrics {
 /// Widget que añade un espacio al final de un [CustomScrollView] para asegurar
 /// que el contenido sea visible por encima de componentes flotantes (como la NavBar).
 class SliverClearanceSpacer extends ConsumerWidget {
-  final double extraPadding;
-
   const SliverClearanceSpacer({super.key, this.extraPadding = 0.0});
+  final double extraPadding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,16 +53,15 @@ class SliverClearanceSpacer extends ConsumerWidget {
 
 /// Widget de utilidad que mide su propio tamaño y emite una [UIMetricsNotification].
 class UIMetricsReporter extends StatefulWidget {
-  final Widget child;
-  final double? Function(Size)? onReportNavBar;
-  final double? Function(Size)? onReportHeader;
-
   const UIMetricsReporter({
     super.key,
     required this.child,
     this.onReportNavBar,
     this.onReportHeader,
   });
+  final Widget child;
+  final double? Function(Size)? onReportNavBar;
+  final double? Function(Size)? onReportHeader;
 
   @override
   State<UIMetricsReporter> createState() => _UIMetricsReporterState();

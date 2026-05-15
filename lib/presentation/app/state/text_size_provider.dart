@@ -1,7 +1,6 @@
+import 'package:iced26/core/constants/text_size_preference.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:iced26/core/constants/text_size_preference.dart';
 
 part 'text_size_provider.g.dart';
 

@@ -6,12 +6,6 @@ import 'package:iced26/presentation/features/search/view/results_section.dart';
 
 /// Cuerpo principal de la búsqueda.
 class SearchBody extends StatelessWidget {
-  final SearchState state;
-  final Search notifier;
-  final bool filtersExpanded;
-  final VoidCallback onCollapseFilters;
-  final ValueChanged<String> onRecentQueryTap;
-
   const SearchBody({
     super.key,
     required this.state,
@@ -20,6 +14,11 @@ class SearchBody extends StatelessWidget {
     required this.onCollapseFilters,
     required this.onRecentQueryTap,
   });
+  final SearchState state;
+  final Search notifier;
+  final bool filtersExpanded;
+  final VoidCallback onCollapseFilters;
+  final ValueChanged<String> onRecentQueryTap;
 
   @override
   Widget build(BuildContext context) {

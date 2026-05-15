@@ -4,16 +4,15 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Tile que muestra una búsqueda reciente.
 class RecentQueryTile extends StatelessWidget {
-  final String query;
-  final VoidCallback onTap;
-  final VoidCallback onRemove;
-
   const RecentQueryTile({
     super.key,
     required this.query,
     required this.onTap,
     required this.onRemove,
   });
+  final String query;
+  final VoidCallback onTap;
+  final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) {

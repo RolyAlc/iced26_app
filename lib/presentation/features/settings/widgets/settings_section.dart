@@ -5,10 +5,9 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Sección con título etiquetado y lista de ítems agrupados visualmente.
 class SettingsSection extends StatelessWidget {
+  const SettingsSection({super.key, required this.title, required this.items});
   final String title;
   final List<Widget> items;
-
-  const SettingsSection({super.key, required this.title, required this.items});
 
   @override
   Widget build(BuildContext context) {
@@ -62,13 +61,6 @@ class SettingsSection extends StatelessWidget {
 
 /// Ítem genérico de ajustes con icono, título, subtítulo y trailing opcional.
 class SettingsItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final Widget? trailing;
-  final VoidCallback? onTap;
-  final bool enabled;
-
   const SettingsItem({
     super.key,
     required this.icon,
@@ -78,6 +70,12 @@ class SettingsItem extends StatelessWidget {
     this.onTap,
     this.enabled = true,
   });
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {

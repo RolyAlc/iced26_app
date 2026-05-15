@@ -15,16 +15,15 @@ TextStyle? chipLabelStyle(
 
 /// Chip que representa un filtro.
 class AppFilterChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
   const AppFilterChip({
     super.key,
     required this.label,
     required this.selected,
     required this.onTap,
   });
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
-import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
+import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
+import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
 
 const _kIconBadgeSize = 36.0;
@@ -66,10 +65,9 @@ class _SpeakerImage extends StatelessWidget {
         aspectRatio: 4 / 3,
         child: AppNetworkImage(
           url: photoUrl,
-          fit: BoxFit.cover,
           placeholder: ColoredBox(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            child: Center(
+            child: const Center(
               child: Icon(AppIcons.person, size: _kPlaceholderIconSize),
             ),
           ),

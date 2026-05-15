@@ -3,13 +3,6 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Botón de acción principal de la aplicación.
 class AppButton extends StatelessWidget {
-  final String label;
-  final VoidCallback? onPressed;
-  final bool isLoading;
-  final IconData? icon;
-  final double height;
-  final bool isFullWidth;
-
   const AppButton({
     super.key,
     required this.label,
@@ -19,10 +12,16 @@ class AppButton extends StatelessWidget {
     this.height = 56,
     this.isFullWidth = true,
   });
+  final String label;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+  final IconData? icon;
+  final double height;
+  final bool isFullWidth;
 
   @override
   Widget build(BuildContext context) {
-    Widget buttonChild = isLoading
+    final Widget buttonChild = isLoading
         ? const SizedBox(
             width: 20,
             height: 20,

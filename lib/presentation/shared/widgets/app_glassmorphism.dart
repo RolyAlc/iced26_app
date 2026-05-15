@@ -5,6 +5,17 @@ import 'package:flutter/material.dart';
 ///
 /// Permite configurar el color de fondo, el radio de los bordes y el nivel de desenfoque.
 class AppGlassmorphism extends StatelessWidget {
+  const AppGlassmorphism({
+    super.key,
+    required this.child,
+    this.backgroundColor =
+        Colors.transparent, // Por defecto no aplica color si no se especifica
+    this.borderRadius = 32.0,
+    this.sigmaX = 10.0,
+    this.sigmaY = 10.0,
+    this.padding = EdgeInsets.zero,
+  });
+
   /// El widget que se mostrará dentro del efecto de glassmorphism.
   final Widget child;
 
@@ -21,17 +32,6 @@ class AppGlassmorphism extends StatelessWidget {
   /// El padding interno del contenido.
   final EdgeInsetsGeometry padding;
 
-  const AppGlassmorphism({
-    super.key,
-    required this.child,
-    this.backgroundColor =
-        Colors.transparent, // Por defecto no aplica color si no se especifica
-    this.borderRadius = 32.0,
-    this.sigmaX = 10.0,
-    this.sigmaY = 10.0,
-    this.padding = EdgeInsets.zero,
-  });
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -43,7 +43,7 @@ class AppGlassmorphism extends StatelessWidget {
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
-        child: Container(
+        child: DecoratedBox(
           decoration: BoxDecoration(
             color: effectiveBackgroundColor,
             borderRadius: BorderRadius.circular(borderRadius),

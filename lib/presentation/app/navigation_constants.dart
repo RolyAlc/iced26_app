@@ -6,17 +6,16 @@ enum AppFeature { home, schedule, search, diary, settings }
 
 /// Define una pestaña de navegación principal.
 class NavigationItem {
-  final AppFeature feature;
-  final IconData icon;
-  final IconData selectedIcon;
-  final String label;
-
   const NavigationItem({
     required this.feature,
     required this.icon,
     required this.selectedIcon,
     required this.label,
   });
+  final AppFeature feature;
+  final IconData icon;
+  final IconData selectedIcon;
+  final String label;
 
   bool get isAction => feature == AppFeature.search;
 }

@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
-
-import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_detail_sheet.dart';
 
 /// Lista de ponentes de la presentación — cada fila abre el detalle del ponente.
 class PresentationSpeakerList extends StatelessWidget {
-  final List<SpeakerEntry> speakers;
-  final Map<String, Person> people;
-  final Map<String, List<Presentation>> presentationsByPerson;
-
   const PresentationSpeakerList({
     super.key,
     required this.speakers,
     required this.people,
     required this.presentationsByPerson,
   });
+  final List<SpeakerEntry> speakers;
+  final Map<String, Person> people;
+  final Map<String, List<Presentation>> presentationsByPerson;
 
   @override
   Widget build(BuildContext context) {

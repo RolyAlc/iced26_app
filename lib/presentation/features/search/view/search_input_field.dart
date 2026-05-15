@@ -5,14 +5,13 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Campo de entrada de texto para la búsqueda.
 class SearchInputField extends StatelessWidget {
-  final TextEditingController controller;
-  final ValueChanged<String> onChanged;
-
   const SearchInputField({
     super.key,
     required this.controller,
     required this.onChanged,
   });
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {

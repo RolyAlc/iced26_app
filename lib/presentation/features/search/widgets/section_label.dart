@@ -4,9 +4,8 @@ const _kLabelLetterSpacing = 0.8;
 
 /// Label que representa una sección.
 class SectionLabel extends StatelessWidget {
-  final String label;
-
   const SectionLabel({super.key, required this.label});
+  final String label;
 
   @override
   Widget build(BuildContext context) {

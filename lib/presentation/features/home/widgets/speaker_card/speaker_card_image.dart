@@ -14,7 +14,6 @@ class SpeakerCardImage extends StatelessWidget {
 
     return AppNetworkImage(
       url: photoUrl ?? '',
-      fit: BoxFit.cover,
       placeholder: ColoredBox(
         color: colors.surfaceContainerHighest,
         child: Center(

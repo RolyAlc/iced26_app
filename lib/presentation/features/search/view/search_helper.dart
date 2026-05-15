@@ -4,16 +4,15 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Widget auxiliar para mostrar información en la búsqueda.
 class SearchHelper extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-
   const SearchHelper({
     super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
   });
+  final String title;
+  final String subtitle;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {

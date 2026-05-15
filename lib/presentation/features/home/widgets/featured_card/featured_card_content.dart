@@ -7,9 +7,8 @@ import 'package:iced26/presentation/shared/widgets/event_status_chip.dart';
 
 /// Contenido principal de la tarjeta de evento destacado.
 class FeaturedCardContent extends StatelessWidget {
-  final EventUIModel event;
-
   const FeaturedCardContent({super.key, required this.event});
+  final EventUIModel event;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +24,8 @@ class FeaturedCardContent extends StatelessWidget {
 
 /// Bloque de imagen con badge de tiempo y estado.
 class _ImageBlock extends StatelessWidget {
-  final EventUIModel event;
-
   const _ImageBlock({required this.event});
+  final EventUIModel event;
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +49,8 @@ class _ImageBlock extends StatelessWidget {
 
 /// Título del evento.
 class _Title extends StatelessWidget {
-  final EventUIModel event;
-
   const _Title({required this.event});
+  final EventUIModel event;
 
   @override
   Widget build(BuildContext context) {

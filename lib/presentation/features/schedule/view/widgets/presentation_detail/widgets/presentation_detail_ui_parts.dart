@@ -4,14 +4,13 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// chip genérico para Track, tiempo y duración — evita repetir el Container de estilos.
 class PresentationChip extends StatelessWidget {
-  final String label;
-  final bool primary;
-
   const PresentationChip({
     super.key,
     required this.label,
     this.primary = false,
   });
+  final String label;
+  final bool primary;
 
   @override
   Widget build(BuildContext context) {

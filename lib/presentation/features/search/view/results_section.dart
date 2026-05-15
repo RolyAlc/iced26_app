@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
@@ -8,23 +7,22 @@ import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/presentation/app/state/recent_searches_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/features/search/view/search_helper.dart';
+import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
 import 'package:iced26/presentation/features/search/view/recent_searches_section.dart';
+import 'package:iced26/presentation/features/search/view/search_helper.dart';
 import 'package:iced26/presentation/features/search/widgets/person_result_tile.dart';
 import 'package:iced26/presentation/features/search/widgets/result_tile.dart';
 import 'package:iced26/presentation/features/search/widgets/section_label.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
 
 /// Sección que muestra los resultados de la búsqueda.
 class ResultsSection extends ConsumerWidget {
-  final SearchState state;
-  final ValueChanged<String> onRecentQueryTap;
-
   const ResultsSection({
     super.key,
     required this.state,
     required this.onRecentQueryTap,
   });
+  final SearchState state;
+  final ValueChanged<String> onRecentQueryTap;
 
   /// Filtra personas por nombre en todos los locales disponibles en I18nStr.
   List<Person> _filterPeople(Map<String, Person> allPeople, String query) {

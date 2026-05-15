@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
-import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
 import 'package:iced26/presentation/shared/widgets/slot_time_label.dart';
 
 /// Tarjeta principal de evento.
 class EventCard extends ConsumerWidget {
-  final Event event;
-
   const EventCard({super.key, required this.event});
+  final Event event;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -61,25 +59,23 @@ class EventCard extends ConsumerWidget {
 
 /// Modelo de datos para la UI
 class _EventViewModel {
-  final String title;
-  final String? time;
-  final bool isLive;
-  final bool isFavorite;
-
   const _EventViewModel({
     required this.title,
     required this.time,
     required this.isLive,
     required this.isFavorite,
   });
+  final String title;
+  final String? time;
+  final bool isLive;
+  final bool isFavorite;
 }
 
 /// Contenido interno de la card
 class _EventContent extends StatelessWidget {
+  const _EventContent({required this.viewModel, required this.eventId});
   final _EventViewModel viewModel;
   final String eventId;
-
-  const _EventContent({required this.viewModel, required this.eventId});
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +85,6 @@ class _EventContent extends StatelessWidget {
         vertical: AppSpacing.sm,
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (viewModel.time != null) ...[
             SlotTimeLabel(time: viewModel.time!, isLive: viewModel.isLive),
@@ -106,9 +101,8 @@ class _EventContent extends StatelessWidget {
 
 /// Widget separado para el título
 class _EventTitle extends StatelessWidget {
-  final String title;
-
   const _EventTitle({required this.title});
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -137,10 +131,9 @@ class _ChevronIcon extends StatelessWidget {
 
 /// Botón para marcar como favorito.
 class _BookmarkButton extends ConsumerWidget {
+  const _BookmarkButton({required this.eventId, required this.isFavorite});
   final String eventId;
   final bool isFavorite;
-
-  const _BookmarkButton({required this.eventId, required this.isFavorite});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

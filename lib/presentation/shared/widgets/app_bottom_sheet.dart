@@ -195,13 +195,12 @@ class AppBottomSheet extends StatelessWidget {
 
 /// Modelo simple para encapsular cálculos de layout.
 class _BottomSheetLayout {
-  final double keyboardHeight;
-  final double availableHeight;
-  final double screenHeight;
-
   const _BottomSheetLayout({
     required this.keyboardHeight,
     required this.availableHeight,
     required this.screenHeight,
   });
+  final double keyboardHeight;
+  final double availableHeight;
+  final double screenHeight;
 }

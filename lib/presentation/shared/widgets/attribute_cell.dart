@@ -4,16 +4,15 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Celda icono + etiqueta + valor para grids de atributos en detail sheets.
 class AttributeCell extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
   const AttributeCell({
     super.key,
     required this.icon,
     required this.label,
     required this.value,
   });
+  final IconData icon;
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {

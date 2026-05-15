@@ -5,11 +5,6 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Contenedor reutilizable para chips.
 class ChipContainer extends StatelessWidget {
-  final bool selected;
-  final Color accentColor;
-  final VoidCallback onTap;
-  final Widget child;
-
   const ChipContainer({
     super.key,
     required this.selected,
@@ -17,6 +12,10 @@ class ChipContainer extends StatelessWidget {
     required this.onTap,
     required this.child,
   });
+  final bool selected;
+  final Color accentColor;
+  final VoidCallback onTap;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {

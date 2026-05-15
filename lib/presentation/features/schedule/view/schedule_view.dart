@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/features/my_schedule/view/my_schedule_view.dart';
 import 'package:iced26/presentation/features/my_schedule/viewmodel/my_schedule_viewmodel.dart';
 import 'package:iced26/presentation/features/schedule/view/schedule_category_filter_bar.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/session_slot_block.dart';
-import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
+import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
@@ -92,9 +91,9 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
     return AppPage(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
       header: header,
-      children: [
-        const SizedBox(height: AppSpacing.m),
-        const _ScheduleBody(),
+      children: const [
+        SizedBox(height: AppSpacing.m),
+        _ScheduleBody(),
       ],
     );
   }
@@ -327,10 +326,9 @@ class _ScheduleHeader extends ConsumerWidget {
 
 /// Tap bar superior Schedule / My Schedule.
 class _TopTabBar extends StatelessWidget {
+  const _TopTabBar({required this.selected, required this.onSelect});
   final ScheduleTab selected;
   final ValueChanged<ScheduleTab> onSelect;
-
-  const _TopTabBar({required this.selected, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
@@ -376,15 +374,14 @@ class _EmptyScheduleFilter extends StatelessWidget {
 
 /// Tab individual de la barra superior.
 class _TopTab extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
   const _TopTab({
     required this.label,
     required this.isSelected,
     required this.onTap,
   });
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

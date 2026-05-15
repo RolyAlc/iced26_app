@@ -5,9 +5,8 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Botón de limpiar filtros reutilizable
 class ClearAllButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
   const ClearAllButton({super.key, required this.onPressed});
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {

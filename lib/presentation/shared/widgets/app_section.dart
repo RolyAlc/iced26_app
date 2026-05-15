@@ -4,15 +4,6 @@ import 'package:iced26/presentation/shared/widgets/app_skeleton.dart';
 
 /// Un contenedor para secciones de contenido con márgenes consistentes.
 class AppSection extends StatelessWidget {
-  static const double defaultVerticalPadding = AppSpacing.m;
-
-  final String? title;
-  final Widget? trailing;
-  final Widget child;
-  final bool edgeToEdge;
-  final double topPadding;
-  final double bottomPadding;
-
   const AppSection({
     super.key,
     this.title,
@@ -54,6 +45,14 @@ class AppSection extends StatelessWidget {
       child: resolvedChild,
     );
   }
+  static const double defaultVerticalPadding = AppSpacing.m;
+
+  final String? title;
+  final Widget? trailing;
+  final Widget child;
+  final bool edgeToEdge;
+  final double topPadding;
+  final double bottomPadding;
 
   static Widget _resolveChild({
     required bool isLoading,
@@ -75,12 +74,7 @@ class AppSection extends StatelessWidget {
 
   /// Skeleton por defecto para secciones.
   static Widget _defaultSectionSkeleton() {
-    return const AppSkeleton(
-      height: 132,
-      textLines: 2,
-      imagePlaceholders: 1,
-      spacing: AppSpacing.sm,
-    );
+    return const AppSkeleton(height: 132, textLines: 2);
   }
 
   @override

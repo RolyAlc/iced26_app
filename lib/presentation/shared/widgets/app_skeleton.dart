@@ -6,6 +6,18 @@ import 'package:flutter/material.dart';
 /// Ayuda a mejorar la percepción de velocidad y a mantener la continuidad visual
 /// durante los estados de carga.
 class AppSkeleton extends StatelessWidget {
+  const AppSkeleton({
+    super.key,
+    this.height = 120.0,
+    this.borderRadius = 20.0,
+    this.textLines = 3,
+    this.imagePlaceholders = 1,
+    this.spacing = 12.0,
+    this.skeletonColor =
+        Colors.transparent, // Usar el color del tema por defecto
+    this.borderColor = Colors.transparent,
+  });
+
   /// La altura total del esqueleto.
   final double height;
 
@@ -27,18 +39,6 @@ class AppSkeleton extends StatelessWidget {
   /// El color del borde.
   final Color borderColor;
 
-  const AppSkeleton({
-    super.key,
-    this.height = 120.0,
-    this.borderRadius = 20.0,
-    this.textLines = 3,
-    this.imagePlaceholders = 1,
-    this.spacing = 12.0,
-    this.skeletonColor =
-        Colors.transparent, // Usar el color del tema por defecto
-    this.borderColor = Colors.transparent,
-  });
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -54,7 +54,7 @@ class AppSkeleton extends StatelessWidget {
       decoration: BoxDecoration(
         color: effectiveSkeletonColor,
         borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(color: effectiveBorderColor, width: 1.0),
+        border: Border.all(color: effectiveBorderColor),
       ),
       padding: const EdgeInsets.all(16.0),
       child: Column(

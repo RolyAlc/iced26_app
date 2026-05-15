@@ -1,16 +1,11 @@
+import 'package:iced26/domain/entities/collections.dart';
+import 'package:iced26/domain/entities/conference.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 import 'package:iced26/domain/entities/metadata.dart';
-import 'package:iced26/domain/entities/conference.dart';
-import 'package:iced26/domain/entities/collections.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 
 /// Entidad que representa los datos de la aplicación.
 class AppData {
-  final Metadata metadata;
-  final Conference conference;
-  final ThemeConfig theme;
-  final Collections collections;
-
   AppData({
     required this.metadata,
     required this.conference,
@@ -38,4 +33,8 @@ class AppData {
       ),
     );
   }
+  final Metadata metadata;
+  final Conference conference;
+  final ThemeConfig theme;
+  final Collections collections;
 }

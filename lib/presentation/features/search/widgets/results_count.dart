@@ -4,9 +4,8 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Muestra el número de resultados.
 class ResultsCount extends StatelessWidget {
-  final int count;
-
   const ResultsCount({super.key, required this.count});
+  final int count;
 
   @override
   Widget build(BuildContext context) {

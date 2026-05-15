@@ -15,14 +15,13 @@ import 'package:iced26/presentation/shared/widgets/app_button.dart';
 
 /// Hoja modal para editar o crear una nota del diario.
 class DiaryNoteEditorSheet extends ConsumerStatefulWidget {
-  final DateTime date;
-  final DiaryNote? existingNote;
-
   const DiaryNoteEditorSheet({
     super.key,
     required this.date,
     this.existingNote,
   });
+  final DateTime date;
+  final DiaryNote? existingNote;
 
   static Future<void> show(
     BuildContext context, {

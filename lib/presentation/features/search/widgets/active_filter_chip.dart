@@ -5,14 +5,13 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Chip reutilizable
 class ActiveFilterChip extends StatelessWidget {
-  final String label;
-  final VoidCallback onRemove;
-
   const ActiveFilterChip({
     super.key,
     required this.label,
     required this.onRemove,
   });
+  final String label;
+  final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) {

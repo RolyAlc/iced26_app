@@ -7,15 +7,6 @@ import 'package:iced26/presentation/shared/widgets/app_page_header_delegate.dart
 
 /// Contenedor maestro que gestiona el layout de una página completa.
 class AppPage extends StatefulWidget {
-  final List<Widget> children;
-  final Widget? fillChild;
-  final Widget? header;
-  final Widget? collapsedHeader;
-  final EdgeInsets? padding;
-  final Color? backgroundColor;
-  final double? headerFallbackHeight;
-  final double? collapsedHeaderFallbackHeight;
-
   const AppPage({
     super.key,
     this.children = const [],
@@ -34,6 +25,14 @@ class AppPage extends StatefulWidget {
          collapsedHeaderFallbackHeight == null || collapsedHeader != null,
          'collapsedHeaderFallbackHeight requires collapsedHeader',
        );
+  final List<Widget> children;
+  final Widget? fillChild;
+  final Widget? header;
+  final Widget? collapsedHeader;
+  final EdgeInsets? padding;
+  final Color? backgroundColor;
+  final double? headerFallbackHeight;
+  final double? collapsedHeaderFallbackHeight;
 
   @override
   State<AppPage> createState() => _AppPageState();
@@ -68,7 +67,6 @@ class _AppPageState extends State<AppPage> {
   Widget _buildSliverLayout(Color bgColor) {
     return CustomScrollView(
       primary: false,
-      clipBehavior: Clip.hardEdge,
       slivers: [
         if (widget.header != null) _buildSliverHeader(bgColor),
         if (widget.fillChild != null)
@@ -95,8 +93,6 @@ class _AppPageState extends State<AppPage> {
   Widget _buildSliverHeader(Color bgColor) {
     return SliverAppBar(
       pinned: true,
-      floating: false,
-      snap: false,
       backgroundColor: bgColor,
       surfaceTintColor: Colors.transparent,
       elevation: 0,

@@ -4,27 +4,6 @@ import 'package:iced26/domain/entities/speaker_entry.dart';
 
 /// Entidad que representa un evento
 class Event {
-  final String id;
-  final I18nStr title;
-  final String? description;
-  final String? subtype;
-  final List<String> tags;
-  final int? durationMin;
-  final DateTime? startDate;
-  final DateTime? endDate;
-  final String? zoneId;
-  final String? roomId;
-  final EventType type;
-  final String? defaultLang;
-  final String? filterDate;
-  final String? filterTime;
-  final List<SpeakerEntry> speakers;
-  final String? slotLabel;
-  final String? parentId;
-  final List<String> extraRooms;
-  final List<String> submissionFormats;
-  final String? externalRef;
-
   const Event({
     required this.id,
     required this.title,
@@ -47,6 +26,26 @@ class Event {
     this.submissionFormats = const [],
     this.externalRef,
   });
+  final String id;
+  final I18nStr title;
+  final String? description;
+  final String? subtype;
+  final List<String> tags;
+  final int? durationMin;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final String? zoneId;
+  final String? roomId;
+  final EventType type;
+  final String? defaultLang;
+  final String? filterDate;
+  final String? filterTime;
+  final List<SpeakerEntry> speakers;
+  final String? slotLabel;
+  final String? parentId;
+  final List<String> extraRooms;
+  final List<String> submissionFormats;
+  final String? externalRef;
 }
 
 extension EventX on Event {

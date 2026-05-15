@@ -1,8 +1,7 @@
 /// Entidad para manejar textos internacionales
 class I18nStr {
-  final Map<String, String> values;
-
   I18nStr(this.values);
+  final Map<String, String> values;
 
   /// Método para obtener el texto según el idioma
   String resolve(String locale) {

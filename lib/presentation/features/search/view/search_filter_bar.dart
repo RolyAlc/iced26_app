@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
+import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/features/search/widgets/active_filter_chip.dart';
 import 'package:iced26/presentation/features/search/widgets/clear_all_button.dart';
 import 'package:iced26/presentation/features/search/widgets/filter_toggle_button.dart';
-import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
 /// Barra de filtros.
 class FilterBar extends ConsumerWidget {
-  final Search notifier;
-  final bool isExpanded;
-  final VoidCallback onToggle;
-
   const FilterBar({
     super.key,
     required this.notifier,
     required this.isExpanded,
     required this.onToggle,
   });
+  final Search notifier;
+  final bool isExpanded;
+  final VoidCallback onToggle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,17 +50,16 @@ class FilterBar extends ConsumerWidget {
 
 /// Filtros expandidos.
 class _ExpandedFilterBar extends StatelessWidget {
-  final int count;
-  final SearchFilterState filters;
-  final Search notifier;
-  final VoidCallback onToggle;
-
   const _ExpandedFilterBar({
     required this.count,
     required this.filters,
     required this.notifier,
     required this.onToggle,
   });
+  final int count;
+  final SearchFilterState filters;
+  final Search notifier;
+  final VoidCallback onToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -78,12 +75,6 @@ class _ExpandedFilterBar extends StatelessWidget {
 
 /// Filtros colapsados.
 class _CollapsedFilterBar extends StatelessWidget {
-  final int count;
-  final SearchFilterState filters;
-  final Search notifier;
-  final VoidCallback onToggle;
-  final Map<String, String> zoneNames;
-
   const _CollapsedFilterBar({
     required this.count,
     required this.filters,
@@ -91,6 +82,11 @@ class _CollapsedFilterBar extends StatelessWidget {
     required this.onToggle,
     required this.zoneNames,
   });
+  final int count;
+  final SearchFilterState filters;
+  final Search notifier;
+  final VoidCallback onToggle;
+  final Map<String, String> zoneNames;
 
   @override
   Widget build(BuildContext context) {

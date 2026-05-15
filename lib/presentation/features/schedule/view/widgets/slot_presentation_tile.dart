@@ -6,14 +6,13 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
 
 class SlotPresentationTile extends StatelessWidget {
-  final Presentation presentation;
-  final Map<String, Person> peopleIndex;
-
   const SlotPresentationTile({
     super.key,
     required this.presentation,
     required this.peopleIndex,
   });
+  final Presentation presentation;
+  final Map<String, Person> peopleIndex;
 
   String? _speakerNames(String locale) {
     final names = presentation.speakers

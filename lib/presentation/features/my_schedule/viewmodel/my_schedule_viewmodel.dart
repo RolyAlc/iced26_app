@@ -1,8 +1,7 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
 import 'package:iced26/presentation/features/my_schedule/viewmodel/models/my_schedule_display_item.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'my_schedule_viewmodel.g.dart';
 

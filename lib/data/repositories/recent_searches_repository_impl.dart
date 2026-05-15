@@ -1,8 +1,7 @@
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:iced26/core/errors/result.dart';
-import 'package:iced26/domain/repositories/recent_searches_repository.dart';
 import 'package:iced26/core/services/logger/logger.dart';
+import 'package:iced26/domain/repositories/recent_searches_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Implementación del repositorio de búsquedas recientes usando SharedPreferences.
 class RecentSearchesRepositoryImpl implements RecentSearchesRepository {
@@ -21,7 +20,7 @@ class RecentSearchesRepositoryImpl implements RecentSearchesRepository {
       return Success(searches);
     } catch (e, stack) {
       AppLogger.e('RecentSearchesRepo: Error al obtener búsquedas', e, stack);
-      return Failure('No se pudieron cargar las búsquedas recientes.');
+      return const Failure('No se pudieron cargar las búsquedas recientes.');
     }
   }
 
@@ -46,7 +45,7 @@ class RecentSearchesRepositoryImpl implements RecentSearchesRepository {
       return const Success(null);
     } catch (e, stack) {
       AppLogger.e('RecentSearchesRepo: Error al añadir búsqueda', e, stack);
-      return Failure('No se pudo guardar la búsqueda.');
+      return const Failure('No se pudo guardar la búsqueda.');
     }
   }
 
@@ -62,7 +61,7 @@ class RecentSearchesRepositoryImpl implements RecentSearchesRepository {
       return const Success(null);
     } catch (e, stack) {
       AppLogger.e('RecentSearchesRepo: Error al eliminar búsqueda', e, stack);
-      return Failure('No se pudo eliminar la búsqueda.');
+      return const Failure('No se pudo eliminar la búsqueda.');
     }
   }
 
@@ -75,7 +74,7 @@ class RecentSearchesRepositoryImpl implements RecentSearchesRepository {
       return const Success(null);
     } catch (e, stack) {
       AppLogger.e('RecentSearchesRepo: Error al limpiar historial', e, stack);
-      return Failure('No se pudo limpiar el historial.');
+      return const Failure('No se pudo limpiar el historial.');
     }
   }
 }

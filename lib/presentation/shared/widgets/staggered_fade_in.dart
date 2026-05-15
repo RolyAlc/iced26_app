@@ -3,9 +3,6 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Widget para animaciones de entrada escalonadas.
 class StaggeredFadeIn extends StatefulWidget {
-  /// [:: Dev] Cambia a false para deshabilitar todas las animaciones de entrada.
-  static const bool kEnabled = false;
-
   const StaggeredFadeIn({
     super.key,
     required this.child,
@@ -13,6 +10,9 @@ class StaggeredFadeIn extends StatefulWidget {
     this.duration = AppDuration.entrance,
     this.offset = const Offset(0, 0.1),
   });
+
+  /// [:: Dev] Cambia a false para deshabilitar todas las animaciones de entrada.
+  static const bool kEnabled = false;
 
   final Widget child;
   final Duration delay;

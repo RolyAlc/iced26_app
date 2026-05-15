@@ -3,6 +3,18 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Tarjeta base de la aplicación.
 class AppCard extends StatelessWidget {
+  const AppCard({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.borderRadius = AppRadius.m,
+    this.color,
+    this.elevation = 0,
+    this.padding,
+    this.bordered = false,
+    this.clipBehavior = Clip.antiAlias,
+  });
+
   /// El contenido de la tarjeta.
   final Widget child;
 
@@ -26,18 +38,6 @@ class AppCard extends StatelessWidget {
 
   /// Clip behavior. Por defecto antiAlias para recortes suaves.
   final Clip clipBehavior;
-
-  const AppCard({
-    super.key,
-    required this.child,
-    this.onTap,
-    this.borderRadius = AppRadius.m,
-    this.color,
-    this.elevation = 0,
-    this.padding,
-    this.bordered = false,
-    this.clipBehavior = Clip.antiAlias,
-  });
 
   @override
   Widget build(BuildContext context) {

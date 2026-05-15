@@ -13,7 +13,7 @@ InputDecoration _editorDecoration({
   EdgeInsetsGeometry contentPadding = const EdgeInsets.all(AppSpacing.m),
 }) {
   final borderRadius = BorderRadius.circular(AppRadius.m);
-  final idleBorder = BorderSide(color: colors.outlineVariant, width: 1);
+  final idleBorder = BorderSide(color: colors.outlineVariant);
 
   return InputDecoration(
     hintText: hint,
@@ -37,9 +37,8 @@ InputDecoration _editorDecoration({
 
 /// Campo de texto para el título de la nota del diario.
 class DiaryEditorTitleInput extends StatelessWidget {
-  final TextEditingController controller;
-
   const DiaryEditorTitleInput({super.key, required this.controller});
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -63,14 +62,13 @@ class DiaryEditorTitleInput extends StatelessWidget {
 
 /// Campo de texto para el contenido de la nota del diario.
 class DiaryEditorContentInput extends StatelessWidget {
-  final TextEditingController controller;
-  final bool autofocus;
-
   const DiaryEditorContentInput({
     super.key,
     required this.controller,
     this.autofocus = false,
   });
+  final TextEditingController controller;
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {

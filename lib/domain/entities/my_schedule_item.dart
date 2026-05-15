@@ -8,8 +8,8 @@ sealed class MyScheduleItem {
 
 /// Item del schedule que es un evento
 class SavedEventItem extends MyScheduleItem {
-  final Event event;
   SavedEventItem(this.event);
+  final Event event;
 
   @override
   DateTime? get sortTime => event.startDate;
@@ -17,8 +17,8 @@ class SavedEventItem extends MyScheduleItem {
 
 /// Item del schedule que es una presentación
 class SavedPresentationItem extends MyScheduleItem {
-  final Presentation presentation;
   SavedPresentationItem(this.presentation);
+  final Presentation presentation;
 
   @override
   DateTime? get sortTime => presentation.startDate;

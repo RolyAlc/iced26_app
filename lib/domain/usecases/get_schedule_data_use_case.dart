@@ -15,9 +15,8 @@ typedef ScheduleDataResult = ({
 
 /// Caso de uso: Obtener los datos crudos para la pantalla de Schedule.
 class GetScheduleDataUseCase {
-  final ScheduleRepository _scheduleRepo;
-
   GetScheduleDataUseCase(this._scheduleRepo);
+  final ScheduleRepository _scheduleRepo;
 
   Future<Result<ScheduleDataResult>> execute() async {
     final results = await Future.wait([

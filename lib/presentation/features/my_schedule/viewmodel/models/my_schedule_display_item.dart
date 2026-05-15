@@ -5,15 +5,13 @@ sealed class MyScheduleDisplayItem {}
 
 /// Cabecera de grupo de un día. [date] es null cuando los items no tienen fecha.
 class MyScheduleDayHeader extends MyScheduleDisplayItem {
+  MyScheduleDayHeader({required this.date, required this.count});
   final DateTime? date;
   final int count;
-
-  MyScheduleDayHeader({required this.date, required this.count});
 }
 
 /// Fila de un item guardado (evento o presentación).
 class MyScheduleRow extends MyScheduleDisplayItem {
-  final MyScheduleItem item;
-
   MyScheduleRow(this.item);
+  final MyScheduleItem item;
 }

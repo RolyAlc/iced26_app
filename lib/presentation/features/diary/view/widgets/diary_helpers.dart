@@ -1,9 +1,8 @@
-import 'package:table_calendar/table_calendar.dart';
-
 import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 /// Clase abastracta final con utilidades para la pantalla de diario.
 abstract final class DiaryHelpers {

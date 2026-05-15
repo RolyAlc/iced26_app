@@ -4,9 +4,8 @@ import 'package:iced26/domain/repositories/presentation_favorites_repository.dar
 /// Implementación del repositorio de presentaciones favoritas.
 class PresentationFavoritesRepositoryImpl
     implements PresentationFavoritesRepository {
-  final AppDatabase _db;
-
   PresentationFavoritesRepositoryImpl(this._db);
+  final AppDatabase _db;
 
   /// Observa las presentaciones favoritas.
   @override

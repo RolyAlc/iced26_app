@@ -1,15 +1,15 @@
 import 'package:iced26/core/errors/result.dart';
-import 'package:iced26/domain/repositories/schedule_repository.dart';
-import 'package:iced26/domain/repositories/home_repository.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
-import 'package:iced26/domain/entities/person.dart';
-import 'package:iced26/domain/entities/room.dart';
-import 'package:iced26/domain/entities/zone.dart';
 import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
+import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
+import 'package:iced26/domain/entities/zone.dart';
+import 'package:iced26/domain/repositories/home_repository.dart';
+import 'package:iced26/domain/repositories/schedule_repository.dart';
 
 const _kKeynoteType = 'keynote_speaker';
 
@@ -28,10 +28,9 @@ typedef HomeDataResult = ({
 
 /// Caso de uso: obtiene toda la información necesaria para la pantalla Home.
 class GetHomeDataUseCase {
+  GetHomeDataUseCase(this._scheduleRepo, this._homeRepo);
   final ScheduleRepository _scheduleRepo;
   final HomeRepository _homeRepo;
-
-  GetHomeDataUseCase(this._scheduleRepo, this._homeRepo);
 
   Future<Result<HomeDataResult>> execute() async {
     // Lanzamos todas las peticiones a la vez (concurrente).

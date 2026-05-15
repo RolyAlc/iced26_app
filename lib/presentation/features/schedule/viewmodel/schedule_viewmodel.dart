@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/usecases/get_schedule_data_use_case.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'schedule_viewmodel.g.dart';
 
@@ -116,7 +116,7 @@ List<Event> _filterEventsByDay({
 
 /// Construye las secciones por día a partir de [days] y [sortedEvents].
 List<ScheduleDaySection> _buildDaySections({
-  required List<dynamic> days,
+  required List<Day> days,
   required List<Event> sortedEvents,
   required Map<String, List<SessionBlock>> blocksByParent,
   required String locale,

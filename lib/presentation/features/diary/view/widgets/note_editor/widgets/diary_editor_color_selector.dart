@@ -5,17 +5,16 @@ import 'package:iced26/domain/entities/note_color.dart';
 
 /// Selector de colores para notas del diario que permite elegir un color o ninguno.
 class DiaryEditorColorSelector extends StatelessWidget {
-  final NoteColor? selectedColor;
-  final ValueChanged<NoteColor?> onSelected;
-
-  // null (primer elemento) = sin color.
-  static final _options = <NoteColor?>[null, ...NoteColor.values];
-
   const DiaryEditorColorSelector({
     super.key,
     required this.selectedColor,
     required this.onSelected,
   });
+  final NoteColor? selectedColor;
+  final ValueChanged<NoteColor?> onSelected;
+
+  // null (primer elemento) = sin color.
+  static final _options = <NoteColor?>[null, ...NoteColor.values];
 
   @override
   Widget build(BuildContext context) {

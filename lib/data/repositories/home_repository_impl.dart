@@ -1,4 +1,5 @@
 import 'package:iced26/core/errors/result.dart';
+import 'package:iced26/core/services/logger/logger.dart';
 import 'package:iced26/data/mappers/home/news_mapper.dart';
 import 'package:iced26/data/mappers/home/social_activity_mapper.dart';
 import 'package:iced26/data/mappers/submission_type_mapper.dart';
@@ -7,13 +8,11 @@ import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 import 'package:iced26/domain/repositories/home_repository.dart';
-import 'package:iced26/core/services/logger/logger.dart';
 
 /// Repositorio para la gestión de la home.
 class HomeRepositoryImpl implements HomeRepository {
-  final AppDatabase _db;
-
   HomeRepositoryImpl(this._db);
+  final AppDatabase _db;
 
   /// Método auxiliar para manejar errores de base de datos.
   Future<Result<T>> _guard<T>(Future<T> Function() call) async {
@@ -31,7 +30,7 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Result<List<NewsItem>>> getAllNews() async {
     return _guard(() async {
       final results = await _db.select(_db.news).get();
-      return results.map((e) => NewsMapper.fromDrift(e)).toList();
+      return results.map(NewsMapper.fromDrift).toList();
     });
   }
 
@@ -40,7 +39,7 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Result<List<SocialActivity>>> getAllSocialActivities() async {
     return _guard(() async {
       final results = await _db.select(_db.socialActivities).get();
-      return results.map((e) => SocialActivityMapper.fromDrift(e)).toList();
+      return results.map(SocialActivityMapper.fromDrift).toList();
     });
   }
 
@@ -49,7 +48,7 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Result<List<SubmissionType>>> getAllSubmissionTypes() async {
     return _guard(() async {
       final results = await _db.select(_db.submissionTypes).get();
-      return results.map((e) => SubmissionTypeMapper.fromDrift(e)).toList();
+      return results.map(SubmissionTypeMapper.fromDrift).toList();
     });
   }
 }

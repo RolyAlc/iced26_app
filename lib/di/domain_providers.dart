@@ -1,23 +1,22 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/data_providers.dart';
+import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/room.dart';
+import 'package:iced26/domain/usecases/clear_favorites_use_case.dart';
+import 'package:iced26/domain/usecases/delete_diary_note_use_case.dart';
 import 'package:iced26/domain/usecases/get_home_data_use_case.dart';
 import 'package:iced26/domain/usecases/get_schedule_data_use_case.dart';
-import 'package:iced26/domain/usecases/clear_favorites_use_case.dart';
-import 'package:iced26/domain/usecases/toggle_favorite_use_case.dart';
-import 'package:iced26/domain/usecases/watch_favorites_use_case.dart';
-import 'package:iced26/domain/usecases/toggle_presentation_favorite_use_case.dart';
-import 'package:iced26/domain/usecases/watch_presentation_favorites_use_case.dart';
-import 'package:iced26/domain/usecases/watch_diary_notes_use_case.dart';
 import 'package:iced26/domain/usecases/save_diary_note_use_case.dart';
-import 'package:iced26/domain/usecases/delete_diary_note_use_case.dart';
-import 'package:iced26/domain/entities/diary_note.dart';
+import 'package:iced26/domain/usecases/toggle_favorite_use_case.dart';
+import 'package:iced26/domain/usecases/toggle_presentation_favorite_use_case.dart';
+import 'package:iced26/domain/usecases/watch_diary_notes_use_case.dart';
+import 'package:iced26/domain/usecases/watch_favorites_use_case.dart';
+import 'package:iced26/domain/usecases/watch_presentation_favorites_use_case.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'domain_providers.g.dart';
 

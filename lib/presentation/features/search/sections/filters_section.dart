@@ -6,14 +6,13 @@ import 'package:iced26/presentation/features/search/view/search_filter_panel.dar
 
 /// Sección que contiene los filtros de búsqueda.
 class FiltersSection extends StatelessWidget {
-  final Search notifier;
-  final VoidCallback onCollapse;
-
   const FiltersSection({
     super.key,
     required this.notifier,
     required this.onCollapse,
   });
+  final Search notifier;
+  final VoidCallback onCollapse;
 
   @override
   Widget build(BuildContext context) {

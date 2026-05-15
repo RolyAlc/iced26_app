@@ -8,10 +8,9 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Tile que muestra un resultado de la búsqueda.
 class ResultTile extends ConsumerWidget {
+  const ResultTile({super.key, required this.event, required this.onTap});
   final Event event;
   final VoidCallback onTap;
-
-  const ResultTile({super.key, required this.event, required this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

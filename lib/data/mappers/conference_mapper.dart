@@ -10,7 +10,7 @@ abstract final class ConferenceMapper {
     final I18nStr name = I18nMapper.fromRaw(json['name'] ?? json['title']);
     final List<I18nStr> themes = json
         .getList('conferenceThemes')
-        .map((item) => I18nMapper.fromRaw(item))
+        .map(I18nMapper.fromRaw)
         .toList();
 
     return Conference(name: name, conferenceThemes: themes);

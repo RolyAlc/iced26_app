@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:iced26/core/constants/app_config.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/settings/widgets/data_items.dart';
 import 'package:iced26/presentation/features/settings/widgets/settings_section.dart';
 import 'package:iced26/presentation/features/settings/widgets/text_size_item.dart';
 import 'package:iced26/presentation/features/settings/widgets/theme_picker.dart';
-import 'package:iced26/core/constants/app_config.dart';
-import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Vista de ajustes de la app.
 class SettingsView extends StatelessWidget {
@@ -19,12 +18,12 @@ class SettingsView extends StatelessWidget {
     return AppPage(
       header: _SettingsHeader(),
       children: [
-        SettingsSection(
+        const SettingsSection(
           title: 'Appearance',
           items: [TextSizeItem(), ThemeItem()],
         ),
         const SizedBox(height: AppSpacing.m),
-        SettingsSection(
+        const SettingsSection(
           title: 'Language',
           items: [
             SettingsItem(
@@ -36,7 +35,7 @@ class SettingsView extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.m),
-        SettingsSection(
+        const SettingsSection(
           title: 'Data',
           items: [ReloadDataItem(), ClearFavouritesItem()],
         ),
@@ -44,12 +43,12 @@ class SettingsView extends StatelessWidget {
         SettingsSection(
           title: 'About',
           items: [
-            SettingsItem(
+            const SettingsItem(
               icon: AppIcons.info,
               title: 'ICED 26',
               subtitle: 'Salamanca, Spain',
             ),
-            SettingsItem(
+            const SettingsItem(
               icon: AppIcons.smartphone,
               title: 'Version',
               subtitle: '—',

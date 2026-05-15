@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event_status.dart';
@@ -9,10 +8,10 @@ import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/slot_presentation_tile.dart';
-import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
 import 'package:iced26/presentation/shared/widgets/slot_time_label.dart';
 
@@ -20,9 +19,8 @@ const _kSeparator = '  ·  ';
 
 /// Slot que contiene varias presentaciones en un mismo bloque.
 class SessionSlotBlock extends StatelessWidget {
-  final SessionSlotItem item;
-
   const SessionSlotBlock({super.key, required this.item});
+  final SessionSlotItem item;
 
   void _showSheet(BuildContext context, String locale) {
     final blockIds = item.blocks.map((b) => b.id).toList();
@@ -78,8 +76,8 @@ class SessionSlotBlock extends StatelessWidget {
 
 /// Badge que muestra el track.
 class _TrackBadge extends StatelessWidget {
-  final String track;
   const _TrackBadge({required this.track});
+  final String track;
 
   @override
   Widget build(BuildContext context) {
@@ -107,10 +105,9 @@ class _TrackBadge extends StatelessWidget {
 /// Lista de presentaciones agrupadas por bloque.
 /// Resuelve `allPeopleIndexProvider` una sola vez y lo pasa hacia abajo.
 class _SlotPresentationList extends ConsumerWidget {
+  const _SlotPresentationList({required this.blocks, required this.blockIds});
   final List<SessionBlock> blocks;
   final List<String> blockIds;
-
-  const _SlotPresentationList({required this.blocks, required this.blockIds});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -143,15 +140,14 @@ class _SlotPresentationList extends ConsumerWidget {
 
 /// Sección que muestra las presentaciones de un bloque.
 class _BlockSection extends StatelessWidget {
-  final SessionBlock block;
-  final List<Presentation> presentations;
-  final Map<String, Person> peopleIndex;
-
   const _BlockSection({
     required this.block,
     required this.presentations,
     required this.peopleIndex,
   });
+  final SessionBlock block;
+  final List<Presentation> presentations;
+  final Map<String, Person> peopleIndex;
 
   @override
   Widget build(BuildContext context) {

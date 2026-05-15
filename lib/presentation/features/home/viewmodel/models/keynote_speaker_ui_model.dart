@@ -3,13 +3,6 @@ import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_mo
 
 /// Modelo de presentación de un keynote speaker.
 class KeynoteSpeakerUIModel {
-  final String id;
-  final String name;
-  final String? institution;
-  final String? photoUrl;
-  final List<SessionUIModel> events;
-  final Presentation? presentation;
-
   const KeynoteSpeakerUIModel({
     required this.id,
     required this.name,
@@ -18,4 +11,10 @@ class KeynoteSpeakerUIModel {
     this.events = const [],
     this.presentation,
   });
+  final String id;
+  final String name;
+  final String? institution;
+  final String? photoUrl;
+  final List<SessionUIModel> events;
+  final Presentation? presentation;
 }

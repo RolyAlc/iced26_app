@@ -6,11 +6,6 @@ import 'package:iced26/presentation/features/search/widgets/section_label.dart';
 
 /// Sección que muestra las búsquedas recientes.
 class RecentSearchesSection extends StatelessWidget {
-  final List<String> queries;
-  final ValueChanged<String> onQueryTap;
-  final ValueChanged<String> onRemove;
-  final VoidCallback onClearAll;
-
   const RecentSearchesSection({
     super.key,
     required this.queries,
@@ -18,6 +13,10 @@ class RecentSearchesSection extends StatelessWidget {
     required this.onRemove,
     required this.onClearAll,
   });
+  final List<String> queries;
+  final ValueChanged<String> onQueryTap;
+  final ValueChanged<String> onRemove;
+  final VoidCallback onClearAll;
 
   @override
   Widget build(BuildContext context) {

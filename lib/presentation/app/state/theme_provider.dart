@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:iced26/core/errors/result.dart';
-import 'package:iced26/presentation/app/theme/app_theme.dart';
 import 'package:iced26/di/data_providers.dart';
+import 'package:iced26/presentation/app/theme/app_theme.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'theme_provider.g.dart';
 

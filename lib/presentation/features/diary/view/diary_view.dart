@@ -50,7 +50,7 @@ class DiaryView extends ConsumerWidget {
 
     return Stack(
       children: [
-        AppPage(header: const DiaryHeader(), children: [const DiaryBody()]),
+        AppPage(header: const DiaryHeader(), children: const [DiaryBody()]),
         const DiaryFab(),
       ],
     );

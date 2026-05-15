@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
-import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/domain/entities/presentation.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
@@ -13,9 +12,8 @@ import 'package:iced26/presentation/shared/widgets/slot_time_label.dart';
 
 /// Tarjeta para mostrar una presentación guardada dentro de la pantalla 'My Schedule'.
 class SavedPresentationCard extends ConsumerWidget {
-  final Presentation presentation;
-
   const SavedPresentationCard({super.key, required this.presentation});
+  final Presentation presentation;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,7 +45,6 @@ class SavedPresentationCard extends ConsumerWidget {
             vertical: AppSpacing.sm,
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (timeRange.isNotEmpty) ...[
                 SlotTimeLabel(time: timeRange),

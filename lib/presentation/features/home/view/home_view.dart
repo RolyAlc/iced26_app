@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/bootstrap.dart';
@@ -10,22 +9,22 @@ import 'package:iced26/presentation/app/navigation_constants.dart';
 import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
-import 'package:iced26/presentation/shared/widgets/error_screen.dart';
-import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
-import 'package:iced26/presentation/shared/widgets/smart_search_bar.dart';
-import 'package:iced26/presentation/shared/widgets/staggered_fade_in.dart';
-import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_featured_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_header_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_keynote_speakers_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_news_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_social_activities_section.dart';
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
+import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
 import 'package:iced26/presentation/shared/widgets/app_section.dart';
+import 'package:iced26/presentation/shared/widgets/error_screen.dart';
+import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
+import 'package:iced26/presentation/shared/widgets/smart_search_bar.dart';
+import 'package:iced26/presentation/shared/widgets/staggered_fade_in.dart';
 
 const double _expandedHeaderHeight = 136.0;
 const double _collapsedHeaderHeight = 80.0;

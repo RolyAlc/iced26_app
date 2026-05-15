@@ -1,24 +1,23 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:collection/collection.dart';
-
 import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/category.dart';
 import 'package:iced26/domain/entities/event.dart';
-import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/event_status.dart';
+import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/domain/usecases/get_home_data_use_case.dart';
+import 'package:iced26/presentation/features/home/viewmodel/mappers/event_ui_mapper.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
-import 'package:iced26/presentation/features/home/viewmodel/mappers/event_ui_mapper.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_viewmodel.g.dart';
 

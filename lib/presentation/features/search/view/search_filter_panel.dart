@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/zone.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
+import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/features/search/models/filter_panel_data.dart';
 import 'package:iced26/presentation/features/search/widgets/filter_chip.dart';
 import 'package:iced26/presentation/features/search/widgets/section_label.dart';
 import 'package:iced26/presentation/features/search/widgets/type_filter_chip.dart';
-import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 
 class FilterPanel extends ConsumerWidget {
-  final Search notifier;
-
   const FilterPanel({super.key, required this.notifier});
+  final Search notifier;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

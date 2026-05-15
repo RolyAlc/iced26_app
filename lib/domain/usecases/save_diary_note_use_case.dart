@@ -3,9 +3,8 @@ import 'package:iced26/domain/repositories/diary_repository.dart';
 
 /// Caso de uso: crear o actualizar una nota del diario.
 class SaveDiaryNoteUseCase {
-  final DiaryRepository _repo;
-
   SaveDiaryNoteUseCase(this._repo);
+  final DiaryRepository _repo;
 
   Future<void> execute({
     int? id,

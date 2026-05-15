@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
@@ -12,11 +11,11 @@ import 'package:iced26/domain/entities/speaker_entry.dart';
 import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
+import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
+import 'package:iced26/presentation/shared/widgets/app_button.dart';
 import 'package:iced26/presentation/shared/widgets/attribute_cell.dart';
 import 'package:iced26/presentation/shared/widgets/event_status_chip.dart';
-import 'package:iced26/presentation/shared/widgets/app_button.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_detail_sheet.dart';
 
@@ -33,8 +32,8 @@ void showEventDetail(BuildContext context, Event event) {
 
 /// Contenido principal del detalle del evento.
 class EventDetailContent extends ConsumerWidget {
-  final Event event;
   const EventDetailContent({super.key, required this.event});
+  final Event event;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,10 +77,9 @@ class EventDetailContent extends ConsumerWidget {
 
 /// Header del tipo de evento con su badge de estado si aplica.
 class _EventTypeHeader extends StatelessWidget {
+  const _EventTypeHeader({required this.event, required this.status});
   final Event event;
   final EventStatus status;
-
-  const _EventTypeHeader({required this.event, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -125,10 +123,9 @@ class _EventTypeHeader extends StatelessWidget {
 
 /// Grilla de atributos del evento.
 class _EventAttributesGrid extends StatelessWidget {
+  const _EventAttributesGrid({required this.event, required this.duration});
   final Event event;
   final String? duration;
-
-  const _EventAttributesGrid({required this.event, required this.duration});
 
   @override
   Widget build(BuildContext context) {
@@ -192,9 +189,8 @@ class _EventAttributesGrid extends StatelessWidget {
 
 /// Botón de favorito con su propio watch — rebuilds aislados del resto del sheet.
 class _EventFavoriteButton extends ConsumerWidget {
-  final String eventId;
-
   const _EventFavoriteButton({required this.eventId});
+  final String eventId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -216,15 +212,14 @@ class _EventFavoriteButton extends ConsumerWidget {
 
 /// Sección de ponentes del evento.
 class _SpeakerSection extends StatelessWidget {
-  final List<SpeakerEntry> speakers;
-  final Map<String, Person> people;
-  final Map<String, List<Presentation>> presentationsByPerson;
-
   const _SpeakerSection({
     required this.speakers,
     required this.people,
     required this.presentationsByPerson,
   });
+  final List<SpeakerEntry> speakers;
+  final Map<String, Person> people;
+  final Map<String, List<Presentation>> presentationsByPerson;
 
   @override
   Widget build(BuildContext context) {
@@ -255,15 +250,14 @@ class _SpeakerSection extends StatelessWidget {
 
 /// Fila de ponente: avatar + nombre/afiliación + enlace a detalle.
 class _SpeakerRow extends StatelessWidget {
-  final SpeakerEntry entry;
-  final Person? person;
-  final List<Presentation> presentations;
-
   const _SpeakerRow({
     required this.entry,
     required this.person,
     required this.presentations,
   });
+  final SpeakerEntry entry;
+  final Person? person;
+  final List<Presentation> presentations;
 
   @override
   Widget build(BuildContext context) {

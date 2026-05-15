@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_calendar.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_day_content.dart';
-import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
+import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
 
 // 300 px/s filtra micro-swipes accidentales al escribir.

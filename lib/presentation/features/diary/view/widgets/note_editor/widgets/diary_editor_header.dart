@@ -6,11 +6,6 @@ import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
 /// Encabezado de la nota del diario que muestra la fecha y el color.
 class DiaryEditorHeader extends StatelessWidget {
-  final DateTime date;
-  final VoidCallback onTapDate;
-  final NoteColor? color;
-  final VoidCallback? onDelete;
-
   const DiaryEditorHeader({
     super.key,
     required this.date,
@@ -18,6 +13,10 @@ class DiaryEditorHeader extends StatelessWidget {
     required this.color,
     this.onDelete,
   });
+  final DateTime date;
+  final VoidCallback onTapDate;
+  final NoteColor? color;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {

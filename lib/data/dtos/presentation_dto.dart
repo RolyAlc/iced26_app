@@ -4,25 +4,6 @@ import 'package:iced26/domain/entities/speaker_entry.dart';
 
 /// DTO para presentaciones
 class PresentationDTO {
-  final String id;
-  final String type;
-  final String? subtype;
-  final String? sessionBlockId;
-  final dynamic title;
-  final dynamic abstract_;
-  final String? description;
-  final String? submissionRef;
-  final int? durationMin;
-  final String? start;
-  final String? end;
-  final List<SpeakerEntry> speakers;
-  final List<String> tags;
-  final String? track;
-  final String? defaultLang;
-  final String? externalRef;
-  final String? aboutPresentationUrl;
-  final String? videoPresentationUrl;
-
   PresentationDTO({
     required this.id,
     required this.type,
@@ -66,6 +47,24 @@ class PresentationDTO {
       videoPresentationUrl: json['videoPresentationUrl']?.toString(),
     );
   }
+  final String id;
+  final String type;
+  final String? subtype;
+  final String? sessionBlockId;
+  final dynamic title;
+  final dynamic abstract_;
+  final String? description;
+  final String? submissionRef;
+  final int? durationMin;
+  final String? start;
+  final String? end;
+  final List<SpeakerEntry> speakers;
+  final List<String> tags;
+  final String? track;
+  final String? defaultLang;
+  final String? externalRef;
+  final String? aboutPresentationUrl;
+  final String? videoPresentationUrl;
 
   Presentation toEntity() {
     return Presentation(

@@ -8,16 +8,15 @@ import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 
 /// Chip que filtra por tipo de evento.
 class TypeFilterChip extends StatelessWidget {
-  final EventType type;
-  final bool selected;
-  final VoidCallback onTap;
-
   const TypeFilterChip({
     super.key,
     required this.type,
     required this.selected,
     required this.onTap,
   });
+  final EventType type;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

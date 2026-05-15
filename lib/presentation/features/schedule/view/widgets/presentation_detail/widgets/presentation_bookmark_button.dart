@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/presentation/app/theme/app_icons.dart';
-
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// extrae el Consumer de favoritos para no hacer ConsumerWidget al widget padre.
 class PresentationBookmarkButton extends ConsumerWidget {
-  final String presentationId;
-
   const PresentationBookmarkButton({super.key, required this.presentationId});
+  final String presentationId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

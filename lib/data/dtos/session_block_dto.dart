@@ -3,17 +3,6 @@ import 'package:iced26/domain/entities/session_block.dart';
 
 /// DTO para bloques de sesiones
 class SessionBlockDTO {
-  final String id;
-  final String parentId;
-  final String? roomId;
-  final String? track;
-  final dynamic title;
-  final String? start;
-  final String? end;
-  final List<String> submissionFormats;
-  final String? defaultLang;
-  final String? externalRef;
-
   SessionBlockDTO({
     required this.id,
     required this.parentId,
@@ -43,6 +32,16 @@ class SessionBlockDTO {
       externalRef: json['externalRef']?.toString(),
     );
   }
+  final String id;
+  final String parentId;
+  final String? roomId;
+  final String? track;
+  final dynamic title;
+  final String? start;
+  final String? end;
+  final List<String> submissionFormats;
+  final String? defaultLang;
+  final String? externalRef;
 
   SessionBlock toEntity() {
     return SessionBlock(

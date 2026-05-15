@@ -1,31 +1,10 @@
+import 'package:iced26/data/mappers/i18n_mapper.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_type.dart';
-import 'package:iced26/data/mappers/i18n_mapper.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
 
 /// DTO para eventos
 class EventDTO {
-  final String id;
-  final dynamic title;
-  final String? description;
-  final String? subtype;
-  final List<String> tags;
-  final int? durationMin;
-  final String? start;
-  final String? end;
-  final String? zoneId;
-  final String? roomId;
-  final String type;
-  final String? defaultLang;
-  final String? filterDate;
-  final String? filterTime;
-  final List<SpeakerEntry> speakers;
-  final String? slotLabel;
-  final String? parentId;
-  final List<String> extraRooms;
-  final List<String> submissionFormats;
-  final String? externalRef;
-
   EventDTO({
     required this.id,
     required this.title,
@@ -73,6 +52,26 @@ class EventDTO {
       externalRef: json['externalRef']?.toString(),
     );
   }
+  final String id;
+  final dynamic title;
+  final String? description;
+  final String? subtype;
+  final List<String> tags;
+  final int? durationMin;
+  final String? start;
+  final String? end;
+  final String? zoneId;
+  final String? roomId;
+  final String type;
+  final String? defaultLang;
+  final String? filterDate;
+  final String? filterTime;
+  final List<SpeakerEntry> speakers;
+  final String? slotLabel;
+  final String? parentId;
+  final List<String> extraRooms;
+  final List<String> submissionFormats;
+  final String? externalRef;
 
   Event toEntity() {
     return Event(

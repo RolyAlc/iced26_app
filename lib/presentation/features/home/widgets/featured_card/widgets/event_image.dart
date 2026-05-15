@@ -6,9 +6,8 @@ import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
 
 /// Evento imagen destacada
 class EventImage extends StatelessWidget {
-  final EventUIModel event;
-
   const EventImage({super.key, required this.event});
+  final EventUIModel event;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +28,7 @@ class EventImage extends StatelessWidget {
       ),
       child: AppNetworkImage(
         url: event.imageUrl ?? '',
-        fit: BoxFit.cover,
-        placeholder: AppNetworkImageAssetPlaceholder(
+        placeholder: const AppNetworkImageAssetPlaceholder(
           assetPath: Assets.expressiveShape,
         ),
       ),

@@ -1,22 +1,14 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_provider.g.dart';
 
 /// Filtros activos en la búsqueda.
 class SearchFilterState {
-  final String? selectedDay;
-  final Set<EventType> selectedTypes;
-  final Set<String> selectedLanguages;
-  final Set<EventStatus> selectedStatuses;
-  final Set<String> selectedZones;
-  final Set<int> selectedDurations;
-
   const SearchFilterState({
     this.selectedDay,
     this.selectedTypes = const {},
@@ -25,6 +17,12 @@ class SearchFilterState {
     this.selectedZones = const {},
     this.selectedDurations = const {},
   });
+  final String? selectedDay;
+  final Set<EventType> selectedTypes;
+  final Set<String> selectedLanguages;
+  final Set<EventStatus> selectedStatuses;
+  final Set<String> selectedZones;
+  final Set<int> selectedDurations;
 
   /// True si hay algún filtro activo.
   bool get isActive =>
@@ -129,15 +127,14 @@ Set<T> _toggleSet<T>(Set<T> original, T value) {
 
 /// State de la búsqueda — los resultados de personas se computan en la UI para poder watchear el provider async.
 class SearchState {
-  final String query;
-  final List<Event> results;
-  final SearchFilterState filters;
-
   SearchState({
     this.query = '',
     this.results = const [],
     SearchFilterState? filters,
   }) : filters = filters ?? const SearchFilterState();
+  final String query;
+  final List<Event> results;
+  final SearchFilterState filters;
 }
 
 /// Provider para la búsqueda.

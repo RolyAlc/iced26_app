@@ -6,9 +6,8 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Tile que muestra un evento del diario.
 class DiaryEventTile extends StatelessWidget {
-  final Event event;
-
   const DiaryEventTile({super.key, required this.event});
+  final Event event;
 
   @override
   Widget build(BuildContext context) {

@@ -3,25 +3,6 @@ import 'package:iced26/domain/entities/speaker_entry.dart';
 
 /// Entidad que representa una presentación
 class Presentation {
-  final String id;
-  final String type;
-  final String? subtype;
-  final String? sessionBlockId;
-  final I18nStr? title;
-  final I18nStr? abstract_;
-  final String? description;
-  final String? submissionRef;
-  final int? durationMin;
-  final DateTime? startDate;
-  final DateTime? endDate;
-  final List<SpeakerEntry> speakers;
-  final List<String> tags;
-  final String? track;
-  final String? defaultLang;
-  final String? externalRef;
-  final String? aboutPresentationUrl;
-  final String? videoPresentationUrl;
-
   const Presentation({
     required this.id,
     required this.type,
@@ -42,6 +23,24 @@ class Presentation {
     this.aboutPresentationUrl,
     this.videoPresentationUrl,
   });
+  final String id;
+  final String type;
+  final String? subtype;
+  final String? sessionBlockId;
+  final I18nStr? title;
+  final I18nStr? abstract_;
+  final String? description;
+  final String? submissionRef;
+  final int? durationMin;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final List<SpeakerEntry> speakers;
+  final List<String> tags;
+  final String? track;
+  final String? defaultLang;
+  final String? externalRef;
+  final String? aboutPresentationUrl;
+  final String? videoPresentationUrl;
 }
 
 extension PresentationX on Presentation {

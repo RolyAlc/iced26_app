@@ -6,11 +6,6 @@ import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
 /// Datos usados por el panel de filtros.
 class FilterPanelData {
-  final List<({String date, String label})> days;
-  final List<EventType> types;
-  final List<Zone> zones;
-  final List<int> durations;
-
   FilterPanelData({
     required this.days,
     required this.types,
@@ -28,6 +23,10 @@ class FilterPanelData {
       durations: _extractDurations(events),
     );
   }
+  final List<({String date, String label})> days;
+  final List<EventType> types;
+  final List<Zone> zones;
+  final List<int> durations;
 
   /// Extrae los días de los eventos.
   static List<({String date, String label})> _extractDays(List<Event> events) {

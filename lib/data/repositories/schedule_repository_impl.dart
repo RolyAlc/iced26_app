@@ -1,9 +1,10 @@
 import 'package:iced26/core/errors/result.dart';
+import 'package:iced26/core/services/logger/logger.dart';
 import 'package:iced26/data/mappers/day_mapper.dart';
 import 'package:iced26/data/mappers/event/event_mapper.dart';
 import 'package:iced26/data/mappers/person_mapper.dart';
-import 'package:iced26/data/mappers/room_mapper.dart';
 import 'package:iced26/data/mappers/presentation/presentation_mapper.dart';
+import 'package:iced26/data/mappers/room_mapper.dart';
 import 'package:iced26/data/mappers/session_block/session_block_mapper.dart';
 import 'package:iced26/data/mappers/zone_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
@@ -15,13 +16,11 @@ import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/entities/zone.dart';
 import 'package:iced26/domain/repositories/schedule_repository.dart';
-import 'package:iced26/core/services/logger/logger.dart';
 
 /// Repositorio para la gestión del schedule.
 class ScheduleRepositoryImpl implements ScheduleRepository {
-  final AppDatabase _db;
-
   ScheduleRepositoryImpl(this._db);
+  final AppDatabase _db;
 
   /// Método auxiliar para manejar errores de base de datos.
   Future<Result<T>> _guard<T>(Future<T> Function() call) async {
@@ -39,7 +38,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   Future<Result<List<Day>>> getAllDays() async {
     return _guard(() async {
       final results = await _db.select(_db.days).get();
-      return results.map((e) => DayMapper.fromDrift(e)).toList();
+      return results.map(DayMapper.fromDrift).toList();
     });
   }
 
@@ -48,7 +47,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   Future<Result<List<Room>>> getAllRooms() async {
     return _guard(() async {
       final results = await _db.select(_db.rooms).get();
-      return results.map((e) => RoomMapper.fromDrift(e)).toList();
+      return results.map(RoomMapper.fromDrift).toList();
     });
   }
 
@@ -57,7 +56,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   Future<Result<List<Zone>>> getAllZones() async {
     return _guard(() async {
       final results = await _db.select(_db.zones).get();
-      return results.map((z) => ZoneMapper.fromDrift(z)).toList();
+      return results.map(ZoneMapper.fromDrift).toList();
     });
   }
 
@@ -66,7 +65,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   Future<Result<List<Event>>> getAllEvents() async {
     return _guard(() async {
       final results = await _db.select(_db.events).get();
-      return results.map((e) => EventMapper.fromDrift(e)).toList();
+      return results.map(EventMapper.fromDrift).toList();
     });
   }
 
@@ -75,7 +74,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   Future<Result<List<SessionBlock>>> getAllSessionBlocks() async {
     return _guard(() async {
       final results = await _db.select(_db.sessionBlocks).get();
-      return results.map((e) => SessionBlockMapper.fromDrift(e)).toList();
+      return results.map(SessionBlockMapper.fromDrift).toList();
     });
   }
 
@@ -89,7 +88,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
       final results = await (_db.select(
         _db.presentations,
       )..where((t) => t.sessionBlockId.isIn(blockIds))).get();
-      return results.map((e) => PresentationMapper.fromDrift(e)).toList();
+      return results.map(PresentationMapper.fromDrift).toList();
     });
   }
 
@@ -100,7 +99,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
       final results = await (_db.select(
         _db.presentations,
       )..where((t) => t.type.equals(type))).get();
-      return results.map((e) => PresentationMapper.fromDrift(e)).toList();
+      return results.map(PresentationMapper.fromDrift).toList();
     });
   }
 
@@ -112,7 +111,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
       final results = await (_db.select(
         _db.events,
       )..where((t) => t.id.isIn(ids))).get();
-      return results.map((e) => EventMapper.fromDrift(e)).toList();
+      return results.map(EventMapper.fromDrift).toList();
     });
   }
 
@@ -126,7 +125,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
       final results = await (_db.select(
         _db.presentations,
       )..where((t) => t.id.isIn(ids))).get();
-      return results.map((e) => PresentationMapper.fromDrift(e)).toList();
+      return results.map(PresentationMapper.fromDrift).toList();
     });
   }
 
@@ -135,7 +134,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   Future<Result<List<Person>>> getAllPeople() async {
     return _guard(() async {
       final results = await _db.select(_db.people).get();
-      return results.map((p) => PersonMapper.fromDrift(p)).toList();
+      return results.map(PersonMapper.fromDrift).toList();
     });
   }
 
@@ -144,7 +143,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   Future<Result<List<Presentation>>> getAllPresentations() async {
     return _guard(() async {
       final results = await _db.select(_db.presentations).get();
-      return results.map((e) => PresentationMapper.fromDrift(e)).toList();
+      return results.map(PresentationMapper.fromDrift).toList();
     });
   }
 }

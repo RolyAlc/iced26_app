@@ -4,16 +4,15 @@ import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Etiqueta de sección para el editor de notas del diario.
 class DiaryEditorSectionLabel extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-
   const DiaryEditorSectionLabel({
     super.key,
     required this.icon,
     required this.label,
     required this.color,
   });
+  final IconData icon;
+  final String label;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {

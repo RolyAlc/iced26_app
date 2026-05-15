@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/text_size_preference.dart';
+import 'package:iced26/di/bootstrap.dart';
 import 'package:iced26/presentation/app/app_shell.dart';
 import 'package:iced26/presentation/app/state/text_size_provider.dart';
 import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
@@ -11,7 +11,6 @@ import 'package:iced26/presentation/app/state/theme_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/theme/app_theme.dart';
 import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
-import 'package:iced26/di/bootstrap.dart';
 
 /// Raíz de la aplicación.
 class MyApp extends ConsumerWidget {

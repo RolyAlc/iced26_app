@@ -29,7 +29,6 @@ class NewsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
-      borderRadius: AppRadius.m,
       child: switch (variant) {
         NewsCardVariant.hero => _buildFeaturedLayout(context),
         NewsCardVariant.compact => _buildStandardLayout(context),
@@ -65,7 +64,7 @@ class NewsCard extends StatelessWidget {
               url: imageUrl,
               width: 80,
               height: 80,
-              placeholder: AppNetworkImageAssetPlaceholder(
+              placeholder: const AppNetworkImageAssetPlaceholder(
                 assetPath: Assets.expressiveShape,
                 width: 80,
                 height: 80,
@@ -123,10 +122,9 @@ class _HeroOverlay extends StatelessWidget {
 }
 
 class _HeroContent extends StatelessWidget {
+  const _HeroContent({required this.title, required this.subtitle});
   final String title;
   final String subtitle;
-
-  const _HeroContent({required this.title, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -161,16 +159,14 @@ class _HeroContent extends StatelessWidget {
 }
 
 class _HeroImage extends StatelessWidget {
-  final String imageUrl;
-
   const _HeroImage({required this.imageUrl});
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
     return AppNetworkImage(
       url: imageUrl,
-      fit: BoxFit.cover,
-      placeholder: AppNetworkImageAssetPlaceholder(
+      placeholder: const AppNetworkImageAssetPlaceholder(
         assetPath: Assets.expressiveShape,
         width: double.infinity,
         height: double.infinity,

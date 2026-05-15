@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/app/navigation_constants.dart';
 import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
-import 'package:iced26/presentation/shared/widgets/smart_search_bar.dart';
 import 'package:iced26/presentation/app/ui_metrics.dart';
+import 'package:iced26/presentation/shared/widgets/smart_search_bar.dart';
 
 const double _selectedItemBackgroundOpacity = 0.1;
 const double _shadowOpacity = 0.08;

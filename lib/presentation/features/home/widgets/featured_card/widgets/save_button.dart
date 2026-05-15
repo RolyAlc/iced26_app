@@ -3,10 +3,9 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Botón de guardar evento — icono bookmark.
 class SaveButton extends StatelessWidget {
+  const SaveButton({super.key, required this.isSaved, required this.onTap});
   final bool isSaved;
   final VoidCallback onTap;
-
-  const SaveButton({super.key, required this.isSaved, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

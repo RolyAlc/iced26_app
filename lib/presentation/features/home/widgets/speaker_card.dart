@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/speaker_card/speaker_card_content.dart';
 import 'package:iced26/presentation/features/home/widgets/speaker_card/speaker_card_image.dart';
@@ -19,7 +18,6 @@ class SpeakerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
-      borderRadius: AppRadius.m,
       child: Stack(
         fit: StackFit.expand,
         children: [

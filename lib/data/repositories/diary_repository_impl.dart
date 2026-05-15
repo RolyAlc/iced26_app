@@ -8,9 +8,8 @@ import 'package:iced26/domain/repositories/diary_repository.dart';
 
 /// Implementación del repositorio del diario personal.
 class DiaryRepositoryImpl implements DiaryRepository {
-  final AppDatabase _db;
-
   DiaryRepositoryImpl(this._db);
+  final AppDatabase _db;
 
   @override
   Stream<List<DiaryNote>> watchAllNotes() {

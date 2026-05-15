@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/presentation/app/theme/app_icons.dart';
+import 'package:iced26/core/services/logger/logger.dart';
 import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card_variant.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
-import 'package:iced26/core/services/logger/logger.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Sección de noticias con bottom sheet de detalle.
 class HomeNewsSection extends StatelessWidget {
@@ -87,7 +86,6 @@ class HomeNewsSection extends StatelessWidget {
   /// Card individual compacta.
   Widget _buildCompactNewsCard(BuildContext context, NewsItem item) {
     return NewsCard(
-      variant: NewsCardVariant.compact,
       title: item.title.resolve('en'),
       subtitle: item.content.resolve('en'),
       imageUrl: item.imgUrl,
@@ -146,7 +144,7 @@ class HomeNewsSection extends StatelessWidget {
           url: item.imgUrl,
           height: _modalImageHeight,
           width: double.infinity,
-          placeholder: AppNetworkImageAssetPlaceholder(
+          placeholder: const AppNetworkImageAssetPlaceholder(
             assetPath: Assets.expressiveShape,
             height: _modalImageHeight,
             width: double.infinity,

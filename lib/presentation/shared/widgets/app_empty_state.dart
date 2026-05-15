@@ -7,13 +7,6 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 /// Pantalla genérica que muestra estado vacío con ilustración, título,
 /// mensaje y acción opcional.
 class AppEmptyState extends StatelessWidget {
-  final Widget? illustration;
-  final String title;
-  final String message;
-  final Widget? actionButton;
-  final double spacing;
-  final EdgeInsetsGeometry padding;
-
   const AppEmptyState({
     super.key,
     this.illustration,
@@ -23,6 +16,12 @@ class AppEmptyState extends StatelessWidget {
     this.spacing = AppSpacing.m,
     this.padding = const EdgeInsets.all(AppSpacing.l),
   });
+  final Widget? illustration;
+  final String title;
+  final String message;
+  final Widget? actionButton;
+  final double spacing;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
@@ -75,16 +74,15 @@ class AppEmptyState extends StatelessWidget {
 
 /// Wrapper para mostrar un SVG con dimensionado y color adaptable al tema.
 class AppSvgIllustration extends StatelessWidget {
-  final String svgPath;
-  final double size;
-  final Color? color;
-
   const AppSvgIllustration({
     super.key,
     required this.svgPath,
     this.size = 120,
     this.color,
   });
+  final String svgPath;
+  final double size;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {

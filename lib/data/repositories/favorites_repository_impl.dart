@@ -3,9 +3,8 @@ import 'package:iced26/domain/repositories/favorites_repository.dart';
 
 /// Implementación del repositorio de favoritos.
 class FavoritesRepositoryImpl implements FavoritesRepository {
-  final AppDatabase _db;
-
   FavoritesRepositoryImpl(this._db);
+  final AppDatabase _db;
 
   /// Observa los favoritos.
   @override

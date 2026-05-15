@@ -8,6 +8,6 @@ abstract final class AppConfig {
   static const String websiteLabel = 'iced26.es';
 
   // Rango de fechas navegables — coincide con el período del congreso.
-  static final DateTime firstDay = DateTime(2025, 1, 1);
+  static final DateTime firstDay = DateTime(2025);
   static final DateTime lastDay = DateTime(2027, 12, 31);
 }

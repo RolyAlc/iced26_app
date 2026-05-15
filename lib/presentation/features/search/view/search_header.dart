@@ -8,11 +8,6 @@ import 'package:iced26/presentation/features/search/view/search_input_field.dart
 
 /// Cabecera de la búsqueda.
 class SearchHeader extends StatelessWidget {
-  final Search notifier;
-  final TextEditingController controller;
-  final bool filtersExpanded;
-  final VoidCallback onToggleFilters;
-
   const SearchHeader({
     super.key,
     required this.notifier,
@@ -20,6 +15,10 @@ class SearchHeader extends StatelessWidget {
     required this.filtersExpanded,
     required this.onToggleFilters,
   });
+  final Search notifier;
+  final TextEditingController controller;
+  final bool filtersExpanded;
+  final VoidCallback onToggleFilters;
 
   @override
   Widget build(BuildContext context) {

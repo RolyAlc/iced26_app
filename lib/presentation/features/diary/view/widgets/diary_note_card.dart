@@ -10,16 +10,15 @@ import 'package:iced26/presentation/shared/widgets/app_card.dart';
 
 /// Tarjeta de notas del diario que muestra el título, el contenido y el estado de ánimo.
 class DiaryNoteCard extends StatelessWidget {
-  final DiaryNote note;
-  final VoidCallback onDelete;
-  final VoidCallback onEdit;
-
   const DiaryNoteCard({
     super.key,
     required this.note,
     required this.onDelete,
     required this.onEdit,
   });
+  final DiaryNote note;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +109,8 @@ class DiaryNoteCard extends StatelessWidget {
 
 /// Pequeño indicador circular de color con etiqueta para el estado de ánimo.
 class _MoodDot extends StatelessWidget {
-  final NoteColor color;
-
   const _MoodDot({required this.color});
+  final NoteColor color;
 
   @override
   Widget build(BuildContext context) {

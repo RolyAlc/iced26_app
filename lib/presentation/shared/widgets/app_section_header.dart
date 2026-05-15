@@ -5,6 +5,14 @@ import 'package:flutter/material.dart';
 /// Proporciona un título consistente y un widget opcional para acciones
 /// como "Ver más".
 class AppSectionHeader extends StatelessWidget {
+  const AppSectionHeader({
+    super.key,
+    required this.title,
+    this.trailing,
+    this.topPadding = 16,
+    this.bottomPadding = 8, // Un poco menos de espacio después del título
+  });
+
   /// El título principal de la sección.
   final String title;
 
@@ -16,14 +24,6 @@ class AppSectionHeader extends StatelessWidget {
 
   /// Espaciado vertical inferior entre secciones.
   final double bottomPadding;
-
-  const AppSectionHeader({
-    super.key,
-    required this.title,
-    this.trailing,
-    this.topPadding = 16,
-    this.bottomPadding = 8, // Un poco menos de espacio después del título
-  });
 
   @override
   Widget build(BuildContext context) {

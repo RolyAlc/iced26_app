@@ -9,14 +9,13 @@ import 'package:iced26/presentation/features/search/view/search_header.dart';
 
 /// Cuerpo principal del modal de búsqueda.
 class SearchModalBody extends ConsumerStatefulWidget {
-  final Search notifier;
-  final bool initiallyExpandedFilters;
-
   const SearchModalBody({
     super.key,
     required this.notifier,
     this.initiallyExpandedFilters = false,
   });
+  final Search notifier;
+  final bool initiallyExpandedFilters;
 
   @override
   ConsumerState<SearchModalBody> createState() => SearchModalBodyState();

@@ -7,16 +7,15 @@ import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
 /// Widget genérico que envuelve un AsyncValue mostrando estado de carga,
 /// error o datos con UI adaptada al tema (Light/Dark/HighContrast).
 class AppAsyncValueWidget<T> extends StatelessWidget {
-  final AsyncValue<T> asyncValue;
-  final Widget Function(T) data;
-  final VoidCallback? onRetry;
-
   const AppAsyncValueWidget({
     super.key,
     required this.asyncValue,
     required this.data,
     this.onRetry,
   });
+  final AsyncValue<T> asyncValue;
+  final Widget Function(T) data;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {

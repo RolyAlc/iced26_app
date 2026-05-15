@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:table_calendar/table_calendar.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 /// Calendario del diario donde se pueden ver las notas y eventos.
 class DiaryCalendar extends ConsumerStatefulWidget {
-  final List<DiaryNote> allNotes;
-  final Map<DateTime, List<Event>> eventsByDay;
-  final DateTime selectedDate;
-  final DateTime focusedMonth;
-  final void Function(DateTime) onDaySelected;
-  final void Function(DateTime) onPageChanged;
-
   const DiaryCalendar({
     super.key,
     required this.allNotes,
@@ -28,6 +20,12 @@ class DiaryCalendar extends ConsumerStatefulWidget {
     required this.onDaySelected,
     required this.onPageChanged,
   });
+  final List<DiaryNote> allNotes;
+  final Map<DateTime, List<Event>> eventsByDay;
+  final DateTime selectedDate;
+  final DateTime focusedMonth;
+  final void Function(DateTime) onDaySelected;
+  final void Function(DateTime) onPageChanged;
 
   @override
   ConsumerState<DiaryCalendar> createState() => _DiaryCalendarState();
@@ -78,8 +76,7 @@ class _DiaryCalendarState extends ConsumerState<DiaryCalendar> {
             eventsByDay: widget.eventsByDay,
           ),
           calendarBuilders: CalendarBuilders(
-            headerTitleBuilder: (context, focusedDay) =>
-                _buildHeaderTitle(context, focusedDay),
+            headerTitleBuilder: _buildHeaderTitle,
             markerBuilder: (context, day, items) =>
                 _buildMarkers(context, items, colors),
           ),
@@ -91,7 +88,6 @@ class _DiaryCalendarState extends ConsumerState<DiaryCalendar> {
           daysOfWeekHeight: daysOfWeekHeight,
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
-            leftChevronVisible: true,
             leftChevronIcon: Icon(
               AppIcons.chevronLeft,
               size: 20,
@@ -205,9 +201,8 @@ class _DiaryCalendarState extends ConsumerState<DiaryCalendar> {
 
 /// Punto indicador de que hay una nota o evento en el día.
 class _Dot extends StatelessWidget {
-  final Color color;
-
   const _Dot({required this.color});
+  final Color color;
 
   @override
   Widget build(BuildContext context) {

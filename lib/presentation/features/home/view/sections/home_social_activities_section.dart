@@ -132,8 +132,6 @@ class _FadeEdgeMask extends StatelessWidget {
 
   Shader _buildShader(Rect bounds) {
     return LinearGradient(
-      begin: Alignment.centerLeft,
-      end: Alignment.centerRight,
       stops: const [_fadeStart, 1.0],
       colors: [Colors.white, surfaceColor.withValues(alpha: 0.0)],
     ).createShader(bounds);

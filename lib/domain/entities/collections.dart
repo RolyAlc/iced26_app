@@ -11,17 +11,6 @@ import 'package:iced26/domain/entities/zone.dart';
 
 /// Entidad que representa las colecciones de datos.
 class Collections {
-  final List<Day> days;
-  final List<Event> events;
-  final List<SessionBlock> sessionBlocks;
-  final List<Presentation> presentations;
-  final List<Person> people;
-  final List<Room> rooms;
-  final List<Zone> zones;
-  final List<SubmissionType> submissionTypes;
-  final List<SocialActivity> socials;
-  final List<NewsItem> news;
-
   Collections({
     required this.days,
     required this.events,
@@ -34,4 +23,14 @@ class Collections {
     required this.socials,
     required this.news,
   });
+  final List<Day> days;
+  final List<Event> events;
+  final List<SessionBlock> sessionBlocks;
+  final List<Presentation> presentations;
+  final List<Person> people;
+  final List<Room> rooms;
+  final List<Zone> zones;
+  final List<SubmissionType> submissionTypes;
+  final List<SocialActivity> socials;
+  final List<NewsItem> news;
 }

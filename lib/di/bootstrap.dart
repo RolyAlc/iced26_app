@@ -1,7 +1,6 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/data_providers.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'bootstrap.g.dart';
 

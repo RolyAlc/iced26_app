@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/search/view/search_modal_body.dart';
 
 class SmartSearchBar extends ConsumerWidget {
-  final Search searchNotifier;
-
   const SmartSearchBar({super.key, required this.searchNotifier});
+  final Search searchNotifier;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,7 +53,6 @@ class SmartSearchBar extends ConsumerWidget {
             ),
           );
         },
-        transitionDuration: AppDuration.medium,
         reverseTransitionDuration: AppDuration.fast,
       ),
     );
@@ -63,10 +60,9 @@ class SmartSearchBar extends ConsumerWidget {
 }
 
 class _SearchScreen extends StatelessWidget {
+  const _SearchScreen({required this.notifier, required this.expandFilters});
   final Search notifier;
   final bool expandFilters;
-
-  const _SearchScreen({required this.notifier, required this.expandFilters});
 
   @override
   Widget build(BuildContext context) {
@@ -93,13 +89,12 @@ class _SearchScreen extends StatelessWidget {
 }
 
 class _SearchBarVisualContainer extends StatelessWidget {
-  final bool isFilterActive;
-  final VoidCallback onFilterTap;
-
   const _SearchBarVisualContainer({
     required this.isFilterActive,
     required this.onFilterTap,
   });
+  final bool isFilterActive;
+  final VoidCallback onFilterTap;
 
   static const double _height = 56;
   static const EdgeInsets _padding = EdgeInsets.symmetric(
@@ -141,10 +136,9 @@ class _SearchBarVisualContainer extends StatelessWidget {
 }
 
 class _FilterIcon extends StatelessWidget {
+  const _FilterIcon({required this.isActive, required this.colors});
   final bool isActive;
   final ColorScheme colors;
-
-  const _FilterIcon({required this.isActive, required this.colors});
 
   @override
   Widget build(BuildContext context) {
