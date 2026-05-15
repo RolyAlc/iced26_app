@@ -10,7 +10,7 @@ class DiaryNoteMapper {
       date: date,
       title: data.title,
       content: data.content,
-      colorIndex: data.colorIndex,
+      color: data.colorIndex, // NoteColor? gracias al NoteColorConverter
       createdAt: data.createdAt,
     );
   }

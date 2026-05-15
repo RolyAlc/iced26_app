@@ -1,10 +1,12 @@
+import 'package:iced26/domain/entities/note_color.dart';
+
 /// Nota personal del diario del usuario.
 class DiaryNote {
   final int id;
   final DateTime date;
   final String? title;
   final String content;
-  final int colorIndex;
+  final NoteColor? color;
   final DateTime createdAt;
 
   const DiaryNote({
@@ -12,7 +14,7 @@ class DiaryNote {
     required this.date,
     this.title,
     required this.content,
-    this.colorIndex = 0,
+    this.color,
     required this.createdAt,
   });
 }

@@ -1,4 +1,5 @@
 import 'package:iced26/domain/entities/diary_note.dart';
+import 'package:iced26/domain/entities/note_color.dart';
 
 /// Contrato para la gestión del diario personal del usuario.
 abstract class DiaryRepository {
@@ -11,7 +12,7 @@ abstract class DiaryRepository {
     required DateTime date,
     String? title,
     required String content,
-    int? colorIndex,
+    NoteColor? color,
   });
 
   /// Elimina una nota por su ID.

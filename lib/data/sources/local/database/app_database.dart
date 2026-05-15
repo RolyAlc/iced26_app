@@ -3,18 +3,18 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:iced26/domain/entities/note_color.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
+import 'package:iced26/data/sources/local/database/note_color_converter.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 
 part 'app_database.g.dart';
 
-/// Conversor de [I18nStr] a String (JSON) y viceversa.
 class I18nConverter extends TypeConverter<I18nStr, String> {
   const I18nConverter();
 
-  /// Convierte String a [I18nStr].
   @override
   I18nStr fromSql(String fromDb) {
     final Map<String, dynamic> json =
@@ -22,7 +22,6 @@ class I18nConverter extends TypeConverter<I18nStr, String> {
     return I18nStr(json.map((key, value) => MapEntry(key, value.toString())));
   }
 
-  /// Convierte [I18nStr] a String (JSON).
   @override
   String toSql(I18nStr value) {
     return jsonEncode(value.values);
@@ -57,6 +56,7 @@ class Rooms extends Table {
 @DataClassName('ZoneTable')
 class Zones extends Table {
   TextColumn get id => text()();
+  // String plano: la resolución de locale ocurre en ZoneMapper antes de persistir.
   TextColumn get name => text()();
   TextColumn get lang => text().nullable()();
   TextColumn get description => text().nullable().map(const I18nConverter())();
@@ -172,6 +172,8 @@ class People extends Table {
   TextColumn get id => text()();
   TextColumn get name => text().map(const I18nConverter())();
   TextColumn get country => text().nullable()();
+  // `title`, `institution` y `bio` vienen en un único idioma desde el backend —
+  // no son campos multilingüe en el JSON fuente.
   TextColumn get title => text().nullable()();
   TextColumn get institution => text().nullable()();
   TextColumn get bio => text().nullable()();
@@ -181,7 +183,7 @@ class People extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Configuración de la aplicación
+/// Clave-valor para configuración interna (ej. `generated_at` del JSON remoto).
 @DataClassName('AppConfigTable')
 class AppConfigs extends Table {
   TextColumn get key => text()();
@@ -220,7 +222,9 @@ class DiaryNotes extends Table {
   DateTimeColumn get date => dateTime()();
   TextColumn get title => text().nullable()();
   TextColumn get content => text()();
-  IntColumn get colorIndex => integer().withDefault(const Constant(0))();
+  IntColumn get colorIndex => integer()
+      .withDefault(const Constant(0))
+      .map(const NoteColorConverter())();
   DateTimeColumn get createdAt =>
       dateTime().clientDefault(() => DateTime.now())();
 }
@@ -239,7 +243,6 @@ class SubmissionTypes extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Base de datos con las tablas
 @DriftDatabase(
   tables: [
     Days,
@@ -258,18 +261,21 @@ class SubmissionTypes extends Table {
     DiaryNotes,
   ],
 )
-/// Base de datos con las tablas.
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 15;
 
-  /// Estrategia de migración
+  // Dos tipos de tablas con estrategias distintas:
+  // - Configuración (Events, Zones, Presentations…): ConfigRepositoryImpl las
+  //   borra y recrea en cada arranque desde el JSON remoto. Sus migraciones son
+  //   destructivas por diseño — no guardan datos del usuario.
+  // - Locales (DiaryNotes, Favorites, SavedPresentations): requieren migraciones
+  //   no destructivas porque el usuario no puede recuperar esos datos.
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
-      // TODO: Revisar estragia de migración
       if (from < 7) {
         await m.addColumn(events, events.speakersJson);
       }
@@ -284,11 +290,13 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(people, people.title);
         await m.addColumn(people, people.bio);
       }
+      // v10 no llegó a producción — squasheada en v11.
       if (from < 11) {
         await m.createTable(zones);
       }
       if (from < 12) {
-        // Events table restructured: drop and recreate to apply column changes.
+        // Events cambió de esquema de forma incompatible con ALTER TABLE.
+        // Drop + recrear es seguro porque es tabla de configuración (sin datos de usuario).
         await customStatement('DROP TABLE IF EXISTS "events"');
         await m.createTable(events);
         await m.createTable(sessionBlocks);
@@ -308,7 +316,6 @@ class AppDatabase extends _$AppDatabase {
   );
 }
 
-/// Abre la base de datos
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
