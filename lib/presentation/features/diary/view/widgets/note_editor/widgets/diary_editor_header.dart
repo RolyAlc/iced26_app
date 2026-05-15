@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/domain/entities/note_color.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
-/// Header del editor que muestra la fecha y el botón de cerrar.
+/// Encabezado de la nota del diario que muestra la fecha y el color.
 class DiaryEditorHeader extends StatelessWidget {
   final DateTime date;
   final VoidCallback onTapDate;
-  final int colorIndex;
+  final NoteColor? color;
+  final VoidCallback? onDelete;
 
   const DiaryEditorHeader({
     super.key,
     required this.date,
     required this.onTapDate,
-    required this.colorIndex,
+    required this.color,
+    this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = AppNoteColors.getColor(colorIndex);
+    final paintColor = color != null ? AppNoteColors.colorOf(color!) : null;
 
     return Row(
       children: [
@@ -30,13 +34,13 @@ class DiaryEditorHeader extends StatelessWidget {
               vertical: AppSpacing.s,
             ),
             decoration: BoxDecoration(
-              color: color == Colors.transparent
-                  ? theme.colorScheme.surfaceContainerHigh
-                  : color.withValues(alpha: 0.2),
+              color: paintColor != null
+                  ? paintColor.withValues(alpha: 0.2)
+                  : theme.colorScheme.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(AppRadius.full),
-              border: color == Colors.transparent
-                  ? null
-                  : Border.all(color: color, width: 1.5),
+              border: paintColor != null
+                  ? Border.all(color: paintColor, width: 1.5)
+                  : null,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -44,17 +48,13 @@ class DiaryEditorHeader extends StatelessWidget {
                 Icon(
                   Icons.calendar_today_rounded,
                   size: 16,
-                  color: color == Colors.transparent
-                      ? theme.colorScheme.onSurfaceVariant
-                      : color,
+                  color: paintColor ?? theme.colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: AppSpacing.s),
                 Text(
                   DateHelper.formatFullDate(date),
                   style: theme.textTheme.labelLarge?.copyWith(
-                    color: color == Colors.transparent
-                        ? theme.colorScheme.onSurfaceVariant
-                        : color,
+                    color: paintColor ?? theme.colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -63,6 +63,14 @@ class DiaryEditorHeader extends StatelessWidget {
           ),
         ),
         const Spacer(),
+        if (onDelete != null)
+          IconButton(
+            onPressed: onDelete,
+            icon: Icon(
+              Icons.delete_outline_rounded,
+              color: theme.colorScheme.error,
+            ),
+          ),
         IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close_rounded),

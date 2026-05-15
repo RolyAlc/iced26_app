@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/data_providers.dart';
@@ -56,5 +57,19 @@ class DiaryFocusedMonth extends _$DiaryFocusedMonth {
 
   void set(DateTime date) {
     state = date;
+  }
+}
+
+// Formato activo del calendario (semana / mes). Estado elevado al viewmodel
+// para que DiaryHeader pueda calcular si "Today" es redundante en cada vista.
+@riverpod
+class DiaryCalendarFormat extends _$DiaryCalendarFormat {
+  @override
+  CalendarFormat build() {
+    return CalendarFormat.week;
+  }
+
+  void set(CalendarFormat format) {
+    state = format;
   }
 }

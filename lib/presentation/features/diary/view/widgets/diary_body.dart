@@ -5,19 +5,15 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_calendar.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_day_content.dart';
-import 'package:iced26/presentation/features/diary/view/widgets/diary_error.dart';
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
 
-/// Mismos límites que DiaryCalendar — evitan navegar a días fuera del rango del congreso.
-final _kFirstDay = DateTime(2025, 1, 1);
-final _kLastDay = DateTime(2027, 12, 31);
-
-/// Umbral mínimo de velocidad para considerar un swipe intencional.
+// 300 px/s filtra micro-swipes accidentales al escribir.
 const _kSwipeVelocityThreshold = 300.0;
 
-/// Cuerpo del diario donde se muestra el calendario y el contenido del día seleccionado.
+/// Cuerpo de la pantalla [DiaryView]. Envuelve [DiaryCalendar] y [DiaryDayContent]
+/// con su propio [AppPage] para poder usarse como destino de navegación independiente.
 class DiaryBody extends ConsumerStatefulWidget {
   const DiaryBody({super.key});
 
@@ -25,11 +21,14 @@ class DiaryBody extends ConsumerStatefulWidget {
   ConsumerState<DiaryBody> createState() => _DiaryBodyState();
 }
 
+/// Estado de [DiaryBody].
 class _DiaryBodyState extends ConsumerState<DiaryBody> {
-  /// Dirección del último swipe — controla el slide de AnimatedSwitcher.
+  // int y no bool: el valor se pasa directamente al eje X del Offset del Tween (1 = derecha, -1 = izquierda).
   int _slideDirection = 1;
 
   void _selectDay(DateTime day) {
+    final current = ref.read(selectedDiaryDateProvider);
+    setState(() => _slideDirection = day.isAfter(current) ? 1 : -1);
     ref.read(selectedDiaryDateProvider.notifier).select(day);
     ref.read(diaryFocusedMonthProvider.notifier).set(day);
   }
@@ -38,7 +37,6 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
     ref.read(diaryFocusedMonthProvider.notifier).set(month);
   }
 
-  /// Avanza o retrocede un día según la velocidad del swipe horizontal.
   void _onHorizontalSwipe(double velocity, DateTime current) {
     if (velocity.abs() < _kSwipeVelocityThreshold) {
       return;
@@ -49,11 +47,11 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
         ? current.add(const Duration(days: 1))
         : current.subtract(const Duration(days: 1));
 
-    if (next.isBefore(_kFirstDay) || next.isAfter(_kLastDay)) {
+    if (next.isBefore(DiaryHelpers.firstDay) ||
+        next.isAfter(DiaryHelpers.lastDay)) {
       return;
     }
 
-    setState(() => _slideDirection = isForward ? 1 : -1);
     _selectDay(next);
   }
 
@@ -66,16 +64,8 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
 
     final allNotes = notesAsync.value ?? [];
     final eventsByDay = eventsAsync.value ?? {};
-
     final notesForDay = DiaryHelpers.notesForDay(allNotes, selectedDate);
     final eventsForDay = DiaryHelpers.eventsForDay(eventsByDay, selectedDate);
-
-    if (notesAsync.hasError) {
-      return DiaryError(error: notesAsync.error!);
-    }
-    if (eventsAsync.hasError) {
-      return DiaryError(error: eventsAsync.error!);
-    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -97,33 +87,46 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
             ),
           ),
         ),
-        const Divider(height: 1),
-        GestureDetector(
-          onHorizontalDragEnd: (details) {
-            _onHorizontalSwipe(details.primaryVelocity ?? 0, selectedDate);
-          },
-          child: AnimatedSwitcher(
-            duration: AppDuration.fast,
-            transitionBuilder: (child, animation) {
-              final slide =
-                  Tween<Offset>(
-                    begin: Offset(_slideDirection.toDouble(), 0),
-                    end: Offset.zero,
-                  ).animate(
-                    CurvedAnimation(parent: animation, curve: Curves.easeOut),
-                  );
-              return SlideTransition(
-                position: slide,
-                child: FadeTransition(opacity: animation, child: child),
-              );
+        ClipRect(
+          child: GestureDetector(
+            onHorizontalDragEnd: (details) {
+              _onHorizontalSwipe(details.primaryVelocity ?? 0, selectedDate);
             },
-            child: DiaryDayContent(
-              key: ValueKey(selectedDate),
-              selectedDate: selectedDate,
-              notes: notesForDay,
-              events: eventsForDay,
-              onDeleteNote: (id) =>
-                  ref.read(deleteDiaryNoteUseCaseProvider).execute(id),
+            child: AnimatedSwitcher(
+              duration: AppDuration.fast,
+              // Anclar arriba: evita que contenidos de distinta altura
+              // se centren en el Stack y provoquen movimiento vertical aparente.
+              layoutBuilder: (currentChild, previousChildren) {
+                return Stack(
+                  alignment: Alignment.topCenter,
+                  children: [...previousChildren, ?currentChild],
+                );
+              },
+              transitionBuilder: (child, animation) {
+                final isIncoming = child.key == ValueKey(selectedDate);
+                final dx = isIncoming
+                    ? _slideDirection.toDouble()
+                    : -_slideDirection.toDouble();
+                final slide =
+                    Tween<Offset>(
+                      begin: Offset(dx, 0),
+                      end: Offset.zero,
+                    ).animate(
+                      CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                    );
+                return SlideTransition(
+                  position: slide,
+                  child: FadeTransition(opacity: animation, child: child),
+                );
+              },
+              child: DiaryDayContent(
+                key: ValueKey(selectedDate),
+                selectedDate: selectedDate,
+                notes: notesForDay,
+                events: eventsForDay,
+                onDeleteNote: (id) =>
+                    ref.read(deleteDiaryNoteUseCaseProvider).execute(id),
+              ),
             ),
           ),
         ),

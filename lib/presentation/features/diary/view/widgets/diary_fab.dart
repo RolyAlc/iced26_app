@@ -7,7 +7,10 @@ import 'package:iced26/presentation/features/diary/view/widgets/note_editor/diar
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
 import 'package:iced26/presentation/app/ui_metrics.dart';
 
-/// Botón flotante para agregar una nota al diario.
+const _kFabLabel = 'Add note';
+const _kFabHeroTag = 'diary_add_note';
+
+/// FAB para añadir una nueva nota en la fecha seleccionada.
 class DiaryFab extends ConsumerWidget {
   const DiaryFab({super.key});
 
@@ -23,10 +26,10 @@ class DiaryFab extends ConsumerWidget {
       right: AppSpacing.l,
       bottom: bottom,
       child: FloatingActionButton.extended(
-        heroTag: 'diary_add_note',
+        heroTag: _kFabHeroTag,
         onPressed: () => DiaryNoteEditorSheet.show(context, date: selectedDate),
-        icon: const Icon(AppIcons.add),
-        label: const Text('Add note'),
+        icon: const Icon(AppIcons.editNote),
+        label: const Text(_kFabLabel),
       ),
     );
   }

@@ -5,18 +5,19 @@ import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_event_tile.dart';
+import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_note_card.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/diary_note_editor_sheet.dart';
-import 'package:iced26/presentation/shared/helpers/date_helper.dart';
-import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
+import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 
-/// Contenido del día seleccionado en el diario.
+const _kCongressLabel = 'Congress';
+const _kMyNotesLabel = 'My notes';
+const _kEmptyNoteTitle = 'No notes for this day';
+const _kEmptyNoteMessage = 'Tap + to write your first note';
+
+/// Renderiza las notas y los eventos del congreso de un día concreto.
+/// Stateless para que el padre (DiaryBody) controle la selección del día y las callbacks de borrado.
 class DiaryDayContent extends StatelessWidget {
-  final DateTime selectedDate;
-  final List<DiaryNote> notes;
-  final List<Event> events;
-  final void Function(int id) onDeleteNote;
-
   const DiaryDayContent({
     super.key,
     required this.selectedDate,
@@ -24,6 +25,11 @@ class DiaryDayContent extends StatelessWidget {
     required this.events,
     required this.onDeleteNote,
   });
+
+  final DateTime selectedDate;
+  final List<DiaryNote> notes;
+  final List<Event> events;
+  final void Function(int id) onDeleteNote;
 
   @override
   Widget build(BuildContext context) {
@@ -37,77 +43,99 @@ class DiaryDayContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            DiaryHelpers.isToday(selectedDate)
-                ? 'Today · ${DateHelper.formatDayShort(selectedDate)}'
-                : DateHelper.formatDayLabel(selectedDate),
+            DiaryHelpers.formatDayHeader(selectedDate),
             style: theme.textTheme.titleSmall?.copyWith(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: AppSpacing.m),
-          if (events.isNotEmpty) ...[
-            Text(
-              'Congress',
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            ...events.map((e) => DiaryEventTile(event: e)),
-            const SizedBox(height: AppSpacing.m),
-          ],
+          if (events.isNotEmpty) _CongressEventsList(events: events),
           Text(
-            'My notes',
+            _kMyNotesLabel,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w900,
               color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
-          if (notes.isEmpty)
-            const _EmptyNotes()
-          else
-            ...notes.map(
-              (note) => DiaryNoteCard(
-                note: note,
-                onEdit: () => DiaryNoteEditorSheet.show(
-                  context,
-                  date: selectedDate,
-                  existingNote: note,
-                ),
-                onDelete: () => onDeleteNote(note.id),
-              ),
-            ),
+          _NotesList(
+            notes: notes,
+            selectedDate: selectedDate,
+            onDeleteNote: onDeleteNote,
+          ),
         ],
       ),
     );
   }
 }
 
-/// Estado cuando no hay notas en el día seleccionado.
-class _EmptyNotes extends StatelessWidget {
-  const _EmptyNotes();
+/// Lista de eventos del congreso para un día concreto.
+class _CongressEventsList extends StatelessWidget {
+  const _CongressEventsList({required this.events});
+
+  final List<Event> events;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.l),
-      child: Column(
-        children: [
-          Icon(AppIcons.article, size: 40, color: colors.outlineVariant),
-          const SizedBox(height: AppSpacing.s),
-          Text(
-            'No notes for this day',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colors.onSurfaceVariant,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          _kCongressLabel,
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.primary,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        ...events.map((e) => DiaryEventTile(event: e)),
+        const SizedBox(height: AppSpacing.m),
+      ],
+    );
+  }
+}
+
+/// Lista de notas del usuario para un día concreto.
+class _NotesList extends StatelessWidget {
+  const _NotesList({
+    required this.notes,
+    required this.selectedDate,
+    required this.onDeleteNote,
+  });
+
+  final List<DiaryNote> notes;
+  final DateTime selectedDate;
+  final void Function(int id) onDeleteNote;
+
+  @override
+  Widget build(BuildContext context) {
+    if (notes.isEmpty) {
+      return AppEmptyState(
+        illustration: Icon(
+          AppIcons.article,
+          size: 40,
+          color: Theme.of(context).colorScheme.outlineVariant,
+        ),
+        title: _kEmptyNoteTitle,
+        message: _kEmptyNoteMessage,
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.l),
+      );
+    }
+    return Column(
+      children: notes
+          .map(
+            (note) => DiaryNoteCard(
+              note: note,
+              onEdit: () => DiaryNoteEditorSheet.show(
+                context,
+                date: selectedDate,
+                existingNote: note,
+              ),
+              onDelete: () => onDeleteNote(note.id),
+            ),
+          )
+          .toList(),
     );
   }
 }

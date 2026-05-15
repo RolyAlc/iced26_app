@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
 
-/// Etiqueta de sección reutilizable para el editor de notas.
+/// Etiqueta de sección para el editor de notas del diario.
 class DiaryEditorSectionLabel extends StatelessWidget {
   final IconData icon;
   final String label;

@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
+import 'package:iced26/domain/entities/note_color.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_color_selector.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_header.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_inputs.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_section_label.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
 
-/// Sheet para editar o crear una nota del diario.
+/// Hoja modal para editar o crear una nota del diario.
 class DiaryNoteEditorSheet extends ConsumerStatefulWidget {
   final DateTime date;
   final DiaryNote? existingNote;
@@ -22,7 +24,6 @@ class DiaryNoteEditorSheet extends ConsumerStatefulWidget {
     this.existingNote,
   });
 
-  /// Muestra el sheet para editar o crear una nota.
   static Future<void> show(
     BuildContext context, {
     required DateTime date,
@@ -43,12 +44,15 @@ class DiaryNoteEditorSheet extends ConsumerStatefulWidget {
       _DiaryNoteEditorSheetState();
 }
 
+/// State de la hoja modal para editar o crear una nota del diario.
 class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
   late DateTime _selectedDate;
-  int _selectedColorIndex = 0;
+  NoteColor? _selectedColor;
   bool _saving = false;
+
+  bool get _isEditing => widget.existingNote != null;
 
   @override
   void initState() {
@@ -58,7 +62,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
       text: widget.existingNote?.content,
     );
     _selectedDate = widget.existingNote?.date ?? widget.date;
-    _selectedColorIndex = widget.existingNote?.colorIndex ?? 0;
+    _selectedColor = widget.existingNote?.color;
 
     _titleController.addListener(_onTextChanged);
     _contentController.addListener(_onTextChanged);
@@ -78,42 +82,33 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
   }
 
   bool get _canSave {
-    final title = _titleController.text.trim();
     final content = _contentController.text.trim();
-
     if (content.isEmpty) return false;
+    if (!_isEditing) return true;
 
-    final isNew = widget.existingNote == null;
-    if (isNew) return true;
-
-    final hasChanges =
-        title != (widget.existingNote?.title ?? '') ||
+    final title = _titleController.text.trim();
+    return title != (widget.existingNote?.title ?? '') ||
         content != (widget.existingNote?.content ?? '') ||
-        _selectedColorIndex != widget.existingNote?.colorIndex ||
+        _selectedColor != widget.existingNote?.color ||
         !DateUtils.isSameDay(_selectedDate, widget.existingNote!.date);
-
-    return hasChanges;
   }
 
   Future<void> _selectDate() async {
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: DateTime(2025),
-      lastDate: DateTime(2027),
+      firstDate: AppConfig.firstDay,
+      lastDate: AppConfig.lastDay,
     );
     if (picked != null && picked != _selectedDate) {
       HapticFeedback.selectionClick();
-      setState(() {
-        _selectedDate = picked;
-      });
+      setState(() => _selectedDate = picked);
     }
   }
 
   Future<void> _save() async {
     final title = _titleController.text.trim();
     final content = _contentController.text.trim();
-
     if (content.isEmpty) return;
 
     setState(() => _saving = true);
@@ -125,7 +120,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
             date: _selectedDate,
             title: title.isEmpty ? null : title,
             content: content,
-            colorIndex: _selectedColorIndex,
+            color: _selectedColor,
           );
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
@@ -137,66 +132,118 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
     }
   }
 
+  Future<void> _confirmDelete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete note?'),
+          content: const Text('This action cannot be undone.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                Navigator.pop(dialogContext, true);
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true && mounted) {
+      await ref
+          .read(deleteDiaryNoteUseCaseProvider)
+          .execute(widget.existingNote!.id);
+      if (mounted) Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final viewInsets = MediaQuery.viewInsetsOf(context);
 
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.l),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              DiaryEditorHeader(
-                date: _selectedDate,
-                onTapDate: _selectDate,
-                colorIndex: _selectedColorIndex,
+      padding: EdgeInsets.only(bottom: viewInsets.bottom),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.l,
+                AppSpacing.l,
+                AppSpacing.l,
+                AppSpacing.m,
               ),
-              const SizedBox(height: AppSpacing.l),
-              DiaryEditorSectionLabel(
-                icon: Icons.title_rounded,
-                label: 'Title',
-                color: colorScheme.onSurfaceVariant,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  DiaryEditorHeader(
+                    date: _selectedDate,
+                    onTapDate: _selectDate,
+                    color: _selectedColor,
+                    onDelete: _isEditing ? _confirmDelete : null,
+                  ),
+                  const SizedBox(height: AppSpacing.l),
+                  DiaryEditorSectionLabel(
+                    icon: Icons.title_rounded,
+                    label: 'Title',
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  DiaryEditorTitleInput(controller: _titleController),
+                  const SizedBox(height: AppSpacing.m),
+                  DiaryEditorSectionLabel(
+                    icon: Icons.notes_rounded,
+                    label: 'Content',
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(height: AppSpacing.s),
+                  DiaryEditorContentInput(
+                    controller: _contentController,
+                    autofocus: !_isEditing,
+                  ),
+                  const SizedBox(height: AppSpacing.l),
+                  DiaryEditorSectionLabel(
+                    icon: Icons.palette_outlined,
+                    label: 'Mood Tag',
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(height: AppSpacing.s),
+                  DiaryEditorColorSelector(
+                    selectedColor: _selectedColor,
+                    onSelected: (color) {
+                      HapticFeedback.selectionClick();
+                      setState(() => _selectedColor = color);
+                    },
+                  ),
+                ],
               ),
-              DiaryEditorTitleInput(controller: _titleController),
-              const SizedBox(height: AppSpacing.m),
-              DiaryEditorSectionLabel(
-                icon: Icons.palette_outlined,
-                label: 'Mood Tag',
-                color: colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(height: AppSpacing.s),
-              DiaryEditorColorSelector(
-                selectedIndex: _selectedColorIndex,
-                onSelected: (index) {
-                  HapticFeedback.selectionClick();
-                  setState(() => _selectedColorIndex = index);
-                },
-              ),
-              const SizedBox(height: AppSpacing.l),
-              DiaryEditorSectionLabel(
-                icon: Icons.notes_rounded,
-                label: 'Content',
-                color: colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(height: AppSpacing.s),
-              DiaryEditorContentInput(
-                controller: _contentController,
-                autofocus: widget.existingNote == null,
-              ),
-              const SizedBox(height: AppSpacing.l),
-              AppButton(
-                onPressed: (_saving || !_canSave) ? null : _save,
-                isLoading: _saving,
-                label: _saving ? 'Saving...' : 'Save note',
-                icon: _saving ? null : Icons.check_rounded,
-              ),
-            ],
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.l,
+              AppSpacing.s,
+              AppSpacing.l,
+              AppSpacing.l,
+            ),
+            child: AppButton(
+              onPressed: (_saving || !_canSave) ? null : _save,
+              isLoading: _saving,
+              label: _saving ? 'Saving...' : 'Save note',
+              icon: _saving ? null : Icons.check_rounded,
+            ),
+          ),
+        ],
       ),
     );
   }

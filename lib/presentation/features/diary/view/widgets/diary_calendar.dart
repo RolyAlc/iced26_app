@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
@@ -7,9 +8,10 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
+import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
 
 /// Calendario del diario donde se pueden ver las notas y eventos.
-class DiaryCalendar extends StatefulWidget {
+class DiaryCalendar extends ConsumerStatefulWidget {
   final List<DiaryNote> allNotes;
   final Map<DateTime, List<Event>> eventsByDay;
   final DateTime selectedDate;
@@ -28,11 +30,8 @@ class DiaryCalendar extends StatefulWidget {
   });
 
   @override
-  State<DiaryCalendar> createState() => _DiaryCalendarState();
+  ConsumerState<DiaryCalendar> createState() => _DiaryCalendarState();
 }
-
-final _kFirstDay = DateTime(2025, 1, 1);
-final _kLastDay = DateTime(2027, 12, 31);
 
 /// Formatos disponibles para el calendario.
 const _kCalendarFormats = {
@@ -41,19 +40,14 @@ const _kCalendarFormats = {
 };
 
 /// Estado del calendario del diario.
-class _DiaryCalendarState extends State<DiaryCalendar> {
-  /// Formato actual del calendario.
-  CalendarFormat _format = CalendarFormat.week;
-
-  /// Establece el formato del calendario.
+class _DiaryCalendarState extends ConsumerState<DiaryCalendar> {
   void _setFormat(CalendarFormat format) {
-    setState(() => _format = format);
+    ref.read(diaryCalendarFormatProvider.notifier).set(format);
   }
 
-  /// Alterna el formato del calendario.
-  void _toggleFormat() {
+  void _toggleFormat(CalendarFormat current) {
     _setFormat(
-      _format == CalendarFormat.week
+      current == CalendarFormat.week
           ? CalendarFormat.month
           : CalendarFormat.week,
     );
@@ -64,14 +58,15 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
     final colors = Theme.of(context).colorScheme;
     final textScaler = MediaQuery.textScalerOf(context);
     final daysOfWeekHeight = textScaler.scale(20.0) + 4;
+    final format = ref.watch(diaryCalendarFormatProvider);
 
     return Column(
       children: [
         TableCalendar<Object>(
-          firstDay: _kFirstDay,
-          lastDay: _kLastDay,
+          firstDay: DiaryHelpers.firstDay,
+          lastDay: DiaryHelpers.lastDay,
           focusedDay: widget.focusedMonth,
-          calendarFormat: _format,
+          calendarFormat: format,
           availableCalendarFormats: _kCalendarFormats,
           selectedDayPredicate: (day) => isSameDay(day, widget.selectedDate),
           onDaySelected: (selected, _) => widget.onDaySelected(selected),
@@ -84,9 +79,9 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
           ),
           calendarBuilders: CalendarBuilders(
             headerTitleBuilder: (context, focusedDay) =>
-                _buildHeaderTitle(context, focusedDay, colors),
-            markerBuilder: (context, day, _) =>
-                _buildMarkers(context, day, colors),
+                _buildHeaderTitle(context, focusedDay),
+            markerBuilder: (context, day, items) =>
+                _buildMarkers(context, items, colors),
           ),
           calendarStyle: _calendarStyle(colors),
           daysOfWeekStyle: DaysOfWeekStyle(
@@ -96,7 +91,14 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
           daysOfWeekHeight: daysOfWeekHeight,
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
-            leftChevronVisible: false,
+            leftChevronVisible: true,
+            leftChevronIcon: Icon(
+              AppIcons.chevronLeft,
+              size: 20,
+              color: colors.onSurfaceVariant,
+            ),
+            leftChevronPadding: const EdgeInsets.all(AppSpacing.s),
+            leftChevronMargin: EdgeInsets.zero,
             rightChevronIcon: Icon(
               AppIcons.chevronRight,
               size: 20,
@@ -108,13 +110,13 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
           ),
         ),
         GestureDetector(
-          onTap: _toggleFormat,
+          onTap: () => _toggleFormat(format),
           behavior: HitTestBehavior.opaque,
           child: SizedBox(
             height: 24,
             child: Center(
               child: AnimatedRotation(
-                turns: _format == CalendarFormat.month ? 0.5 : 0.0,
+                turns: format == CalendarFormat.month ? 0.5 : 0.0,
                 duration: AppDuration.medium,
                 child: Icon(
                   AppIcons.expand,
@@ -129,64 +131,45 @@ class _DiaryCalendarState extends State<DiaryCalendar> {
     );
   }
 
-  /// Construye el botón de anterior.
-  Widget _buildPrevButton(DateTime focusedDay, ColorScheme colors) {
-    final prevMonth = DateTime(focusedDay.year, focusedDay.month - 1);
-    final canGoBack = !prevMonth.isBefore(_kFirstDay);
-
-    return InkWell(
-      onTap: canGoBack ? () => widget.onPageChanged(prevMonth) : null,
-      borderRadius: BorderRadius.circular(AppRadius.full),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.s),
-        child: Icon(
-          AppIcons.chevronLeft,
-          size: 20,
-          color: canGoBack
-              ? colors.onSurfaceVariant
-              : colors.onSurface.withValues(alpha: 0.3),
-        ),
+  Widget _buildHeaderTitle(BuildContext context, DateTime focusedDay) {
+    return Padding(
+      padding: const EdgeInsets.only(left: AppSpacing.s),
+      child: Text(
+        DateHelper.formatMonthYear(focusedDay),
+        style: Theme.of(
+          context,
+        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  /// Construye el título del header.
-  Widget _buildHeaderTitle(
-    BuildContext context,
-    DateTime focusedDay,
-    ColorScheme colors,
-  ) {
-    final theme = Theme.of(context);
-    return Row(
-      children: [
-        Text(
-          DateHelper.formatMonthYear(focusedDay),
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const Spacer(),
-        _buildPrevButton(focusedDay, colors),
-      ],
-    );
-  }
-
-  /// Construye los marcadores del día.
+  /// Construye los marcadores del día con dots de mood reales.
   Widget? _buildMarkers(
     BuildContext context,
-    DateTime day,
+    List<Object> items,
     ColorScheme colors,
   ) {
-    final eventExists = DiaryHelpers.hasEvent(widget.eventsByDay, day);
-    final noteExists = DiaryHelpers.hasNote(widget.allNotes, day);
+    final hasEvent = items.whereType<Event>().isNotEmpty;
+    final notes = items.whereType<DiaryNote>().toList();
 
-    if (!eventExists && !noteExists) return null;
+    if (!hasEvent && notes.isEmpty) return null;
+
+    // Colores de mood únicos (sin "None"), máximo 3, en orden de aparición.
+    final moodColors = notes
+        .where((n) => n.color != null)
+        .map((n) => AppNoteColors.colorOf(n.color!))
+        .toSet()
+        .take(3)
+        .toList();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (eventExists) _Dot(color: colors.primary),
-        if (noteExists) _Dot(color: colors.secondary),
+        if (hasEvent) _Dot(color: colors.primary),
+        if (moodColors.isNotEmpty)
+          ...moodColors.map((c) => _Dot(color: c))
+        else if (notes.isNotEmpty)
+          _Dot(color: colors.secondary),
       ],
     );
   }
