@@ -2,19 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
+import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/features/my_schedule/view/my_schedule_view.dart';
+import 'package:iced26/presentation/features/my_schedule/viewmodel/my_schedule_viewmodel.dart';
 import 'package:iced26/presentation/features/schedule/view/schedule_category_filter_bar.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/session_slot_block.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
-import 'package:iced26/presentation/helpers/date_helper.dart';
-import 'package:iced26/presentation/widgets/app_page.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
+import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
-// TODO: revisar
+// TODO: Revisar _ScheduleHeader codigo con muchos tabs
+
+const _kScheduleTitle = 'Schedule';
 
 /// Vista principal del schedule.
 class ScheduleView extends ConsumerWidget {
@@ -23,7 +28,6 @@ class ScheduleView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scheduleStateAsync = ref.watch(scheduleViewModelProvider);
-
     return AppAsyncValueWidget(
       asyncValue: scheduleStateAsync,
       data: (state) => _ScheduleContent(state: state),
@@ -31,65 +35,156 @@ class ScheduleView extends ConsumerWidget {
   }
 }
 
-/// Contenido principal del schedule.
-class _ScheduleContent extends ConsumerWidget {
+/// Orquestador del schedule. Gestiona el TabController y decide
+/// si mostrar el timeline o MySchedule.
+class _ScheduleContent extends ConsumerStatefulWidget {
   const _ScheduleContent({required this.state});
 
   final ScheduleState state;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final topTab = ref.watch(scheduleTopTabProvider);
-    final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
-    final visibleItems = ref.watch(visibleItemsProvider);
-    final safeDayIndex = ref.watch(safeDayIndexProvider);
-    final isFiltered = selectedCategory != null;
-    final isMySchedule = topTab == ScheduleTab.mySchedule;
+  ConsumerState<_ScheduleContent> createState() => _ScheduleContentState();
+}
 
-    return DefaultTabController(
-      length: state.sections.length,
-      initialIndex: safeDayIndex,
-      child: AppPage(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-        header: _ScheduleHeader(
-          topTab: topTab,
-          onTopTabSelect: (tab) =>
-              ref.read(scheduleTopTabProvider.notifier).select(tab),
-          categories: state.categories,
-          selectedCategory: selectedCategory,
-          onCategorySelect: (cat) =>
-              ref.read(selectedScheduleCategoryProvider.notifier).select(cat),
-          sections: state.sections,
-          onDaySelect: (index) =>
-              ref.read(selectedDayIndexProvider.notifier).set(index),
-          isFiltered: isFiltered,
-          isMySchedule: isMySchedule,
-        ),
-        children: [
-          const SizedBox(height: AppSpacing.m),
-          if (isMySchedule)
-            const MyScheduleContent()
-          else
-            _ScheduleBody(visibleItems: visibleItems, isFiltered: isFiltered),
-        ],
-      ),
+/// Estado del schedule content.
+class _ScheduleContentState extends ConsumerState<_ScheduleContent>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: widget.state.sections.length,
+      vsync: this,
+      initialIndex: ref.read(safeDayIndexProvider),
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isMySchedule =
+        ref.watch(scheduleTopTabProvider) == ScheduleTab.mySchedule;
+
+    // Sincroniza el tab cuando el día cambia externamente al TabBar
+    ref.listen(safeDayIndexProvider, (_, next) {
+      if (_tabController.index != next) {
+        _tabController.animateTo(next);
+      }
+    });
+
+    final header = _ScheduleHeader(
+      tabController: _tabController,
+      categories: widget.state.categories,
+      sections: widget.state.sections,
+    );
+
+    if (isMySchedule) {
+      return _MyScheduleTab(header: header);
+    }
+
+    return AppPage(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+      header: header,
+      children: [
+        const SizedBox(height: AppSpacing.m),
+        const _ScheduleBody(),
+      ],
     );
   }
 }
 
-/// Cuerpo del schedule.
-class _ScheduleBody extends StatelessWidget {
-  const _ScheduleBody({required this.visibleItems, required this.isFiltered});
+/// Tab de My Schedule dentro del Schedule. Gestiona el estado async y decide
+/// entre [AppPage.fillChild] (loading/error/vacío) y [AppPage.children] (con datos)
+/// para que los estados vacíos queden centrados verticalmente.
+class _MyScheduleTab extends ConsumerWidget {
+  const _MyScheduleTab({required this.header});
 
-  final List<ScheduleItem> visibleItems;
-  final bool isFiltered;
+  final Widget header;
 
   @override
-  Widget build(BuildContext context) {
-    if (visibleItems.isEmpty && isFiltered) {
-      return const _EmptyFilter();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final asyncItems = ref.watch(myScheduleGroupedProvider);
+
+    if (asyncItems.isLoading) {
+      return AppPage(
+        header: header,
+        fillChild: const Center(child: CircularProgressIndicator()),
+      );
     }
 
+    if (asyncItems.hasError) {
+      return AppPage(
+        header: header,
+        fillChild: Center(
+          child: AppEmptyState(
+            illustration: Icon(
+              AppIcons.error,
+              size: 48,
+              color: theme.colorScheme.error,
+            ),
+            title: 'Could not load your schedule',
+            message: 'Something went wrong. Please try again.',
+            actionButton: TextButton(
+              onPressed: () => ref.invalidate(myScheduleItemsProvider),
+              child: const Text('Retry'),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final items = asyncItems.value ?? const [];
+
+    if (items.isEmpty) {
+      return AppPage(
+        header: header,
+        fillChild: Center(
+          child: AppEmptyState(
+            illustration: Icon(
+              AppIcons.bookmarkOff,
+              size: 48,
+              color: theme.colorScheme.outlineVariant,
+            ),
+            title: 'Nothing saved yet',
+            message: 'Bookmark sessions and talks to build your schedule',
+          ),
+        ),
+      );
+    }
+
+    return AppPage(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+      header: header,
+      children: [
+        const SizedBox(height: AppSpacing.m),
+        MyScheduleContent(items: items),
+      ],
+    );
+  }
+}
+
+/// Cuerpo del schedule — lee sus propios providers.
+class _ScheduleBody extends ConsumerWidget {
+  const _ScheduleBody();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final visibleItems = ref.watch(visibleItemsProvider);
+    final isFiltered = ref.watch(
+      selectedScheduleCategoryProvider.select((cat) => cat != null),
+    );
+
+    if (visibleItems.isEmpty && isFiltered) {
+      return const _EmptyScheduleFilter();
+    }
     return Column(children: visibleItems.map(_buildItem).toList());
   }
 
@@ -134,45 +229,37 @@ class _DaySeparator extends StatelessWidget {
   }
 }
 
-/// Texto de cabecera de la pantalla Schedule.
-const _kScheduleTitle = 'Schedule';
-
-/// Header de la pantalla Schedule.
-class _ScheduleHeader extends StatelessWidget {
+/// Header del schedule — lee su propio estado de providers.
+class _ScheduleHeader extends ConsumerWidget {
   const _ScheduleHeader({
-    required this.topTab,
-    required this.onTopTabSelect,
+    required this.tabController,
     required this.categories,
-    required this.selectedCategory,
-    required this.onCategorySelect,
     required this.sections,
-    required this.onDaySelect,
-    required this.isFiltered,
-    required this.isMySchedule,
   });
 
-  final ScheduleTab topTab;
-  final ValueChanged<ScheduleTab> onTopTabSelect;
+  final TabController tabController;
   final List<EventType> categories;
-  final EventType? selectedCategory;
-  final ValueChanged<EventType?> onCategorySelect;
   final List<ScheduleDaySection> sections;
-  final ValueChanged<int> onDaySelect;
-  final bool isFiltered;
-  final bool isMySchedule;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
+    final topTab = ref.watch(scheduleTopTabProvider);
+    final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
+    final isFiltered = selectedCategory != null;
+    final isMySchedule = topTab == ScheduleTab.mySchedule;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-          child: _TopTabBar(selected: topTab, onSelect: onTopTabSelect),
+          child: _TopTabBar(
+            selected: topTab,
+            onSelect: (tab) =>
+                ref.read(scheduleTopTabProvider.notifier).select(tab),
+          ),
         ),
         if (!isMySchedule) ...[
           if (sections.isNotEmpty) ...[
@@ -197,7 +284,10 @@ class _ScheduleHeader extends StatelessWidget {
                       ],
                     )
                   : TabBar(
-                      onTap: onDaySelect,
+                      controller: tabController,
+                      onTap: (index) => ref
+                          .read(selectedDayIndexProvider.notifier)
+                          .set(index),
                       isScrollable: true,
                       tabAlignment: TabAlignment.start,
                       padding: EdgeInsets.zero,
@@ -224,7 +314,9 @@ class _ScheduleHeader extends StatelessWidget {
             ScheduleCategoryFilterBar(
               categories: categories,
               selected: selectedCategory,
-              onSelect: onCategorySelect,
+              onSelect: (cat) => ref
+                  .read(selectedScheduleCategoryProvider.notifier)
+                  .select(cat),
             ),
           ],
         ],
@@ -233,7 +325,7 @@ class _ScheduleHeader extends StatelessWidget {
   }
 }
 
-/// Tap bar superior.
+/// Tap bar superior Schedule / My Schedule.
 class _TopTabBar extends StatelessWidget {
   final ScheduleTab selected;
   final ValueChanged<ScheduleTab> onSelect;
@@ -242,9 +334,6 @@ class _TopTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-
     return Row(
       children: [
         Flexible(
@@ -252,8 +341,6 @@ class _TopTabBar extends StatelessWidget {
             label: _kScheduleTitle,
             isSelected: selected == ScheduleTab.timeline,
             onTap: () => onSelect(ScheduleTab.timeline),
-            theme: theme,
-            colors: colors,
           ),
         ),
         const SizedBox(width: AppSpacing.m),
@@ -262,8 +349,6 @@ class _TopTabBar extends StatelessWidget {
             label: 'My Schedule',
             isSelected: selected == ScheduleTab.mySchedule,
             onTap: () => onSelect(ScheduleTab.mySchedule),
-            theme: theme,
-            colors: colors,
           ),
         ),
       ],
@@ -271,24 +356,40 @@ class _TopTabBar extends StatelessWidget {
   }
 }
 
-/// Tap de la tap bar superior.
+/// Estado vacío del schedule cuando se aplica un filtro.
+class _EmptyScheduleFilter extends StatelessWidget {
+  const _EmptyScheduleFilter();
+
+  @override
+  Widget build(BuildContext context) {
+    return AppEmptyState(
+      illustration: Icon(
+        AppIcons.searchOff,
+        size: 48,
+        color: Theme.of(context).colorScheme.outlineVariant,
+      ),
+      title: 'No sessions match your filters',
+      message: 'Try a different category or clear the filter',
+    );
+  }
+}
+
+/// Tab individual de la barra superior.
 class _TopTab extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
-  final ThemeData theme;
-  final ColorScheme colors;
 
   const _TopTab({
     required this.label,
     required this.isSelected,
     required this.onTap,
-    required this.theme,
-    required this.colors,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -303,58 +404,6 @@ class _TopTab extends StatelessWidget {
             color: isSelected ? colors.onSurface : colors.outline,
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// Estado cuando el schedule está vacío debido a filtros.
-class _EmptyFilter extends StatelessWidget {
-  const _EmptyFilter();
-
-  @override
-  Widget build(BuildContext context) => _EmptyState(
-    icon: AppIcons.searchOff,
-    title: 'No sessions match your filters',
-    subtitle: 'Try a different category or clear the filter',
-  );
-}
-
-/// Estado genérico de Schedule vacío.
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-      child: Column(
-        children: [
-          Icon(icon, size: 48, color: theme.colorScheme.outlineVariant),
-          const SizedBox(height: AppSpacing.m),
-          Text(
-            title,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            subtitle,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.outline,
-            ),
-          ),
-        ],
       ),
     );
   }

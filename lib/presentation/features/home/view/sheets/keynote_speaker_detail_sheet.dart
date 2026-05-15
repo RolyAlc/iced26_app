@@ -14,7 +14,10 @@ import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
 const _kIconBadgeSize = 36.0;
 const _kIconSize = 18.0;
 const _kPlaceholderIconSize = 64.0;
+const _kLabelPresentation = 'Presentation';
+const _kLabelSession = 'Sessions';
 
+/// Muestra el sheet de detalle de un keynote speaker.
 void showKeynoteSpeakerDetail(
   BuildContext context,
   KeynoteSpeakerUIModel speaker,
@@ -26,6 +29,7 @@ void showKeynoteSpeakerDetail(
   );
 }
 
+/// Contenido del sheet de detalle de un keynote speaker.
 class _SpeakerDetailContent extends StatelessWidget {
   const _SpeakerDetailContent({required this.speaker});
 
@@ -48,6 +52,7 @@ class _SpeakerDetailContent extends StatelessWidget {
   }
 }
 
+/// Imagen del keynote speaker.
 class _SpeakerImage extends StatelessWidget {
   const _SpeakerImage({required this.photoUrl});
 
@@ -74,6 +79,7 @@ class _SpeakerImage extends StatelessWidget {
   }
 }
 
+/// Información de la institución del keynote speaker.
 class _SpeakerInstitution extends StatelessWidget {
   const _SpeakerInstitution({required this.institution});
 
@@ -107,6 +113,7 @@ class _SpeakerInstitution extends StatelessWidget {
   }
 }
 
+/// Sección de sesiones dentro del detalle de un keynote speaker.
 class _SpeakerSessions extends StatelessWidget {
   const _SpeakerSessions({required this.events});
 
@@ -126,7 +133,7 @@ class _SpeakerSessions extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Sessions',
+            _kLabelSession,
             style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: AppSpacing.s),
@@ -137,6 +144,7 @@ class _SpeakerSessions extends StatelessWidget {
   }
 }
 
+/// Row de una presentación dentro del detalle de un keynote speaker.
 class _PresentationRow extends StatelessWidget {
   const _PresentationRow({required this.presentation});
 
@@ -153,7 +161,7 @@ class _PresentationRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Presentation',
+            _kLabelPresentation,
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -197,6 +205,7 @@ class _PresentationRow extends StatelessWidget {
   }
 }
 
+/// Row de una sesión dentro del detalle de un keynote speaker.
 class _SessionRow extends StatelessWidget {
   const _SessionRow({required this.session});
 
@@ -205,7 +214,7 @@ class _SessionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final style = resolveTypeStyle(context, session.type);
+    final style = session.type.style(theme.colorScheme);
 
     return InkWell(
       onTap: () => showEventDetail(context, session.event),
@@ -254,6 +263,7 @@ class _SessionRow extends StatelessWidget {
   }
 }
 
+/// Badge con icono y fondo de color.
 class _IconBadge extends StatelessWidget {
   const _IconBadge({
     required this.icon,

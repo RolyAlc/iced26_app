@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:collection/collection.dart';
 
+import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/category.dart';
@@ -24,7 +25,6 @@ part 'home_viewmodel.g.dart';
 // Locale usado para resolver textos multilingüe.
 // TODO: Obtener dinámicamente desde configuración del usuario.
 const _kLocale = 'en';
-const _kHeaderLabel = 'Welcome to ICED26';
 const _kMaxFeaturedEvents = 5;
 final _kMaxDate = DateTime(9999);
 final _kMinDate = DateTime(0);
@@ -225,7 +225,7 @@ class HomeViewModel extends _$HomeViewModel {
       categories: _buildCategories(data.subTypes),
       news: data.news,
       socialActivities: data.socialActivities,
-      headerInfoLabel: _kHeaderLabel,
+      headerInfoLabel: AppConfig.welcomeLabel,
     );
   }
 }

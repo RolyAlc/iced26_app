@@ -4,30 +4,33 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/bootstrap.dart';
+import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/presentation/app/navigation_constants.dart';
 import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/app/widgets/app_async_value_widget.dart';
-import 'package:iced26/presentation/app/widgets/loading_screen.dart';
-import 'package:iced26/presentation/app/widgets/smart_search_bar.dart';
-import 'package:iced26/presentation/app/widgets/staggered_fade_in.dart';
-import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
-import 'package:iced26/presentation/features/home/view/sections/home_news_section.dart';
-import 'package:iced26/presentation/features/home/view/sections/home_header_section.dart';
+import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
+import 'package:iced26/presentation/shared/widgets/error_screen.dart';
+import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
+import 'package:iced26/presentation/shared/widgets/smart_search_bar.dart';
+import 'package:iced26/presentation/shared/widgets/staggered_fade_in.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_featured_section.dart';
+import 'package:iced26/presentation/features/home/view/sections/home_header_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_keynote_speakers_section.dart';
+import 'package:iced26/presentation/features/home/view/sections/home_news_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_social_activities_section.dart';
-import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
-import 'package:iced26/presentation/widgets/app_empty_state.dart';
-import 'package:iced26/presentation/widgets/app_page.dart';
-import 'package:iced26/presentation/widgets/app_section.dart';
+import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
+import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
+import 'package:iced26/presentation/shared/widgets/app_page.dart';
+import 'package:iced26/presentation/shared/widgets/app_section.dart';
 
-// Alturas de referencia para el header colapsable.
 const double _expandedHeaderHeight = 136.0;
 const double _collapsedHeaderHeight = 80.0;
 
-/// Vista raíz de la página principal.
+/// Vista principal de la pantalla de inicio.
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
@@ -38,25 +41,12 @@ class HomeView extends ConsumerWidget {
     return bootstrapAsync.when(
       data: (_) => const _HomeContent(),
       loading: () => const LoadingScreen(),
-      error: (err, stack) => _BootstrapErrorScreen(error: err),
+      error: (err, stack) => ErrorScreen(error: err.toString()),
     );
   }
 }
 
-/// Pantalla de error cuando el bootstrap falla.
-class _BootstrapErrorScreen extends StatelessWidget {
-  const _BootstrapErrorScreen({required this.error});
-
-  final Object error;
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: reemplazar por AppErrorScreen cuando exista.
-    return Center(child: Text('Error: $error'));
-  }
-}
-
-/// Observa [homeViewModelProvider] y monta el [AppPage] con todas las secciones.
+/// Contenedor principal de la vista de inicio.
 class _HomeContent extends ConsumerWidget {
   const _HomeContent();
 
@@ -69,7 +59,6 @@ class _HomeContent extends ConsumerWidget {
       asyncValue: homeStateAsync,
       data: (state) => AppPage(
         header: _HomeExpandedHeader(
-          today: DateTime.now(),
           infoLabel: state.headerInfoLabel,
           searchNotifier: searchNotifier,
         ),
@@ -78,57 +67,82 @@ class _HomeContent extends ConsumerWidget {
         ),
         headerFallbackHeight: _expandedHeaderHeight,
         collapsedHeaderFallbackHeight: _collapsedHeaderHeight,
-        children: _buildSections(state, ref),
+        children: [
+          _HomeFeaturedSection(
+            featuredEvents: state.featuredEvents,
+            onExploreTap: () => ref
+                .read(navigationProvider.notifier)
+                .select(AppFeature.schedule),
+          ),
+          if (state.keynoteSpeakers.isNotEmpty)
+            _HomeKeynoteSection(speakers: state.keynoteSpeakers),
+          _HomeNewsSection(news: state.news),
+          _HomeSocialSection(socialActivities: state.socialActivities),
+        ],
       ),
     );
   }
+}
 
-  /// Devuelve la lista ordenada de secciones de la Home.
-  List<Widget> _buildSections(HomeState state, WidgetRef ref) {
-    return [
-      _buildFeaturedSection(state, ref),
-      if (state.keynoteSpeakers.isNotEmpty) _buildKeynoteSection(state),
-      _buildNewsSection(state),
-      _buildSocialSection(state),
-    ];
-  }
+/// Sección de eventos destacados.
+class _HomeFeaturedSection extends StatelessWidget {
+  const _HomeFeaturedSection({
+    required this.featuredEvents,
+    required this.onExploreTap,
+  });
 
-  /// Carrusel horizontal de eventos destacados.
-  Widget _buildFeaturedSection(HomeState state, WidgetRef ref) {
-    return _AnimatedSection(
+  final List<EventUIModel> featuredEvents;
+  final VoidCallback onExploreTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return StaggeredFadeIn(
       delay: const Duration(milliseconds: 200),
       child: AppSection(
         title: 'Featured sessions',
         edgeToEdge: true,
         child: HomeFeaturedSection(
-          featuredEvents: state.featuredEvents,
-          onExploreTap: () =>
-              ref.read(navigationProvider.notifier).select(AppFeature.schedule),
+          featuredEvents: featuredEvents,
+          onExploreTap: onExploreTap,
         ),
       ),
     );
   }
+}
 
-  /// Carrusel horizontal de keynote speakers.
-  Widget _buildKeynoteSection(HomeState state) {
-    return _AnimatedSection(
+/// Sección de keynotes.
+class _HomeKeynoteSection extends StatelessWidget {
+  const _HomeKeynoteSection({required this.speakers});
+
+  final List<KeynoteSpeakerUIModel> speakers;
+
+  @override
+  Widget build(BuildContext context) {
+    return StaggeredFadeIn(
       delay: const Duration(milliseconds: 350),
       child: AppSection(
         title: 'Keynote speakers',
         edgeToEdge: true,
-        child: HomeKeynoteSection(speakers: state.keynoteSpeakers),
+        child: HomeKeynoteSection(speakers: speakers),
       ),
     );
   }
+}
 
-  /// Lista vertical de noticias con estado vacío.
-  Widget _buildNewsSection(HomeState state) {
-    return _AnimatedSection(
+/// Sección de últimas noticias.
+class _HomeNewsSection extends StatelessWidget {
+  const _HomeNewsSection({required this.news});
+
+  final List<NewsItem> news;
+
+  @override
+  Widget build(BuildContext context) {
+    return StaggeredFadeIn(
       delay: const Duration(milliseconds: 400),
       child: AppSection.resolved(
         title: 'Latest news',
-        hasData: state.news.isNotEmpty,
-        dataChild: HomeNewsSection(news: state.news),
+        hasData: news.isNotEmpty,
+        dataChild: HomeNewsSection(news: news),
         emptyChild: const AppEmptyState(
           title: 'No news available',
           message: 'Check back later for the latest updates.',
@@ -137,16 +151,23 @@ class _HomeContent extends ConsumerWidget {
       ),
     );
   }
+}
 
-  /// Carrusel horizontal de actividades sociales con estado vacío.
-  Widget _buildSocialSection(HomeState state) {
-    return _AnimatedSection(
+/// Sección de actividades sociales.
+class _HomeSocialSection extends StatelessWidget {
+  const _HomeSocialSection({required this.socialActivities});
+
+  final List<SocialActivity> socialActivities;
+
+  @override
+  Widget build(BuildContext context) {
+    return StaggeredFadeIn(
       delay: const Duration(milliseconds: 500),
       child: AppSection.resolved(
         title: 'Social activities',
         edgeToEdge: true,
-        hasData: state.socialActivities.isNotEmpty,
-        dataChild: HomeSocialActivitiesSection(socials: state.socialActivities),
+        hasData: socialActivities.isNotEmpty,
+        dataChild: HomeSocialActivitiesSection(socials: socialActivities),
         emptyChild: const Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.l),
           child: AppEmptyState(
@@ -160,15 +181,13 @@ class _HomeContent extends ConsumerWidget {
   }
 }
 
-/// Header expandido: logo + fecha/welcome + barra de búsqueda.
+/// Header expandido de la vista de inicio.
 class _HomeExpandedHeader extends StatelessWidget {
   const _HomeExpandedHeader({
-    required this.today,
     required this.infoLabel,
     required this.searchNotifier,
   });
 
-  final DateTime today;
   final String infoLabel;
   final Search searchNotifier;
 
@@ -177,7 +196,9 @@ class _HomeExpandedHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    final dateLabel = MaterialLocalizations.of(context).formatFullDate(today);
+    final dateLabel = MaterialLocalizations.of(
+      context,
+    ).formatFullDate(DateTime.now());
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -189,7 +210,6 @@ class _HomeExpandedHeader extends StatelessWidget {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.asset(Assets.logoIced26, height: 48, fit: BoxFit.contain),
               Column(
@@ -203,7 +223,7 @@ class _HomeExpandedHeader extends StatelessWidget {
                         size: 14,
                         color: colorScheme.primary,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppSpacing.xs),
                       Text(
                         dateLabel,
                         style: textTheme.labelSmall?.copyWith(
@@ -231,18 +251,5 @@ class _HomeExpandedHeader extends StatelessWidget {
         ),
       ],
     );
-  }
-}
-
-/// Envuelve cualquier sección con [StaggeredFadeIn] para animación de entrada.
-class _AnimatedSection extends StatelessWidget {
-  const _AnimatedSection({required this.delay, required this.child});
-
-  final Duration delay;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return StaggeredFadeIn(delay: delay, child: child);
   }
 }

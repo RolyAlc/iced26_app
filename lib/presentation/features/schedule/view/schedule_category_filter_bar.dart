@@ -41,7 +41,7 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
         onTap: () => onSelect(null),
       ),
       ...categories.expand((cat) {
-        final style = resolveTypeStyle(context, cat);
+        final style = cat.style(colors);
         return [
           const SizedBox(width: AppSpacing.xs),
           _CategoryChip(

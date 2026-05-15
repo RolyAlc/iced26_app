@@ -6,7 +6,6 @@ import 'package:iced26/presentation/features/home/viewmodel/mappers/category_ui_
 import 'package:iced26/presentation/features/home/widgets/category_card.dart';
 
 /// Seccion de categorias. Grid uniforme de 2 columnas.
-/// Escala correctamente con cualquier numero de categorias (5, 8, 11...).
 class HomeCategoriesSection extends StatelessWidget {
   const HomeCategoriesSection({super.key, required this.categories});
 
@@ -28,6 +27,7 @@ class HomeCategoriesSection extends StatelessWidget {
             (category) => CategoryCard(
               name: category.name,
               style: CategoryUiMapper.resolve(category),
+              // TODO: navegar al listado filtrado por categoría (navigationProvider)
               onTap: () {},
             ),
           )

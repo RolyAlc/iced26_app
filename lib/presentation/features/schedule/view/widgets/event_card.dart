@@ -9,8 +9,8 @@ import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
 import 'package:iced26/di/domain_providers.dart';
-import 'package:iced26/presentation/widgets/app_card.dart';
-import 'package:iced26/presentation/widgets/slot_time_label.dart';
+import 'package:iced26/presentation/shared/widgets/app_card.dart';
+import 'package:iced26/presentation/shared/widgets/slot_time_label.dart';
 
 /// Tarjeta principal de evento.
 class EventCard extends ConsumerWidget {
@@ -55,7 +55,7 @@ class EventCard extends ConsumerWidget {
 
   /// Acción al pulsar la card
   void _onTap(BuildContext context) {
-    showDetailSheet(context, event);
+    showEventDetail(context, event);
   }
 }
 

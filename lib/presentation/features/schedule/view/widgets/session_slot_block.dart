@@ -4,16 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event_status.dart';
+import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/app/widgets/app_bottom_sheet.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
-import 'package:iced26/presentation/helpers/date_helper.dart';
+import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
+import 'package:iced26/presentation/features/schedule/view/widgets/slot_presentation_tile.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
-import 'package:iced26/presentation/widgets/app_card.dart';
-import 'package:iced26/presentation/widgets/slot_time_label.dart';
+import 'package:iced26/presentation/shared/widgets/app_card.dart';
+import 'package:iced26/presentation/shared/widgets/slot_time_label.dart';
+
+const _kSeparator = '  ·  ';
 
 /// Slot que contiene varias presentaciones en un mismo bloque.
 class SessionSlotBlock extends StatelessWidget {
@@ -21,8 +24,7 @@ class SessionSlotBlock extends StatelessWidget {
 
   const SessionSlotBlock({super.key, required this.item});
 
-  void _showSheet(BuildContext context) {
-    final locale = Localizations.localeOf(context).languageCode;
+  void _showSheet(BuildContext context, String locale) {
     final blockIds = item.blocks.map((b) => b.id).toList();
     AppBottomSheet.show(
       context: context,
@@ -42,7 +44,7 @@ class SessionSlotBlock extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: AppCard(
-        onTap: () => _showSheet(context),
+        onTap: () => _showSheet(context, locale),
         bordered: true,
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -50,7 +52,6 @@ class SessionSlotBlock extends StatelessWidget {
             vertical: AppSpacing.sm,
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (time != null) ...[
                 SlotTimeLabel(time: time, isLive: isLive),
@@ -104,6 +105,7 @@ class _TrackBadge extends StatelessWidget {
 }
 
 /// Lista de presentaciones agrupadas por bloque.
+/// Resuelve `allPeopleIndexProvider` una sola vez y lo pasa hacia abajo.
 class _SlotPresentationList extends ConsumerWidget {
   final List<SessionBlock> blocks;
   final List<String> blockIds;
@@ -115,6 +117,7 @@ class _SlotPresentationList extends ConsumerWidget {
     final asyncPresentations = ref.watch(
       presentationsForSlotProvider(blockIds),
     );
+    final peopleIndex = ref.watch(allPeopleIndexProvider).value ?? {};
 
     return asyncPresentations.when(
       loading: () => const Padding(
@@ -126,8 +129,11 @@ class _SlotPresentationList extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: blocks
             .map(
-              (b) =>
-                  _BlockSection(block: b, presentations: grouped[b.id] ?? []),
+              (b) => _BlockSection(
+                block: b,
+                presentations: grouped[b.id] ?? [],
+                peopleIndex: peopleIndex,
+              ),
             )
             .toList(),
       ),
@@ -139,8 +145,13 @@ class _SlotPresentationList extends ConsumerWidget {
 class _BlockSection extends StatelessWidget {
   final SessionBlock block;
   final List<Presentation> presentations;
+  final Map<String, Person> peopleIndex;
 
-  const _BlockSection({required this.block, required this.presentations});
+  const _BlockSection({
+    required this.block,
+    required this.presentations,
+    required this.peopleIndex,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +187,7 @@ class _BlockSection extends StatelessWidget {
           if (headerParts.isNotEmpty)
             Flexible(
               child: Text(
-                headerParts.join('  ·  '),
+                headerParts.join(_kSeparator),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
@@ -202,68 +213,10 @@ class _BlockSection extends StatelessWidget {
             ),
           )
         else
-          ...presentations.map((p) => _PresentationTile(presentation: p)),
-      ],
-    );
-  }
-}
-
-/// Tile que muestra una presentación.
-class _PresentationTile extends ConsumerWidget {
-  final Presentation presentation;
-
-  const _PresentationTile({required this.presentation});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final locale = Localizations.localeOf(context).languageCode;
-    final title =
-        presentation.title?.resolve(locale) ?? presentation.externalRef ?? '—';
-
-    final peopleIndex = ref.watch(allPeopleIndexProvider).value ?? {};
-    final names = presentation.speakers
-        .map((s) => peopleIndex[s.personId]?.name.resolve(locale))
-        .whereType<String>()
-        .toList();
-    final speakerNames = switch (names.length) {
-      0 => null,
-      1 => names.first,
-      _ => '${names.first} & +${names.length - 1} more',
-    };
-
-    return Column(
-      children: [
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(
-            title,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          ...presentations.map(
+            (p) =>
+                SlotPresentationTile(presentation: p, peopleIndex: peopleIndex),
           ),
-          subtitle: speakerNames != null
-              ? Text(
-                  speakerNames,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                )
-              : null,
-          trailing: Icon(
-            AppIcons.chevronRight,
-            color: theme.colorScheme.outline,
-          ),
-          onTap: () => showPresentationDetail(context, presentation),
-        ),
-        Divider(
-          height: 1,
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.15),
-        ),
       ],
     );
   }
