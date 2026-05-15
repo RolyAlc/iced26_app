@@ -3,53 +3,115 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
-import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/my_schedule/view/widgets/saved_presentation_card.dart';
+import 'package:iced26/presentation/features/my_schedule/viewmodel/models/my_schedule_display_item.dart';
+import 'package:iced26/presentation/features/my_schedule/viewmodel/my_schedule_viewmodel.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
-/// Vista standalone de My Schedule (con AppPage propio).
-/// Usada cuando My Schedule ocupa una pantalla completa.
+const _kNothingSavedTitle = 'Nothing saved yet';
+const _kNothingSavedMessage =
+    'Bookmark sessions and talks to build your schedule';
+const _kErrorTitle = 'Could not load your schedule';
+const _kErrorMessage = 'Something went wrong. Please try again.';
+
+// TODO: Gestionar los if
+
+/// Pantalla completa de My Schedule. Envuelve [MyScheduleContent] con su propio
+/// [AppPage] para poder usarse como destino de navegación independiente.
 class MyScheduleView extends ConsumerWidget {
   const MyScheduleView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final asyncItems = ref.watch(myScheduleGroupedProvider);
+    final items = asyncItems.asData?.value;
+    final hasItems = items != null && items.isNotEmpty;
+
+    if (asyncItems.isLoading) {
+      return AppPage(
+        header: const _MyScheduleHeader(),
+        fillChild: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (asyncItems.hasError) {
+      return AppPage(
+        header: const _MyScheduleHeader(),
+        fillChild: Center(
+          child: AppEmptyState(
+            illustration: Icon(
+              AppIcons.error,
+              size: 48,
+              color: theme.colorScheme.error,
+            ),
+            title: _kErrorTitle,
+            message: _kErrorMessage,
+            actionButton: TextButton(
+              onPressed: () => ref.invalidate(myScheduleItemsProvider),
+              child: const Text('Retry'),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (!hasItems) {
+      return AppPage(
+        header: const _MyScheduleHeader(),
+        fillChild: Center(
+          child: AppEmptyState(
+            illustration: Icon(
+              AppIcons.bookmarkOff,
+              size: 48,
+              color: theme.colorScheme.outlineVariant,
+            ),
+            title: _kNothingSavedTitle,
+            message: _kNothingSavedMessage,
+          ),
+        ),
+      );
+    }
+
+    final totalCount = items.whereType<MyScheduleRow>().length;
+
     return AppPage(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-      header: _MyScheduleHeader(),
+      header: _MyScheduleHeader(count: totalCount),
       children: [
         const SizedBox(height: AppSpacing.m),
-        const MyScheduleContent(),
+        MyScheduleContent(items: items),
       ],
     );
   }
 }
 
-/// Contenido de My Schedule sin AppPage — para embeber dentro de otra pantalla.
-class MyScheduleContent extends ConsumerWidget {
-  const MyScheduleContent({super.key});
+/// Lista de items guardados sin [AppPage] propio, para embeber en otras pantallas
+/// (ej. tab de Schedule) sin duplicar el scaffold.
+class MyScheduleContent extends StatelessWidget {
+  const MyScheduleContent({super.key, required this.items});
+
+  final List<MyScheduleDisplayItem> items;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final asyncItems = ref.watch(myScheduleItemsProvider);
-
-    return asyncItems.when(
-      loading: () => const Padding(
-        padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
-        child: Center(child: CircularProgressIndicator()),
-      ),
-      error: (_, _) => const SizedBox.shrink(),
-      data: (items) => items.isEmpty
-          ? const _EmptyMySchedule()
-          : Column(children: items.map(_buildItem).toList()),
-    );
+  Widget build(BuildContext context) {
+    return Column(children: items.map(_buildDisplayItem).toList());
   }
 }
 
-/// Construye un widget basado en el tipo de item de My Schedule.
-Widget _buildItem(MyScheduleItem item) {
+Widget _buildDisplayItem(MyScheduleDisplayItem displayItem) {
+  return switch (displayItem) {
+    MyScheduleDayHeader() => _MyScheduleDayHeader(header: displayItem),
+    MyScheduleRow(:final item) => _buildScheduleItem(item),
+  };
+}
+
+Widget _buildScheduleItem(MyScheduleItem item) {
   return switch (item) {
     SavedEventItem(:final event) => EventCard(event: event),
     SavedPresentationItem(:final presentation) => SavedPresentationCard(
@@ -58,55 +120,67 @@ Widget _buildItem(MyScheduleItem item) {
   };
 }
 
-/// Cabecera de My Schedule.
-class _MyScheduleHeader extends StatelessWidget {
+/// Header de sección de un día dentro de [MyScheduleContent].
+class _MyScheduleDayHeader extends StatelessWidget {
+  const _MyScheduleDayHeader({required this.header});
+
+  final MyScheduleDayHeader header;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final label = header.date != null
+        ? DateHelper.formatDayLabel(header.date!)
+        : 'Unscheduled';
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-      child: Text(
-        'My Schedule',
-        style: theme.textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
+      padding: const EdgeInsets.only(top: AppSpacing.l, bottom: AppSpacing.s),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          Text(
+            '· ${header.count}',
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.outline,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.s),
+          Expanded(
+            child: Divider(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-/// Estado cuando My Schedule está vacío.
-class _EmptyMySchedule extends StatelessWidget {
-  const _EmptyMySchedule();
+/// Header general de la pantalla [MyScheduleView].
+class _MyScheduleHeader extends StatelessWidget {
+  const _MyScheduleHeader({this.count});
+
+  final int? count;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final title = count != null ? 'My Schedule ($count)' : 'My Schedule';
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-      child: Column(
-        children: [
-          Icon(
-            AppIcons.bookmarkOff,
-            size: 48,
-            color: theme.colorScheme.outlineVariant,
-          ),
-          const SizedBox(height: AppSpacing.m),
-          Text(
-            'Nothing saved yet',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            'Bookmark sessions and talks to build your schedule',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.outline,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+      child: Text(
+        title,
+        style: theme.textTheme.headlineSmall?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
