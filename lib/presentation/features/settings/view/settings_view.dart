@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:iced26/presentation/features/settings/widgets/data_items.dart';
 import 'package:iced26/presentation/features/settings/widgets/settings_section.dart';
 import 'package:iced26/presentation/features/settings/widgets/text_size_item.dart';
 import 'package:iced26/presentation/features/settings/widgets/theme_picker.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
@@ -56,10 +57,10 @@ class SettingsView extends StatelessWidget {
             SettingsItem(
               icon: AppIcons.language,
               title: 'Official website',
-              subtitle: 'iced26.es',
+              subtitle: AppConfig.websiteLabel,
               onTap: () {
                 launchUrl(
-                  Uri.parse('https://iced26.es'),
+                  Uri.parse(AppConfig.websiteUrl),
                   mode: LaunchMode.externalApplication,
                 );
               },

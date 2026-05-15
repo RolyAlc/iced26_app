@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
@@ -61,7 +62,6 @@ class _ThemePickerDialogState extends ConsumerState<_ThemePickerDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Theme'),
-      // Sin padding lateral para que el InkWell de cada opción llegue al borde.
       contentPadding: const EdgeInsets.only(top: AppSpacing.s),
       content: RadioGroup<ThemeMode>(
         groupValue: _selected,
@@ -73,8 +73,7 @@ class _ThemePickerDialogState extends ConsumerState<_ThemePickerDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            for (final mode in ThemeMode.values)
-              _ThemeOptionTile(mode: mode, onSelect: _select),
+            for (final mode in ThemeMode.values) _ThemeOptionTile(mode: mode),
           ],
         ),
       ),
@@ -100,38 +99,30 @@ class _ThemePickerDialogState extends ConsumerState<_ThemePickerDialog> {
   }
 }
 
-/// Fila de opción de tema con radio, icono, etiqueta y swatch de colores.
+/// Fila de opción de tema con radio, icono y etiqueta.
 class _ThemeOptionTile extends StatelessWidget {
-  const _ThemeOptionTile({required this.mode, required this.onSelect});
+  const _ThemeOptionTile({required this.mode});
 
   final ThemeMode mode;
-  final ValueChanged<ThemeMode> onSelect;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onSelect(mode);
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.m,
-          vertical: AppSpacing.xs,
-        ),
-        child: Row(
+    return Material(
+      color: Colors.transparent,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.m),
+      ),
+      child: RadioListTile<ThemeMode>(
+        value: mode,
+        contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
+        title: Row(
           children: [
-            Radio<ThemeMode>(
-              value: mode,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            const SizedBox(width: AppSpacing.xs),
             Icon(_themeIcon(mode), size: 20),
             const SizedBox(width: AppSpacing.s),
-            Expanded(
-              child: Text(
-                _themeLabel(mode),
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+            Text(
+              _themeLabel(mode),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
         ),

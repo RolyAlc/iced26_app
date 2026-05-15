@@ -32,8 +32,6 @@ class TextSizeItem extends ConsumerWidget {
 }
 
 /// Diálogo de selección de tamaño de texto.
-/// Cada opción se renderiza en su propio tamaño — el label ES la demo.
-/// Aplica el cambio al instante; Cancel revierte.
 class _TextSizePickerDialog extends ConsumerStatefulWidget {
   const _TextSizePickerDialog({required this.initialPref});
 
@@ -44,6 +42,7 @@ class _TextSizePickerDialog extends ConsumerStatefulWidget {
       _TextSizePickerDialogState();
 }
 
+/// Estado del diálogo de selección de tamaño de texto.
 class _TextSizePickerDialogState extends ConsumerState<_TextSizePickerDialog> {
   late TextSizePreference _selected;
 
@@ -78,7 +77,7 @@ class _TextSizePickerDialogState extends ConsumerState<_TextSizePickerDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             for (final pref in TextSizePreference.values)
-              _TextSizeOptionTile(pref: pref, onSelect: _select),
+              _TextSizeOptionTile(pref: pref),
           ],
         ),
       ),
@@ -109,29 +108,23 @@ class _TextSizePickerDialogState extends ConsumerState<_TextSizePickerDialog> {
 /// Fila de opción: radio + label renderizado en el tamaño que representa.
 /// El propio texto demuestra visualmente el efecto de cada opción.
 class _TextSizeOptionTile extends StatelessWidget {
-  const _TextSizeOptionTile({required this.pref, required this.onSelect});
+  const _TextSizeOptionTile({required this.pref});
 
   final TextSizePreference pref;
-  final ValueChanged<TextSizePreference> onSelect;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onSelect(pref);
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.m,
-          vertical: AppSpacing.xs,
-        ),
-        child: Row(
+    return Material(
+      color: Colors.transparent,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.m),
+      ),
+      child: RadioListTile<TextSizePreference>(
+        value: pref,
+        contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
+        title: Row(
           children: [
-            Radio<TextSizePreference>(
-              value: pref,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            const SizedBox(width: AppSpacing.xs),
             // MediaQuery override aislado: el label se renderiza a su propio scale,
             // independiente de la preferencia activa en el resto de la app.
             MediaQuery(

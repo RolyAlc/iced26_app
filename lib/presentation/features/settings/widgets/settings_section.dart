@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
@@ -33,23 +34,24 @@ class SettingsSection extends StatelessWidget {
               ),
             ),
           ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadius.m),
-            child: ColoredBox(
-              color: colors.surfaceContainerLow,
-              child: Column(
-                children: [
-                  for (int i = 0; i < items.length; i++) ...[
-                    items[i],
-                    if (i < items.length - 1)
-                      Divider(
-                        height: 1,
-                        indent: AppSpacing.l + 40,
-                        color: colors.outlineVariant.withValues(alpha: 0.5),
-                      ),
-                  ],
+          Material(
+            clipBehavior: Clip.antiAlias,
+            color: colors.surfaceContainerLow,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.m),
+            ),
+            child: Column(
+              children: [
+                for (int i = 0; i < items.length; i++) ...[
+                  items[i],
+                  if (i < items.length - 1)
+                    Divider(
+                      height: 1,
+                      indent: AppSpacing.l + 40,
+                      color: colors.outlineVariant.withValues(alpha: 0.5),
+                    ),
                 ],
-              ),
+              ],
             ),
           ),
         ],
