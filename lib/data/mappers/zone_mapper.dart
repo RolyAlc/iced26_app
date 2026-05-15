@@ -25,4 +25,10 @@ abstract final class ZoneMapper {
       description: data.description ?? I18nStr({}),
     );
   }
+
+  /// Resuelve el nombre de la zona
+  static String resolveDisplayName(Zone zone) {
+    final und = zone.name.resolve('und');
+    return und.isNotEmpty ? und : zone.name.resolve('en');
+  }
 }

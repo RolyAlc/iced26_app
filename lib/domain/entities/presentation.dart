@@ -43,3 +43,9 @@ class Presentation {
     this.videoPresentationUrl,
   });
 }
+
+extension PresentationX on Presentation {
+  String resolvedTitle(String locale) {
+    return title?.resolve(locale) ?? externalRef ?? '—';
+  }
+}

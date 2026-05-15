@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/data/mappers/app_data_mapper.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
+import 'package:iced26/data/mappers/zone_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/data/sources/local/json/local_json_service.dart';
 import 'package:iced26/domain/entities/app_data.dart';
@@ -144,22 +145,17 @@ class ConfigRepositoryImpl implements ConfigRepository {
     );
   }
 
-  /// Inserta las zonas en la tabla zones.
   void _insertZones(Batch batch, AppData appData) {
     batch.insertAll(
       _db.zones,
-      appData.collections.zones.map((z) {
-        final name = z.name.resolve('und').isNotEmpty
-            ? z.name.resolve('und')
-            : z.name.resolve('en');
-
-        return ZonesCompanion.insert(
+      appData.collections.zones.map(
+        (z) => ZonesCompanion.insert(
           id: z.id,
-          name: name,
+          name: ZoneMapper.resolveDisplayName(z),
           lang: Value(z.lang),
           description: Value(z.description),
-        );
-      }),
+        ),
+      ),
       mode: InsertMode.insertOrReplace,
     );
   }
