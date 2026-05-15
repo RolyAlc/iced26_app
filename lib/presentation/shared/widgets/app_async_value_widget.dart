@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:iced26/presentation/shared/widgets/error_screen.dart';
 import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
 
-/// Widget genérico para manejar estados asíncronos ('AsyncValue') de forma estándar en toda la aplicación.
+/// Widget genérico que envuelve un AsyncValue mostrando estado de carga,
+/// error o datos con UI adaptada al tema (Light/Dark/HighContrast).
 class AppAsyncValueWidget<T> extends StatelessWidget {
   final AsyncValue<T> asyncValue;
   final Widget Function(T) data;
@@ -21,10 +23,8 @@ class AppAsyncValueWidget<T> extends StatelessWidget {
     return asyncValue.when(
       data: data,
       loading: () => const LoadingScreen(),
-      error: (error, stackTrace) => ErrorScreen(
-        error: error.toString(),
-        // TODO: Actualizar 'ErrorScreen' para que acepte 'onRetry' si es necesario en el futuro.
-      ),
+      error: (error, stackTrace) =>
+          ErrorScreen(error: error.toString(), onRetry: onRetry),
     );
   }
 }

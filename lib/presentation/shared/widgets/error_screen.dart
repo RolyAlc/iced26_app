@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Pantalla de error genérica para mostrar mensajes de error de forma amigable.
 class ErrorScreen extends StatelessWidget {
-  const ErrorScreen({super.key, required this.error});
+  const ErrorScreen({super.key, required this.error, this.onRetry});
 
   final String error;
+  final VoidCallback? onRetry;
 
   static const _kTitle = 'Oops! Something went wrong';
 
@@ -34,6 +36,13 @@ class ErrorScreen extends StatelessWidget {
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
+              if (onRetry != null) ...[
+                const SizedBox(height: 24),
+                FilledButton.tonal(
+                  onPressed: onRetry,
+                  child: const Text('Retry'),
+                ),
+              ],
             ],
           ),
         ),

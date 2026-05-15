@@ -31,6 +31,7 @@ abstract final class AppIcons {
   static const openInNew = Icons.open_in_new_rounded;
   static const refresh = Icons.refresh_rounded;
   static const add = Icons.add_rounded;
+  static const editNote = Icons.edit_note_rounded;
   static const apps = Icons.apps_rounded;
   static const moreHoriz = Icons.more_horiz_rounded;
 

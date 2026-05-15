@@ -3,9 +3,12 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/ui_metrics.dart';
 import 'package:iced26/presentation/shared/widgets/app_page_header_delegate.dart';
 
+// TODO: revisar 'assert'
+
 /// Contenedor maestro que gestiona el layout de una página completa.
 class AppPage extends StatefulWidget {
   final List<Widget> children;
+  final Widget? fillChild;
   final Widget? header;
   final Widget? collapsedHeader;
   final EdgeInsets? padding;
@@ -15,7 +18,8 @@ class AppPage extends StatefulWidget {
 
   const AppPage({
     super.key,
-    required this.children,
+    this.children = const [],
+    this.fillChild,
     this.header,
     this.collapsedHeader,
     this.padding,
@@ -23,6 +27,10 @@ class AppPage extends StatefulWidget {
     this.headerFallbackHeight,
     this.collapsedHeaderFallbackHeight,
   }) : assert(
+         children.length > 0 || fillChild != null,
+         'AppPage requires either children or fillChild',
+       ),
+       assert(
          collapsedHeaderFallbackHeight == null || collapsedHeader != null,
          'collapsedHeaderFallbackHeight requires collapsedHeader',
        );
@@ -63,7 +71,21 @@ class _AppPageState extends State<AppPage> {
       clipBehavior: Clip.hardEdge,
       slivers: [
         if (widget.header != null) _buildSliverHeader(bgColor),
-        _buildSliverContent(),
+        if (widget.fillChild != null)
+          SliverFillRemaining(
+            hasScrollBody: false,
+            // Compensa el solapamiento de la NavBar para que Center()
+            // quede centrado en el área visualmente disponible.
+            child: Padding(
+              padding: const EdgeInsets.only(
+                bottom:
+                    AppLayout.navBarHeight + AppLayout.navBarBottomClearance,
+              ),
+              child: widget.fillChild,
+            ),
+          )
+        else
+          _buildSliverContent(),
         const SliverClearanceSpacer(),
       ],
     );

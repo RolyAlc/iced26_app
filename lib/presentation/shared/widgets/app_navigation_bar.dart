@@ -13,10 +13,9 @@ const double _selectedItemBackgroundOpacity = 0.1;
 const double _shadowOpacity = 0.08;
 const double _shadowBlurRadius = 12.0;
 
+/// Bottom navigation bar principal con navegación por features.
 class AppNavigationBar extends ConsumerWidget {
   const AppNavigationBar({super.key});
-
-  static const double barHeight = 72.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,10 +35,10 @@ class AppNavigationBar extends ConsumerWidget {
           left: AppSpacing.l,
           right: AppSpacing.l,
           top: AppSpacing.l,
-          bottom: AppSpacing.s + bottomInset,
+          bottom: AppLayout.navBarBottomClearance + bottomInset,
         ),
         child: _NavContainer(
-          height: barHeight,
+          height: AppLayout.navBarHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -62,6 +61,7 @@ class AppNavigationBar extends ConsumerWidget {
   }
 }
 
+/// Widget contenedor del bottom navigation bar que aplica estilo visual.
 class _NavContainer extends StatelessWidget {
   const _NavContainer({required this.child, required this.height});
 
@@ -91,6 +91,7 @@ class _NavContainer extends StatelessWidget {
   }
 }
 
+/// Widget que representa un único item del bottom navigation bar.
 class _NavigationItem extends StatelessWidget {
   const _NavigationItem({
     required this.label,
@@ -133,7 +134,6 @@ class _NavigationItem extends StatelessWidget {
           curve: Curves.easeInOut,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Badge(
                 isLabelVisible: showBadge,

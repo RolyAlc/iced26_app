@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
-/// Widget para mostrar estados vacíos o de error de forma consistente.
+/// Pantalla genérica que muestra estado vacío con ilustración, título,
+/// mensaje y acción opcional.
 class AppEmptyState extends StatelessWidget {
   final Widget? illustration;
   final String title;
@@ -17,8 +20,8 @@ class AppEmptyState extends StatelessWidget {
     required this.title,
     required this.message,
     this.actionButton,
-    this.spacing = 16.0,
-    this.padding = const EdgeInsets.all(24.0),
+    this.spacing = AppSpacing.m,
+    this.padding = const EdgeInsets.all(AppSpacing.l),
   });
 
   @override
@@ -29,16 +32,12 @@ class AppEmptyState extends StatelessWidget {
     return Padding(
       padding: padding,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Ilustración o Icono
           if (illustration != null) ...[
             illustration!,
             SizedBox(height: spacing),
           ] else ...[
-            // Icono por defecto si no se proporciona ilustración
             Icon(
               AppIcons.info,
               size: 60,
@@ -47,7 +46,6 @@ class AppEmptyState extends StatelessWidget {
             SizedBox(height: spacing),
           ],
 
-          // Título
           Text(
             title,
             style: theme.textTheme.titleLarge?.copyWith(
@@ -58,7 +56,6 @@ class AppEmptyState extends StatelessWidget {
           ),
           SizedBox(height: spacing / 2),
 
-          // Mensaje descriptivo
           Text(
             message,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -76,8 +73,7 @@ class AppEmptyState extends StatelessWidget {
   }
 }
 
-/// Ejemplo de uso con un icono SVG personalizado.
-/// Requiere la dependencia `flutter_svg`.
+/// Wrapper para mostrar un SVG con dimensionado y color adaptable al tema.
 class AppSvgIllustration extends StatelessWidget {
   final String svgPath;
   final double size;
