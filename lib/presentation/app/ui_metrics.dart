@@ -18,7 +18,7 @@ class UIMetricsNotification extends Notification {
 class UIMetrics {
   final double navBarHeight;
 
-  const UIMetrics({this.navBarHeight = 0.0}); // 0.0 es el valor por defecto.
+  const UIMetrics({this.navBarHeight = 0.0});
 
   UIMetrics copyWith({double? navBarHeight}) {
     return UIMetrics(navBarHeight: navBarHeight ?? this.navBarHeight);
@@ -72,7 +72,7 @@ class UIMetricsReporter extends StatefulWidget {
   State<UIMetricsReporter> createState() => _UIMetricsReporterState();
 }
 
-/// Estado del widget de utilidad que mide su propio tamaño y emite una [UIMetricsNotification].
+/// Estado del reporter de métricas de la UI.
 class _UIMetricsReporterState extends State<UIMetricsReporter> {
   @override
   void initState() {

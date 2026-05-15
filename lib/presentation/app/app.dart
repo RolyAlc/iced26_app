@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/text_size_preference.dart';
 import 'package:iced26/presentation/app/app_shell.dart';
@@ -11,8 +12,6 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/theme/app_theme.dart';
 import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
 import 'package:iced26/di/bootstrap.dart';
-
-const _kAppTitle = 'ICED26';
 
 /// Raíz de la aplicación.
 class MyApp extends ConsumerWidget {
@@ -31,7 +30,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: _kAppTitle,
+      title: AppConfig.title,
       theme: themeAsync.value ?? AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       highContrastTheme: AppTheme.highContrastTheme,
