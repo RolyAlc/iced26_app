@@ -7,11 +7,14 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/note_color.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_color_selector.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_header.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_inputs.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_section_label.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
+
+// TODO: revisar
 
 /// Hoja modal para editar o crear una nota del diario.
 class DiaryNoteEditorSheet extends ConsumerStatefulWidget {
@@ -194,14 +197,14 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
                   ),
                   const SizedBox(height: AppSpacing.l),
                   DiaryEditorSectionLabel(
-                    icon: Icons.title_rounded,
+                    icon: AppIcons.title,
                     label: 'Title',
                     color: colorScheme.onSurfaceVariant,
                   ),
                   DiaryEditorTitleInput(controller: _titleController),
                   const SizedBox(height: AppSpacing.m),
                   DiaryEditorSectionLabel(
-                    icon: Icons.notes_rounded,
+                    icon: AppIcons.notes,
                     label: 'Content',
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -212,7 +215,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
                   ),
                   const SizedBox(height: AppSpacing.l),
                   DiaryEditorSectionLabel(
-                    icon: Icons.palette_outlined,
+                    icon: AppIcons.palette,
                     label: 'Mood Tag',
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -239,7 +242,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
               onPressed: (_saving || !_canSave) ? null : _save,
               isLoading: _saving,
               label: _saving ? 'Saving...' : 'Save note',
-              icon: _saving ? null : Icons.check_rounded,
+              icon: _saving ? null : AppIcons.check,
             ),
           ),
         ],

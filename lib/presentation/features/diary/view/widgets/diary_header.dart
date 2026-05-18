@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
+import 'package:iced26/presentation/shared/widgets/app_page_title.dart';
+
 import 'package:table_calendar/table_calendar.dart';
 
-const _kTitle = 'My Diary';
+const _kTitle = 'My diary';
 const _kTodayLabel = 'Today';
 
 /// Header de la vista del diario con el título y un botón para volver al día actual.
@@ -30,41 +33,30 @@ class DiaryHeader extends ConsumerWidget {
 
     final isRedundant = isSelectedToday && isTodayVisible;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.l,
-        vertical: AppSpacing.m,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(_kTitle, style: theme.textTheme.headlineMedium),
-          AnimatedOpacity(
-            opacity: isRedundant ? 0.0 : 1.0,
-            duration: AppDuration.fast,
-            child: IgnorePointer(
-              ignoring: isRedundant,
-              child: ActionChip(
-                label: Text(
-                  _kTodayLabel,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer,
-                  ),
-                ),
-                backgroundColor: theme.colorScheme.primaryContainer,
-                side: BorderSide.none,
-                elevation: 0,
-                shadowColor: Colors.transparent,
-                onPressed: () {
-                  ref.read(selectedDiaryDateProvider.notifier).selectToday();
-                  ref
-                      .read(diaryFocusedMonthProvider.notifier)
-                      .set(DateTime.now());
-                },
+    return AppPageTitle(
+      title: _kTitle,
+      trailing: AnimatedOpacity(
+        opacity: isRedundant ? 0.0 : 1.0,
+        duration: AppDuration.fast,
+        child: IgnorePointer(
+          ignoring: isRedundant,
+          child: ActionChip(
+            label: Text(
+              _kTodayLabel,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.onPrimaryContainer,
               ),
             ),
+            backgroundColor: theme.colorScheme.primaryContainer,
+            side: BorderSide.none,
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            onPressed: () {
+              ref.read(selectedDiaryDateProvider.notifier).selectToday();
+              ref.read(diaryFocusedMonthProvider.notifier).set(DateTime.now());
+            },
           ),
-        ],
+        ),
       ),
     );
   }

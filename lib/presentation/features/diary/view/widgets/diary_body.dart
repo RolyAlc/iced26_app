@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_calendar.dart';
@@ -8,7 +9,6 @@ import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.da
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
 
-// 300 px/s filtra micro-swipes accidentales al escribir.
 const _kSwipeVelocityThreshold = 300.0;
 
 /// Cuerpo de la pantalla [DiaryView]. Envuelve [DiaryCalendar] y [DiaryDayContent]
@@ -60,7 +60,6 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
     final eventsAsync = ref.watch(diaryConferenceEventsProvider);
     final selectedDate = ref.watch(selectedDiaryDateProvider);
     final focusedMonth = ref.watch(diaryFocusedMonthProvider);
-
     final allNotes = notesAsync.value ?? [];
     final eventsByDay = eventsAsync.value ?? {};
     final notesForDay = DiaryHelpers.notesForDay(allNotes, selectedDate);
@@ -70,8 +69,8 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.l,
+          padding: EdgeInsets.symmetric(
+            horizontal: AppLayout.horizontalPadding(context),
             vertical: AppSpacing.s,
           ),
           child: AppCard(
@@ -93,8 +92,7 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
             },
             child: AnimatedSwitcher(
               duration: AppDuration.fast,
-              // Anclar arriba: evita que contenidos de distinta altura
-              // se centren en el Stack y provoquen movimiento vertical aparente.
+              // TODO: Revisar ancla
               layoutBuilder: (currentChild, previousChildren) {
                 return Stack(
                   alignment: Alignment.topCenter,

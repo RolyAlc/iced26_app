@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/note_color.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+
+// TODO: revisar return
 
 /// Encabezado de la nota del diario que muestra la fecha y el color.
 class DiaryEditorHeader extends StatelessWidget {
@@ -45,7 +48,7 @@ class DiaryEditorHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.calendar_today_rounded,
+                  AppIcons.calendarToday,
                   size: 16,
                   color: paintColor ?? theme.colorScheme.onSurfaceVariant,
                 ),
@@ -65,14 +68,11 @@ class DiaryEditorHeader extends StatelessWidget {
         if (onDelete != null)
           IconButton(
             onPressed: onDelete,
-            icon: Icon(
-              Icons.delete_outline_rounded,
-              color: theme.colorScheme.error,
-            ),
+            icon: Icon(AppIcons.deleteOutline, color: theme.colorScheme.error),
           ),
         IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.close_rounded),
+          icon: const Icon(AppIcons.close),
         ),
       ],
     );

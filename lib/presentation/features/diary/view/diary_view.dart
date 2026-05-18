@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_body.dart';
@@ -11,7 +12,6 @@ import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
 const _kErrorTitle = 'Could not load diary';
-const _kErrorMessage = 'Something went wrong. Please try again.';
 
 /// Pantalla completa de Diary. Envuelve [DiaryBody] con su propio
 /// [AppPage] para poder usarse como destino de navegación independiente.
@@ -35,13 +35,13 @@ class DiaryView extends ConsumerWidget {
               color: Theme.of(context).colorScheme.error,
             ),
             title: _kErrorTitle,
-            message: _kErrorMessage,
+            message: AppStrings.genericErrorMessage,
             actionButton: TextButton(
               onPressed: () {
                 ref.invalidate(diaryNotesProvider);
                 ref.invalidate(diaryConferenceEventsProvider);
               },
-              child: const Text('Retry'),
+              child: const Text(AppStrings.retry),
             ),
           ),
         ),

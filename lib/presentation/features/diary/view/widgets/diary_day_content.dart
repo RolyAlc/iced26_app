@@ -10,6 +10,8 @@ import 'package:iced26/presentation/features/diary/view/widgets/diary_note_card.
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/diary_note_editor_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 
+// TODO: return largo
+
 const _kCongressLabel = 'Congress';
 const _kMyNotesLabel = 'My notes';
 const _kEmptyNoteTitle = 'No notes for this day';
@@ -35,8 +37,8 @@ class DiaryDayContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.l,
+      padding: EdgeInsets.symmetric(
+        horizontal: AppLayout.horizontalPadding(context),
         vertical: AppSpacing.m,
       ),
       child: Column(

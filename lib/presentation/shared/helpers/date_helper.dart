@@ -1,3 +1,4 @@
+/// Helper para formatear fechas.
 class DateHelper {
   static const _months = [
     'Jan',
@@ -53,6 +54,16 @@ class DateHelper {
     return '${date.day} ${_months[date.month - 1]}';
   }
 
+  // "Mon", "Tue"… — nombre corto del día de la semana.
+  static String weekdayShort(DateTime date) {
+    return _weekdays[date.weekday - 1];
+  }
+
+  // Comprueba si dos fechas caen en el mismo día (ignora la hora).
+  static bool isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
   // "Thu · 8 May" — etiqueta compacta para cabeceras de día.
   static String formatDayLabel(DateTime date) {
     return '${_weekdays[date.weekday - 1]} · ${formatDayShort(date)}';
@@ -64,6 +75,7 @@ class DateHelper {
     return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
   }
 
+  // Devuelve '' si los tiempos son nulos.
   static String formatTimeRange(DateTime? start, DateTime? end) {
     final s = formatTime(start);
     if (s.isEmpty) return '';

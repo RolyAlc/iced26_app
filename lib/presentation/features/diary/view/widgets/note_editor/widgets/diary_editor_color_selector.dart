@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/note_color.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
+
+// TODO: doble return
 
 /// Selector de colores para notas del diario que permite elegir un color o ninguno.
 class DiaryEditorColorSelector extends StatelessWidget {
@@ -49,9 +52,11 @@ class DiaryEditorColorSelector extends StatelessWidget {
               ),
               child: isSelected
                   ? Icon(
-                      Icons.check_rounded,
+                      AppIcons.check,
                       size: 18,
-                      color: paintColor != null ? Colors.white : scheme.primary,
+                      color: paintColor != null
+                          ? AppOverlayColors.heroText
+                          : scheme.primary,
                     )
                   : null,
             ),
