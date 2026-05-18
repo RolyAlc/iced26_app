@@ -2,17 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/presentation/features/search/widgets/chip_container.dart';
 
-TextStyle? chipLabelStyle(
-  TextTheme textTheme, {
-  required bool selected,
-  required Color color,
-}) {
-  return textTheme.labelMedium?.copyWith(
-    fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-    color: color,
-  );
-}
-
 /// Chip que representa un filtro.
 class AppFilterChip extends StatelessWidget {
   const AppFilterChip({

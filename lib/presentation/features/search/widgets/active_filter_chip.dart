@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
+
+const _kRemoveIconSize = 14.0;
 
 /// Chip reutilizable
 class ActiveFilterChip extends StatelessWidget {
@@ -42,10 +45,17 @@ class ActiveFilterChip extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.xs),
           GestureDetector(
-            onTap: onRemove,
+            onTap: () {
+              HapticFeedback.selectionClick();
+              onRemove();
+            },
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.xs),
-              child: Icon(AppIcons.close, size: 14, color: colors.primary),
+              child: Icon(
+                AppIcons.close,
+                size: _kRemoveIconSize,
+                color: colors.primary,
+              ),
             ),
           ),
         ],

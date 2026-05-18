@@ -14,11 +14,13 @@ class SearchHeader extends StatelessWidget {
     required this.controller,
     required this.filtersExpanded,
     required this.onToggleFilters,
+    this.onSubmitted,
   });
   final Search notifier;
   final TextEditingController controller;
   final bool filtersExpanded;
   final VoidCallback onToggleFilters;
+  final ValueChanged<String>? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class SearchHeader extends StatelessWidget {
         Row(
           children: [
             IconButton(
+              padding: const EdgeInsets.only(right: AppSpacing.s),
               icon: const Icon(AppIcons.arrowBack),
               onPressed: () => Navigator.pop(context),
             ),
@@ -34,6 +37,7 @@ class SearchHeader extends StatelessWidget {
               child: SearchInputField(
                 controller: controller,
                 onChanged: notifier.performSearch,
+                onSubmitted: onSubmitted,
               ),
             ),
           ],

@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/presentation/features/search/widgets/chip_container.dart';
-import 'package:iced26/presentation/features/search/widgets/filter_chip.dart';
 import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
+
+const _kChipIconSize = 16.0;
 
 /// Chip que filtra por tipo de evento.
 class TypeFilterChip extends StatelessWidget {
@@ -33,7 +34,7 @@ class TypeFilterChip extends StatelessWidget {
         children: [
           Icon(
             style.icon,
-            size: 16,
+            size: _kChipIconSize,
             color: selected ? style.color : colors.onSurfaceVariant,
           ),
           const SizedBox(width: AppSpacing.xs),

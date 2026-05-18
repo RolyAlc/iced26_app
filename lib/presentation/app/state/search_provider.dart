@@ -7,6 +7,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_provider.g.dart';
 
+// Sentinel para el copyWith de SearchFilterState: permite distinguir
+// selectedDay: null (borrar el filtro) de selectedDay no pasado (mantener).
+const _kUnset = Object();
+
 /// Filtros activos en la búsqueda.
 class SearchFilterState {
   const SearchFilterState({
@@ -42,76 +46,55 @@ class SearchFilterState {
       selectedZones.length +
       selectedDurations.length;
 
+  SearchFilterState copyWith({
+    // Sentinel para distinguir "poner null" de "no cambiar".
+    Object? selectedDay = _kUnset,
+    Set<EventType>? selectedTypes,
+    Set<String>? selectedLanguages,
+    Set<EventStatus>? selectedStatuses,
+    Set<String>? selectedZones,
+    Set<int>? selectedDurations,
+  }) {
+    return SearchFilterState(
+      selectedDay: selectedDay == _kUnset
+          ? this.selectedDay
+          : selectedDay as String?,
+      selectedTypes: selectedTypes ?? this.selectedTypes,
+      selectedLanguages: selectedLanguages ?? this.selectedLanguages,
+      selectedStatuses: selectedStatuses ?? this.selectedStatuses,
+      selectedZones: selectedZones ?? this.selectedZones,
+      selectedDurations: selectedDurations ?? this.selectedDurations,
+    );
+  }
+
   /// Activa o desactiva el filtro de día.
   SearchFilterState withToggledDay(String date) {
-    return SearchFilterState(
-      selectedDay: selectedDay == date ? null : date,
-      selectedTypes: selectedTypes,
-      selectedLanguages: selectedLanguages,
-      selectedStatuses: selectedStatuses,
-      selectedZones: selectedZones,
-      selectedDurations: selectedDurations,
-    );
+    return copyWith(selectedDay: selectedDay == date ? null : date);
   }
 
   /// Activa o desactiva un tipo de evento.
   SearchFilterState withToggledType(EventType type) {
-    return SearchFilterState(
-      selectedDay: selectedDay,
-      selectedTypes: _toggleSet(selectedTypes, type),
-      selectedLanguages: selectedLanguages,
-      selectedStatuses: selectedStatuses,
-      selectedZones: selectedZones,
-      selectedDurations: selectedDurations,
-    );
+    return copyWith(selectedTypes: _toggleSet(selectedTypes, type));
   }
 
   /// Activa o desactiva un idioma.
   SearchFilterState withToggledLanguage(String lang) {
-    return SearchFilterState(
-      selectedDay: selectedDay,
-      selectedTypes: selectedTypes,
-      selectedLanguages: _toggleSet(selectedLanguages, lang),
-      selectedStatuses: selectedStatuses,
-      selectedZones: selectedZones,
-      selectedDurations: selectedDurations,
-    );
+    return copyWith(selectedLanguages: _toggleSet(selectedLanguages, lang));
   }
 
   /// Activa o desactiva un estado de evento.
   SearchFilterState withToggledStatus(EventStatus status) {
-    return SearchFilterState(
-      selectedDay: selectedDay,
-      selectedTypes: selectedTypes,
-      selectedLanguages: selectedLanguages,
-      selectedStatuses: _toggleSet(selectedStatuses, status),
-      selectedZones: selectedZones,
-      selectedDurations: selectedDurations,
-    );
+    return copyWith(selectedStatuses: _toggleSet(selectedStatuses, status));
   }
 
   /// Activa o desactiva una zona.
   SearchFilterState withToggledZone(String zoneId) {
-    return SearchFilterState(
-      selectedDay: selectedDay,
-      selectedTypes: selectedTypes,
-      selectedLanguages: selectedLanguages,
-      selectedStatuses: selectedStatuses,
-      selectedZones: _toggleSet(selectedZones, zoneId),
-      selectedDurations: selectedDurations,
-    );
+    return copyWith(selectedZones: _toggleSet(selectedZones, zoneId));
   }
 
   /// Activa o desactiva una duración.
   SearchFilterState withToggledDuration(int minutes) {
-    return SearchFilterState(
-      selectedDay: selectedDay,
-      selectedTypes: selectedTypes,
-      selectedLanguages: selectedLanguages,
-      selectedStatuses: selectedStatuses,
-      selectedZones: selectedZones,
-      selectedDurations: _toggleSet(selectedDurations, minutes),
-    );
+    return copyWith(selectedDurations: _toggleSet(selectedDurations, minutes));
   }
 }
 
@@ -138,7 +121,7 @@ class SearchState {
 }
 
 /// Provider para la búsqueda.
-@riverpod
+@Riverpod(keepAlive: true)
 class Search extends _$Search {
   @override
   SearchState build() {
@@ -201,12 +184,22 @@ class Search extends _$Search {
     updateFilters(const SearchFilterState());
   }
 
-  /// Limpia la búsqueda completa.
+  /// Limpia la query pero mantiene los filtros activos y recomputa los resultados.
+  void clearQuery() {
+    state = SearchState(
+      results: _computeEvents('', state.filters),
+      filters: state.filters,
+    );
+  }
+
+  /// Limpia la búsqueda completa — query y filtros.
   void clear() {
     state = SearchState();
   }
 
   List<Event> _computeEvents(String query, SearchFilterState filters) {
+    // ref.read es intencional: este método se llama desde acciones del notifier,
+    // no desde build(). Usar ref.watch aquí lanzaría una excepción en Riverpod.
     final homeData = ref.read(homeViewModelProvider).value;
     if (homeData == null) {
       return [];

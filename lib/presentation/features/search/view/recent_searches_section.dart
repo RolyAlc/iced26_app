@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/features/search/widgets/recent_query_tile.dart';
 import 'package:iced26/presentation/features/search/widgets/section_label.dart';
@@ -29,17 +30,12 @@ class RecentSearchesSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SectionLabel(label: 'Recent'),
-            TextButton(
-              onPressed: onClearAll,
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
+            const SectionLabel(label: AppStrings.searchRecentTitle),
+            GestureDetector(
+              onTap: onClearAll,
               child: Text(
-                'Clear all',
-                style: theme.textTheme.labelSmall?.copyWith(
+                AppStrings.searchClearAll,
+                style: theme.textTheme.labelMedium?.copyWith(
                   color: colors.primary,
                 ),
               ),

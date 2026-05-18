@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// TODO: Mirar formas de mejorar la legibilidad
+
 /// Catálogo central de iconos de la app.
 abstract final class AppIcons {
   // --- Navegación ---
@@ -13,6 +15,10 @@ abstract final class AppIcons {
   static const diaryOn = Icons.bookmark_rounded;
   static const settingsOff = Icons.settings_outlined;
   static const settingsOn = Icons.settings_rounded;
+
+  // --- Vista de lista / agenda ---
+  static const viewList = Icons.view_list_rounded;
+  static const viewAgenda = Icons.view_agenda_rounded;
 
   // --- Acciones generales ---
   static const search = Icons.search_rounded;
@@ -47,6 +53,7 @@ abstract final class AppIcons {
   static const info = Icons.info_outline_rounded;
   static const empty = Icons.auto_awesome_rounded;
   static const history = Icons.history_rounded;
+  static const liveIndicator = Icons.sensors_rounded;
 
   // --- Tiempo y lugar ---
   static const time = Icons.access_time_rounded;
@@ -84,6 +91,13 @@ abstract final class AppIcons {
   static const workspacePremium = Icons.workspace_premium_rounded;
   static const playCircleOutline = Icons.play_circle_outline_rounded;
   static const slideshow = Icons.slideshow_rounded;
+
+  // --- Diary editor ---
+  static const title = Icons.title_rounded;
+  static const notes = Icons.notes_rounded;
+  static const palette = Icons.palette_outlined;
+  static const check = Icons.check_rounded;
+  static const calendarToday = Icons.calendar_today_rounded;
 
   // --- Configuración ---
   static const textField = Icons.text_fields_rounded;

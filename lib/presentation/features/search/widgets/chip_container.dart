@@ -3,6 +3,17 @@ import 'package:flutter/services.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 
+TextStyle? chipLabelStyle(
+  TextTheme textTheme, {
+  required bool selected,
+  required Color color,
+}) {
+  return textTheme.labelMedium?.copyWith(
+    fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+    color: color,
+  );
+}
+
 /// Contenedor reutilizable para chips.
 class ChipContainer extends StatelessWidget {
   const ChipContainer({

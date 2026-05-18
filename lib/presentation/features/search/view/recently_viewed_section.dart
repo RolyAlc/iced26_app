@@ -1,0 +1,62 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:iced26/core/constants/app_strings.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
+import 'package:iced26/presentation/features/search/widgets/result_tile.dart';
+import 'package:iced26/presentation/features/search/widgets/section_label.dart';
+
+// TODO: Posible duplicado de allEventsIndexProvider
+
+/// Sección que muestra los eventos vistos recientemente.
+class RecentlyViewedSection extends ConsumerWidget {
+  const RecentlyViewedSection({
+    super.key,
+    required this.eventIds,
+    required this.onEventTap,
+  });
+
+  final List<String> eventIds;
+  final ValueChanged<Event> onEventTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // .value devuelve null mientras el provider está cargando o tiene error.
+    // ?? {} es seguro: si aún no hay datos simplemente no se muestra nada.
+    final eventsIndex = ref.watch(allEventsIndexProvider).value ?? {};
+
+    // Resolvemos IDs → Events, descartando los que no existan.
+    final events = eventIds
+        .map((id) => eventsIndex[id])
+        .whereType<Event>()
+        .toList();
+
+    if (events.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: AppSpacing.m),
+        const SectionLabel(
+          label: AppStrings.searchRecentlyViewedTitle,
+          icon: AppIcons.history,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        ...events.map(
+          (event) => ResultTile(
+            key: ValueKey(event.id),
+            event: event,
+            onTap: () {
+              onEventTap(event);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}

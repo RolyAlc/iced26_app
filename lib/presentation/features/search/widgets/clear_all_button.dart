@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
+
+const _kClearIconSize = 16.0;
 
 /// Botón de limpiar filtros reutilizable
 class ClearAllButton extends StatelessWidget {
@@ -14,11 +18,14 @@ class ClearAllButton extends StatelessWidget {
     final colors = theme.colorScheme;
 
     return GestureDetector(
-      onTap: onPressed,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onPressed();
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.s,
-          vertical: AppSpacing.xs,
+          horizontal: AppSpacing.m,
+          vertical: AppSpacing.s,
         ),
         decoration: BoxDecoration(
           color: colors.errorContainer.withValues(alpha: 0.5),
@@ -28,11 +35,11 @@ class ClearAllButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(AppIcons.close, size: 12, color: colors.error),
+            Icon(AppIcons.close, size: _kClearIconSize, color: colors.error),
             const SizedBox(width: AppSpacing.xs),
             Text(
-              'Clear',
-              style: theme.textTheme.labelSmall?.copyWith(
+              AppStrings.searchClearAll,
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: colors.error,
                 fontWeight: FontWeight.w600,
               ),

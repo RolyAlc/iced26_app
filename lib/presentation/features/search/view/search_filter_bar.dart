@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/features/search/widgets/active_filter_chip.dart';
 import 'package:iced26/presentation/features/search/widgets/clear_all_button.dart';
 import 'package:iced26/presentation/features/search/widgets/filter_toggle_button.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+
+// TODO: Muchos for
 
 /// Barra de filtros.
 class FilterBar extends ConsumerWidget {
@@ -114,10 +117,17 @@ class _CollapsedFilterBar extends StatelessWidget {
           ),
           if (chips.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.s),
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: chips,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (int i = 0; i < chips.length; i++) ...[
+                    chips[i],
+                    if (i < chips.length - 1)
+                      const SizedBox(width: AppSpacing.xs),
+                  ],
+                ],
+              ),
             ),
           ],
         ],
@@ -158,7 +168,7 @@ class _CollapsedFilterBar extends StatelessWidget {
     for (final d in filters.selectedDurations) {
       chips.add(
         ActiveFilterChip(
-          label: '$d min',
+          label: AppStrings.searchDurationLabel(d),
           onRemove: () => notifier.toggleDuration(d),
         ),
       );
@@ -167,7 +177,7 @@ class _CollapsedFilterBar extends StatelessWidget {
     for (final s in filters.selectedStatuses) {
       chips.add(
         ActiveFilterChip(
-          label: _statusLabel(s),
+          label: AppStrings.searchStatusLabel(s),
           onRemove: () => notifier.toggleStatus(s),
         ),
       );
@@ -175,10 +185,4 @@ class _CollapsedFilterBar extends StatelessWidget {
 
     return chips;
   }
-
-  String _statusLabel(EventStatus s) => switch (s) {
-    EventStatus.live => 'Live now',
-    EventStatus.next => 'Up next',
-    EventStatus.ended => 'Ended',
-  };
 }

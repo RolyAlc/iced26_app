@@ -28,7 +28,6 @@ class FilterPanelData {
   final List<Zone> zones;
   final List<int> durations;
 
-  /// Extrae los días de los eventos.
   static List<({String date, String label})> _extractDays(List<Event> events) {
     final seen = <String>{};
     final days = <({String date, String label})>[];
@@ -47,14 +46,12 @@ class FilterPanelData {
     return days;
   }
 
-  /// Extrae los tipos de eventos.
   static List<EventType> _extractTypes(List<Event> events) {
     final types = events.map((e) => e.type).toSet().toList();
     types.sort((a, b) => a.label.compareTo(b.label));
     return types;
   }
 
-  /// Extrae las zonas de los eventos.
   static List<Zone> _extractZones(HomeState homeData) {
     final zones = homeData.allZones.toList();
     zones.sort(
@@ -63,7 +60,6 @@ class FilterPanelData {
     return zones;
   }
 
-  /// Extrae las duraciones de los eventos.
   static List<int> _extractDurations(List<Event> events) {
     final durations = events
         .map((e) => e.durationMin)

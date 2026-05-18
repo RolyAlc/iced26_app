@@ -3,39 +3,45 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/services/logger/logger.dart';
+import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/presentation/app/state/recent_searches_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/features/search/view/search_body.dart';
 import 'package:iced26/presentation/features/search/view/search_header.dart';
 
-/// Cuerpo principal del modal de búsqueda.
+/// Cuerpo de la pantalla de búsqueda: header + contenido.
+/// El overlay (Explore / No results) lo gestiona el padre (_SearchScreen).
 class SearchModalBody extends ConsumerStatefulWidget {
   const SearchModalBody({
     super.key,
     required this.notifier,
-    this.initiallyExpandedFilters = false,
+    required this.people,
+    required this.filtersExpanded,
+    required this.onToggleFilters,
   });
   final Search notifier;
-  final bool initiallyExpandedFilters;
+  final List<Person> people;
+  final bool filtersExpanded;
+  final VoidCallback onToggleFilters;
 
   @override
-  ConsumerState<SearchModalBody> createState() => SearchModalBodyState();
+  ConsumerState<SearchModalBody> createState() => _SearchModalBodyState();
 }
 
-class SearchModalBodyState extends ConsumerState<SearchModalBody> {
-  late bool _filtersExpanded;
+/// Estado del cuerpo de la pantalla de búsqueda.
+class _SearchModalBodyState extends ConsumerState<SearchModalBody> {
   late final TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
     AppLogger.d('SearchModal: Abriendo modal');
-    _filtersExpanded = widget.initiallyExpandedFilters;
     _searchController = TextEditingController();
 
     // Limpia el estado del buscador anterior en el primer frame.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        widget.notifier.clear();
+        widget.notifier.clearQuery();
       }
     });
   }
@@ -57,16 +63,18 @@ class SearchModalBodyState extends ConsumerState<SearchModalBody> {
         SearchHeader(
           notifier: widget.notifier,
           controller: _searchController,
-          filtersExpanded: _filtersExpanded,
-          onToggleFilters: _toggleFilters,
+          filtersExpanded: widget.filtersExpanded,
+          onToggleFilters: widget.onToggleFilters,
+          onSubmitted: _onSearchSubmitted,
         ),
         const SizedBox(height: AppSpacing.l),
         Expanded(
           child: SearchBody(
             state: state,
+            people: widget.people,
             notifier: widget.notifier,
-            filtersExpanded: _filtersExpanded,
-            onCollapseFilters: _toggleFilters,
+            filtersExpanded: widget.filtersExpanded,
+            onCollapseFilters: widget.onToggleFilters,
             onRecentQueryTap: _onRecentQueryTap,
           ),
         ),
@@ -74,10 +82,12 @@ class SearchModalBodyState extends ConsumerState<SearchModalBody> {
     );
   }
 
-  void _toggleFilters() {
-    setState(() {
-      _filtersExpanded = !_filtersExpanded;
-    });
+  void _onSearchSubmitted(String query) {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) {
+      return;
+    }
+    ref.read(recentSearchesProvider.notifier).add(trimmed);
   }
 
   void _onRecentQueryTap(String query) {
