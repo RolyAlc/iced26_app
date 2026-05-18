@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
@@ -7,7 +8,20 @@ import 'package:iced26/presentation/features/settings/widgets/settings_section.d
 import 'package:iced26/presentation/features/settings/widgets/text_size_item.dart';
 import 'package:iced26/presentation/features/settings/widgets/theme_picker.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
+import 'package:iced26/presentation/shared/widgets/app_page_title.dart';
+
 import 'package:url_launcher/url_launcher.dart';
+
+const String _kSectionAppearance = 'Appearance';
+const String _kSectionLanguage = 'Language';
+const String _kSectionData = 'Data';
+const String _kSectionAbout = 'About';
+const String _kTitleSettings = 'Settings';
+const String _kAppLanguageTitle = 'App language';
+const String _kAppLanguageValue = 'English';
+const String _kVersionTitle = 'Version';
+const String _kVersionValue = '—';
+const String _kWebsiteTitle = 'Official website';
 
 /// Vista de ajustes de la app.
 class SettingsView extends StatelessWidget {
@@ -16,46 +30,47 @@ class SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppPage(
-      header: _SettingsHeader(),
+      header: const AppPageTitle(title: _kTitleSettings),
       children: [
         const SettingsSection(
-          title: 'Appearance',
+          title: _kSectionAppearance,
           items: [TextSizeItem(), ThemeItem()],
         ),
         const SizedBox(height: AppSpacing.m),
         const SettingsSection(
-          title: 'Language',
+          title: _kSectionLanguage,
           items: [
             SettingsItem(
               icon: AppIcons.translate,
-              title: 'App language',
-              subtitle: 'English',
+              title: _kAppLanguageTitle,
+              subtitle: _kAppLanguageValue,
               trailing: ComingSoonBadge(),
             ),
           ],
         ),
         const SizedBox(height: AppSpacing.m),
         const SettingsSection(
-          title: 'Data',
+          title: _kSectionData,
           items: [ReloadDataItem(), ClearFavouritesItem()],
         ),
         const SizedBox(height: AppSpacing.m),
         SettingsSection(
-          title: 'About',
+          title: _kSectionAbout,
           items: [
             const SettingsItem(
               icon: AppIcons.info,
-              title: 'ICED 26',
-              subtitle: 'Salamanca, Spain',
+              title: AppConfig.edition,
+              subtitle: AppConfig.location,
             ),
             const SettingsItem(
               icon: AppIcons.smartphone,
-              title: 'Version',
-              subtitle: '—',
+              title: _kVersionTitle,
+              // TODO: obtener versión real con package_info_plus
+              subtitle: _kVersionValue,
             ),
             SettingsItem(
               icon: AppIcons.language,
-              title: 'Official website',
+              title: _kWebsiteTitle,
               subtitle: AppConfig.websiteLabel,
               onTap: () {
                 launchUrl(
@@ -67,28 +82,6 @@ class SettingsView extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-/// Cabecera de la pantalla de ajustes.
-class _SettingsHeader extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.l,
-        AppSpacing.xl,
-        AppSpacing.l,
-        AppSpacing.m,
-      ),
-      child: Text(
-        'Settings',
-        style: theme.textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
-      ),
     );
   }
 }

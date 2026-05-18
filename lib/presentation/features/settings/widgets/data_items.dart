@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:iced26/di/bootstrap.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
@@ -60,23 +61,27 @@ class ClearFavouritesItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final count = ref
+    final eventCount = ref
         .watch(favoriteIdsProvider)
         .when(data: (ids) => ids.length, loading: () => 0, error: (_, _) => 0);
-    final hasItems = count > 0;
+    final presentationCount = ref
+        .watch(presentationFavoriteIdsProvider)
+        .when(data: (ids) => ids.length, loading: () => 0, error: (_, _) => 0);
+    final totalCount = eventCount + presentationCount;
+    final hasItems = totalCount > 0;
 
     return SettingsItem(
       icon: AppIcons.bookmarkRemove,
       title: 'Clear favourites',
-      subtitle: switch (count) {
-        0 => 'No saved events',
-        1 => '1 saved event',
-        _ => '$count saved events',
+      subtitle: switch (totalCount) {
+        0 => 'No saved items',
+        1 => '1 saved item',
+        _ => '$totalCount saved items',
       },
       enabled: hasItems,
       onTap: hasItems
           ? () {
-              _confirmClear(context, ref, count);
+              _confirmClear(context, ref, totalCount);
             }
           : null,
     );
@@ -93,7 +98,7 @@ class ClearFavouritesItem extends ConsumerWidget {
         return AlertDialog(
           title: const Text('Clear favourites?'),
           content: Text(
-            'Remove all $count saved ${count == 1 ? 'event' : 'events'}? This cannot be undone.',
+            'Remove all $count saved ${count == 1 ? 'item' : 'items'}? This cannot be undone.',
           ),
           actions: [
             TextButton(
@@ -114,7 +119,7 @@ class ClearFavouritesItem extends ConsumerWidget {
     );
 
     if (confirmed == true) {
-      await ref.read(clearFavoritesUseCaseProvider).execute();
+      await ref.read(clearAllSavedItemsUseCaseProvider).execute();
     }
   }
 }

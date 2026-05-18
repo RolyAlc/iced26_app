@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
+// TODO: Hadouoken
+
 /// Sección con título etiquetado y lista de ítems agrupados visualmente.
 class SettingsSection extends StatelessWidget {
   const SettingsSection({super.key, required this.title, required this.items});
@@ -15,7 +17,9 @@ class SettingsSection extends StatelessWidget {
     final colors = theme.colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppLayout.horizontalPadding(context),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -25,11 +29,11 @@ class SettingsSection extends StatelessWidget {
               bottom: AppSpacing.s,
             ),
             child: Text(
-              title.toUpperCase(),
-              style: theme.textTheme.labelSmall?.copyWith(
+              title,
+              style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: colors.primary,
-                letterSpacing: 0.8,
+                letterSpacing: 1,
               ),
             ),
           ),
