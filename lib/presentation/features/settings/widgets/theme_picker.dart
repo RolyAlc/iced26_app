@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iced26/core/constants/app_strings.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
@@ -15,7 +16,7 @@ class ThemeItem extends ConsumerWidget {
     final mode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
 
     return SettingsItem(
-      icon: _themeIcon(mode),
+      icon: AppIcons.forThemeMode(mode),
       title: 'Theme',
       subtitle: _themeLabel(mode),
       onTap: () {
@@ -41,6 +42,7 @@ class _ThemePickerDialog extends ConsumerStatefulWidget {
   ConsumerState<_ThemePickerDialog> createState() => _ThemePickerDialogState();
 }
 
+/// Estado del diálogo de selección de tema.
 class _ThemePickerDialogState extends ConsumerState<_ThemePickerDialog> {
   late ThemeMode _selected;
 
@@ -118,7 +120,7 @@ class _ThemeOptionTile extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
         title: Row(
           children: [
-            Icon(_themeIcon(mode), size: 20),
+            Icon(AppIcons.forThemeMode(mode), size: 20),
             const SizedBox(width: AppSpacing.s),
             Text(
               _themeLabel(mode),
@@ -131,19 +133,11 @@ class _ThemeOptionTile extends StatelessWidget {
   }
 }
 
-// Helpers de ThemeMode compartidos entre _ThemeItem y _ThemePickerDialog.
-IconData _themeIcon(ThemeMode mode) {
-  return switch (mode) {
-    ThemeMode.light => AppIcons.lightTheme,
-    ThemeMode.dark => AppIcons.darkTheme,
-    ThemeMode.system => AppIcons.systemTheme,
-  };
-}
-
+/// Obtiene la etiqueta textual del modo de tema.
 String _themeLabel(ThemeMode mode) {
   return switch (mode) {
-    ThemeMode.light => 'Light',
-    ThemeMode.dark => 'Dark',
-    ThemeMode.system => 'System',
+    ThemeMode.light => AppStrings.themeLight,
+    ThemeMode.dark => AppStrings.themeDark,
+    ThemeMode.system => AppStrings.themeSystem,
   };
 }

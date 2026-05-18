@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-// TODO: Mirar formas de mejorar la legibilidad
-
 /// Catálogo central de iconos de la app.
 abstract final class AppIcons {
   // --- Navegación ---
@@ -22,6 +20,7 @@ abstract final class AppIcons {
 
   // --- Acciones generales ---
   static const search = Icons.search_rounded;
+  static const copyContent = Icons.content_copy_rounded;
   static const searchEmpty = Icons.search_off_rounded;
   static const filter = Icons.tune_rounded;
   static const arrowBack = Icons.arrow_back_rounded;
@@ -59,6 +58,7 @@ abstract final class AppIcons {
   static const time = Icons.access_time_rounded;
   static const accessTime = Icons.access_time_filled_rounded;
   static const duration = Icons.timelapse_rounded;
+  static const timerOutlined = Icons.timer_outlined;
   static const clockOutline = Icons.access_time_outlined;
   static const calendarOutline = Icons.calendar_month_outlined;
   static const scheduleOutline = Icons.schedule_outlined;
@@ -107,6 +107,17 @@ abstract final class AppIcons {
   static const translate = Icons.translate_rounded;
   static const smartphone = Icons.smartphone_rounded;
   static const language = Icons.language_rounded;
+
+  // --- Helpers ---
+  static final Map<ThemeMode, IconData> _icons = {
+    ThemeMode.light: lightTheme,
+    ThemeMode.dark: darkTheme,
+    ThemeMode.system: systemTheme,
+  };
+
+  static IconData forThemeMode(ThemeMode mode) {
+    return _icons[mode]!;
+  }
 
   // --- Eventos especiales ---
   static const coffee = Icons.coffee_rounded;
