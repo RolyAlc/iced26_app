@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/core/services/logger/logger.dart';
+import 'package:iced26/data/mappers/conference_theme_mapper.dart';
 import 'package:iced26/data/mappers/home/news_mapper.dart';
 import 'package:iced26/data/mappers/home/social_activity_mapper.dart';
 import 'package:iced26/data/mappers/submission_type_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
+import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
@@ -49,6 +53,29 @@ class HomeRepositoryImpl implements HomeRepository {
     return _guard(() async {
       final results = await _db.select(_db.submissionTypes).get();
       return results.map(SubmissionTypeMapper.fromDrift).toList();
+    });
+  }
+
+  /// Obtiene los temas de la conferencia desde appConfigs.
+  ///
+  /// A diferencia de [getAllNews] o [getAllSubmissionTypes], no existe una tabla
+  /// Drift dedicada para los temas. Se almacenan como blob JSON en appConfigs
+  /// bajo la clave 'conference_themes', igual que hace [ConfigRepositoryImpl]
+  /// con 'theme_config'. El mapper reconstruye la lista en memoria.
+  @override
+  Future<Result<List<ConferenceTheme>>> getConferenceThemes() async {
+    return _guard(() async {
+      final query = _db.select(_db.appConfigs)
+        ..where((t) => t.key.equals('conference_themes'));
+      final row = await query.getSingleOrNull();
+      if (row == null) {
+        return [];
+      }
+      final list = jsonDecode(row.value) as List<dynamic>;
+      return list
+          .whereType<Map<String, dynamic>>()
+          .map(ConferenceThemeMapper.fromMap)
+          .toList();
     });
   }
 }
