@@ -1,8 +1,8 @@
 import 'package:iced26/domain/repositories/favorites_repository.dart';
 
 /// Caso de uso: eliminar todos los favoritos del usuario.
-class ClearFavoritesUseCase {
-  ClearFavoritesUseCase(this._repo);
+class ClearEventFavoritesUseCase {
+  ClearEventFavoritesUseCase(this._repo);
   final FavoritesRepository _repo;
 
   /// Ejecuta el caso de uso.

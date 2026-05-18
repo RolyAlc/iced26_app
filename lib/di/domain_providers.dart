@@ -6,6 +6,8 @@ import 'package:iced26/domain/entities/my_schedule_item.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/room.dart';
+import 'package:iced26/domain/entities/session_block.dart';
+import 'package:iced26/domain/usecases/clear_all_saved_items_use_case.dart';
 import 'package:iced26/domain/usecases/clear_favorites_use_case.dart';
 import 'package:iced26/domain/usecases/delete_diary_note_use_case.dart';
 import 'package:iced26/domain/usecases/get_home_data_use_case.dart';
@@ -16,6 +18,7 @@ import 'package:iced26/domain/usecases/toggle_presentation_favorite_use_case.dar
 import 'package:iced26/domain/usecases/watch_diary_notes_use_case.dart';
 import 'package:iced26/domain/usecases/watch_favorites_use_case.dart';
 import 'package:iced26/domain/usecases/watch_presentation_favorites_use_case.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'domain_providers.g.dart';
@@ -47,10 +50,19 @@ ToggleFavoriteUseCase toggleFavoriteUseCase(Ref ref) {
   return ToggleFavoriteUseCase(ref.watch(favoritesRepositoryProvider));
 }
 
-/// Provee el caso de uso para limpiar los favoritos.
+/// Provee el caso de uso para limpiar los favoritos de eventos (N1).
 @riverpod
-ClearFavoritesUseCase clearFavoritesUseCase(Ref ref) {
-  return ClearFavoritesUseCase(ref.watch(favoritesRepositoryProvider));
+ClearEventFavoritesUseCase clearFavoritesUseCase(Ref ref) {
+  return ClearEventFavoritesUseCase(ref.watch(favoritesRepositoryProvider));
+}
+
+/// Provee el caso de uso para limpiar todos los items guardados (N1 + N3).
+@riverpod
+ClearAllSavedItemsUseCase clearAllSavedItemsUseCase(Ref ref) {
+  return ClearAllSavedItemsUseCase(
+    ref.watch(favoritesRepositoryProvider),
+    ref.watch(presentationFavoritesRepositoryProvider),
+  );
 }
 
 /// Provee el stream de IDs de eventos favoritos.
@@ -168,6 +180,16 @@ Stream<List<DiaryNote>> diaryNotes(Ref ref) {
   return ref.watch(watchDiaryNotesUseCaseProvider).execute();
 }
 
+/// Provee el índice de eventos por ID.
+@riverpod
+Future<Map<String, Event>> allEventsIndex(Ref ref) async {
+  final result = await ref.watch(scheduleRepositoryProvider).getAllEvents();
+  if (result is! Success<List<Event>>) {
+    return {};
+  }
+  return {for (final e in result.data) e.id: e};
+}
+
 /// Provee el índice de salas por ID.
 @riverpod
 Future<Map<String, Room>> allRoomsIndex(Ref ref) async {
@@ -176,6 +198,18 @@ Future<Map<String, Room>> allRoomsIndex(Ref ref) async {
     return {};
   }
   return {for (final r in result.data) r.id: r};
+}
+
+/// Provee el índice de bloques de sesión por ID.
+@riverpod
+Future<Map<String, SessionBlock>> allSessionBlocksIndex(Ref ref) async {
+  final result = await ref
+      .watch(scheduleRepositoryProvider)
+      .getAllSessionBlocks();
+  if (result is! Success<List<SessionBlock>>) {
+    return {};
+  }
+  return {for (final b in result.data) b.id: b};
 }
 
 /// Índice inverso para listar las presentaciones de un ponente sin escanear toda la lista en cada tap.

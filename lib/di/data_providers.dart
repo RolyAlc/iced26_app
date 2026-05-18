@@ -4,6 +4,7 @@ import 'package:iced26/data/repositories/favorites_repository_impl.dart';
 import 'package:iced26/data/repositories/home_repository_impl.dart';
 import 'package:iced26/data/repositories/presentation_favorites_repository_impl.dart';
 import 'package:iced26/data/repositories/recent_searches_repository_impl.dart';
+import 'package:iced26/data/repositories/recently_viewed_repository_impl.dart';
 import 'package:iced26/data/repositories/schedule_repository_impl.dart';
 import 'package:iced26/data/sources/local/json/local_json_service.dart';
 import 'package:iced26/di/core_providers.dart';
@@ -13,7 +14,9 @@ import 'package:iced26/domain/repositories/favorites_repository.dart';
 import 'package:iced26/domain/repositories/home_repository.dart';
 import 'package:iced26/domain/repositories/presentation_favorites_repository.dart';
 import 'package:iced26/domain/repositories/recent_searches_repository.dart';
+import 'package:iced26/domain/repositories/recently_viewed_repository.dart';
 import 'package:iced26/domain/repositories/schedule_repository.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'data_providers.g.dart';
@@ -65,4 +68,17 @@ DiaryRepository diaryRepository(Ref ref) {
 @riverpod
 RecentSearchesRepository recentSearchesRepository(Ref ref) {
   return RecentSearchesRepositoryImpl();
+}
+
+/// Provee el repositorio de eventos vistos recientemente.
+@riverpod
+RecentlyViewedRepository recentlyViewedRepository(Ref ref) {
+  return const RecentlyViewedRepositoryImpl(prefsKey: 'recently_viewed_events');
+}
+
+/// Provee el repositorio de ponentes vistos recientemente.
+/// Misma implementación que eventos, distinta clave de almacenamiento.
+@riverpod
+RecentlyViewedRepository recentlyViewedPeopleRepository(Ref ref) {
+  return const RecentlyViewedRepositoryImpl(prefsKey: 'recently_viewed_people');
 }
