@@ -1,6 +1,9 @@
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
+
+// TODO: Revisar EventX
 
 /// Entidad que representa un evento
 class Event {
@@ -50,5 +53,6 @@ class Event {
 
 extension EventX on Event {
   /// Formato fecha y hora del evento
-  String get formattedDateTime => [?filterDate, ?filterTime].join(' · ');
+  String get formattedDateTime =>
+      [?filterDate, ?filterTime].join(AppStrings.separator);
 }

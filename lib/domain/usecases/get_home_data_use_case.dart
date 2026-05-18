@@ -1,4 +1,5 @@
 import 'package:iced26/core/errors/result.dart';
+import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/new.dart';
@@ -24,6 +25,7 @@ typedef HomeDataResult = ({
   List<NewsItem> news,
   List<SocialActivity> socialActivities,
   List<SubmissionType> subTypes,
+  List<ConferenceTheme> conferenceThemes,
 });
 
 /// Caso de uso: obtiene toda la información necesaria para la pantalla Home.
@@ -43,6 +45,7 @@ class GetHomeDataUseCase {
     final newsF = _homeRepo.getAllNews();
     final socialsF = _homeRepo.getAllSocialActivities();
     final subTypesF = _homeRepo.getAllSubmissionTypes();
+    final themesF = _homeRepo.getConferenceThemes();
 
     // Recogemos los resultados.
     final days = await daysF;
@@ -54,6 +57,7 @@ class GetHomeDataUseCase {
     final news = await newsF;
     final socials = await socialsF;
     final subTypes = await subTypesF;
+    final themes = await themesF;
 
     // En caso de que falle, devolvemos el primer error.
     final failure = _firstFailure([
@@ -66,6 +70,7 @@ class GetHomeDataUseCase {
       news,
       socials,
       subTypes,
+      themes,
     ]);
 
     if (failure != null) {
@@ -82,6 +87,7 @@ class GetHomeDataUseCase {
       news: (news as Success<List<NewsItem>>).data,
       socialActivities: (socials as Success<List<SocialActivity>>).data,
       subTypes: (subTypes as Success<List<SubmissionType>>).data,
+      conferenceThemes: (themes as Success<List<ConferenceTheme>>).data,
     ));
   }
 

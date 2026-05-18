@@ -1,4 +1,5 @@
 import 'package:iced26/core/errors/result.dart';
+import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
@@ -13,4 +14,7 @@ abstract class HomeRepository {
 
   /// Obtiene todos los tipos de presentación (categorías).
   Future<Result<List<SubmissionType>>> getAllSubmissionTypes();
+
+  /// Obtiene los temas de la conferencia.
+  Future<Result<List<ConferenceTheme>>> getConferenceThemes();
 }
