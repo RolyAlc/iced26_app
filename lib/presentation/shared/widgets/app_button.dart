@@ -12,6 +12,7 @@ class AppButton extends StatelessWidget {
     this.onPressed,
     this.isLoading = false,
     this.icon,
+    this.trailingIcon,
     this.height = 56,
     this.isFullWidth = true,
   });
@@ -19,6 +20,7 @@ class AppButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
   final IconData? icon;
+  final IconData? trailingIcon;
   final double height;
   final bool isFullWidth;
 
@@ -42,6 +44,10 @@ class AppButton extends StatelessWidget {
                 const SizedBox(width: AppSpacing.s),
               ],
               Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+              if (trailingIcon != null) ...[
+                const SizedBox(width: AppSpacing.s),
+                Icon(trailingIcon, size: 20),
+              ],
             ],
           );
 
