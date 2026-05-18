@@ -3,13 +3,53 @@ import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
-// TODO: Hadouoken
+// Ancho del área leading de ListTile M3: icono(24dp) + gap al título(16dp).
+const _kListTileLeadingWidth = 40.0;
 
 /// Sección con título etiquetado y lista de ítems agrupados visualmente.
 class SettingsSection extends StatelessWidget {
   const SettingsSection({super.key, required this.title, required this.items});
+
   final String title;
   final List<Widget> items;
+
+  Widget _buildSectionTitle(ThemeData theme, ColorScheme colors) {
+    return Padding(
+      padding: const EdgeInsets.only(left: AppSpacing.xs, bottom: AppSpacing.s),
+      child: Text(
+        title,
+        style: theme.textTheme.labelMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: colors.primary,
+          letterSpacing: AppTextStyle.labelLetterSpacing,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildItemsCard(ColorScheme colors) {
+    return Material(
+      clipBehavior: Clip.antiAlias,
+      color: colors.surfaceContainerLow,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.m),
+      ),
+      child: Column(
+        children: [
+          for (int i = 0; i < items.length; i++) ...[
+            items[i],
+            if (i < items.length - 1)
+              Divider(
+                height: 1,
+                // indent alinea el divisor con el texto tras el icono del ListTile.
+                indent: AppSpacing.l + _kListTileLeadingWidth,
+                color: colors.outlineVariant.withValues(alpha: 0.5),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,42 +62,7 @@ class SettingsSection extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: AppSpacing.xs,
-              bottom: AppSpacing.s,
-            ),
-            child: Text(
-              title,
-              style: theme.textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colors.primary,
-                letterSpacing: 1,
-              ),
-            ),
-          ),
-          Material(
-            clipBehavior: Clip.antiAlias,
-            color: colors.surfaceContainerLow,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.m),
-            ),
-            child: Column(
-              children: [
-                for (int i = 0; i < items.length; i++) ...[
-                  items[i],
-                  if (i < items.length - 1)
-                    Divider(
-                      height: 1,
-                      indent: AppSpacing.l + 40,
-                      color: colors.outlineVariant.withValues(alpha: 0.5),
-                    ),
-                ],
-              ],
-            ),
-          ),
-        ],
+        children: [_buildSectionTitle(theme, colors), _buildItemsCard(colors)],
       ),
     );
   }
@@ -81,6 +86,16 @@ class SettingsItem extends StatelessWidget {
   final VoidCallback? onTap;
   final bool enabled;
 
+  Widget? _resolveTrailing() {
+    if (trailing != null) {
+      return trailing;
+    }
+    if (onTap != null) {
+      return const Icon(AppIcons.chevronRight, size: 20);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -90,9 +105,7 @@ class SettingsItem extends StatelessWidget {
       leading: Icon(icon, color: colors.onSurfaceVariant),
       title: Text(title),
       subtitle: subtitle != null ? Text(subtitle!) : null,
-      trailing:
-          trailing ??
-          (onTap != null ? const Icon(AppIcons.chevronRight, size: 20) : null),
+      trailing: _resolveTrailing(),
       onTap: onTap,
     );
   }
