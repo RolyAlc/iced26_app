@@ -6,34 +6,30 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/domain/entities/note_color.dart';
 
-// TODO: Actualizar library de colores
-// TODO: Mirar esto: https://pub.dev/packages/dynamic_color
-
-/// Animaciones (AppDuration)
+/// fast → micro-interacciones (ripples, snackbars). entrance → transiciones de pantalla completa.
 class AppDuration {
   static const fast = Duration(milliseconds: 200);
   static const medium = Duration(milliseconds: 300);
   static const entrance = Duration(milliseconds: 600);
 }
 
-/// Elevación (AppElevation)
+/// M3 usa color tonal para jerarquía visual — la sombra se reserva solo para elementos flotantes.
 class AppElevation {
   static const double none = 0;
   static const double low = 2;
 }
 
-/// Tipografía (AppTextSize)
+/// Tamaños puntuales fuera de textTheme (chips, badges). El resto de tipografía usa theme.textTheme.
 class AppTextSize {
   static const double chip = 12.0;
 }
 
-/// Estilo de texto (AppTextStyle)
+/// Overrides que complementan textTheme. 0.8 sigue la guía M3 para labels en caps (labelSmall/Medium bold).
 class AppTextStyle {
   // Espaciado de letras para etiquetas de sección en mayúsculas (labelSmall/labelMedium bold).
   static const double labelLetterSpacing = 0.8;
 }
 
-/// Espaciados (AppSpacing)
 class AppSpacing {
   static const double xxs = 2.0;
   static const double xs = 4.0;
@@ -44,7 +40,6 @@ class AppSpacing {
   static const double xl = 32.0;
 }
 
-/// Layout (AppLayout)
 class AppLayout {
   static const double pageHeaderFallbackHeight = 142.0;
   static const double searchBarHeaderFallbackHeight = 70.0;
@@ -66,12 +61,12 @@ class AppLayout {
   }
 }
 
-/// Opacidad (AppOpacity)
+/// Opacidades semánticas — evita literales dispersos. placeholder = contenido pendiente de carga.
 class AppOpacity {
   static const double placeholder = 0.75;
 }
 
-/// Radios (AppRadius)
+/// container (28) para cards/sheets M3; l (32) para modales y drawers de mayor prominencia.
 class AppRadius {
   static const double s = 12.0;
   static const double m = 20.0;
@@ -102,7 +97,6 @@ class AppOverlayColors {
   static const Color shadowBase = Color(0xFF000000); // black
 }
 
-/// Colores de categorías (AppCategoryColors)
 class AppCategoryColors {
   static const workshop = Color(0xFFFF8F00); // Amber 800 — cálido/artesanal
   static const paper = Color(0xFF1976D2); // Blue 700  — académico clásico
@@ -112,7 +106,7 @@ class AppCategoryColors {
   static const fallback = Color(0xFF00796B); // Teal 700  — otros
 }
 
-/// Colores de notas (Mood Tags)
+/// Paleta de las etiquetas "Mood Tags" en la UI de notas. Fijos — no siguen el ColorScheme.
 class AppNoteColors {
   static const _colors = {
     NoteColor.focus: Color(0xFF2196F3), // Blue 500

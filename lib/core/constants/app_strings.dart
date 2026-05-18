@@ -88,4 +88,8 @@ abstract final class AppStrings {
   static String speakersOverflow(int count) {
     return '& +$count more';
   }
+
+  static const String themeLight = 'Light';
+  static const String themeDark = 'Dark';
+  static const String themeSystem = 'System';
 }
