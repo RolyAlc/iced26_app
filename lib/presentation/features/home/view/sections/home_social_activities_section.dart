@@ -71,7 +71,9 @@ class _SocialCarousel extends StatelessWidget {
     return SizedBox(
       height: dimensions.height,
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppLayout.horizontalPadding(context),
+        ),
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
         itemCount: socials.length,
@@ -131,6 +133,8 @@ class _FadeEdgeMask extends StatelessWidget {
   }
 
   Shader _buildShader(Rect bounds) {
+    // BlendMode.dstIn usa el gradiente como máscara alpha, no como color visual.
+    // Colors.white = alpha 1.0 (opaco), Colors.transparent = alpha 0.0 (invisible).
     return LinearGradient(
       stops: const [_fadeStart, 1.0],
       colors: [Colors.white, surfaceColor.withValues(alpha: 0.0)],

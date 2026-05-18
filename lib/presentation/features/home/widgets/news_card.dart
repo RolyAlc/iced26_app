@@ -6,6 +6,8 @@ import 'package:iced26/presentation/features/home/widgets/news_card_variant.dart
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
 import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
 
+const double _kHeroHeight = 220.0;
+
 /// Tarjeta de noticia.
 class NewsCard extends StatelessWidget {
   const NewsCard({
@@ -23,22 +25,42 @@ class NewsCard extends StatelessWidget {
   final VoidCallback onTap;
   final NewsCardVariant variant;
 
-  static const double _heroHeight = 220.0;
-
   @override
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
       child: switch (variant) {
-        NewsCardVariant.hero => _buildFeaturedLayout(context),
-        NewsCardVariant.compact => _buildStandardLayout(context),
+        NewsCardVariant.hero => _FeaturedLayout(
+          imageUrl: imageUrl,
+          title: title,
+          subtitle: subtitle,
+        ),
+        NewsCardVariant.compact => _StandardLayout(
+          imageUrl: imageUrl,
+          title: title,
+          subtitle: subtitle,
+        ),
       },
     );
   }
+}
 
-  Widget _buildFeaturedLayout(BuildContext context) {
+//// Canva para la vista destacada
+class _FeaturedLayout extends StatelessWidget {
+  const _FeaturedLayout({
+    required this.imageUrl,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String imageUrl;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
-      height: _heroHeight,
+      height: _kHeroHeight,
       width: double.infinity,
       child: Stack(
         fit: StackFit.expand,
@@ -50,8 +72,22 @@ class NewsCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildStandardLayout(BuildContext context) {
+/// Canva para la vista compacta
+class _StandardLayout extends StatelessWidget {
+  const _StandardLayout({
+    required this.imageUrl,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String imageUrl;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return Padding(
@@ -103,6 +139,7 @@ class NewsCard extends StatelessWidget {
   }
 }
 
+/// Canva para el overlay de la vista destacada
 class _HeroOverlay extends StatelessWidget {
   const _HeroOverlay();
 
@@ -113,7 +150,10 @@ class _HeroOverlay extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.transparent, Colors.black87],
+          colors: [
+            AppOverlayColors.heroGradientStart,
+            AppOverlayColors.heroGradientEnd,
+          ],
           stops: [0.4, 1.0],
         ),
       ),
@@ -121,15 +161,16 @@ class _HeroOverlay extends StatelessWidget {
   }
 }
 
+/// Canva para el contenido de la vista destacada
 class _HeroContent extends StatelessWidget {
   const _HeroContent({required this.title, required this.subtitle});
+
   final String title;
   final String subtitle;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.m),
       child: Column(
@@ -142,7 +183,7 @@ class _HeroContent extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: AppOverlayColors.heroText,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
@@ -150,7 +191,9 @@ class _HeroContent extends StatelessWidget {
             subtitle,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white70),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppOverlayColors.heroTextSecondary,
+            ),
           ),
         ],
       ),
@@ -158,8 +201,10 @@ class _HeroContent extends StatelessWidget {
   }
 }
 
+/// Canva para la imagen de la vista destacada.ss
 class _HeroImage extends StatelessWidget {
   const _HeroImage({required this.imageUrl});
+
   final String imageUrl;
 
   @override

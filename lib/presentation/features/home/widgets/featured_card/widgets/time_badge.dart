@@ -15,13 +15,13 @@ class TimeBadge extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.4),
+        color: AppOverlayColors.timeBadgeBackground,
         borderRadius: BorderRadius.circular(AppRadius.s),
       ),
       child: Text(
         time.toUpperCase(),
         style: const TextStyle(
-          color: Colors.white,
+          color: AppOverlayColors.heroText,
           fontSize: AppTextSize.chip,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.5,

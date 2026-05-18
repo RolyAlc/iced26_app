@@ -1,4 +1,5 @@
 import 'package:iced26/domain/entities/category.dart';
+import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/new.dart';
@@ -20,6 +21,7 @@ class HomeState {
     required this.categories,
     required this.news,
     required this.socialActivities,
+    required this.conferenceThemes,
     required this.headerInfoLabel,
   });
   final List<Day> days;
@@ -31,5 +33,6 @@ class HomeState {
   final List<Category> categories;
   final List<NewsItem> news;
   final List<SocialActivity> socialActivities;
+  final List<ConferenceTheme> conferenceThemes;
   final String headerInfoLabel;
 }

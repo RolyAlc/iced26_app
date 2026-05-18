@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/bootstrap.dart';
+import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/presentation/app/navigation_constants.dart';
 import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
+import 'package:iced26/presentation/features/home/view/sections/home_conference_themes_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_featured_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_header_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_keynote_speakers_section.dart';
@@ -17,6 +20,7 @@ import 'package:iced26/presentation/features/home/view/sections/home_social_acti
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
+import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
@@ -25,6 +29,8 @@ import 'package:iced26/presentation/shared/widgets/error_screen.dart';
 import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
 import 'package:iced26/presentation/shared/widgets/smart_search_bar.dart';
 import 'package:iced26/presentation/shared/widgets/staggered_fade_in.dart';
+
+// TODO: Revisar hadouken
 
 const double _expandedHeaderHeight = 136.0;
 const double _collapsedHeaderHeight = 80.0;
@@ -69,12 +75,20 @@ class _HomeContent extends ConsumerWidget {
         children: [
           _HomeFeaturedSection(
             featuredEvents: state.featuredEvents,
-            onExploreTap: () => ref
-                .read(navigationProvider.notifier)
-                .select(AppFeature.schedule),
+            onExploreTap: () {
+              ref
+                  .read(scheduleTopTabProvider.notifier)
+                  .select(ScheduleTab.timeline);
+              ref.read(navigationProvider.notifier).select(AppFeature.schedule);
+            },
           ),
           if (state.keynoteSpeakers.isNotEmpty)
-            _HomeKeynoteSection(speakers: state.keynoteSpeakers),
+            _HomeKeynoteSection(
+              speakers: state.keynoteSpeakers,
+              onViewAll: () => SmartSearchBar.open(context, searchNotifier),
+            ),
+          if (state.conferenceThemes.isNotEmpty)
+            _HomeThemesSection(themes: state.conferenceThemes),
           _HomeNewsSection(news: state.news),
           _HomeSocialSection(socialActivities: state.socialActivities),
         ],
@@ -111,9 +125,10 @@ class _HomeFeaturedSection extends StatelessWidget {
 
 /// Sección de keynotes.
 class _HomeKeynoteSection extends StatelessWidget {
-  const _HomeKeynoteSection({required this.speakers});
+  const _HomeKeynoteSection({required this.speakers, required this.onViewAll});
 
   final List<KeynoteSpeakerUIModel> speakers;
+  final VoidCallback onViewAll;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +137,27 @@ class _HomeKeynoteSection extends StatelessWidget {
       child: AppSection(
         title: 'Keynote speakers',
         edgeToEdge: true,
-        child: HomeKeynoteSection(speakers: speakers),
+        child: HomeKeynoteSection(speakers: speakers, onViewAll: onViewAll),
+      ),
+    );
+  }
+}
+
+/// Sección de temas de la conferencia.
+class _HomeThemesSection extends StatelessWidget {
+  const _HomeThemesSection({required this.themes});
+
+  final List<ConferenceTheme> themes;
+
+  @override
+  Widget build(BuildContext context) {
+    return StaggeredFadeIn(
+      delay: const Duration(milliseconds: 450),
+      child: AppSection.resolved(
+        title: 'Conference themes',
+        hasData: themes.isNotEmpty,
+        dataChild: HomeConferenceThemesSection(themes: themes),
+        emptyChild: const SizedBox.shrink(),
       ),
     );
   }
@@ -137,7 +172,7 @@ class _HomeNewsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StaggeredFadeIn(
-      delay: const Duration(milliseconds: 400),
+      delay: const Duration(milliseconds: 500),
       child: AppSection.resolved(
         title: 'Latest news',
         hasData: news.isNotEmpty,
@@ -161,15 +196,17 @@ class _HomeSocialSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StaggeredFadeIn(
-      delay: const Duration(milliseconds: 500),
+      delay: const Duration(milliseconds: 600),
       child: AppSection.resolved(
         title: 'Social activities',
         edgeToEdge: true,
         hasData: socialActivities.isNotEmpty,
         dataChild: HomeSocialActivitiesSection(socials: socialActivities),
-        emptyChild: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.l),
-          child: AppEmptyState(
+        emptyChild: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppLayout.horizontalPadding(context),
+          ),
+          child: const AppEmptyState(
             title: 'No social activities found',
             message: 'Check back later for upcoming events.',
             illustration: Icon(AppIcons.social, size: 60),
@@ -203,8 +240,8 @@ class _HomeExpandedHeader extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.l,
+          padding: EdgeInsets.symmetric(
+            horizontal: AppLayout.horizontalPadding(context),
             vertical: AppSpacing.m,
           ),
           child: Row(

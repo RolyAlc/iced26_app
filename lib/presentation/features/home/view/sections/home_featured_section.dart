@@ -7,6 +7,10 @@ import 'package:iced26/presentation/features/home/widgets/featured_card/featured
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
 import 'package:iced26/presentation/shared/widgets/app_dots_indicator.dart';
 
+const String _kEmptyMessage = 'No sessions available today';
+const String _kExploreMoreMessage = 'Explore all sessions';
+const String _kViewScheduleMessage = 'View schedule';
+
 /// Sección de eventos destacados — carousel con snap, peek y dots.
 class HomeFeaturedSection extends StatefulWidget {
   const HomeFeaturedSection({
@@ -58,7 +62,6 @@ class _HomeFeaturedSectionState extends State<HomeFeaturedSection> {
     }
 
     final items = _items;
-
     final totalCount = items.length + 1;
 
     return Column(
@@ -101,6 +104,7 @@ class _HomeFeaturedSectionState extends State<HomeFeaturedSection> {
   }
 }
 
+/// Tarjeta que invita al usuario a explorar todos los eventos.
 class _ExploreMoreCard extends StatelessWidget {
   const _ExploreMoreCard({required this.onTap});
 
@@ -122,7 +126,7 @@ class _ExploreMoreCard extends StatelessWidget {
           Icon(AppIcons.scheduleOn, size: 40, color: colors.onPrimaryContainer),
           const SizedBox(height: AppSpacing.m),
           Text(
-            'Explore all sessions',
+            _kExploreMoreMessage,
             style: textTheme.titleMedium?.copyWith(
               color: colors.onPrimaryContainer,
               fontWeight: FontWeight.bold,
@@ -134,7 +138,7 @@ class _ExploreMoreCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'View schedule',
+                _kViewScheduleMessage,
                 style: textTheme.labelMedium?.copyWith(
                   color: colors.onPrimaryContainer.withValues(alpha: 0.8),
                 ),
@@ -164,7 +168,9 @@ class _FeaturedEmptyState extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppLayout.horizontalPadding(context),
+      ),
       child: Container(
         height: _height,
         decoration: BoxDecoration(
@@ -173,7 +179,7 @@ class _FeaturedEmptyState extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            'No sessions available today',
+            _kEmptyMessage,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

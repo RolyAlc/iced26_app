@@ -7,6 +7,8 @@ import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speak
 import 'package:iced26/presentation/features/home/widgets/speaker_card.dart';
 import 'package:iced26/presentation/shared/widgets/app_dots_indicator.dart';
 
+const String _kExploreAllSpeakers = 'Explore all speakers';
+
 /// Sección de keynote speakers — carousel con peek + dots + CTA opcional.
 class HomeKeynoteSection extends StatefulWidget {
   const HomeKeynoteSection({super.key, required this.speakers, this.onViewAll});
@@ -109,7 +111,7 @@ class _ViewAllButton extends StatelessWidget {
       onPressed: onTap,
       icon: Icon(AppIcons.peopleOutline, size: 18, color: colors.primary),
       label: Text(
-        'Ver todos los ponentes',
+        _kExploreAllSpeakers,
         style: TextStyle(color: colors.primary),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/services/logger/logger.dart';
@@ -8,7 +9,13 @@ import 'package:iced26/presentation/features/home/widgets/news_card.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card_variant.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
+
 import 'package:url_launcher/url_launcher.dart';
+
+// TODO: Revisar Class grande
+
+const _kReadFullArticle = 'Read full article';
+const _kModalImageHeight = 200.0;
 
 /// Sección de noticias con bottom sheet de detalle.
 class HomeNewsSection extends StatelessWidget {
@@ -16,156 +23,72 @@ class HomeNewsSection extends StatelessWidget {
 
   final List<NewsItem> news;
 
-  static const double _modalImageHeight = 200.0;
-
   @override
   Widget build(BuildContext context) {
-    if (_isEmpty()) {
+    if (news.isEmpty) {
       return const SizedBox.shrink();
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: _buildNewsList(context),
-    );
-  }
-
-  /// Comprueba si no hay noticias.
-  bool _isEmpty() => news.isEmpty;
-
-  /// Construye toda la lista de widgets de noticias.
-  List<Widget> _buildNewsList(BuildContext context) {
-    final List<Widget> items = [];
-
-    items.add(_buildHeroNews(context));
-    items.add(const SizedBox(height: AppSpacing.sm));
-
-    if (news.length > 1) {
-      items.add(_buildCompactNewsList(context));
-    }
-
-    return items;
-  }
-
-  /// Noticia principal (hero).
-  Widget _buildHeroNews(BuildContext context) {
-    final item = news.first;
-
-    return NewsCard(
-      variant: NewsCardVariant.hero,
-      title: item.title.resolve('en'),
-      subtitle: item.content.resolve('en'),
-      imageUrl: item.imgUrl,
-      onTap: () => _showNewsDetails(context, item),
-    );
-  }
-
-  /// Lista de noticias secundarias.
-  Widget _buildCompactNewsList(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: _buildCompactNewsItems(context),
-    );
-  }
-
-  /// Genera los items compactos.
-  List<Widget> _buildCompactNewsItems(BuildContext context) {
-    final List<Widget> items = [];
-
-    for (int i = 1; i < news.length; i++) {
-      if (i > 1) {
-        items.add(const SizedBox(height: AppSpacing.sm));
-      }
-      items.add(_buildCompactNewsCard(context, news[i]));
-    }
-
-    return items;
-  }
-
-  /// Card individual compacta.
-  Widget _buildCompactNewsCard(BuildContext context, NewsItem item) {
-    return NewsCard(
-      title: item.title.resolve('en'),
-      subtitle: item.content.resolve('en'),
-      imageUrl: item.imgUrl,
-      onTap: () => _showNewsDetails(context, item),
-    );
-  }
-
-  /// Bottom sheet con detalle de noticia.
-  void _showNewsDetails(BuildContext context, NewsItem item) {
-    final theme = Theme.of(context);
-
-    AppBottomSheet.show(
-      context: context,
-      title: item.title.resolve('en'),
-      actions: [_buildOpenWebButton(context, item)],
-      child: _buildBottomSheetContent(theme, item),
-    );
-  }
-
-  /// Botón de acción para abrir la noticia.
-  Widget _buildOpenWebButton(BuildContext context, NewsItem item) {
-    return FilledButton.icon(
-      onPressed: () {
-        Navigator.pop(context);
-        _launchURL(context, item.webUrl);
-      },
-      icon: const Icon(AppIcons.openInNew, size: 18),
-      label: const Text('Read full article'),
-      style: FilledButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.m),
-        ),
-      ),
-    );
-  }
-
-  /// Contenido del bottom sheet.
-  Widget _buildBottomSheetContent(ThemeData theme, NewsItem item) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildBottomSheetImage(item),
-        _buildBottomSheetText(theme, item),
+        NewsCard(
+          variant: NewsCardVariant.hero,
+          title: news.first.title.resolve('en'),
+          subtitle: news.first.content.resolve('en'),
+          imageUrl: news.first.imgUrl,
+          onTap: () {
+            _showNewsDetails(context, news.first);
+          },
+        ),
+        if (news.length > 1) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (int i = 1; i < news.length; i++) ...[
+                if (i > 1) const SizedBox(height: AppSpacing.sm),
+                NewsCard(
+                  title: news[i].title.resolve('en'),
+                  subtitle: news[i].content.resolve('en'),
+                  imageUrl: news[i].imgUrl,
+                  onTap: () {
+                    _showNewsDetails(context, news[i]);
+                  },
+                ),
+              ],
+            ],
+          ),
+        ],
       ],
     );
   }
 
-  /// Imagen del bottom sheet.
-  Widget _buildBottomSheetImage(NewsItem item) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.l),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppRadius.l),
-        child: AppNetworkImage(
-          url: item.imgUrl,
-          height: _modalImageHeight,
-          width: double.infinity,
-          placeholder: const AppNetworkImageAssetPlaceholder(
-            assetPath: Assets.expressiveShape,
-            height: _modalImageHeight,
-            width: double.infinity,
+  void _showNewsDetails(BuildContext context, NewsItem item) {
+    AppBottomSheet.show(
+      context: context,
+      title: item.title.resolve('en'),
+      actions: [
+        FilledButton.icon(
+          onPressed: () {
+            Navigator.pop(context);
+            _launchURL(context, item.webUrl);
+          },
+          icon: const Icon(AppIcons.openInNew, size: 18),
+          label: const Text(_kReadFullArticle),
+          style: FilledButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.m),
+            ),
           ),
         ),
-      ),
+      ],
+      child: _NewsDetailContent(item: item),
     );
   }
 
-  /// Texto del bottom sheet.
-  Widget _buildBottomSheetText(ThemeData theme, NewsItem item) {
-    return Text(
-      item.content.resolve('en'),
-      style: theme.textTheme.bodyLarge?.copyWith(
-        color: theme.colorScheme.onSurfaceVariant,
-        height: 1.5,
-      ),
-    );
-  }
-
-  /// Abre URL externa.
   Future<void> _launchURL(BuildContext context, String urlString) async {
     final Uri url = Uri.parse(urlString);
 
@@ -186,7 +109,6 @@ class HomeNewsSection extends StatelessWidget {
     }
   }
 
-  /// Error UI al abrir enlace.
   void _showError(BuildContext context, String urlString) {
     if (!context.mounted) {
       return;
@@ -194,6 +116,46 @@ class HomeNewsSection extends StatelessWidget {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Could not open the link: $urlString')),
+    );
+  }
+}
+
+/// Contenido del bottom sheet de detalle de una noticia.
+class _NewsDetailContent extends StatelessWidget {
+  const _NewsDetailContent({required this.item});
+
+  final NewsItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.l),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppRadius.l),
+            child: AppNetworkImage(
+              url: item.imgUrl,
+              height: _kModalImageHeight,
+              width: double.infinity,
+              placeholder: const AppNetworkImageAssetPlaceholder(
+                assetPath: Assets.expressiveShape,
+                height: _kModalImageHeight,
+                width: double.infinity,
+              ),
+            ),
+          ),
+        ),
+        Text(
+          item.content.resolve('en'),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            height: 1.5,
+          ),
+        ),
+      ],
     );
   }
 }

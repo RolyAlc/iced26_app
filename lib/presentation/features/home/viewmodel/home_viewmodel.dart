@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+
 import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
@@ -17,14 +18,14 @@ import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_mode
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_viewmodel.g.dart';
 
-// Locale usado para resolver textos multilingüe.
-// TODO: Obtener dinámicamente desde configuración del usuario.
-const _kLocale = 'en';
-const _kMaxFeaturedEvents = 5;
+// TODO: Obtener locale dinámico desde configuración del usuario.
+const _kMaxFeaturedEvents = 3;
+const _kUnknownRoom = 'Unknown Room';
 final _kMaxDate = DateTime(9999);
 final _kMinDate = DateTime(0);
 
@@ -97,7 +98,7 @@ String? _resolveSpeakerPhoto(Event event, Map<String, Person> peopleById) {
 /// Devuelve el nombre de la sala de [event] buscando en [allRooms].
 String _resolveRoomName(Event event, List<Room> allRooms) {
   final room = allRooms.firstWhereOrNull((r) => r.id == event.roomId);
-  return room?.name.resolve(_kLocale) ?? 'Unknown Room';
+  return room?.name.resolve(AppConfig.defaultLocale) ?? _kUnknownRoom;
 }
 
 /// Construye la lista de [EventUIModel] para los eventos destacados.
@@ -124,7 +125,7 @@ List<SessionUIModel> _buildSpeakerSessions({
       .map(
         (e) => SessionUIModel(
           type: e.type,
-          title: e.title.resolve(_kLocale),
+          title: e.title.resolve(AppConfig.defaultLocale),
           formattedDateTime: e.formattedDateTime,
           event: e,
         ),
@@ -144,7 +145,7 @@ KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
 
   return KeynoteSpeakerUIModel(
     id: speaker.id,
-    name: speaker.name.resolve(_kLocale),
+    name: speaker.name.resolve(AppConfig.defaultLocale),
     institution: speaker.institution,
     photoUrl: speaker.photoUrl,
     events: _buildSpeakerSessions(
@@ -184,7 +185,7 @@ List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
 /// Construye la lista de [Category] a partir de los subtipos del evento.
 List<Category> _buildCategories(List<SubmissionType> subTypes) {
   return subTypes
-      .map((st) => Category(name: st.name.resolve(_kLocale)))
+      .map((st) => Category(name: st.name.resolve(AppConfig.defaultLocale)))
       .toList();
 }
 
@@ -224,6 +225,7 @@ class HomeViewModel extends _$HomeViewModel {
       categories: _buildCategories(data.subTypes),
       news: data.news,
       socialActivities: data.socialActivities,
+      conferenceThemes: data.conferenceThemes,
       headerInfoLabel: AppConfig.welcomeLabel,
     );
   }

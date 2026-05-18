@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
+
+// TODO: return muy largo
 
 /// Texto superpuesto en la base de la card (nombre + institución).
 class SpeakerCardContent extends StatelessWidget {
@@ -22,16 +25,19 @@ class SpeakerCardContent extends StatelessWidget {
           children: [
             Text(
               speaker.name,
-              style: textTheme.titleLarge?.copyWith(color: Colors.white),
+              style: textTheme.titleLarge?.copyWith(
+                color: AppOverlayColors.heroText,
+                fontWeight: speaker.isPresentingToday ? FontWeight.bold : null,
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
             if (speaker.institution != null) ...[
-              const SizedBox(height: 2),
+              const SizedBox(height: AppSpacing.xxs),
               Text(
                 speaker.institution!,
                 style: textTheme.labelSmall?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.8),
+                  color: AppOverlayColors.cardTextSecondary,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

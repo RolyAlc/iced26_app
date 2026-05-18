@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
@@ -14,8 +15,8 @@ class HomeHeaderSection extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.l,
+      padding: EdgeInsets.symmetric(
+        horizontal: AppLayout.horizontalPadding(context),
         vertical: AppSpacing.m,
       ),
       child: Row(
