@@ -8,6 +8,8 @@ import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/ui_metrics.dart';
 import 'package:iced26/presentation/shared/widgets/smart_search_bar.dart';
 
+// TODO: code hadouken
+
 const double _selectedItemBackgroundOpacity = 0.1;
 const double _shadowOpacity = 0.08;
 const double _shadowBlurRadius = 12.0;
@@ -31,8 +33,8 @@ class AppNavigationBar extends ConsumerWidget {
       onReportNavBar: (size) => size.height,
       child: Padding(
         padding: EdgeInsets.only(
-          left: AppSpacing.l,
-          right: AppSpacing.l,
+          left: AppLayout.horizontalPadding(context),
+          right: AppLayout.horizontalPadding(context),
           top: AppSpacing.l,
           bottom: AppLayout.navBarBottomClearance + bottomInset,
         ),
@@ -79,7 +81,9 @@ class _NavContainer extends StatelessWidget {
         border: Border.all(color: colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: _shadowOpacity),
+            color: AppOverlayColors.shadowBase.withValues(
+              alpha: _shadowOpacity,
+            ),
             blurRadius: _shadowBlurRadius,
             offset: const Offset(0, 4),
           ),

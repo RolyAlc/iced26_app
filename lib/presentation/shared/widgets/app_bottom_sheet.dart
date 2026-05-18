@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
+
+// TODO: Revisar los Edge
+
+const double _kMaxSheetHeightRatio = 0.70;
+const double _kCeilingMarginRatio = 0.10;
+const double _kGrabberWidth = 36.0;
+const double _kGrabberHeight = 4.0;
+const double _kCloseIconSize = 20.0;
 
 /// Widget base para los paneles deslizantes de la app.
 class AppBottomSheet extends StatelessWidget {
@@ -9,19 +18,22 @@ class AppBottomSheet extends StatelessWidget {
     required this.title,
     required this.child,
     this.actions,
+    this.stickyBottom,
     this.isFullHeight = false,
     this.scrollable = true,
   });
 
-  static const _contentPadding = EdgeInsets.fromLTRB(24, 0, 24, 24);
-  static const _kMaxSheetHeightRatio = 0.70;
-  static const _kCeilingMarginRatio = 0.10;
-  static const _kGrabberWidth = 36.0;
-  static const _kGrabberHeight = 4.0;
+  static const _contentPadding = EdgeInsets.fromLTRB(
+    AppSpacing.l,
+    AppSpacing.m,
+    AppSpacing.l,
+    AppSpacing.l,
+  );
 
   final String title;
   final Widget child;
   final List<Widget>? actions;
+  final Widget? stickyBottom;
   final bool isFullHeight;
   final bool scrollable;
 
@@ -30,6 +42,7 @@ class AppBottomSheet extends StatelessWidget {
     required String title,
     required Widget child,
     List<Widget>? actions,
+    Widget? stickyBottom,
     bool isFullHeight = false,
     bool scrollable = true,
   }) {
@@ -37,10 +50,11 @@ class AppBottomSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black54,
+      barrierColor: AppOverlayColors.barrierScrim,
       builder: (context) => AppBottomSheet(
         title: title,
         actions: actions,
+        stickyBottom: stickyBottom,
         isFullHeight: isFullHeight,
         scrollable: scrollable,
         child: child,
@@ -69,6 +83,7 @@ class AppBottomSheet extends StatelessWidget {
               _buildGrabber(colors),
               _buildHeader(context, theme),
               _buildContent(),
+              _buildStickyBottom(),
               _buildActions(),
             ],
           ),
@@ -120,7 +135,7 @@ class AppBottomSheet extends StatelessWidget {
   Widget _buildGrabber(ColorScheme colors) {
     return Column(
       children: [
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.s),
         Container(
           width: _kGrabberWidth,
           height: _kGrabberHeight,
@@ -129,7 +144,7 @@ class AppBottomSheet extends StatelessWidget {
             borderRadius: BorderRadius.circular(_kGrabberHeight / 2),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.m),
       ],
     );
   }
@@ -137,7 +152,7 @@ class AppBottomSheet extends StatelessWidget {
   /// Construye el header del bottom sheet.
   Widget _buildHeader(BuildContext context, ThemeData theme) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
       child: Row(
         children: [
           Expanded(
@@ -150,7 +165,7 @@ class AppBottomSheet extends StatelessWidget {
           ),
           IconButton.filledTonal(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(AppIcons.close, size: 20),
+            icon: const Icon(AppIcons.close, size: _kCloseIconSize),
           ),
         ],
       ),
@@ -169,6 +184,22 @@ class AppBottomSheet extends StatelessWidget {
     );
   }
 
+  /// Widget fijo al fondo del sheet, fuera del área de scroll.
+  Widget _buildStickyBottom() {
+    if (stickyBottom == null) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        _contentPadding.left,
+        AppSpacing.m,
+        _contentPadding.right,
+        AppSpacing.s,
+      ),
+      child: stickyBottom,
+    );
+  }
+
   /// Construye las acciones del bottom sheet.
   Widget _buildActions() {
     if (actions == null) {
@@ -182,7 +213,9 @@ class AppBottomSheet extends StatelessWidget {
             .map(
               (action) => Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                  ),
                   child: action,
                 ),
               ),

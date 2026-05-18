@@ -59,7 +59,19 @@ class _AppPageState extends State<AppPage> {
         if (height != null) _onHeaderHeightChanged(height);
         return false;
       },
-      child: Material(color: bgColor, child: _buildSliverLayout(bgColor)),
+      // Material llena la pantalla completa (fondo sin cortes).
+      // El contenido se acota a maxContentWidth y se centra en pantallas anchas.
+      child: Material(
+        color: bgColor,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppLayout.maxContentWidth,
+            ),
+            child: _buildSliverLayout(bgColor),
+          ),
+        ),
+      ),
     );
   }
 

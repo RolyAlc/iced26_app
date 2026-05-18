@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Pantalla de error genérica para mostrar mensajes de error de forma amigable.
@@ -40,7 +41,7 @@ class ErrorScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 FilledButton.tonal(
                   onPressed: onRetry,
-                  child: const Text('Retry'),
+                  child: const Text(AppStrings.retry),
                 ),
               ],
             ],

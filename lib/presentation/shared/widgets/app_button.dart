@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
+
+// TODO: Num mágicos
 
 /// Botón de acción principal de la aplicación.
 class AppButton extends StatelessWidget {
@@ -21,13 +24,14 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final Widget buttonChild = isLoading
-        ? const SizedBox(
+        ? SizedBox(
             width: 20,
             height: 20,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: Colors.white,
+              color: colorScheme.onPrimary,
             ),
           )
         : Row(

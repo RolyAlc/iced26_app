@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/shared/widgets/app_skeleton.dart';
+
+// TODO: Code Hadouken
 
 /// Un contenedor para secciones de contenido con márgenes consistentes.
 class AppSection extends StatelessWidget {
@@ -89,7 +92,9 @@ class AppSection extends StatelessWidget {
         children: [
           if (hasHeader) ...[
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+              padding: EdgeInsets.symmetric(
+                horizontal: AppLayout.horizontalPadding(context),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -111,7 +116,9 @@ class AppSection extends StatelessWidget {
             child
           else
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+              padding: EdgeInsets.symmetric(
+                horizontal: AppLayout.horizontalPadding(context),
+              ),
               child: child,
             ),
         ],
