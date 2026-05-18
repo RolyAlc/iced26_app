@@ -14,14 +14,13 @@ import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
+import 'package:iced26/presentation/shared/models/icon_color_style.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
 import 'package:iced26/presentation/shared/widgets/attribute_cell.dart';
 import 'package:iced26/presentation/shared/widgets/event_status_chip.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_detail_sheet.dart';
-
-// TODO: Revisar hadouken
 
 const _kFallbackTime = '--:--';
 const _kFallbackRoom = 'TBA';
@@ -30,6 +29,11 @@ const _kLabelTime = 'Time';
 const _kLabelRoom = 'Room';
 const _kLabelDuration = 'Duration';
 const _kLabelLanguage = 'Language';
+
+const _kTypeIconSize = 12.0;
+const _kChevronSize = 16.0;
+// Espacio de letras para la etiqueta de tipo de evento (badge inline, más compacto que labelLetterSpacing).
+const _kTypeBadgeLetterSpacing = 0.5;
 
 void showEventDetail(BuildContext context, Event event) {
   AppBottomSheet.show(
@@ -42,6 +46,7 @@ void showEventDetail(BuildContext context, Event event) {
 /// Contenido principal del detalle del evento.
 class EventDetailContent extends ConsumerWidget {
   const EventDetailContent({super.key, required this.event});
+
   final Event event;
 
   @override
@@ -65,7 +70,7 @@ class EventDetailContent extends ConsumerWidget {
           event.title.resolve(locale),
           style: Theme.of(
             context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900),
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: AppSpacing.l),
         _EventAttributesGrid(event: event, duration: duration),
@@ -87,6 +92,7 @@ class EventDetailContent extends ConsumerWidget {
 /// Header del tipo de evento con su badge de estado si aplica.
 class _EventTypeHeader extends StatelessWidget {
   const _EventTypeHeader({required this.event, required this.status});
+
   final Event event;
   final EventStatus status;
 
@@ -94,33 +100,10 @@ class _EventTypeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final style = event.type.style(theme.colorScheme);
+
     return Row(
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: AppSpacing.xs,
-          ),
-          decoration: BoxDecoration(
-            color: style.color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(AppRadius.s),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(style.icon, size: 12, color: style.color),
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                event.type.label.toUpperCase(),
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: style.color,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
-          ),
-        ),
+        _buildTypeBadge(theme, style),
         if (status != EventStatus.ended) ...[
           const SizedBox(width: AppSpacing.s),
           EventStatusChip(status: status),
@@ -128,17 +111,47 @@ class _EventTypeHeader extends StatelessWidget {
       ],
     );
   }
+
+  Widget _buildTypeBadge(ThemeData theme, IconColorStyle style) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: style.color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppRadius.s),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(style.icon, size: _kTypeIconSize, color: style.color),
+          const SizedBox(width: AppSpacing.xs),
+          Text(
+            event.type.label.toUpperCase(),
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: style.color,
+              fontWeight: FontWeight.bold,
+              letterSpacing: _kTypeBadgeLetterSpacing,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-/// Grilla de atributos del evento.
+/// Grilla de atributos del evento: hora, sala, duración e idioma.
 class _EventAttributesGrid extends StatelessWidget {
   const _EventAttributesGrid({required this.event, required this.duration});
+
   final Event event;
   final String? duration;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.m),
       decoration: BoxDecoration(
@@ -147,23 +160,17 @@ class _EventAttributesGrid extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: AttributeCell(
-                  icon: AppIcons.accessTime,
-                  label: _kLabelTime,
-                  value: event.filterTime ?? _kFallbackTime,
-                ),
-              ),
-              Expanded(
-                child: AttributeCell(
-                  icon: AppIcons.meetingRoom,
-                  label: _kLabelRoom,
-                  value: event.roomId ?? _kFallbackRoom,
-                ),
-              ),
-            ],
+          _buildAttributeRow(
+            AttributeCell(
+              icon: AppIcons.accessTime,
+              label: _kLabelTime,
+              value: event.filterTime ?? _kFallbackTime,
+            ),
+            AttributeCell(
+              icon: AppIcons.meetingRoom,
+              label: _kLabelRoom,
+              value: event.roomId ?? _kFallbackRoom,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
@@ -172,26 +179,29 @@ class _EventAttributesGrid extends StatelessWidget {
               color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2),
             ),
           ),
-          Row(
-            children: [
-              Expanded(
-                child: AttributeCell(
-                  icon: AppIcons.duration,
-                  label: _kLabelDuration,
-                  value: duration ?? _kFallbackValue,
-                ),
-              ),
-              Expanded(
-                child: AttributeCell(
-                  icon: AppIcons.translate,
-                  label: _kLabelLanguage,
-                  value: event.defaultLang?.toUpperCase() ?? _kFallbackValue,
-                ),
-              ),
-            ],
+          _buildAttributeRow(
+            AttributeCell(
+              icon: AppIcons.duration,
+              label: _kLabelDuration,
+              value: duration ?? _kFallbackValue,
+            ),
+            AttributeCell(
+              icon: AppIcons.translate,
+              label: _kLabelLanguage,
+              value: event.defaultLang?.toUpperCase() ?? _kFallbackValue,
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAttributeRow(Widget left, Widget right) {
+    return Row(
+      children: [
+        Expanded(child: left),
+        Expanded(child: right),
+      ],
     );
   }
 }
@@ -199,6 +209,7 @@ class _EventAttributesGrid extends StatelessWidget {
 /// Botón de favorito con su propio watch — rebuilds aislados del resto del sheet.
 class _EventFavoriteButton extends ConsumerWidget {
   const _EventFavoriteButton({required this.eventId});
+
   final String eventId;
 
   @override
@@ -208,6 +219,7 @@ class _EventFavoriteButton extends ConsumerWidget {
         (ids) => ids.value?.contains(eventId) ?? false,
       ),
     );
+
     return AppButton(
       onPressed: () {
         HapticFeedback.lightImpact();
@@ -228,6 +240,7 @@ class _SpeakerSection extends StatelessWidget {
     required this.people,
     required this.presentationsByPerson,
   });
+
   final List<SpeakerEntry> speakers;
   final Map<String, Person> people;
   final Map<String, List<Presentation>> presentationsByPerson;
@@ -235,6 +248,7 @@ class _SpeakerSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -247,13 +261,12 @@ class _SpeakerSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.s),
-        ...speakers.map(
-          (s) => _SpeakerRow(
+        for (final s in speakers)
+          _SpeakerRow(
             entry: s,
             person: people[s.personId],
             presentations: presentationsByPerson[s.personId] ?? [],
           ),
-        ),
       ],
     );
   }
@@ -266,6 +279,7 @@ class _SpeakerRow extends StatelessWidget {
     required this.person,
     required this.presentations,
   });
+
   final SpeakerEntry entry;
   final Person? person;
   final List<Presentation> presentations;
@@ -280,9 +294,7 @@ class _SpeakerRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: AppSpacing.s),
       child: InkWell(
         onTap: person != null
-            ? () {
-                showSpeakerDetail(context, person!, presentations);
-              }
+            ? () => showSpeakerDetail(context, person!, presentations)
             : null,
         borderRadius: BorderRadius.circular(AppRadius.s),
         child: Padding(
@@ -294,36 +306,43 @@ class _SpeakerRow extends StatelessWidget {
             children: [
               SpeakerAvatar(person: person, name: name),
               const SizedBox(width: AppSpacing.m),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (person?.institution != null)
-                      Text(
-                        person!.institution!,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              if (person != null)
-                Icon(
-                  AppIcons.chevronRight,
-                  size: 16,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+              Expanded(child: _buildSpeakerInfo(theme, name)),
+              if (person != null) _buildChevron(theme),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSpeakerInfo(ThemeData theme, String name) {
+    final institution = person?.institution;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          name,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        if (institution != null)
+          Text(
+            institution,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildChevron(ThemeData theme) {
+    return Icon(
+      AppIcons.chevronRight,
+      size: _kChevronSize,
+      color: theme.colorScheme.onSurfaceVariant,
     );
   }
 }

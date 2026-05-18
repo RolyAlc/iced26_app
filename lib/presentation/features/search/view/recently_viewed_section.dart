@@ -9,8 +9,6 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/search/widgets/result_tile.dart';
 import 'package:iced26/presentation/features/search/widgets/section_label.dart';
 
-// TODO: Posible duplicado de allEventsIndexProvider
-
 /// Sección que muestra los eventos vistos recientemente.
 class RecentlyViewedSection extends ConsumerWidget {
   const RecentlyViewedSection({
@@ -28,11 +26,11 @@ class RecentlyViewedSection extends ConsumerWidget {
     // ?? {} es seguro: si aún no hay datos simplemente no se muestra nada.
     final eventsIndex = ref.watch(allEventsIndexProvider).value ?? {};
 
-    // Resolvemos IDs → Events, descartando los que no existan.
-    final events = eventIds
-        .map((id) => eventsIndex[id])
-        .whereType<Event>()
-        .toList();
+    // Resolvemos IDs → Events, descartando los que no existan en el índice.
+    final events = <Event>[
+      for (final id in eventIds)
+        if (eventsIndex[id] != null) eventsIndex[id]!,
+    ];
 
     if (events.isEmpty) {
       return const SizedBox.shrink();
@@ -47,15 +45,14 @@ class RecentlyViewedSection extends ConsumerWidget {
           icon: AppIcons.history,
         ),
         const SizedBox(height: AppSpacing.xs),
-        ...events.map(
-          (event) => ResultTile(
+        for (final event in events)
+          ResultTile(
             key: ValueKey(event.id),
             event: event,
             onTap: () {
               onEventTap(event);
             },
           ),
-        ),
       ],
     );
   }

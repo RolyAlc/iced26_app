@@ -15,7 +15,7 @@ import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
-// TODO: Revisar if y else anidados
+const double _kEmptyStateIconSize = 48.0;
 
 /// Vista principal del schedule.
 class ScheduleView extends ConsumerWidget {
@@ -76,67 +76,11 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
       }
     });
 
-    Widget? fillChild;
-    List<Widget> children = const [];
-
-    if (isMySchedule) {
-      final asyncItems = ref.watch(myScheduleGroupedProvider);
-
-      if (asyncItems.isLoading) {
-        fillChild = const Center(child: CircularProgressIndicator());
-      } else if (asyncItems.hasError) {
-        fillChild = Center(
-          child: AppEmptyState(
-            illustration: Icon(
-              AppIcons.error,
-              size: 48,
-              color: theme.colorScheme.error,
-            ),
-            title: AppStrings.myScheduleErrorTitle,
-            message: AppStrings.genericErrorMessage,
-            actionButton: TextButton(
-              onPressed: () => ref.invalidate(myScheduleItemsProvider),
-              child: const Text(AppStrings.retry),
-            ),
-          ),
-        );
-      } else {
-        final items = asyncItems.value ?? const [];
-        if (items.isEmpty) {
-          fillChild = Center(
-            child: AppEmptyState(
-              illustration: Icon(
-                AppIcons.bookmarkOff,
-                size: 48,
-                color: theme.colorScheme.outlineVariant,
-              ),
-              title: AppStrings.myScheduleNothingSavedTitle,
-              message: AppStrings.myScheduleNothingSavedMessage,
-            ),
+    final slot = isMySchedule
+        ? _buildMyScheduleSlot(context, theme)
+        : _ContentSlot.scrollable(
+            _buildPaddedContent(context, const ScheduleTimelineBody()),
           );
-        } else {
-          children = [
-            const SizedBox(height: AppSpacing.m),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppLayout.horizontalPadding(context),
-              ),
-              child: MyScheduleContent(items: items),
-            ),
-          ];
-        }
-      }
-    } else {
-      children = [
-        const SizedBox(height: AppSpacing.m),
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppLayout.horizontalPadding(context),
-          ),
-          child: const ScheduleTimelineBody(),
-        ),
-      ];
-    }
 
     // AppPage único — su estado (_headerHeight) persiste al cambiar de tab
     // y al transicionar entre fillChild y children, evitando saltos de layout.
@@ -146,8 +90,90 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
         categories: widget.state.categories,
         sections: widget.state.sections,
       ),
-      fillChild: fillChild,
-      children: children,
+      fillChild: slot.fillChild,
+      children: slot.children,
     );
   }
+
+  _ContentSlot _buildMyScheduleSlot(BuildContext context, ThemeData theme) {
+    final asyncItems = ref.watch(myScheduleGroupedProvider);
+
+    if (asyncItems.isLoading) {
+      return const _ContentSlot.fill(
+        Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (asyncItems.hasError) {
+      return _ContentSlot.fill(_buildMyScheduleError(theme));
+    }
+
+    final items = asyncItems.value ?? const [];
+    if (items.isEmpty) {
+      return _ContentSlot.fill(_buildMyScheduleEmpty(theme));
+    }
+    return _ContentSlot.scrollable(
+      _buildPaddedContent(context, MyScheduleContent(items: items)),
+    );
+  }
+
+  Widget _buildMyScheduleError(ThemeData theme) {
+    return Center(
+      child: AppEmptyState(
+        illustration: Icon(
+          AppIcons.error,
+          size: _kEmptyStateIconSize,
+          color: theme.colorScheme.error,
+        ),
+        title: AppStrings.myScheduleErrorTitle,
+        message: AppStrings.genericErrorMessage,
+        actionButton: TextButton(
+          onPressed: () => ref.invalidate(myScheduleItemsProvider),
+          child: const Text(AppStrings.retry),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMyScheduleEmpty(ThemeData theme) {
+    return Center(
+      child: AppEmptyState(
+        illustration: Icon(
+          AppIcons.bookmarkOff,
+          size: _kEmptyStateIconSize,
+          color: theme.colorScheme.outlineVariant,
+        ),
+        title: AppStrings.myScheduleNothingSavedTitle,
+        message: AppStrings.myScheduleNothingSavedMessage,
+      ),
+    );
+  }
+
+  List<Widget> _buildPaddedContent(BuildContext context, Widget child) {
+    return [
+      const SizedBox(height: AppSpacing.m),
+      Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppLayout.horizontalPadding(context),
+        ),
+        child: child,
+      ),
+    ];
+  }
+}
+
+/// Slot de contenido para AppPage.
+///
+/// `.fill` — un solo widget que ocupa todo el espacio disponible (loading, error, empty).
+/// `.scrollable` — lista de children que se añaden al scroll de AppPage (contenido real).
+class _ContentSlot {
+  const _ContentSlot.fill(Widget child)
+    : fillChild = child,
+      children = const [];
+
+  _ContentSlot.scrollable(List<Widget> items)
+    : fillChild = null,
+      children = items;
+
+  final Widget? fillChild;
+  final List<Widget> children;
 }

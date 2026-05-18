@@ -30,10 +30,19 @@ import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
 import 'package:iced26/presentation/shared/widgets/smart_search_bar.dart';
 import 'package:iced26/presentation/shared/widgets/staggered_fade_in.dart';
 
-// TODO: Revisar hadouken
-
 const double _expandedHeaderHeight = 136.0;
 const double _collapsedHeaderHeight = 80.0;
+const double _kLogoHeight = 48.0;
+const double _kDateIconSize = 14.0;
+const double _kEmptyIllustrationSize = 60.0;
+
+// Delays escalonados para StaggeredFadeIn — cada sección entra
+// ligeramente después que la anterior para dar sensación de carga progresiva.
+const Duration _kFeaturedFadeDelay = Duration(milliseconds: 200);
+const Duration _kKeynoteFadeDelay = Duration(milliseconds: 350);
+const Duration _kThemesFadeDelay = Duration(milliseconds: 450);
+const Duration _kNewsFadeDelay = Duration(milliseconds: 500);
+const Duration _kSocialFadeDelay = Duration(milliseconds: 600);
 
 /// Vista principal de la pantalla de inicio.
 class HomeView extends ConsumerWidget {
@@ -110,7 +119,7 @@ class _HomeFeaturedSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StaggeredFadeIn(
-      delay: const Duration(milliseconds: 200),
+      delay: _kFeaturedFadeDelay,
       child: AppSection(
         title: 'Featured sessions',
         edgeToEdge: true,
@@ -133,7 +142,7 @@ class _HomeKeynoteSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StaggeredFadeIn(
-      delay: const Duration(milliseconds: 350),
+      delay: _kKeynoteFadeDelay,
       child: AppSection(
         title: 'Keynote speakers',
         edgeToEdge: true,
@@ -152,12 +161,11 @@ class _HomeThemesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StaggeredFadeIn(
-      delay: const Duration(milliseconds: 450),
-      child: AppSection.resolved(
+      delay: _kThemesFadeDelay,
+      // El padre ya garantiza themes.isNotEmpty — AppSection simple es suficiente.
+      child: AppSection(
         title: 'Conference themes',
-        hasData: themes.isNotEmpty,
-        dataChild: HomeConferenceThemesSection(themes: themes),
-        emptyChild: const SizedBox.shrink(),
+        child: HomeConferenceThemesSection(themes: themes),
       ),
     );
   }
@@ -172,7 +180,7 @@ class _HomeNewsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StaggeredFadeIn(
-      delay: const Duration(milliseconds: 500),
+      delay: _kNewsFadeDelay,
       child: AppSection.resolved(
         title: 'Latest news',
         hasData: news.isNotEmpty,
@@ -180,7 +188,7 @@ class _HomeNewsSection extends StatelessWidget {
         emptyChild: const AppEmptyState(
           title: 'No news available',
           message: 'Check back later for the latest updates.',
-          illustration: Icon(AppIcons.news, size: 60),
+          illustration: Icon(AppIcons.news, size: _kEmptyIllustrationSize),
         ),
       ),
     );
@@ -196,7 +204,7 @@ class _HomeSocialSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StaggeredFadeIn(
-      delay: const Duration(milliseconds: 600),
+      delay: _kSocialFadeDelay,
       child: AppSection.resolved(
         title: 'Social activities',
         edgeToEdge: true,
@@ -209,7 +217,7 @@ class _HomeSocialSection extends StatelessWidget {
           child: const AppEmptyState(
             title: 'No social activities found',
             message: 'Check back later for upcoming events.',
-            illustration: Icon(AppIcons.social, size: 60),
+            illustration: Icon(AppIcons.social, size: _kEmptyIllustrationSize),
           ),
         ),
       ),
@@ -247,7 +255,11 @@ class _HomeExpandedHeader extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Image.asset(Assets.logoIced26, height: 48, fit: BoxFit.contain),
+              Image.asset(
+                Assets.logoIced26,
+                height: _kLogoHeight,
+                fit: BoxFit.contain,
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -256,7 +268,7 @@ class _HomeExpandedHeader extends StatelessWidget {
                     children: [
                       Icon(
                         AppIcons.calendarOutline,
-                        size: 14,
+                        size: _kDateIconSize,
                         color: colorScheme.primary,
                       ),
                       const SizedBox(width: AppSpacing.xs),

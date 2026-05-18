@@ -10,14 +10,13 @@ import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dar
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-// TODO: Comentar a un lugar adecuado
-// TODO: Class largos
-
 const double _kDaysOfWeekBaseHeight = 20.0;
 const double _kDaysOfWeekHeightPad = 4.0;
 const double _kFormatToggleHeight = 24.0;
 const double _kCalendarRowHeight = 40.0;
 const double _kCalendarIconSize = 20.0;
+const double _kDotSize = 6.0;
+const double _kDotMargin = 1.0;
 const _kCalendarFormats = {
   CalendarFormat.month: 'Month',
   CalendarFormat.week: 'Week',
@@ -121,9 +120,8 @@ class _DiaryCalendarState extends ConsumerState<DiaryCalendar> {
             headerPadding: EdgeInsets.only(bottom: AppSpacing.s),
           ),
         ),
-        GestureDetector(
+        InkWell(
           onTap: () => _toggleFormat(format),
-          behavior: HitTestBehavior.opaque,
           child: SizedBox(
             height: _kFormatToggleHeight,
             child: Center(
@@ -143,7 +141,7 @@ class _DiaryCalendarState extends ConsumerState<DiaryCalendar> {
     );
   }
 
-  CalendarStyle _calendarStyle(ColorScheme colors) {
+  static CalendarStyle _calendarStyle(ColorScheme colors) {
     final defaultText = TextStyle(color: colors.onSurface);
     final mutedText = TextStyle(color: colors.onSurface.withValues(alpha: 0.4));
 
@@ -214,7 +212,6 @@ class _CalendarHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(left: AppSpacing.s),
       child: Row(
@@ -227,43 +224,40 @@ class _CalendarHeader extends StatelessWidget {
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
-          IconButton(
-            icon: Icon(
-              AppIcons.chevronLeft,
-              size: _kCalendarIconSize,
-              color: colors.onSurfaceVariant,
-            ),
-            onPressed: onPrevMonth,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.s,
-              vertical: AppSpacing.s,
-            ),
-            // Sin esto Flutter fuerza un mínimo de 48×48 px en el botón
-            // y los chevrones quedan visualmente separados aunque el padding sea pequeño.
-            style: IconButton.styleFrom(
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              AppIcons.chevronRight,
-              size: _kCalendarIconSize,
-              color: colors.onSurfaceVariant,
-            ),
-            onPressed: onNextMonth,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.s,
-              vertical: AppSpacing.s,
-            ),
-            // Sin esto Flutter fuerza un mínimo de 48×48 px en el botón
-            // y los chevrones quedan visualmente separados aunque el padding sea pequeño.
-            style: IconButton.styleFrom(
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-          ),
+          _ChevronButton(icon: AppIcons.chevronLeft, onPressed: onPrevMonth),
+          _ChevronButton(icon: AppIcons.chevronRight, onPressed: onNextMonth),
         ],
+      ),
+    );
+  }
+}
+
+/// Botón de chevron compacto para navegar entre meses.
+class _ChevronButton extends StatelessWidget {
+  const _ChevronButton({required this.icon, required this.onPressed});
+
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return IconButton(
+      icon: Icon(
+        icon,
+        size: _kCalendarIconSize,
+        color: colors.onSurfaceVariant,
+      ),
+      onPressed: onPressed,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s,
+        vertical: AppSpacing.s,
+      ),
+      // Sin esto Flutter fuerza un mínimo de 48×48 px en el botón
+      // y los chevrones quedan visualmente separados aunque el padding sea pequeño.
+      style: IconButton.styleFrom(
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );
   }
@@ -286,12 +280,11 @@ class _CalendarDayMarkers extends StatelessWidget {
     }
 
     // Colores de mood únicos (sin "None"), máximo 3, en orden de aparición.
-    final moodColors = notes
-        .where((n) => n.color != null)
-        .map((n) => AppNoteColors.colorOf(n.color!))
-        .toSet()
-        .take(3)
-        .toList();
+    // Set<Color> elimina duplicados preservando el orden de inserción (LinkedHashSet).
+    final moodColors = <Color>{
+      for (final n in notes)
+        if (n.color != null) AppNoteColors.colorOf(n.color!),
+    }.take(3).toList();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -315,9 +308,9 @@ class _Dot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 6,
-      height: 6,
-      margin: const EdgeInsets.symmetric(horizontal: 1),
+      width: _kDotSize,
+      height: _kDotSize,
+      margin: const EdgeInsets.symmetric(horizontal: _kDotMargin),
       decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }

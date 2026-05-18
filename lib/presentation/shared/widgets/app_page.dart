@@ -3,9 +3,10 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/ui_metrics.dart';
 import 'package:iced26/presentation/shared/widgets/app_page_header_delegate.dart';
 
-// TODO: revisar 'assert'
-
 /// Contenedor maestro que gestiona el layout de una página completa.
+///
+/// Los [assert] validan el uso correcto de la API en tiempo de desarrollo.
+/// Solo se ejecutan en modo debug — en release se eliminan sin coste.
 class AppPage extends StatefulWidget {
   const AppPage({
     super.key,
@@ -44,7 +45,9 @@ class _AppPageState extends State<AppPage> {
 
   void _onHeaderHeightChanged(double newHeight) {
     if ((newHeight - _headerHeight).abs() > 0.5) {
-      setState(() => _headerHeight = newHeight);
+      setState(() {
+        _headerHeight = newHeight;
+      });
     }
   }
 

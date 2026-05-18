@@ -5,9 +5,10 @@ import 'package:iced26/domain/entities/note_color.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
-// TODO: revisar return
+const _kDateIconSize = 16.0;
+const _kColorBorderWidth = 1.5;
 
-/// Encabezado de la nota del diario que muestra la fecha y el color.
+/// Encabezado del editor de notas: chip de fecha con color activo + botones de acción.
 class DiaryEditorHeader extends StatelessWidget {
   const DiaryEditorHeader({
     super.key,
@@ -16,6 +17,7 @@ class DiaryEditorHeader extends StatelessWidget {
     required this.color,
     this.onDelete,
   });
+
   final DateTime date;
   final VoidCallback onTapDate;
   final NoteColor? color;
@@ -24,46 +26,12 @@ class DiaryEditorHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final paintColor = color != null ? AppNoteColors.colorOf(color!) : null;
+    final c = color;
+    final paintColor = c != null ? AppNoteColors.colorOf(c) : null;
 
     return Row(
       children: [
-        GestureDetector(
-          onTap: onTapDate,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.m,
-              vertical: AppSpacing.s,
-            ),
-            decoration: BoxDecoration(
-              color: paintColor != null
-                  ? paintColor.withValues(alpha: 0.2)
-                  : theme.colorScheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(AppRadius.full),
-              border: paintColor != null
-                  ? Border.all(color: paintColor, width: 1.5)
-                  : null,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  AppIcons.calendarToday,
-                  size: 16,
-                  color: paintColor ?? theme.colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(width: AppSpacing.s),
-                Text(
-                  DateHelper.formatFullDate(date),
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: paintColor ?? theme.colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        _buildDateChip(theme, paintColor),
         const Spacer(),
         if (onDelete != null)
           IconButton(
@@ -75,6 +43,48 @@ class DiaryEditorHeader extends StatelessWidget {
           icon: const Icon(AppIcons.close),
         ),
       ],
+    );
+  }
+
+  Widget _buildDateChip(ThemeData theme, Color? paintColor) {
+    final chipColor = paintColor ?? theme.colorScheme.onSurfaceVariant;
+
+    return InkWell(
+      onTap: onTapDate,
+      borderRadius: BorderRadius.circular(AppRadius.full),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.m,
+          vertical: AppSpacing.s,
+        ),
+        decoration: BoxDecoration(
+          color: paintColor != null
+              ? paintColor.withValues(alpha: 0.2)
+              : theme.colorScheme.surfaceContainerHigh,
+          borderRadius: BorderRadius.circular(AppRadius.full),
+          border: paintColor != null
+              ? Border.all(color: paintColor, width: _kColorBorderWidth)
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              AppIcons.calendarToday,
+              size: _kDateIconSize,
+              color: chipColor,
+            ),
+            const SizedBox(width: AppSpacing.s),
+            Text(
+              DateHelper.formatFullDate(date),
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: chipColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

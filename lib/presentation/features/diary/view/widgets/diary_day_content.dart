@@ -10,8 +10,6 @@ import 'package:iced26/presentation/features/diary/view/widgets/diary_note_card.
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/diary_note_editor_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 
-// TODO: return largo
-
 const _kCongressLabel = 'Congress';
 const _kMyNotesLabel = 'My notes';
 const _kEmptyNoteTitle = 'No notes for this day';
@@ -36,6 +34,7 @@ class DiaryDayContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: AppLayout.horizontalPadding(context),
@@ -44,22 +43,10 @@ class DiaryDayContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            DiaryHelpers.formatDayHeader(selectedDate),
-            style: theme.textTheme.titleSmall?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          _buildDayHeader(theme),
           const SizedBox(height: AppSpacing.m),
           if (events.isNotEmpty) _CongressEventsList(events: events),
-          Text(
-            _kMyNotesLabel,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w900,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
+          _buildNotesLabel(theme),
           const SizedBox(height: AppSpacing.xs),
           _NotesList(
             notes: notes,
@@ -67,6 +54,26 @@ class DiaryDayContent extends StatelessWidget {
             onDeleteNote: onDeleteNote,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDayHeader(ThemeData theme) {
+    return Text(
+      DiaryHelpers.formatDayHeader(selectedDate),
+      style: theme.textTheme.titleSmall?.copyWith(
+        color: theme.colorScheme.primary,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _buildNotesLabel(ThemeData theme) {
+    return Text(
+      _kMyNotesLabel,
+      style: theme.textTheme.headlineSmall?.copyWith(
+        fontWeight: FontWeight.bold,
+        color: theme.colorScheme.onSurface,
       ),
     );
   }
@@ -81,6 +88,7 @@ class _CongressEventsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -91,7 +99,7 @@ class _CongressEventsList extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.xs),
-        ...events.map((e) => DiaryEventTile(event: e)),
+        for (final e in events) DiaryEventTile(event: e),
         const SizedBox(height: AppSpacing.m),
       ],
     );
@@ -124,20 +132,20 @@ class _NotesList extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.l),
       );
     }
+
     return Column(
-      children: notes
-          .map(
-            (note) => DiaryNoteCard(
-              note: note,
-              onEdit: () => DiaryNoteEditorSheet.show(
-                context,
-                date: selectedDate,
-                existingNote: note,
-              ),
-              onDelete: () => onDeleteNote(note.id),
+      children: [
+        for (final note in notes)
+          DiaryNoteCard(
+            note: note,
+            onEdit: () => DiaryNoteEditorSheet.show(
+              context,
+              date: selectedDate,
+              existingNote: note,
             ),
-          )
-          .toList(),
+            onDelete: () => onDeleteNote(note.id),
+          ),
+      ],
     );
   }
 }

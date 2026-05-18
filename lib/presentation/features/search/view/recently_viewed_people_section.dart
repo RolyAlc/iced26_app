@@ -10,8 +10,6 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/search/widgets/person_result_tile.dart';
 import 'package:iced26/presentation/features/search/widgets/section_label.dart';
 
-// TODO: Posible duplicado de final peopleIndex
-
 /// Sección que muestra los ponentes vistos recientemente.
 class RecentlyViewedPeopleSection extends ConsumerWidget {
   const RecentlyViewedPeopleSection({super.key, required this.personIds});
@@ -24,11 +22,11 @@ class RecentlyViewedPeopleSection extends ConsumerWidget {
     // ?? {} es seguro: si aún no hay datos simplemente no se muestra nada.
     final peopleIndex = ref.watch(allPeopleIndexProvider).value ?? {};
 
-    // Resolvemos IDs → People, descartando los que no existan.
-    final people = personIds
-        .map((id) => peopleIndex[id])
-        .whereType<Person>()
-        .toList();
+    // Resolvemos IDs → People, descartando los que no existan en el índice.
+    final people = <Person>[
+      for (final id in personIds)
+        if (peopleIndex[id] != null) peopleIndex[id]!,
+    ];
 
     if (people.isEmpty) {
       return const SizedBox.shrink();
@@ -43,8 +41,8 @@ class RecentlyViewedPeopleSection extends ConsumerWidget {
           icon: AppIcons.person,
         ),
         const SizedBox(height: AppSpacing.xs),
-        ...people.map(
-          (person) => PersonResultTile(
+        for (final person in people)
+          PersonResultTile(
             key: ValueKey(person.id),
             person: person,
             // Mueve el ponente al tope del historial al volver a visitarlo.
@@ -52,7 +50,6 @@ class RecentlyViewedPeopleSection extends ConsumerWidget {
               ref.read(recentlyViewedPeopleProvider.notifier).add(person.id);
             },
           ),
-        ),
       ],
     );
   }

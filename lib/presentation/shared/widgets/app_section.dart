@@ -3,20 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/shared/widgets/app_skeleton.dart';
 
-// TODO: Code Hadouken
-
 /// Un contenedor para secciones de contenido con márgenes consistentes.
 class AppSection extends StatelessWidget {
-  const AppSection({
-    super.key,
-    this.title,
-    this.trailing,
-    required this.child,
-    this.edgeToEdge = false,
-    this.topPadding = defaultVerticalPadding,
-    this.bottomPadding = defaultVerticalPadding,
-  });
-
   factory AppSection.resolved({
     Key? key,
     String? title,
@@ -48,7 +36,18 @@ class AppSection extends StatelessWidget {
       child: resolvedChild,
     );
   }
+  const AppSection({
+    super.key,
+    this.title,
+    this.trailing,
+    required this.child,
+    this.edgeToEdge = false,
+    this.topPadding = defaultVerticalPadding,
+    this.bottomPadding = defaultVerticalPadding,
+  });
+  // Declarados antes de los constructores porque se usan como valores por defecto.
   static const double defaultVerticalPadding = AppSpacing.m;
+  static const double _kTitleLetterSpacing = -0.5;
 
   final String? title;
   final Widget? trailing;
@@ -72,6 +71,8 @@ class AppSection extends StatelessWidget {
       return emptyChild;
     }
 
+    // Fallthrough intencional: si no hay datos pero no se proporcionó emptyChild,
+    // el dataChild es responsable de mostrar su propio estado vacío.
     return dataChild;
   }
 
@@ -103,7 +104,7 @@ class AppSection extends StatelessWidget {
                       title!,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
+                        letterSpacing: _kTitleLetterSpacing,
                       ),
                     ),
                   trailing ?? const SizedBox.shrink(),
