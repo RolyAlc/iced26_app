@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
@@ -13,11 +14,7 @@ import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
-const _kNothingSavedTitle = 'Nothing saved yet';
-const _kNothingSavedMessage =
-    'Bookmark sessions and talks to build your schedule';
-const _kErrorTitle = 'Could not load your schedule';
-const _kErrorMessage = 'Something went wrong. Please try again.';
+const _kUnscheduled = 'Unscheduled';
 
 // TODO: Gestionar los if
 
@@ -50,11 +47,11 @@ class MyScheduleView extends ConsumerWidget {
               size: 48,
               color: theme.colorScheme.error,
             ),
-            title: _kErrorTitle,
-            message: _kErrorMessage,
+            title: AppStrings.myScheduleErrorTitle,
+            message: AppStrings.genericErrorMessage,
             actionButton: TextButton(
               onPressed: () => ref.invalidate(myScheduleItemsProvider),
-              child: const Text('Retry'),
+              child: const Text(AppStrings.retry),
             ),
           ),
         ),
@@ -71,8 +68,8 @@ class MyScheduleView extends ConsumerWidget {
               size: 48,
               color: theme.colorScheme.outlineVariant,
             ),
-            title: _kNothingSavedTitle,
-            message: _kNothingSavedMessage,
+            title: AppStrings.myScheduleNothingSavedTitle,
+            message: AppStrings.myScheduleNothingSavedMessage,
           ),
         ),
       );
@@ -81,18 +78,21 @@ class MyScheduleView extends ConsumerWidget {
     final totalCount = items.whereType<MyScheduleRow>().length;
 
     return AppPage(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
       header: _MyScheduleHeader(count: totalCount),
       children: [
         const SizedBox(height: AppSpacing.m),
-        MyScheduleContent(items: items),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppLayout.horizontalPadding(context),
+          ),
+          child: MyScheduleContent(items: items),
+        ),
       ],
     );
   }
 }
 
-/// Lista de items guardados sin [AppPage] propio, para embeber en otras pantallas
-/// (ej. tab de Schedule) sin duplicar el scaffold.
+/// Lista de items guardados sin [AppPage] propio, para embeber en otras pantallas.
 class MyScheduleContent extends StatelessWidget {
   const MyScheduleContent({super.key, required this.items});
 
@@ -131,7 +131,7 @@ class _MyScheduleDayHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final label = header.date != null
         ? DateHelper.formatDayLabel(header.date!)
-        : 'Unscheduled';
+        : _kUnscheduled;
 
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.l, bottom: AppSpacing.s),
@@ -172,10 +172,14 @@ class _MyScheduleHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = count != null ? 'My Schedule ($count)' : 'My Schedule';
+    final title = count != null
+        ? '${AppStrings.myScheduleTitle} ($count)'
+        : AppStrings.myScheduleTitle;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppLayout.horizontalPadding(context),
+      ),
       child: Text(
         title,
         style: theme.textTheme.headlineSmall?.copyWith(
