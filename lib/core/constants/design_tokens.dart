@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/domain/entities/note_color.dart';
 
-// TODO: Los comentarios moverlos a library
+// TODO: Actualizar library de colores
+// TODO: Mirar esto: https://pub.dev/packages/dynamic_color
 
 /// Animaciones (AppDuration)
 class AppDuration {
@@ -26,8 +27,15 @@ class AppTextSize {
   static const double chip = 12.0;
 }
 
+/// Estilo de texto (AppTextStyle)
+class AppTextStyle {
+  // Espaciado de letras para etiquetas de sección en mayúsculas (labelSmall/labelMedium bold).
+  static const double labelLetterSpacing = 0.8;
+}
+
 /// Espaciados (AppSpacing)
 class AppSpacing {
+  static const double xxs = 2.0;
   static const double xs = 4.0;
   static const double s = 8.0;
   static const double sm = 12.0;
@@ -45,6 +53,17 @@ class AppLayout {
   static const double navBarBottomClearance = 4.0;
   // navBarHeight(72) + topPad(24) + bottomClearance(4) + margen de seguridad(20) ≈ 120.
   static const double navBarClearanceFallback = 120.0;
+  // Ancho máximo del área de contenido. En pantallas más anchas (tablet, web)
+  // el contenido se centra horizontalmente respetando este límite.
+  static const double maxContentWidth = 750.0;
+  // Margen horizontal adaptativo entre el borde del dispositivo y el contenido.
+  // Se adapta al ancho de pantalla: móvil pequeño → s, móvil → m, tablet/web → l.
+  static double horizontalPadding(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    if (width < 360) return AppSpacing.s;
+    if (width < 600) return AppSpacing.m;
+    return AppSpacing.l;
+  }
 }
 
 /// Opacidad (AppOpacity)
@@ -59,6 +78,28 @@ class AppRadius {
   static const double container = 28.0;
   static const double l = 32.0;
   static const double full = 100.0;
+}
+
+/// Colores fijos (AppOverlayColors)
+/// No siguen el tema — se usan sobre imágenes o superficies opacas donde
+/// el contraste está garantizado por el contexto visual, no por el tema.
+class AppOverlayColors {
+  // Gradiente inferior del hero de noticias.
+  static const Color heroGradientStart = Color(0x00000000); // transparent
+  static const Color heroGradientEnd = Color(0xDD000000); // black 87%
+  // Texto blanco fijo sobre imagen (el gradiente/fondo garantiza la legibilidad).
+  static const Color heroText = Color(0xFFFFFFFF); // white
+  static const Color heroTextSecondary = Color(0xB3FFFFFF); // white 70%
+  // Texto secundario sobre cards con imagen de fondo.
+  static const Color cardTextSecondary = Color(0xCCFFFFFF); // white 80%
+  // Extremo oscuro del degradado en speaker cards (negro 80% — más suave que heroGradientEnd).
+  static const Color speakerCardGradientEnd = Color(0xCC000000); // black 80%
+  // Fondo semitransparente del badge de tiempo sobre imagen.
+  static const Color timeBadgeBackground = Color(0x66000000); // black 40%
+  // Scrim (barrera) de bottom sheets y modales.
+  static const Color barrierScrim = Color(0x8A000000); // black 54%
+  // Color base para sombras con opacidad dinámica.
+  static const Color shadowBase = Color(0xFF000000); // black
 }
 
 /// Colores de categorías (AppCategoryColors)
