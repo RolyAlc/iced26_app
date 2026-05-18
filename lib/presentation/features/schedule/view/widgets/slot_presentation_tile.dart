@@ -11,7 +11,10 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
 
-// TODO: Codigo hadouken
+const _kBookmarkIconSize = 20.0;
+const _kChevronIconSize = 22.0;
+// 36dp intencional: lista densa. M3 recomienda 48dp — si hay problemas táctiles, subir aquí.
+const _kActionButtonMinSize = 36.0;
 
 /// Tile de presentación en la vista agenda.
 class SlotPresentationTile extends ConsumerWidget {
@@ -20,6 +23,7 @@ class SlotPresentationTile extends ConsumerWidget {
     required this.presentation,
     required this.peopleIndex,
   });
+
   final Presentation presentation;
   final Map<String, Person> peopleIndex;
 
@@ -28,11 +32,56 @@ class SlotPresentationTile extends ConsumerWidget {
         .map((s) => peopleIndex[s.personId]?.name.resolve(locale))
         .whereType<String>()
         .toList();
-    return switch (names.length) {
-      0 => null,
-      1 => names.first,
-      _ => '${names.first} ${AppStrings.speakersOverflow(names.length - 1)}',
-    };
+
+    if (names.isEmpty) {
+      return null;
+    }
+    final first = names.first;
+
+    if (names.length == 1) return first;
+    final remaining = names.length - 1;
+
+    return '$first ${AppStrings.speakersOverflow(remaining)}';
+  }
+
+  Widget _buildTileContent(
+    ThemeData theme,
+    String title,
+    String? speakerNames,
+    bool isFavorite,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.m,
+        vertical: AppSpacing.sm,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (speakerNames != null) ...[
+                  const SizedBox(height: AppSpacing.s),
+                  ScheduleInfoChip(label: speakerNames, icon: AppIcons.person),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.s),
+          _TileActions(presentationId: presentation.id, isFavorite: isFavorite),
+        ],
+      ),
+    );
   }
 
   @override
@@ -51,44 +100,7 @@ class SlotPresentationTile extends ConsumerWidget {
       children: [
         InkWell(
           onTap: () => showPresentationDetail(context, presentation),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.m,
-              vertical: AppSpacing.sm,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (speakerNames != null) ...[
-                        const SizedBox(height: AppSpacing.s),
-                        ScheduleInfoChip(
-                          label: speakerNames,
-                          icon: AppIcons.person,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.s),
-                _TileActions(
-                  presentationId: presentation.id,
-                  isFavorite: isFavorite,
-                ),
-              ],
-            ),
-          ),
+          child: _buildTileContent(theme, title, speakerNames, isFavorite),
         ),
         Divider(
           height: 1,
@@ -100,8 +112,10 @@ class SlotPresentationTile extends ConsumerWidget {
 }
 
 /// Columna de acciones del tile: bookmark arriba, chevron abajo.
+// ConsumerWidget (no StatelessWidget) porque necesita ref.read en el handler del botón.
 class _TileActions extends ConsumerWidget {
   const _TileActions({required this.presentationId, required this.isFavorite});
+
   final String presentationId;
   final bool isFavorite;
 
@@ -123,7 +137,7 @@ class _TileActions extends ConsumerWidget {
           ),
           icon: Icon(
             isFavorite ? AppIcons.bookmarkOn : AppIcons.bookmarkOff,
-            size: 20,
+            size: _kBookmarkIconSize,
           ),
           onPressed: () {
             HapticFeedback.lightImpact();
@@ -133,9 +147,16 @@ class _TileActions extends ConsumerWidget {
           },
           visualDensity: VisualDensity.compact,
           padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+          constraints: const BoxConstraints(
+            minWidth: _kActionButtonMinSize,
+            minHeight: _kActionButtonMinSize,
+          ),
         ),
-        Icon(AppIcons.chevronRight, color: colors.primary, size: 22),
+        Icon(
+          AppIcons.chevronRight,
+          color: colors.primary,
+          size: _kChevronIconSize,
+        ),
       ],
     );
   }
