@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/core/services/logger/logger.dart';
 import 'package:iced26/data/mappers/app_data_mapper.dart';
+import 'package:iced26/data/mappers/conference_theme_mapper.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/data/mappers/zone_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
@@ -95,7 +96,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
     _insertNews(batch, appData);
     _insertSocialActivities(batch, appData);
     _insertPeople(batch, appData);
-    _insertTheme(batch, appData);
+    _insertAppConfigs(batch, appData);
   }
 
   /// Inserta los días en la tabla days.
@@ -232,11 +233,25 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   /// Inserta las presentaciones (N3) en la tabla presentations.
+  ///
+  /// Algunas presentaciones (ej. posters) no tienen fecha propia en el JSON
+  /// pero sí pertenecen a un SessionBlock con fecha. Se usa el bloque como
+  /// fallback para que My Schedule pueda ordenarlas correctamente.
   void _insertPresentations(Batch batch, AppData appData) {
+    final blockStartIndex = {
+      for (final b in appData.collections.sessionBlocks)
+        if (b.id.isNotEmpty) b.id: b.startDate,
+    };
+
     batch.insertAll(
       _db.presentations,
-      appData.collections.presentations.map(
-        (pr) => PresentationsCompanion.insert(
+      appData.collections.presentations.map((pr) {
+        final resolvedStart =
+            pr.startDate ??
+            (pr.sessionBlockId != null
+                ? blockStartIndex[pr.sessionBlockId]
+                : null);
+        return PresentationsCompanion.insert(
           id: pr.id,
           type: pr.type,
           subtype: Value(pr.subtype),
@@ -246,7 +261,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
           description: Value(pr.description),
           submissionRef: Value(pr.submissionRef),
           durationMin: Value(pr.durationMin),
-          startDate: Value(pr.startDate),
+          startDate: Value(resolvedStart),
           endDate: Value(pr.endDate),
           speakersJson: Value(
             pr.speakers.isEmpty
@@ -263,8 +278,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
           externalRef: Value(pr.externalRef),
           aboutPresentationUrl: Value(pr.aboutPresentationUrl),
           videoPresentationUrl: Value(pr.videoPresentationUrl),
-        ),
-      ),
+        );
+      }),
       mode: InsertMode.insertOrReplace,
     );
   }
@@ -325,8 +340,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
     );
   }
 
-  /// Inserta la configuración del tema en la tabla appConfigs.
-  void _insertTheme(Batch batch, AppData appData) {
+  /// Inserta la configuración de la app (tema + temas de la conferencia) en appConfigs.
+  void _insertAppConfigs(Batch batch, AppData appData) {
     batch.insert(
       _db.appConfigs,
       AppConfigsCompanion.insert(
@@ -336,6 +351,18 @@ class ConfigRepositoryImpl implements ConfigRepository {
           'typography': appData.theme.typography,
           'logo': appData.theme.logo,
         }),
+      ),
+      mode: InsertMode.insertOrReplace,
+    );
+    batch.insert(
+      _db.appConfigs,
+      AppConfigsCompanion.insert(
+        key: 'conference_themes',
+        value: jsonEncode(
+          appData.conference.conferenceThemes
+              .map(ConferenceThemeMapper.toMap)
+              .toList(),
+        ),
       ),
       mode: InsertMode.insertOrReplace,
     );
