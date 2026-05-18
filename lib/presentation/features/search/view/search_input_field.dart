@@ -4,8 +4,6 @@ import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
-// TODO: Doble return
-
 /// Campo de entrada de texto para la búsqueda.
 class SearchInputField extends StatelessWidget {
   const SearchInputField({
@@ -14,43 +12,51 @@ class SearchInputField extends StatelessWidget {
     required this.onChanged,
     this.onSubmitted,
   });
+
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
   final ValueChanged<String>? onSubmitted;
 
+  // ListenableBuilder reconstruye solo este subtree cuando cambia el texto,
+  // necesario para mostrar/ocultar el botón de borrar sin afectar al árbol padre.
   @override
   Widget build(BuildContext context) {
+    return ListenableBuilder(listenable: controller, builder: _buildTextField);
+  }
+
+  Widget _buildTextField(BuildContext context, Widget? _) {
     final colors = Theme.of(context).colorScheme;
 
-    return ListenableBuilder(
-      listenable: controller,
-      builder: (context, _) {
-        return TextField(
-          controller: controller,
-          autofocus: true,
-          textInputAction: TextInputAction.search,
-          onChanged: onChanged,
-          onSubmitted: onSubmitted,
-          decoration: InputDecoration(
-            hintText: AppStrings.searchInputHint,
-            prefixIcon: Icon(AppIcons.search, color: colors.primary),
-            filled: true,
-            fillColor: colors.surfaceContainerLow,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.m),
-              borderSide: BorderSide.none,
-            ),
-            suffixIcon: controller.text.isNotEmpty
-                ? IconButton(
-                    icon: const Icon(AppIcons.close),
-                    onPressed: () {
-                      controller.clear();
-                      onChanged('');
-                    },
-                  )
-                : null,
-          ),
-        );
+    return TextField(
+      controller: controller,
+      autofocus: true,
+      textInputAction: TextInputAction.search,
+      onChanged: onChanged,
+      onSubmitted: onSubmitted,
+      decoration: InputDecoration(
+        hintText: AppStrings.searchInputHint,
+        prefixIcon: Icon(AppIcons.search, color: colors.primary),
+        filled: true,
+        fillColor: colors.surfaceContainerLow,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.m),
+          borderSide: BorderSide.none,
+        ),
+        suffixIcon: _buildClearButton(),
+      ),
+    );
+  }
+
+  Widget? _buildClearButton() {
+    if (controller.text.isEmpty) {
+      return null;
+    }
+
+    return IconButton(
+      icon: const Icon(AppIcons.close),
+      onPressed: () {
+        controller.clear();
+        onChanged('');
       },
     );
   }

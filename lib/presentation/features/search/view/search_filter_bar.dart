@@ -10,8 +10,6 @@ import 'package:iced26/presentation/features/search/widgets/clear_all_button.dar
 import 'package:iced26/presentation/features/search/widgets/filter_toggle_button.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
-// TODO: Muchos for
-
 /// Barra de filtros.
 class FilterBar extends ConsumerWidget {
   const FilterBar({
@@ -38,8 +36,11 @@ class FilterBar extends ConsumerWidget {
       );
     }
 
-    final zones = ref.watch(homeViewModelProvider).value?.allZones ?? [];
-    final zoneNames = {for (final z in zones) z.id: z.name.resolve('und')};
+    final homeState = ref.watch(homeViewModelProvider);
+    final zones = homeState.value?.allZones ?? [];
+    final Map<String, String> zoneNames = {
+      for (final z in zones) z.id: z.name.resolve('und'),
+    };
 
     return _CollapsedFilterBar(
       count: count,
@@ -96,7 +97,7 @@ class _CollapsedFilterBar extends StatelessWidget {
     final chips = _buildActiveChips();
 
     return AnimatedSize(
-      duration: const Duration(milliseconds: 200),
+      duration: AppDuration.fast,
       curve: Curves.easeOut,
       alignment: Alignment.topCenter,
       child: Column(
@@ -121,10 +122,10 @@ class _CollapsedFilterBar extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  for (int i = 0; i < chips.length; i++) ...[
-                    chips[i],
-                    if (i < chips.length - 1)
-                      const SizedBox(width: AppSpacing.xs),
+                  for (final chip in chips) ...[
+                    chip,
+                    // Trailing spacer de 4px es invisible al final de un área scrollable.
+                    const SizedBox(width: AppSpacing.xs),
                   ],
                 ],
               ),
@@ -135,54 +136,35 @@ class _CollapsedFilterBar extends StatelessWidget {
     );
   }
 
+  // Collection literal — mismo patrón for/if que los widget trees de Flutter.
+  // Sin lista mutable ni .add(): cada fuente de filtros contribuye sus chips directamente.
   List<Widget> _buildActiveChips() {
-    final List<Widget> chips = [];
-
-    if (filters.selectedDay != null) {
-      chips.add(
+    return [
+      if (filters.selectedDay != null)
         ActiveFilterChip(
           label: DateHelper.formatShortDate(filters.selectedDay!),
           onRemove: () => notifier.toggleDay(filters.selectedDay!),
         ),
-      );
-    }
-
-    for (final t in filters.selectedTypes) {
-      chips.add(
+      for (final t in filters.selectedTypes)
         ActiveFilterChip(
           label: t.label,
           onRemove: () => notifier.toggleType(t),
         ),
-      );
-    }
-
-    for (final id in filters.selectedZones) {
-      chips.add(
+      for (final id in filters.selectedZones)
         ActiveFilterChip(
           label: zoneNames[id] ?? id,
           onRemove: () => notifier.toggleZone(id),
         ),
-      );
-    }
-
-    for (final d in filters.selectedDurations) {
-      chips.add(
+      for (final d in filters.selectedDurations)
         ActiveFilterChip(
           label: AppStrings.searchDurationLabel(d),
           onRemove: () => notifier.toggleDuration(d),
         ),
-      );
-    }
-
-    for (final s in filters.selectedStatuses) {
-      chips.add(
+      for (final s in filters.selectedStatuses)
         ActiveFilterChip(
           label: AppStrings.searchStatusLabel(s),
           onRemove: () => notifier.toggleStatus(s),
         ),
-      );
-    }
-
-    return chips;
+    ];
   }
 }
