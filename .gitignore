@@ -1,5 +1,7 @@
 # Bin
 00_*/
+.venv/*
+site/*
 
 # Database
 **.g.dart
