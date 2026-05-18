@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
@@ -19,8 +21,15 @@ import 'package:iced26/presentation/shared/widgets/event_status_chip.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_detail_sheet.dart';
 
-/// Separador entre secciones basado en label.
-const _kLabelLetterSpacing = 0.8;
+// TODO: Revisar hadouken
+
+const _kFallbackTime = '--:--';
+const _kFallbackRoom = 'TBA';
+const _kFallbackValue = '--';
+const _kLabelTime = 'Time';
+const _kLabelRoom = 'Room';
+const _kLabelDuration = 'Duration';
+const _kLabelLanguage = 'Language';
 
 void showEventDetail(BuildContext context, Event event) {
   AppBottomSheet.show(
@@ -143,15 +152,15 @@ class _EventAttributesGrid extends StatelessWidget {
               Expanded(
                 child: AttributeCell(
                   icon: AppIcons.accessTime,
-                  label: 'Time',
-                  value: event.filterTime ?? '--:--',
+                  label: _kLabelTime,
+                  value: event.filterTime ?? _kFallbackTime,
                 ),
               ),
               Expanded(
                 child: AttributeCell(
                   icon: AppIcons.meetingRoom,
-                  label: 'Room',
-                  value: event.roomId ?? 'TBA',
+                  label: _kLabelRoom,
+                  value: event.roomId ?? _kFallbackRoom,
                 ),
               ),
             ],
@@ -168,15 +177,15 @@ class _EventAttributesGrid extends StatelessWidget {
               Expanded(
                 child: AttributeCell(
                   icon: AppIcons.duration,
-                  label: 'Duration',
-                  value: duration ?? '--',
+                  label: _kLabelDuration,
+                  value: duration ?? _kFallbackValue,
                 ),
               ),
               Expanded(
                 child: AttributeCell(
                   icon: AppIcons.translate,
-                  label: 'Language',
-                  value: event.defaultLang?.toUpperCase() ?? '--',
+                  label: _kLabelLanguage,
+                  value: event.defaultLang?.toUpperCase() ?? _kFallbackValue,
                 ),
               ),
             ],
@@ -205,7 +214,9 @@ class _EventFavoriteButton extends ConsumerWidget {
         ref.read(toggleFavoriteUseCaseProvider).execute(eventId);
       },
       icon: isFavorite ? AppIcons.bookmarkOn : AppIcons.bookmarkAdd,
-      label: isFavorite ? 'Saved to my schedule' : 'Add to my schedule',
+      label: isFavorite
+          ? AppStrings.scheduleButtonSaved
+          : AppStrings.scheduleButtonAdd,
     );
   }
 }
@@ -228,11 +239,11 @@ class _SpeakerSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Speakers',
+          AppStrings.labelSpeakers,
           style: theme.textTheme.labelMedium?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.bold,
-            letterSpacing: _kLabelLetterSpacing,
+            letterSpacing: AppTextStyle.labelLetterSpacing,
           ),
         ),
         const SizedBox(height: AppSpacing.s),

@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/presentation.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/widgets/presentation_bookmark_button.dart';
+import 'package:iced26/domain/entities/speaker_entry.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/widgets/presentation_detail_ui_parts.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/widgets/presentation_links_section.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/widgets/presentation_speaker_list.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
+import 'package:iced26/presentation/shared/widgets/app_button.dart';
 
-const _kLabelLetterSpacing = 0.8;
 const _kLabelAbstract = 'Abstract';
+const _kShowLess = 'Show less';
+const _kTrackPrefix = 'Track';
+const _kMinSuffix = 'min';
+const _kSpeakersCollapseThreshold = 3;
 
 /// Muestra el sheet de detalle de la presentación.
 void showPresentationDetail(BuildContext context, Presentation presentation) {
@@ -19,6 +27,7 @@ void showPresentationDetail(BuildContext context, Presentation presentation) {
     context: context,
     title: '',
     isFullHeight: true,
+    stickyBottom: _PresentationSaveButton(presentationId: presentation.id),
     child: _PresentationDetailContent(presentation: presentation),
   );
 }
@@ -41,13 +50,11 @@ class _PresentationDetailContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _PresentationTitle(title: title, presentationId: presentation.id),
-        const SizedBox(height: AppSpacing.s),
+        _PresentationTitle(title: title),
+        const SizedBox(height: AppSpacing.sm),
         _PresentationMetadata(presentation: presentation, timeRange: timeRange),
         if (presentation.speakers.isNotEmpty)
-          _PresentationSection(
-            child: _PresentationSpeakersSection(presentation: presentation),
-          ),
+          _PresentationSpeakersCard(presentation: presentation),
         if (abstract_ != null && abstract_.isNotEmpty)
           _PresentationSection(
             child: _PresentationAbstractSection(abstract_: abstract_),
@@ -70,40 +77,29 @@ class _PresentationDetailContent extends StatelessWidget {
               videoUrl: presentation.videoPresentationUrl,
             ),
           ),
-        const SizedBox(height: AppSpacing.l),
+        const SizedBox(height: AppSpacing.m),
       ],
     );
   }
 }
 
-// bookmark en la cabecera para que sea accesible sin hacer scroll.
 class _PresentationTitle extends StatelessWidget {
-  const _PresentationTitle({required this.title, required this.presentationId});
+  const _PresentationTitle({required this.title});
   final String title;
-  final String presentationId;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Text(
-            title,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        PresentationBookmarkButton(presentationId: presentationId),
-      ],
+    return Text(
+      title,
+      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 }
 
 // chips compactos para no competir visualmente con el título principal.
-class _PresentationMetadata extends StatelessWidget {
+// ConsumerWidget para resolver el nombre de sala via sessionBlockId → allSessionBlocksIndex → allRoomsIndex.
+class _PresentationMetadata extends ConsumerWidget {
   const _PresentationMetadata({
     required this.presentation,
     required this.timeRange,
@@ -112,19 +108,34 @@ class _PresentationMetadata extends StatelessWidget {
   final String timeRange;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = Localizations.localeOf(context).languageCode;
+    final blocksIndex = ref.watch(allSessionBlocksIndexProvider).value ?? {};
+    final roomsIndex = ref.watch(allRoomsIndexProvider).value ?? {};
+
+    final block = blocksIndex[presentation.sessionBlockId];
+    final roomName = block != null
+        ? roomsIndex[block.roomId]?.name.resolve(locale)
+        : null;
+
     return Wrap(
       spacing: AppSpacing.s,
       runSpacing: AppSpacing.xs,
       children: [
         if (presentation.track != null)
           PresentationChip(
-            label: 'Track ${presentation.track!}',
+            label: '$_kTrackPrefix ${presentation.track!}',
             primary: true,
           ),
-        if (timeRange.isNotEmpty) PresentationChip(label: timeRange),
+        if (timeRange.isNotEmpty)
+          PresentationChip(label: timeRange, icon: AppIcons.time),
         if (presentation.durationMin != null)
-          PresentationChip(label: '${presentation.durationMin} min'),
+          PresentationChip(
+            label: '${presentation.durationMin} $_kMinSuffix',
+            icon: AppIcons.duration,
+          ),
+        if (roomName != null)
+          PresentationChip(label: roomName, icon: AppIcons.meetingRoom),
       ],
     );
   }
@@ -133,8 +144,8 @@ class _PresentationMetadata extends StatelessWidget {
 // Aísla los dos provider watches para que un cambio en el índice de personas
 // no rebuilde el título ni los chips de metadata.
 class _PresentationSpeakersSection extends ConsumerWidget {
-  const _PresentationSpeakersSection({required this.presentation});
-  final Presentation presentation;
+  const _PresentationSpeakersSection({required this.speakers});
+  final List<SpeakerEntry> speakers;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -143,7 +154,7 @@ class _PresentationSpeakersSection extends ConsumerWidget {
         ref.watch(presentationsByPersonIdProvider).value ?? {};
 
     return PresentationSpeakerList(
-      speakers: presentation.speakers,
+      speakers: speakers,
       people: people,
       presentationsByPerson: presentationsByPerson,
     );
@@ -166,7 +177,7 @@ class _PresentationAbstractSection extends StatelessWidget {
           style: theme.textTheme.labelMedium?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.bold,
-            letterSpacing: _kLabelLetterSpacing,
+            letterSpacing: AppTextStyle.labelLetterSpacing,
           ),
         ),
         const SizedBox(height: AppSpacing.s),
@@ -178,6 +189,143 @@ class _PresentationAbstractSection extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Card semirredondeada que agrupa los ponentes — da separación visual sin divider.
+/// Se colapsa a los primeros [_kSpeakersCollapseThreshold] speakers si hay más.
+class _PresentationSpeakersCard extends StatefulWidget {
+  const _PresentationSpeakersCard({required this.presentation});
+  final Presentation presentation;
+
+  @override
+  State<_PresentationSpeakersCard> createState() =>
+      _PresentationSpeakersCardState();
+}
+
+class _PresentationSpeakersCardState extends State<_PresentationSpeakersCard> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final speakers = widget.presentation.speakers;
+    final needsCollapse = speakers.length > _kSpeakersCollapseThreshold;
+    final visibleSpeakers = needsCollapse && !_isExpanded
+        ? speakers.sublist(0, _kSpeakersCollapseThreshold)
+        : speakers;
+
+    final headerLabel = speakers.length > 1
+        ? '${AppStrings.labelSpeakers} · ${speakers.length}'
+        : AppStrings.labelSpeakers;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.m),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.m),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(AppRadius.m),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              headerLabel,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
+                letterSpacing: AppTextStyle.labelLetterSpacing,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.s),
+            _PresentationSpeakersSection(speakers: visibleSpeakers),
+            if (needsCollapse)
+              _SpeakersToggleFooter(
+                isExpanded: _isExpanded,
+                totalCount: speakers.length,
+                onToggle: () {
+                  setState(() {
+                    _isExpanded = !_isExpanded;
+                  });
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Footer que alterna entre "Show all (N)" y "Show less".
+class _SpeakersToggleFooter extends StatelessWidget {
+  const _SpeakersToggleFooter({
+    required this.isExpanded,
+    required this.totalCount,
+    required this.onToggle,
+  });
+
+  final bool isExpanded;
+  final int totalCount;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onToggle,
+      borderRadius: BorderRadius.circular(AppRadius.s),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.s,
+          horizontal: AppSpacing.xs,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              isExpanded ? _kShowLess : 'Show all ($totalCount)',
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Icon(
+              isExpanded ? AppIcons.collapse : AppIcons.expandMore,
+              size: 16,
+              color: theme.colorScheme.primary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Botón CTA full-width al pie del sheet — acción principal de guardar.
+class _PresentationSaveButton extends ConsumerWidget {
+  const _PresentationSaveButton({required this.presentationId});
+  final String presentationId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteIds = ref.watch(presentationFavoriteIdsProvider).value ?? {};
+    final isSaved = favoriteIds.contains(presentationId);
+
+    return AppButton(
+      onPressed: () {
+        HapticFeedback.lightImpact();
+        ref
+            .read(togglePresentationFavoriteUseCaseProvider)
+            .execute(presentationId);
+      },
+      icon: isSaved ? AppIcons.bookmarkOn : AppIcons.bookmarkAdd,
+      label: isSaved
+          ? AppStrings.scheduleButtonSaved
+          : AppStrings.scheduleButtonAdd,
     );
   }
 }

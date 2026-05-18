@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event_status.dart';
@@ -8,14 +9,38 @@ import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
+import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/slot_presentation_tile.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
+import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
-import 'package:iced26/presentation/shared/widgets/slot_time_label.dart';
 
-const _kSeparator = '  ·  ';
+// TODO: Revisar if muchos
+
+const _kSingularTalk = 'talk';
+const _kPluralTalks = 'talks';
+const _kSingularSession = 'session';
+const _kPluralSessions = 'sessions';
+const _kNoPresentations = 'No presentations';
+const _kCollapseLabel = 'Collapse';
+const _kCollapseThreshold = 4;
+const _kCollapseIconSize = 18.0;
+
+/// Muestra el sheet interior del slot desde cualquier contexto.
+void showSessionSlotDetail(
+  BuildContext context,
+  SessionSlotItem item,
+  String locale,
+) {
+  AppBottomSheet.show(
+    context: context,
+    title: item.event.title.resolve(locale),
+    isFullHeight: true,
+    child: _SlotPresentationList(blocks: item.blocks),
+  );
+}
 
 /// Slot que contiene varias presentaciones en un mismo bloque.
 class SessionSlotBlock extends StatelessWidget {
@@ -23,13 +48,7 @@ class SessionSlotBlock extends StatelessWidget {
   final SessionSlotItem item;
 
   void _showSheet(BuildContext context, String locale) {
-    final blockIds = item.blocks.map((b) => b.id).toList();
-    AppBottomSheet.show(
-      context: context,
-      title: item.event.title.resolve(locale),
-      isFullHeight: true,
-      child: _SlotPresentationList(blocks: item.blocks, blockIds: blockIds),
-    );
+    showSessionSlotDetail(context, item, locale);
   }
 
   @override
@@ -39,63 +58,34 @@ class SessionSlotBlock extends StatelessWidget {
     final time = item.event.filterTime;
     final isLive = EventStatusResolver.resolve(item.event) == EventStatus.live;
 
+    // Sin bookmark — los favoritos son de presentaciones individuales,
+    // no del slot contenedor. El usuario guarda desde el sheet interior.
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: AppCard(
         onTap: () => _showSheet(context, locale),
-        bordered: true,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.m,
-            vertical: AppSpacing.sm,
-          ),
-          child: Row(
-            children: [
-              if (time != null) ...[
-                SlotTimeLabel(time: time, isLive: isLive),
-                const SizedBox(width: AppSpacing.sm),
-              ],
-              Expanded(
-                child: Text(
-                  item.event.title.resolve(locale),
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+        child: ScheduleCardRow(
+          title: item.event.title.resolve(locale),
+          infoBadges: [
+            if (item.event.subtype != null && item.event.subtype!.isNotEmpty)
+              ScheduleInfoChip(
+                label: item.event.subtype!,
+                icon: item.event.type.style(Theme.of(context).colorScheme).icon,
               ),
-              Icon(AppIcons.expandMore, color: theme.colorScheme.outline),
-            ],
+            ScheduleInfoChip(
+              label:
+                  '${item.blocks.length} ${item.blocks.length == 1 ? _kSingularSession : _kPluralSessions}',
+              icon: AppIcons.sessions,
+              variant: ScheduleChipVariant.tertiary,
+            ),
+          ],
+          time: time,
+          isLive: isLive,
+          bottomAction: Icon(
+            AppIcons.chevronRight,
+            color: theme.colorScheme.onSurfaceVariant,
+            size: 22,
           ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Badge que muestra el track.
-class _TrackBadge extends StatelessWidget {
-  const _TrackBadge({required this.track});
-  final String track;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.s,
-        vertical: 2,
-      ),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(AppRadius.s),
-      ),
-      child: Text(
-        track,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onPrimaryContainer,
-          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -103,9 +93,10 @@ class _TrackBadge extends StatelessWidget {
 }
 
 /// Lista de presentaciones agrupadas por bloque.
-/// Resuelve `allPeopleIndexProvider` una sola vez y lo pasa hacia abajo.
 class _SlotPresentationList extends ConsumerWidget {
-  const _SlotPresentationList({required this.blocks, required this.blockIds});
+  _SlotPresentationList({required this.blocks})
+    : blockIds = blocks.map((b) => b.id).toList();
+
   final List<SessionBlock> blocks;
   final List<String> blockIds;
 
@@ -115,6 +106,8 @@ class _SlotPresentationList extends ConsumerWidget {
       presentationsForSlotProvider(blockIds),
     );
     final peopleIndex = ref.watch(allPeopleIndexProvider).value ?? {};
+    final roomsIndex = ref.watch(allRoomsIndexProvider).value ?? {};
+    final locale = Localizations.localeOf(context).languageCode;
 
     return asyncPresentations.when(
       loading: () => const Padding(
@@ -124,96 +117,185 @@ class _SlotPresentationList extends ConsumerWidget {
       error: (_, _) => const SizedBox.shrink(),
       data: (grouped) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: blocks
-            .map(
-              (b) => _BlockSection(
-                block: b,
-                presentations: grouped[b.id] ?? [],
-                peopleIndex: peopleIndex,
-              ),
-            )
-            .toList(),
+        children: blocks.asMap().entries.map((entry) {
+          final block = entry.value;
+          // Fallback al roomId raw si el nombre no está en el índice.
+          final roomName =
+              roomsIndex[block.roomId]?.name.resolve(locale) ?? block.roomId;
+          return _BlockSection(
+            block: block,
+            presentations: grouped[block.id] ?? [],
+            peopleIndex: peopleIndex,
+            isFirstBlock: entry.key == 0,
+            roomName: roomName,
+          );
+        }).toList(),
       ),
     );
   }
 }
 
 /// Sección que muestra las presentaciones de un bloque.
-class _BlockSection extends StatelessWidget {
+class _BlockSection extends StatefulWidget {
   const _BlockSection({
     required this.block,
     required this.presentations,
     required this.peopleIndex,
+    required this.isFirstBlock,
+    this.roomName,
   });
+
   final SessionBlock block;
   final List<Presentation> presentations;
   final Map<String, Person> peopleIndex;
+  final bool isFirstBlock;
+  final String? roomName;
+
+  @override
+  State<_BlockSection> createState() {
+    return _BlockSectionState();
+  }
+}
+
+class _BlockSectionState extends State<_BlockSection> {
+  late final ExpansibleController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ExpansibleController();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final timeRange = DateHelper.formatTimeRange(
-      block.startDate,
-      block.endDate,
+      widget.block.startDate,
+      widget.block.endDate,
     );
-    final talkCount = presentations.length;
-    final headerParts = [
-      if (block.roomId != null) block.roomId!,
-      if (timeRange.isNotEmpty) timeRange,
-      if (talkCount > 0) '$talkCount ${talkCount == 1 ? 'talk' : 'talks'}',
-    ];
+    final talkCount = widget.presentations.length;
 
-    return ExpansionTile(
-      initiallyExpanded: true,
-      tilePadding: const EdgeInsets.only(
-        top: AppSpacing.m,
-        bottom: AppSpacing.s,
-      ),
-      childrenPadding: EdgeInsets.zero,
-      // Elimina los bordes por defecto del ExpansionTile
-      shape: const Border(),
-      collapsedShape: const Border(),
-      expandedCrossAxisAlignment: CrossAxisAlignment.start,
-      title: Row(
-        children: [
-          if (block.track != null) ...[
-            _TrackBadge(track: block.track!),
-            const SizedBox(width: AppSpacing.s),
-          ],
-          if (headerParts.isNotEmpty)
-            Flexible(
-              child: Text(
-                headerParts.join(_kSeparator),
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-        ],
-      ),
-      children: [
-        Divider(
-          height: 1,
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.s),
+      child: Card(
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        color: theme.colorScheme.surfaceContainerLow,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.m),
         ),
-        if (presentations.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
-            child: Text(
-              'No presentations',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.outline,
-              ),
-            ),
-          )
-        else
-          ...presentations.map(
-            (p) =>
-                SlotPresentationTile(presentation: p, peopleIndex: peopleIndex),
+        clipBehavior: Clip.antiAlias,
+        child: ExpansionTile(
+          controller: _controller,
+          initiallyExpanded: widget.isFirstBlock,
+          backgroundColor: Colors.transparent,
+          collapsedBackgroundColor: Colors.transparent,
+          tilePadding: const EdgeInsets.fromLTRB(
+            AppSpacing.m,
+            AppSpacing.m,
+            AppSpacing.m,
+            AppSpacing.m,
           ),
-      ],
+          childrenPadding: EdgeInsets.zero,
+          shape: const Border(),
+          collapsedShape: const Border(),
+          expandedCrossAxisAlignment: CrossAxisAlignment.start,
+          title: Wrap(
+            spacing: AppSpacing.s,
+            runSpacing: AppSpacing.xs,
+            children: [
+              if (widget.block.track != null)
+                ScheduleInfoChip(
+                  label: widget.block.track!,
+                  variant: ScheduleChipVariant.primary,
+                ),
+              if (widget.roomName != null)
+                ScheduleInfoChip(
+                  label: widget.roomName!,
+                  icon: AppIcons.meetingRoom,
+                  size: ScheduleChipSize.medium,
+                ),
+              if (timeRange.isNotEmpty)
+                ScheduleInfoChip(
+                  label: timeRange,
+                  icon: AppIcons.time,
+                  size: ScheduleChipSize.medium,
+                ),
+              if (talkCount > 0)
+                ScheduleInfoChip(
+                  label:
+                      '$talkCount ${talkCount == 1 ? _kSingularTalk : _kPluralTalks}',
+                  icon: AppIcons.mic,
+                  size: ScheduleChipSize.medium,
+                ),
+            ],
+          ),
+          children: [
+            Divider(
+              height: 1,
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+            ),
+            if (widget.presentations.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
+                child: Text(
+                  _kNoPresentations,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.outline,
+                  ),
+                ),
+              )
+            else
+              ...widget.presentations.map(
+                (p) => SlotPresentationTile(
+                  presentation: p,
+                  peopleIndex: widget.peopleIndex,
+                ),
+              ),
+            if (talkCount > _kCollapseThreshold)
+              _CollapseFooter(controller: _controller),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Footer "Collapse" visible solo cuando el bloque tiene más de [_kCollapseThreshold] charlas.
+/// Evita que el usuario tenga que hacer scroll hasta el header para colapsar.
+class _CollapseFooter extends StatelessWidget {
+  const _CollapseFooter({required this.controller});
+
+  final ExpansibleController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final actionColor = theme.colorScheme.primary;
+
+    return InkWell(
+      onTap: controller.collapse,
+      borderRadius: const BorderRadius.vertical(
+        bottom: Radius.circular(AppRadius.m),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              AppIcons.collapse,
+              size: _kCollapseIconSize,
+              color: actionColor,
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Text(
+              _kCollapseLabel,
+              style: theme.textTheme.labelMedium?.copyWith(color: actionColor),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

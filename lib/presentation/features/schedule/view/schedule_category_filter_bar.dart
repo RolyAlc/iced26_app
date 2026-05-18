@@ -25,7 +25,9 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppLayout.horizontalPadding(context),
+      ),
       child: Row(children: _buildChips(context, colors)),
     );
   }

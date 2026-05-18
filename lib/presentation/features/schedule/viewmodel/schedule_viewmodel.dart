@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/day.dart';
@@ -7,12 +9,18 @@ import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/usecases/get_schedule_data_use_case.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'schedule_viewmodel.g.dart';
 
+const _kUnknownDate = 'Unknown date';
+
 /// Tabs del header superior de Schedule.
 enum ScheduleTab { timeline, mySchedule }
+
+/// Formato de visualización de la lista de sesiones.
+enum ScheduleViewFormat { list, agenda }
 
 @riverpod
 class ScheduleTopTab extends _$ScheduleTopTab {
@@ -36,6 +44,21 @@ class SelectedDayIndex extends _$SelectedDayIndex {
 
   void set(int value) {
     state = value;
+  }
+}
+
+/// Formato activo de la vista (lista o agenda). Se resetea al cambiar de día.
+@riverpod
+class SelectedScheduleViewFormat extends _$SelectedScheduleViewFormat {
+  @override
+  ScheduleViewFormat build() {
+    return ScheduleViewFormat.list;
+  }
+
+  void toggle() {
+    state = state == ScheduleViewFormat.list
+        ? ScheduleViewFormat.agenda
+        : ScheduleViewFormat.list;
   }
 }
 
@@ -142,7 +165,7 @@ List<ScheduleDaySection> _buildFallbackSections({
   final grouped = <String, List<Event>>{};
   for (final event in sortedEvents) {
     final dateKey =
-        event.startDate?.toIso8601String().split('T').first ?? 'Sin fecha';
+        event.startDate?.toIso8601String().split('T').first ?? _kUnknownDate;
     grouped.putIfAbsent(dateKey, () => []).add(event);
   }
   return grouped.entries.map((entry) {
@@ -208,7 +231,6 @@ final visibleItemsProvider = Provider<List<ScheduleItem>>((ref) {
 @riverpod
 class ScheduleViewModel extends _$ScheduleViewModel {
   // TODO: Obtener locale dinámico desde configuración del usuario
-  static const String _locale = 'en';
 
   @override
   Future<ScheduleState> build() async {
@@ -231,7 +253,7 @@ class ScheduleViewModel extends _$ScheduleViewModel {
       days: data.days,
       sortedEvents: sortedEvents,
       blocksByParent: blocksByParent,
-      locale: _locale,
+      locale: AppConfig.defaultLocale,
     );
 
     final finalSections = sections.isEmpty
