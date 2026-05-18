@@ -8,11 +8,10 @@ import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/ui_metrics.dart';
 import 'package:iced26/presentation/shared/widgets/smart_search_bar.dart';
 
-// TODO: code hadouken
-
 const double _selectedItemBackgroundOpacity = 0.1;
 const double _shadowOpacity = 0.08;
 const double _shadowBlurRadius = 12.0;
+const double _shadowOffsetY = 4.0;
 
 /// Bottom navigation bar principal con navegación por features.
 class AppNavigationBar extends ConsumerWidget {
@@ -25,9 +24,7 @@ class AppNavigationBar extends ConsumerWidget {
     final searchNotifier = ref.read(searchProvider.notifier);
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
-    final today = DateTime.now();
-    final notes = ref.watch(diaryNotesProvider).value ?? [];
-    final hasDiaryBadge = notes.any((n) => DateUtils.isSameDay(n.date, today));
+    final hasDiaryBadge = ref.watch(hasDiaryNoteForTodayProvider);
 
     return UIMetricsReporter(
       onReportNavBar: (size) => size.height,
@@ -85,7 +82,7 @@ class _NavContainer extends StatelessWidget {
               alpha: _shadowOpacity,
             ),
             blurRadius: _shadowBlurRadius,
-            offset: const Offset(0, 4),
+            offset: const Offset(0, _shadowOffsetY),
           ),
         ],
       ),
@@ -112,10 +109,41 @@ class _NavigationItem extends StatelessWidget {
   final bool showBadge;
   final VoidCallback onTap;
 
+  Widget _buildIcon(Color activeColor, Color inactiveColor) {
+    return Badge(
+      isLabelVisible: showBadge,
+      child: Icon(
+        isSelected ? selectedIcon : icon,
+        color: isSelected ? activeColor : inactiveColor,
+      ),
+    );
+  }
+
+  Widget _buildLabel(ThemeData theme, Color activeColor) {
+    // ValueKey explícito — AnimatedSwitcher necesita keys distintas para
+    // identificar los hijos y animar la transición correctamente.
+    return AnimatedSwitcher(
+      duration: AppDuration.fast,
+      child: isSelected
+          ? Text(
+              label,
+              key: const ValueKey(true),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: activeColor,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+          : const SizedBox.shrink(key: ValueKey(false)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final activeColor = theme.colorScheme.primary;
+    final inactiveColor = theme.colorScheme.onSurfaceVariant;
 
     return InkWell(
       onTap: onTap,
@@ -138,29 +166,8 @@ class _NavigationItem extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Badge(
-                isLabelVisible: showBadge,
-                child: Icon(
-                  isSelected ? selectedIcon : icon,
-                  color: isSelected
-                      ? activeColor
-                      : theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              AnimatedSwitcher(
-                duration: AppDuration.fast,
-                child: isSelected
-                    ? Text(
-                        label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: activeColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
+              _buildIcon(activeColor, inactiveColor),
+              _buildLabel(theme, activeColor),
             ],
           ),
         ),

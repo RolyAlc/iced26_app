@@ -180,6 +180,20 @@ Stream<List<DiaryNote>> diaryNotes(Ref ref) {
   return ref.watch(watchDiaryNotesUseCaseProvider).execute();
 }
 
+/// True si existe al menos una nota del diario para hoy.
+/// Derivado de [diaryNotesProvider] para que el NavBar solo se reconstruya
+/// cuando el bool cambia, no en cada actualización de la lista.
+@riverpod
+bool hasDiaryNoteForToday(Ref ref) {
+  final today = DateTime.now();
+  final notes = ref.watch(diaryNotesProvider).value ?? [];
+  return notes.any((n) {
+    return n.date.year == today.year &&
+        n.date.month == today.month &&
+        n.date.day == today.day;
+  });
+}
+
 /// Provee el índice de eventos por ID.
 @riverpod
 Future<Map<String, Event>> allEventsIndex(Ref ref) async {
