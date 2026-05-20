@@ -17,8 +17,6 @@ import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
 
-// TODO: Revisar if muchos
-
 const _kSingularTalk = 'talk';
 const _kPluralTalks = 'talks';
 const _kSingularSession = 'session';
@@ -27,6 +25,7 @@ const _kNoPresentations = 'No presentations';
 const _kCollapseLabel = 'Collapse';
 const _kCollapseThreshold = 4;
 const _kCollapseIconSize = 18.0;
+const _kChevronIconSize = 22.0;
 
 /// Muestra el sheet interior del slot desde cualquier contexto.
 void showSessionSlotDetail(
@@ -84,7 +83,7 @@ class SessionSlotBlock extends StatelessWidget {
           bottomAction: Icon(
             AppIcons.chevronRight,
             color: theme.colorScheme.onSurfaceVariant,
-            size: 22,
+            size: _kChevronIconSize,
           ),
         ),
       ),
@@ -95,7 +94,7 @@ class SessionSlotBlock extends StatelessWidget {
 /// Lista de presentaciones agrupadas por bloque.
 class _SlotPresentationList extends ConsumerWidget {
   _SlotPresentationList({required this.blocks})
-    : blockIds = blocks.map((b) => b.id).toList();
+    : blockIds = [for (final b in blocks) b.id];
 
   final List<SessionBlock> blocks;
   final List<String> blockIds;
@@ -117,19 +116,19 @@ class _SlotPresentationList extends ConsumerWidget {
       error: (_, _) => const SizedBox.shrink(),
       data: (grouped) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: blocks.asMap().entries.map((entry) {
-          final block = entry.value;
-          // Fallback al roomId raw si el nombre no está en el índice.
-          final roomName =
-              roomsIndex[block.roomId]?.name.resolve(locale) ?? block.roomId;
-          return _BlockSection(
-            block: block,
-            presentations: grouped[block.id] ?? [],
-            peopleIndex: peopleIndex,
-            isFirstBlock: entry.key == 0,
-            roomName: roomName,
-          );
-        }).toList(),
+        children: [
+          for (final (index, block) in blocks.indexed)
+            _BlockSection(
+              block: block,
+              presentations: grouped[block.id] ?? [],
+              peopleIndex: peopleIndex,
+              isFirstBlock: index == 0,
+              // Fallback al roomId raw si el nombre no está en el índice.
+              roomName:
+                  roomsIndex[block.roomId]?.name.resolve(locale) ??
+                  block.roomId,
+            ),
+        ],
       ),
     );
   }
@@ -167,6 +166,12 @@ class _BlockSectionState extends State<_BlockSection> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final timeRange = DateHelper.formatTimeRange(
@@ -190,12 +195,7 @@ class _BlockSectionState extends State<_BlockSection> {
           initiallyExpanded: widget.isFirstBlock,
           backgroundColor: Colors.transparent,
           collapsedBackgroundColor: Colors.transparent,
-          tilePadding: const EdgeInsets.fromLTRB(
-            AppSpacing.m,
-            AppSpacing.m,
-            AppSpacing.m,
-            AppSpacing.m,
-          ),
+          tilePadding: const EdgeInsets.all(AppSpacing.m),
           childrenPadding: EdgeInsets.zero,
           shape: const Border(),
           collapsedShape: const Border(),
@@ -203,61 +203,70 @@ class _BlockSectionState extends State<_BlockSection> {
           title: Wrap(
             spacing: AppSpacing.s,
             runSpacing: AppSpacing.xs,
-            children: [
-              if (widget.block.track != null)
-                ScheduleInfoChip(
-                  label: widget.block.track!,
-                  variant: ScheduleChipVariant.primary,
-                ),
-              if (widget.roomName != null)
-                ScheduleInfoChip(
-                  label: widget.roomName!,
-                  icon: AppIcons.meetingRoom,
-                  size: ScheduleChipSize.medium,
-                ),
-              if (timeRange.isNotEmpty)
-                ScheduleInfoChip(
-                  label: timeRange,
-                  icon: AppIcons.time,
-                  size: ScheduleChipSize.medium,
-                ),
-              if (talkCount > 0)
-                ScheduleInfoChip(
-                  label:
-                      '$talkCount ${talkCount == 1 ? _kSingularTalk : _kPluralTalks}',
-                  icon: AppIcons.mic,
-                  size: ScheduleChipSize.medium,
-                ),
-            ],
+            children: _buildChips(timeRange, talkCount),
           ),
           children: [
             Divider(
               height: 1,
               color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
             ),
-            if (widget.presentations.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
-                child: Text(
-                  _kNoPresentations,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.outline,
-                  ),
-                ),
-              )
-            else
-              ...widget.presentations.map(
-                (p) => SlotPresentationTile(
-                  presentation: p,
-                  peopleIndex: widget.peopleIndex,
-                ),
-              ),
-            if (talkCount > _kCollapseThreshold)
-              _CollapseFooter(controller: _controller),
+            ..._buildPresentationItems(theme, talkCount),
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> _buildChips(String timeRange, int talkCount) {
+    return [
+      if (widget.block.track != null)
+        ScheduleInfoChip(
+          label: widget.block.track!,
+          variant: ScheduleChipVariant.primary,
+        ),
+      if (widget.roomName != null)
+        ScheduleInfoChip(
+          label: widget.roomName!,
+          icon: AppIcons.meetingRoom,
+          size: ScheduleChipSize.medium,
+        ),
+      if (timeRange.isNotEmpty)
+        ScheduleInfoChip(
+          label: timeRange,
+          icon: AppIcons.time,
+          size: ScheduleChipSize.medium,
+        ),
+      if (talkCount > 0)
+        ScheduleInfoChip(
+          label:
+              '$talkCount ${talkCount == 1 ? _kSingularTalk : _kPluralTalks}',
+          icon: AppIcons.mic,
+          size: ScheduleChipSize.medium,
+        ),
+    ];
+  }
+
+  List<Widget> _buildPresentationItems(ThemeData theme, int talkCount) {
+    return [
+      if (widget.presentations.isEmpty)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
+          child: Text(
+            _kNoPresentations,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.outline,
+            ),
+          ),
+        )
+      else
+        for (final p in widget.presentations)
+          SlotPresentationTile(
+            presentation: p,
+            peopleIndex: widget.peopleIndex,
+          ),
+      if (talkCount > _kCollapseThreshold)
+        _CollapseFooter(controller: _controller),
+    ];
   }
 }
 
