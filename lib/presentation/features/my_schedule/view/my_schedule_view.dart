@@ -15,8 +15,7 @@ import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
 const _kUnscheduled = 'Unscheduled';
-
-// TODO: Gestionar los if
+const _kIllustrationIconSize = 48.0;
 
 /// Pantalla completa de My Schedule. Envuelve [MyScheduleContent] con su propio
 /// [AppPage] para poder usarse como destino de navegación independiente.
@@ -44,7 +43,7 @@ class MyScheduleView extends ConsumerWidget {
           child: AppEmptyState(
             illustration: Icon(
               AppIcons.error,
-              size: 48,
+              size: _kIllustrationIconSize,
               color: theme.colorScheme.error,
             ),
             title: AppStrings.myScheduleErrorTitle,
@@ -65,7 +64,7 @@ class MyScheduleView extends ConsumerWidget {
           child: AppEmptyState(
             illustration: Icon(
               AppIcons.bookmarkOff,
-              size: 48,
+              size: _kIllustrationIconSize,
               color: theme.colorScheme.outlineVariant,
             ),
             title: AppStrings.myScheduleNothingSavedTitle,
@@ -98,26 +97,28 @@ class MyScheduleContent extends StatelessWidget {
 
   final List<MyScheduleDisplayItem> items;
 
+  static Widget _buildDisplayItem(MyScheduleDisplayItem displayItem) {
+    return switch (displayItem) {
+      MyScheduleDayHeader() => _MyScheduleDayHeader(header: displayItem),
+      MyScheduleRow(:final item) => _buildScheduleItem(item),
+    };
+  }
+
+  static Widget _buildScheduleItem(MyScheduleItem item) {
+    return switch (item) {
+      SavedEventItem(:final event) => EventCard(event: event),
+      SavedPresentationItem(:final presentation) => SavedPresentationCard(
+        presentation: presentation,
+      ),
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(children: items.map(_buildDisplayItem).toList());
+    return Column(
+      children: [for (final item in items) _buildDisplayItem(item)],
+    );
   }
-}
-
-Widget _buildDisplayItem(MyScheduleDisplayItem displayItem) {
-  return switch (displayItem) {
-    MyScheduleDayHeader() => _MyScheduleDayHeader(header: displayItem),
-    MyScheduleRow(:final item) => _buildScheduleItem(item),
-  };
-}
-
-Widget _buildScheduleItem(MyScheduleItem item) {
-  return switch (item) {
-    SavedEventItem(:final event) => EventCard(event: event),
-    SavedPresentationItem(:final presentation) => SavedPresentationCard(
-      presentation: presentation,
-    ),
-  };
 }
 
 /// Header de sección de un día dentro de [MyScheduleContent].

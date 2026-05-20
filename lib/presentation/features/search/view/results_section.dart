@@ -18,8 +18,6 @@ import 'package:iced26/presentation/features/search/widgets/person_result_tile.d
 import 'package:iced26/presentation/features/search/widgets/result_tile.dart';
 import 'package:iced26/presentation/features/search/widgets/section_label.dart';
 
-// TODO: Muchos if
-
 // Límites independientes: pueden divergir si el diseño lo requiere
 const _kPeopleCap = 6;
 const _kSessionsCap = 6;
@@ -152,6 +150,74 @@ class _CombinedResultsListState extends State<_CombinedResultsList> {
     }
   }
 
+  List<Widget> _buildPeopleItems(List<Person> visible, int remaining) {
+    final onPersonTap = widget.onPersonTap;
+    return [
+      Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.s),
+        child: SectionLabel(
+          label: AppStrings.searchPeopleLabel,
+          icon: AppIcons.peopleOutline,
+          count: widget.people.length,
+        ),
+      ),
+      for (final p in visible)
+        PersonResultTile(
+          key: ValueKey(p.id),
+          person: p,
+          onTap: onPersonTap != null
+              ? () {
+                  onPersonTap(p);
+                }
+              : null,
+        ),
+      if (remaining > 0)
+        _ShowMoreButton(
+          remaining: remaining,
+          onTap: () {
+            setState(() {
+              _allPeopleVisible = true;
+            });
+          },
+        ),
+    ];
+  }
+
+  List<Widget> _buildEventsItems(
+    List<Event> visible,
+    int remaining, {
+    required bool hasPeopleAbove,
+  }) {
+    return [
+      if (hasPeopleAbove) const SizedBox(height: AppSpacing.m),
+      Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.s),
+        child: SectionLabel(
+          label: AppStrings.searchSessionsLabel,
+          icon: AppIcons.sessions,
+          count: widget.events.length,
+        ),
+      ),
+      for (final e in visible)
+        ResultTile(
+          key: ValueKey(e.id),
+          event: e,
+          onTap: () {
+            widget.onEventTap(e);
+          },
+        ),
+      if (remaining > 0)
+        _ShowMoreButton(
+          remaining: remaining,
+          onTap: () {
+            setState(() {
+              _allEventsVisible = true;
+            });
+          },
+        ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final visiblePeople = _allPeopleVisible
@@ -164,90 +230,19 @@ class _CombinedResultsListState extends State<_CombinedResultsList> {
     final remainingPeople = widget.people.length - visiblePeople.length;
     final remainingEvents = widget.events.length - visibleEvents.length;
 
-    final items = <Widget>[
-      _ResultsCount(total: widget.people.length + widget.events.length),
-    ];
-
-    if (widget.people.isNotEmpty) {
-      items.add(
-        Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.s),
-          child: SectionLabel(
-            label: AppStrings.searchPeopleLabel,
-            icon: AppIcons.peopleOutline,
-            count: widget.people.length,
-          ),
-        ),
-      );
-      for (final p in visiblePeople) {
-        items.add(
-          PersonResultTile(
-            key: ValueKey(p.id),
-            person: p,
-            onTap: widget.onPersonTap != null
-                ? () {
-                    widget.onPersonTap!(p);
-                  }
-                : null,
-          ),
-        );
-      }
-      if (remainingPeople > 0) {
-        items.add(
-          _ShowMoreButton(
-            remaining: remainingPeople,
-            onTap: () {
-              setState(() {
-                _allPeopleVisible = true;
-              });
-            },
-          ),
-        );
-      }
-    }
-
-    if (widget.events.isNotEmpty) {
-      if (widget.people.isNotEmpty) {
-        items.add(const SizedBox(height: AppSpacing.m));
-      }
-      items.add(
-        Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.s),
-          child: SectionLabel(
-            label: AppStrings.searchSessionsLabel,
-            icon: AppIcons.sessions,
-            count: widget.events.length,
-          ),
-        ),
-      );
-      for (final e in visibleEvents) {
-        items.add(
-          ResultTile(
-            key: ValueKey(e.id),
-            event: e,
-            onTap: () {
-              widget.onEventTap(e);
-            },
-          ),
-        );
-      }
-      if (remainingEvents > 0) {
-        items.add(
-          _ShowMoreButton(
-            remaining: remainingEvents,
-            onTap: () {
-              setState(() {
-                _allEventsVisible = true;
-              });
-            },
-          ),
-        );
-      }
-    }
-
     return ListView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      children: items,
+      children: [
+        _ResultsCount(total: widget.people.length + widget.events.length),
+        if (widget.people.isNotEmpty)
+          ..._buildPeopleItems(visiblePeople, remainingPeople),
+        if (widget.events.isNotEmpty)
+          ..._buildEventsItems(
+            visibleEvents,
+            remainingEvents,
+            hasPeopleAbove: widget.people.isNotEmpty,
+          ),
+      ],
     );
   }
 }

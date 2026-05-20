@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/domain/entities/diary_note.dart';
+import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_calendar.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_day_content.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
@@ -41,6 +43,7 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
       return;
     }
 
+    // Velocidad negativa = deslizamiento hacia la izquierda = avanzar al día siguiente.
     final isForward = velocity < 0;
     final next = isForward
         ? current.add(const Duration(days: 1))
@@ -85,49 +88,60 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
             ),
           ),
         ),
-        ClipRect(
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              _onHorizontalSwipe(details.primaryVelocity ?? 0, selectedDate);
-            },
-            child: AnimatedSwitcher(
-              duration: AppDuration.fast,
-              // TODO: Revisar ancla
-              layoutBuilder: (currentChild, previousChildren) {
-                return Stack(
-                  alignment: Alignment.topCenter,
-                  children: [...previousChildren, ?currentChild],
-                );
-              },
-              transitionBuilder: (child, animation) {
-                final isIncoming = child.key == ValueKey(selectedDate);
-                final dx = isIncoming
-                    ? _slideDirection.toDouble()
-                    : -_slideDirection.toDouble();
-                final slide =
-                    Tween<Offset>(
-                      begin: Offset(dx, 0),
-                      end: Offset.zero,
-                    ).animate(
-                      CurvedAnimation(parent: animation, curve: Curves.easeOut),
-                    );
-                return SlideTransition(
-                  position: slide,
-                  child: FadeTransition(opacity: animation, child: child),
-                );
-              },
-              child: DiaryDayContent(
-                key: ValueKey(selectedDate),
-                selectedDate: selectedDate,
-                notes: notesForDay,
-                events: eventsForDay,
-                onDeleteNote: (id) =>
-                    ref.read(deleteDiaryNoteUseCaseProvider).execute(id),
-              ),
-            ),
-          ),
+        _buildAnimatedDayContent(
+          selectedDate: selectedDate,
+          notesForDay: notesForDay,
+          eventsForDay: eventsForDay,
         ),
       ],
+    );
+  }
+
+  Widget _buildAnimatedDayContent({
+    required DateTime selectedDate,
+    required List<DiaryNote> notesForDay,
+    required List<Event> eventsForDay,
+  }) {
+    return ClipRect(
+      child: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          _onHorizontalSwipe(details.primaryVelocity ?? 0, selectedDate);
+        },
+        child: AnimatedSwitcher(
+          duration: AppDuration.fast,
+          layoutBuilder: (currentChild, previousChildren) {
+            // Ancla en topCenter: días con contenido de altura variable se mantienen
+            // alineados arriba durante la animación. Sin esto, el hijo más corto
+            // flotaría al centro del Stack visualmente.
+            return Stack(
+              alignment: Alignment.topCenter,
+              children: [...previousChildren, ?currentChild],
+            );
+          },
+          transitionBuilder: (child, animation) {
+            final isIncoming = child.key == ValueKey(selectedDate);
+            final dx = isIncoming
+                ? _slideDirection.toDouble()
+                : -_slideDirection.toDouble();
+            final slide = Tween<Offset>(begin: Offset(dx, 0), end: Offset.zero)
+                .animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                );
+            return SlideTransition(
+              position: slide,
+              child: FadeTransition(opacity: animation, child: child),
+            );
+          },
+          child: DiaryDayContent(
+            key: ValueKey(selectedDate),
+            selectedDate: selectedDate,
+            notes: notesForDay,
+            events: eventsForDay,
+            onDeleteNote: (id) =>
+                ref.read(deleteDiaryNoteUseCaseProvider).execute(id),
+          ),
+        ),
+      ),
     );
   }
 }
