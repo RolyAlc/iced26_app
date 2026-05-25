@@ -11,11 +11,7 @@ audience: tecnico
 
 Este documento describe cómo circulan los datos en la aplicación: **desde el JSON inicial hasta la pantalla**, y qué ocurre con los datos que genera el usuario.
 
-## 1. Arranque  del JSON a la base de datos
-
-La primera vez que la app se lanza, los datos del congreso se cargan desde el JSON empaquetado en los assets y se persisten en SQLite.
-
-En los arranques siguientes, la BD ya tiene datos y la carga del JSON se omite.
+## 1. Arranque del JSON a la base de datos
 
 ```mermaid
 sequenceDiagram
@@ -46,9 +42,9 @@ sequenceDiagram
     Boot-->>App: listo — UI puede renderizar
 ```
 
-## 2. Lectura de la base de datos a la pantalla
+La primera vez que la app se lanza, los datos del congreso se cargan desde el JSON empaquetado en los assets y se persisten en SQLite. En los arranques siguientes, la carga del JSON se omite.
 
-Una vez inicializada la BD, cada pantalla solicita sus datos a través de un caso de uso. El resultado siempre se envuelve en `Result<T>`.
+## 2. Lectura de la base de datos a la pantalla
 
 ```mermaid
 sequenceDiagram
@@ -72,6 +68,8 @@ sequenceDiagram
         VM-->>View: HomeState con error
     end
 ```
+
+Una vez inicializada la BD, cada pantalla solicita sus datos a través de un caso de uso. El resultado siempre se envuelve en `Result<T>`.
 
 > El **contrato** (`Repository` interface) es una restricción de tipos en compilación.
 >

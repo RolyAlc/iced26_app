@@ -13,27 +13,7 @@ La app usa **Riverpod**, como sistema de inyección de dependencias y gestión d
 
 En lugar de crear objetos manualmente o usar *singletons globales*, cada pieza del sistema se declara como un provider y Riverpod se encarga de instanciarla, cachearla y destruirla en el momento adecuado.
 
-## 1. Cómo funciona un provider
-
-Los providers se declaran con la anotación `@riverpod`.
-
-El generador de código (`riverpod_generator`) produce automáticamente el provider tipado en el fichero `.g.dart` correspondiente.
-
-```dart
-// Declaración (lib/di/data_providers.dart)
-@riverpod
-ScheduleRepository scheduleRepository(Ref ref) {
-  final db = ref.watch(appDatabaseProvider); // depende de otro provider
-  return ScheduleRepositoryImpl(db);
-}
-
-// Uso en un widget o viewmodel
-final repo = ref.watch(scheduleRepositoryProvider);
-```
-
-> Los ficheros `.g.dart` son generados por `build_runner`. No se deben editar a mano.
-
-## 2. Árbol de dependencias
+## 1. Árbol de dependencias
 
 El árbol se divide en dos niveles para facilitar su lectura.
 
@@ -98,6 +78,24 @@ graph TD
     style HDT fill:#e3f2fd,stroke:#1565c0
     style MSI fill:#e3f2fd,stroke:#1565c0
 ```
+
+## 2. Cómo funciona un provider
+
+Los providers se declaran con la anotación `@riverpod`. El generador de código (`riverpod_generator`) produce automáticamente el provider tipado en el fichero `.g.dart` correspondiente.
+
+```dart
+// Declaración (lib/di/data_providers.dart)
+@riverpod
+ScheduleRepository scheduleRepository(Ref ref) {
+  final db = ref.watch(appDatabaseProvider); // depende de otro provider
+  return ScheduleRepositoryImpl(db);
+}
+
+// Uso en un widget o viewmodel
+final repo = ref.watch(scheduleRepositoryProvider);
+```
+
+> Los ficheros `.g.dart` son generados por `build_runner`. No se deben editar a mano.
 
 ## 3. Ficheros en `lib/di/`
 
