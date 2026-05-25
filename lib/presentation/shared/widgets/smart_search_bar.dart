@@ -13,21 +13,18 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/search/view/search_helper.dart';
 import 'package:iced26/presentation/features/search/view/search_modal_body.dart';
 
-// TODO: Cumple al S de SOLID ¿?
-
-const _kBadgeSize = 8.0;
-const _kBadgeOffset = -3.0;
+const double _kBadgeSize = 8.0;
+const double _kBadgeOffset = -3.0;
 
 List<Person> _filterPeople(Map<String, Person> allPeople, String query) {
   if (query.isEmpty) {
     return [];
   }
   final q = query.toLowerCase();
-  return allPeople.values
-      .where(
-        (p) => p.name.values.values.any((v) => v.toLowerCase().contains(q)),
-      )
-      .toList();
+  return [
+    for (final p in allPeople.values)
+      if (p.name.values.values.any((v) => v.toLowerCase().contains(q))) p,
+  ];
 }
 
 SearchHelper? _resolveOverlay({
@@ -35,7 +32,8 @@ SearchHelper? _resolveOverlay({
   required bool historyIsEmpty,
   required bool hasNoResults,
 }) {
-  if (hasNoActiveSearch && historyIsEmpty) {
+  final hasNoActiveSearchAndHistoryIsEmpty = hasNoActiveSearch && historyIsEmpty
+  if (hasNoActiveSearchAndHistoryIsEmpty) {
     return const SearchHelper(
       title: AppStrings.searchExploreTitle,
       subtitle: AppStrings.searchExploreSubtitle,
@@ -119,6 +117,7 @@ class _SearchScreen extends ConsumerStatefulWidget {
   ConsumerState<_SearchScreen> createState() => _SearchScreenState();
 }
 
+/// Estado de [_SearchScreen].
 class _SearchScreenState extends ConsumerState<_SearchScreen> {
   late bool _filtersExpanded;
 
@@ -197,8 +196,9 @@ class _SearchBarVisualContainer extends StatelessWidget {
   final bool isFilterActive;
   final VoidCallback onFilterTap;
 
-  static const double _height = 56;
-  static const EdgeInsets _padding = EdgeInsets.symmetric(
+  static const double _kBarHeight = 56.0;
+  static const double _kBorderWidth = 1.2;
+  static const EdgeInsets _kPadding = EdgeInsets.symmetric(
     horizontal: AppSpacing.m,
   );
 
@@ -207,15 +207,15 @@ class _SearchBarVisualContainer extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     return Container(
-      height: _height,
-      padding: _padding,
+      height: _kBarHeight,
+      padding: _kPadding,
       decoration: BoxDecoration(
         color: Color.alphaBlend(
           colors.primary.withValues(alpha: 0.08),
           colors.surface,
         ),
         borderRadius: BorderRadius.circular(AppRadius.l),
-        border: Border.all(color: colors.outlineVariant, width: 1.2),
+        border: Border.all(color: colors.outlineVariant, width: _kBorderWidth),
       ),
       child: Row(
         children: [

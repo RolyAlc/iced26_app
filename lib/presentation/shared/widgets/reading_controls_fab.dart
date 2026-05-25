@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/text_size_preference.dart';
 import 'package:iced26/presentation/app/state/text_size_provider.dart';
@@ -9,22 +10,15 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 const _kTextSizeLabel = 'Text size';
 const _kThemeLabel = 'Theme';
-const _kTextSizeTooltip = 'Text size';
-const _kThemeTooltip = 'Theme';
 const _kScrollToTopTooltip = 'Back to top';
 
-const _kFabIconSize = 22.0;
-const _kFabButtonPaddingH = 18.0;
-const _kFabButtonPaddingV = 14.0;
-const _kFabDividerHeight = 22.0;
-const _kFabElevation = 3.0;
-
-// TODO: codigo anidado
+const double _kFabIconSize = 22.0;
+const double _kFabButtonPaddingH = 18.0;
+const double _kFabButtonPaddingV = 14.0;
+const double _kFabDividerHeight = 22.0;
+const double _kFabElevation = 3.0;
 
 /// Píldora flotante centrada con controles de lectura: tamaño de texto y tema.
-///
-/// Si se pasan [scrollController] y [showScrollToTop], aparece un botón "↑"
-/// a la izquierda de la píldora cuando el usuario ha hecho scroll suficiente.
 class ReadingControlsFab extends ConsumerWidget {
   const ReadingControlsFab({
     super.key,
@@ -53,6 +47,33 @@ class ReadingControlsFab extends ConsumerWidget {
     );
   }
 
+  Widget _buildScrollToTopSlot(ColorScheme colors) {
+    if (scrollController == null) {
+      return const SizedBox.shrink();
+    }
+
+    // AnimatedSize colapsa el ancho cuando el botón no es visible,
+    // evitando que la píldora ocupe espacio extra innecesariamente.
+    return AnimatedSize(
+      duration: AppDuration.fast,
+      curve: Curves.easeOut,
+      child: showScrollToTop
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _PillIconButton(
+                  icon: AppIcons.collapse,
+                  color: colors.onPrimaryContainer,
+                  tooltip: _kScrollToTopTooltip,
+                  onTap: _scrollToTop,
+                ),
+                _PillDivider(color: colors.onPrimaryContainer),
+              ],
+            )
+          : const SizedBox.shrink(),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
@@ -67,38 +88,18 @@ class ReadingControlsFab extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (scrollController != null)
-            // AnimatedSize colapsa el ancho cuando el botón no es visible,
-            // evitando que la píldora ocupe espacio extra innecesariamente.
-            AnimatedSize(
-              duration: AppDuration.fast,
-              curve: Curves.easeOut,
-              child: showScrollToTop
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _PillIconButton(
-                          icon: AppIcons.collapse,
-                          color: colors.onPrimaryContainer,
-                          tooltip: _kScrollToTopTooltip,
-                          onTap: _scrollToTop,
-                        ),
-                        _PillDivider(color: colors.onPrimaryContainer),
-                      ],
-                    )
-                  : const SizedBox.shrink(),
-            ),
+          _buildScrollToTopSlot(colors),
           _PillIconButton(
             icon: AppIcons.textField,
             color: colors.onPrimaryContainer,
-            tooltip: _kTextSizeTooltip,
+            tooltip: _kTextSizeLabel,
             onTap: () => _openSheet(context),
           ),
           _PillDivider(color: colors.onPrimaryContainer),
           _PillIconButton(
             icon: AppIcons.forThemeMode(themeMode),
             color: colors.onPrimaryContainer,
-            tooltip: _kThemeTooltip,
+            tooltip: _kThemeLabel,
             onTap: () => _openSheet(context),
           ),
         ],
@@ -160,16 +161,76 @@ class _PillDivider extends StatelessWidget {
 class _ReadingControlsSheet extends ConsumerWidget {
   const _ReadingControlsSheet();
 
+  Widget _buildSection(ThemeData theme, String label, Widget control) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.s),
+        SizedBox(width: double.infinity, child: control),
+      ],
+    );
+  }
+
+  Widget _buildTextSizeControl(WidgetRef ref, TextSizePreference current) {
+    return SegmentedButton<TextSizePreference>(
+      segments: [
+        for (final pref in TextSizePreference.values)
+          ButtonSegment<TextSizePreference>(
+            value: pref,
+            label: Text(pref.label),
+            tooltip: pref.displayName,
+          ),
+      ],
+      selected: {current},
+      onSelectionChanged: (selection) {
+        ref.read(textSizeProvider.notifier).setPreference(selection.first);
+      },
+    );
+  }
+
+  Widget _buildThemeModeControl(WidgetRef ref, ThemeMode current) {
+    return SegmentedButton<ThemeMode>(
+      segments: const [
+        ButtonSegment<ThemeMode>(
+          value: ThemeMode.light,
+          icon: Icon(AppIcons.lightTheme),
+          label: Text(AppStrings.themeLight),
+        ),
+        ButtonSegment<ThemeMode>(
+          value: ThemeMode.system,
+          icon: Icon(AppIcons.systemTheme),
+          label: Text(AppStrings.themeSystem),
+        ),
+        ButtonSegment<ThemeMode>(
+          value: ThemeMode.dark,
+          icon: Icon(AppIcons.darkTheme),
+          label: Text(AppStrings.themeDark),
+        ),
+      ],
+      selected: {current},
+      onSelectionChanged: (selection) {
+        ref.read(themeModeProvider.notifier).setMode(selection.first);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textSize =
         ref.watch(textSizeProvider).value ?? TextSizePreference.medium;
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
 
     return SafeArea(
       child: Padding(
+        // Top reducido: showDragHandle ya añade espacio visual suficiente arriba.
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.l,
           AppSpacing.s,
@@ -180,65 +241,16 @@ class _ReadingControlsSheet extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            _buildSection(
+              theme,
               _kTextSizeLabel,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.s),
-            SizedBox(
-              width: double.infinity,
-              child: SegmentedButton<TextSizePreference>(
-                segments: [
-                  for (final pref in TextSizePreference.values)
-                    ButtonSegment<TextSizePreference>(
-                      value: pref,
-                      label: Text(pref.label),
-                      tooltip: pref.displayName,
-                    ),
-                ],
-                selected: {textSize},
-                onSelectionChanged: (selection) {
-                  ref
-                      .read(textSizeProvider.notifier)
-                      .setPreference(selection.first);
-                },
-              ),
+              _buildTextSizeControl(ref, textSize),
             ),
             const SizedBox(height: AppSpacing.l),
-            Text(
+            _buildSection(
+              theme,
               _kThemeLabel,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.s),
-            SizedBox(
-              width: double.infinity,
-              child: SegmentedButton<ThemeMode>(
-                segments: const [
-                  ButtonSegment<ThemeMode>(
-                    value: ThemeMode.light,
-                    icon: Icon(AppIcons.lightTheme),
-                    label: Text('Light'),
-                  ),
-                  ButtonSegment<ThemeMode>(
-                    value: ThemeMode.system,
-                    icon: Icon(AppIcons.systemTheme),
-                    label: Text('System'),
-                  ),
-                  ButtonSegment<ThemeMode>(
-                    value: ThemeMode.dark,
-                    icon: Icon(AppIcons.darkTheme),
-                    label: Text('Dark'),
-                  ),
-                ],
-                selected: {themeMode},
-                onSelectionChanged: (selection) {
-                  ref.read(themeModeProvider.notifier).setMode(selection.first);
-                },
-              ),
+              _buildThemeModeControl(ref, themeMode),
             ),
           ],
         ),
