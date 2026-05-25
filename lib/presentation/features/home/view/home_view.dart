@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/bootstrap.dart';
 import 'package:iced26/domain/entities/conference_theme.dart';
@@ -12,6 +10,7 @@ import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_conference_themes_section.dart';
+import 'package:iced26/presentation/features/home/view/sections/home_expanded_header.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_featured_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_header_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_keynote_speakers_section.dart';
@@ -32,8 +31,6 @@ import 'package:iced26/presentation/shared/widgets/staggered_fade_in.dart';
 
 const double _expandedHeaderHeight = 136.0;
 const double _collapsedHeaderHeight = 80.0;
-const double _kLogoHeight = 48.0;
-const double _kDateIconSize = 14.0;
 const double _kEmptyIllustrationSize = 60.0;
 
 // Delays escalonados para StaggeredFadeIn — cada sección entra
@@ -72,7 +69,7 @@ class _HomeContent extends ConsumerWidget {
     return AppAsyncValueWidget(
       asyncValue: homeStateAsync,
       data: (state) => AppPage(
-        header: _HomeExpandedHeader(
+        header: HomeExpandedHeader(
           infoLabel: state.headerInfoLabel,
           searchNotifier: searchNotifier,
         ),
@@ -85,10 +82,7 @@ class _HomeContent extends ConsumerWidget {
           _HomeFeaturedSection(
             featuredEvents: state.featuredEvents,
             onExploreTap: () {
-              ref
-                  .read(scheduleTopTabProvider.notifier)
-                  .select(ScheduleTab.timeline);
-              ref.read(navigationProvider.notifier).select(AppFeature.schedule);
+              _navigateToSchedule(ref);
             },
           ),
           if (state.keynoteSpeakers.isNotEmpty)
@@ -103,6 +97,11 @@ class _HomeContent extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  void _navigateToSchedule(WidgetRef ref) {
+    ref.read(scheduleTopTabProvider.notifier).select(ScheduleTab.timeline);
+    ref.read(navigationProvider.notifier).select(AppFeature.schedule);
   }
 }
 
@@ -145,8 +144,18 @@ class _HomeKeynoteSection extends StatelessWidget {
       delay: _kKeynoteFadeDelay,
       child: AppSection(
         title: 'Keynote speakers',
+        trailing: TextButton.icon(
+          onPressed: onViewAll,
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            visualDensity: VisualDensity.compact,
+          ),
+          label: const Text('See all'),
+          iconAlignment: IconAlignment.end,
+        ),
         edgeToEdge: true,
-        child: HomeKeynoteSection(speakers: speakers, onViewAll: onViewAll),
+        child: HomeKeynoteSection(speakers: speakers),
       ),
     );
   }
@@ -221,83 +230,6 @@ class _HomeSocialSection extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Header expandido de la vista de inicio.
-class _HomeExpandedHeader extends StatelessWidget {
-  const _HomeExpandedHeader({
-    required this.infoLabel,
-    required this.searchNotifier,
-  });
-
-  final String infoLabel;
-  final Search searchNotifier;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-    final dateLabel = MaterialLocalizations.of(
-      context,
-    ).formatFullDate(DateTime.now());
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppLayout.horizontalPadding(context),
-            vertical: AppSpacing.m,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Image.asset(
-                Assets.logoIced26,
-                height: _kLogoHeight,
-                fit: BoxFit.contain,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        AppIcons.calendarOutline,
-                        size: _kDateIconSize,
-                        color: colorScheme.primary,
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      Text(
-                        dateLabel,
-                        style: textTheme.labelSmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    infoLabel,
-                    style: textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-          child: SmartSearchBar(searchNotifier: searchNotifier),
-        ),
-      ],
     );
   }
 }
