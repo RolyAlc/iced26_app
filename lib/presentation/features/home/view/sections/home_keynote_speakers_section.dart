@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/view/sheets/keynote_speaker_detail_sheet.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/speaker_card.dart';
 import 'package:iced26/presentation/shared/widgets/app_dots_indicator.dart';
 
-const String _kExploreAllSpeakers = 'Explore all speakers';
-
-/// Sección de keynote speakers — carousel con peek + dots + CTA opcional.
+/// Sección de keynote speakers — carousel con peek + dots.
 class HomeKeynoteSection extends StatefulWidget {
-  const HomeKeynoteSection({super.key, required this.speakers, this.onViewAll});
+  const HomeKeynoteSection({super.key, required this.speakers});
 
   final List<KeynoteSpeakerUIModel> speakers;
-  final VoidCallback? onViewAll;
 
   @override
   State<HomeKeynoteSection> createState() => _HomeKeynoteSectionState();
@@ -60,10 +56,6 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
         _buildCarousel(),
         const SizedBox(height: AppSpacing.l),
         AppDotsIndicator(count: widget.speakers.length, current: _currentPage),
-        if (widget.onViewAll != null) ...[
-          const SizedBox(height: AppSpacing.m),
-          _ViewAllButton(onTap: widget.onViewAll!),
-        ],
       ],
     );
   }
@@ -93,27 +85,6 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
           ),
         );
       },
-    );
-  }
-}
-
-/// Botón para ver todos los ponentes.
-class _ViewAllButton extends StatelessWidget {
-  const _ViewAllButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return TextButton.icon(
-      onPressed: onTap,
-      icon: Icon(AppIcons.peopleOutline, size: 18, color: colors.primary),
-      label: Text(
-        _kExploreAllSpeakers,
-        style: TextStyle(color: colors.primary),
-      ),
     );
   }
 }
