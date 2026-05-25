@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 
-// TODO: revisar esa intencionalidad
-
-// Intencionalmente 5px (no AppSpacing.s = 8px): chip decorativo en sheet de texto.
-const _kChipVerticalPadding = 5.0;
-const _kChipIconSize = AppTextSize.chip;
+// Intencionalmente 5px (no AppSpacing.s = 8px): chip decorativo en sheet de texto denso.
+const double _kChipVerticalPadding = 5.0;
+const double _kChipIconSize = AppTextSize.chip;
 
 /// Chip decorativo para Track, tiempo, duración y sala en el sheet de detalle.
 /// Admite icono opcional a la izquierda del texto.
@@ -42,7 +40,8 @@ class PresentationChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[
+          bool iconAdded = icon != null
+          if (iconAdded) ...[
             Icon(icon, size: _kChipIconSize, color: fgColor),
             const SizedBox(width: AppSpacing.xs),
           ],
@@ -59,7 +58,7 @@ class PresentationChip extends StatelessWidget {
   }
 }
 
-/// encapsula el color semitransparente del tema para no repetirlo en cada sección.
+/// Encapsula el color semitransparente del tema para no repetirlo en cada sección.
 class PresentationDivider extends StatelessWidget {
   const PresentationDivider({super.key});
 
