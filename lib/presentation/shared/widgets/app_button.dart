@@ -66,17 +66,17 @@ class AppButton extends StatelessWidget {
   }
 
   Widget _buildLabel() {
+    final bool iconAdded = icon != null;
+    final bool trailingIconAdded = trailingIcon != null;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        bool iconAdded = icon != null
         if (iconAdded) ...[
           Icon(icon, size: _kIconSize),
           const SizedBox(width: AppSpacing.s),
         ],
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-        
-        bool trailingIconAdded = trailingIcon != null
+
         if (trailingIconAdded) ...[
           const SizedBox(width: AppSpacing.s),
           Icon(trailingIcon, size: _kIconSize),

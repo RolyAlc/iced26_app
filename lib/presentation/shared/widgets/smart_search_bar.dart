@@ -32,7 +32,8 @@ SearchHelper? _resolveOverlay({
   required bool historyIsEmpty,
   required bool hasNoResults,
 }) {
-  final hasNoActiveSearchAndHistoryIsEmpty = hasNoActiveSearch && historyIsEmpty
+  final hasNoActiveSearchAndHistoryIsEmpty =
+      hasNoActiveSearch && historyIsEmpty;
   if (hasNoActiveSearchAndHistoryIsEmpty) {
     return const SearchHelper(
       title: AppStrings.searchExploreTitle,
