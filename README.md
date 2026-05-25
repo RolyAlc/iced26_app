@@ -34,8 +34,7 @@ Funciona sin conexión: todos los datos están empaquetados en la app.
 
 ## 3. Requisitos previos
 
-- Flutter SDK `^3.11.4`
-- Dart SDK `^3.11.4`
+- **Flutter SDK** `^3.11.4` (incluye Dart — no es necesario instalarlo por separado)
 - Android Studio o Xcode (según plataforma destino)
 
 ## 4. Cómo arrancar

@@ -14,6 +14,7 @@ audience: principiante
 ## 1. ¿Qué es esta app?
 
 **ICED26** es la aplicación del congreso de ingeniería de diseño **ICED 2026**.
+
 Muestra el **programa**, los **ponentes**, **noticias** y permite al asistente llevar su propio horario personalizado y un **diario de notas**.
 
 **Funciona completamente sin internet.** No hay servidor. Todos los datos del congreso vienen dentro de la propia aplicación en un fichero JSON.
@@ -35,6 +36,8 @@ flutter doctor
 > Todos los elementos deben aparecer en verde (o con advertencias menores).
 
 ## 3. Primeros pasos
+
+Se muestran los comandos básicos para arrancar la app por primera vez.
 
 ```bash
 # 1. Clonar el repositorio
@@ -81,14 +84,14 @@ tools/              > scripts de utilidad (smell_checker, generador de estructur
 
 ## 5. ¿Por dónde sigo?
 
-| Quiero entender...                           | Documento                                                       |
-| -------------------------------------------- | --------------------------------------------------------------- |
-| Cómo se organizan las capas del proyecto     | [Arquitectura y capas](../architecture/layers.md) *(Bloque B)*  |
-| Cómo llegan los datos del JSON a la pantalla | [Flujo de datos](../architecture/data_flow.md) *(Bloque B)*     |
-| Cómo funciona Riverpod en este proyecto      | [Inyección de dependencias](../architecture/di.md) *(Bloque B)* |
-| Las convenciones de código del equipo        | [Convenciones](conventions.md) *(Bloque B)*                     |
-| Los comandos del día a día                   | [Comandos útiles](commands.md)                                  |
-| Las decisiones de arquitectura tomadas       | [ADRs](../architecture/adr/0001_usar_pattern_result.md)         |
-| Los tokens visuales del design system        | [Sistema de diseño](../architecture/design_system.md)           |
-| El contrato oficial del JSON                 | [Contrato técnico](../generated/contract.md)                    |
-| Cómo publicar la app en las tiendas          | [Publicación en tiendas](publish_stores.md)                     |
+| Quiero entender...                           | Documento                                               |
+| -------------------------------------------- | ------------------------------------------------------- |
+| Cómo se organizan las capas del proyecto     | [Arquitectura y capas](../architecture/layers.md)       |
+| Cómo llegan los datos del JSON a la pantalla | [Flujo de datos](../architecture/data_flow.md)          |
+| Cómo funciona Riverpod en este proyecto      | [Inyección de dependencias](../architecture/di.md)      |
+| Las convenciones de código del equipo        | [Convenciones](conventions.md)                          |
+| Los comandos del día a día                   | [Comandos útiles](commands.md)                          |
+| Las decisiones de arquitectura tomadas       | [ADRs](../architecture/adr/0001_usar_pattern_result.md) |
+| Los tokens visuales del design system        | [Sistema de diseño](../architecture/design_system.md)   |
+| El contrato oficial del JSON                 | [Contrato técnico](../generated/contract.md)            |
+| Cómo publicar la app en las tiendas          | [Publicación en tiendas](publish_stores.md)             |
