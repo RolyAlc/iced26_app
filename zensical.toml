@@ -45,7 +45,33 @@ Copyright &copy; 2026 The authors
 #
 # Read more: https://zensical.org/docs/setup/navigation/
 nav = [
-  { "Inicio" = "index.md" }
+  { "Inicio" = "index.md" },
+  { "Contrato de datos" = [
+    { "Contrato técnico (auto-generado)" = "generated/contract.md" }
+  ]},
+  { "Arquitectura" = [
+    { "Sistema de diseño" = "architecture/design_system.md" },
+    { "Pantallas" = [
+      { "Home" = "architecture/screens/home_screen.md" },
+      { "Detalle de presentación" = "architecture/screens/presentation_detail.md" },
+      { "Búsqueda" = "architecture/screens/search_screen.md" },
+      { "Lista de presentaciones" = "architecture/screens/slot_presentation_list.md" }
+    ]},
+    { "Decisiones (ADR)" = [
+      { "Pattern Result" = "architecture/adr/0001_usar_pattern_result.md" },
+      { "Fuente de verdad de datos" = "architecture/adr/0002_fuente_verdad_datos.md" },
+      { "Sistema visual Material 3" = "architecture/adr/0003_sistema_visual_material3.md" },
+      { "Estructura de features" = "architecture/adr/0004_estructura_features.md" },
+      { "Design tokens" = "architecture/adr/0005_design_tokens.md" },
+      { "App icons" = "architecture/adr/0006_app_icons.md" },
+      { "Migración datos nueva edición" = "architecture/adr/0007_migracion_datos_nueva_edicion.md" },
+      { "SQLite3 Flutter libs" = "architecture/adr/0008_sqlite3_flutter_libs.md" }
+    ]}
+  ]},
+  { "Guías" = [
+    { "Comandos útiles" = "guides/commands.md" },
+    { "Glosario UX/UI" = "guides/ux_ui_glossary.md" }
+  ]}
 ]
 
 # With the "extra_css" option you can add your own CSS styling to customize
