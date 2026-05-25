@@ -12,8 +12,6 @@ import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
-// TODO: Revisar Class grande
-
 const _kReadFullArticle = 'Read full article';
 const _kModalImageHeight = 200.0;
 
@@ -29,46 +27,29 @@ class HomeNewsSection extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final locale = Localizations.localeOf(context).languageCode;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        NewsCard(
-          variant: NewsCardVariant.hero,
-          title: news.first.title.resolve('en'),
-          subtitle: news.first.content.resolve('en'),
-          imageUrl: news.first.imgUrl,
-          onTap: () {
-            _showNewsDetails(context, news.first);
-          },
-        ),
-        if (news.length > 1) ...[
-          const SizedBox(height: AppSpacing.sm),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (int i = 1; i < news.length; i++) ...[
-                if (i > 1) const SizedBox(height: AppSpacing.sm),
-                NewsCard(
-                  title: news[i].title.resolve('en'),
-                  subtitle: news[i].content.resolve('en'),
-                  imageUrl: news[i].imgUrl,
-                  onTap: () {
-                    _showNewsDetails(context, news[i]);
-                  },
-                ),
-              ],
-            ],
+        for (final (i, item) in news.indexed) ...[
+          if (i > 0) const SizedBox(height: AppSpacing.sm),
+          NewsCard(
+            variant: i == 0 ? NewsCardVariant.hero : NewsCardVariant.compact,
+            title: item.title.resolve(locale),
+            subtitle: item.content.resolve(locale),
+            imageUrl: item.imgUrl,
+            onTap: () => _showNewsDetails(context, item, locale),
           ),
         ],
       ],
     );
   }
 
-  void _showNewsDetails(BuildContext context, NewsItem item) {
+  void _showNewsDetails(BuildContext context, NewsItem item, String locale) {
     AppBottomSheet.show(
       context: context,
-      title: item.title.resolve('en'),
+      title: item.title.resolve(locale),
       actions: [
         FilledButton.icon(
           onPressed: () {
@@ -85,7 +66,7 @@ class HomeNewsSection extends StatelessWidget {
           ),
         ),
       ],
-      child: _NewsDetailContent(item: item),
+      child: _NewsDetailContent(item: item, locale: locale),
     );
   }
 
@@ -122,13 +103,15 @@ class HomeNewsSection extends StatelessWidget {
 
 /// Contenido del bottom sheet de detalle de una noticia.
 class _NewsDetailContent extends StatelessWidget {
-  const _NewsDetailContent({required this.item});
+  const _NewsDetailContent({required this.item, required this.locale});
 
   final NewsItem item;
+  final String locale;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -149,7 +132,7 @@ class _NewsDetailContent extends StatelessWidget {
           ),
         ),
         Text(
-          item.content.resolve('en'),
+          item.content.resolve(locale),
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
             height: 1.5,

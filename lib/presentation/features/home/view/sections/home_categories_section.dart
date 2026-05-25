@@ -22,16 +22,13 @@ class HomeCategoriesSection extends StatelessWidget {
       crossAxisSpacing: AppSpacing.s,
       mainAxisSpacing: AppSpacing.s,
       childAspectRatio: _childAspectRatio,
-      children: categories
-          .map(
-            (category) => CategoryCard(
-              name: category.name,
-              style: CategoryUiMapper.resolve(category),
-              // TODO: navegar al listado filtrado por categoría (navigationProvider)
-              onTap: () {},
-            ),
-          )
-          .toList(),
+      children: [
+        for (final category in categories)
+          CategoryCard(
+            name: category.name,
+            style: CategoryUiMapper.resolve(category),
+          ),
+      ],
     );
   }
 }

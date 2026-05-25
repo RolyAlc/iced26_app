@@ -10,12 +10,12 @@ class CategoryCard extends StatelessWidget {
     super.key,
     required this.name,
     required this.style,
-    required this.onTap,
+    this.onTap,
   });
 
   final String name;
   final IconColorStyle style;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

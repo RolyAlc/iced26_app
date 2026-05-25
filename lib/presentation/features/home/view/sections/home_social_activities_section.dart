@@ -9,11 +9,12 @@ class HomeSocialActivitiesSection extends StatelessWidget {
   const HomeSocialActivitiesSection({
     super.key,
     required this.socials,
-    this.showFadeMask = false,
+    this.onTap,
   });
 
   final List<SocialActivity> socials;
-  final bool showFadeMask;
+  // Callback al pulsar una tarjeta. null = sin navegación (pendiente de implementar).
+  final void Function(SocialActivity)? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -25,20 +26,11 @@ class HomeSocialActivitiesSection extends StatelessWidget {
       builder: (context, constraints) {
         final dimensions = _CardDimensions.from(constraints);
 
-        final carousel = _SocialCarousel(
+        return _SocialCarousel(
           socials: socials,
           dimensions: dimensions,
+          onTap: onTap,
         );
-
-        // Aplica la máscara sólo si el padre la solicita.
-        if (showFadeMask) {
-          return _FadeEdgeMask(
-            surfaceColor: Theme.of(context).colorScheme.surface,
-            child: carousel,
-          );
-        }
-
-        return carousel;
       },
     );
   }
@@ -61,10 +53,15 @@ class _CardDimensions {
 
 /// Lista horizontal con separadores que muestra una [SocialCard] por actividad.
 class _SocialCarousel extends StatelessWidget {
-  const _SocialCarousel({required this.socials, required this.dimensions});
+  const _SocialCarousel({
+    required this.socials,
+    required this.dimensions,
+    this.onTap,
+  });
 
   final List<SocialActivity> socials;
   final _CardDimensions dimensions;
+  final void Function(SocialActivity)? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -90,54 +87,36 @@ class _SocialCarousel extends StatelessWidget {
   Widget _buildItem(BuildContext context, int index) {
     final activity = socials[index];
 
-    return _SocialCardItem(activity: activity, cardWidth: dimensions.width);
+    return _SocialCardItem(
+      activity: activity,
+      cardWidth: dimensions.width,
+      onTap: onTap,
+    );
   }
 }
 
 /// Wrapper de ancho fijo alrededor de [SocialCard].
 class _SocialCardItem extends StatelessWidget {
-  const _SocialCardItem({required this.activity, required this.cardWidth});
+  const _SocialCardItem({
+    required this.activity,
+    required this.cardWidth,
+    this.onTap,
+  });
 
   final SocialActivity activity;
   final double cardWidth;
-
-  // TODO: Inyectar onTap desde el padre cuando se implemente la navegación.
-  void _handleTap() {}
+  final void Function(SocialActivity)? onTap;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: cardWidth,
-      child: SocialCard(activity: activity, onTap: _handleTap),
+      child: SocialCard(
+        activity: activity,
+        onTap: () {
+          onTap?.call(activity);
+        },
+      ),
     );
-  }
-}
-
-/// Mascara con degradado horizontal.
-class _FadeEdgeMask extends StatelessWidget {
-  const _FadeEdgeMask({required this.surfaceColor, required this.child});
-
-  final Color surfaceColor;
-  final Widget child;
-
-  /// Fracción del ancho a partir de la cual empieza el fade.
-  static const double _fadeStart = 0.85;
-
-  @override
-  Widget build(BuildContext context) {
-    return ShaderMask(
-      blendMode: BlendMode.dstIn,
-      shaderCallback: _buildShader,
-      child: child,
-    );
-  }
-
-  Shader _buildShader(Rect bounds) {
-    // BlendMode.dstIn usa el gradiente como máscara alpha, no como color visual.
-    // Colors.white = alpha 1.0 (opaco), Colors.transparent = alpha 0.0 (invisible).
-    return LinearGradient(
-      stops: const [_fadeStart, 1.0],
-      colors: [Colors.white, surfaceColor.withValues(alpha: 0.0)],
-    ).createShader(bounds);
   }
 }
