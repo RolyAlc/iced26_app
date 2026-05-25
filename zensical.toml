@@ -50,12 +50,19 @@ nav = [
     { "Contrato técnico (auto-generado)" = "generated/contract.md" }
   ]},
   { "Arquitectura" = [
+    { "Capas del proyecto" = "architecture/layers.md" },
+    { "Flujo de datos" = "architecture/data_flow.md" },
+    { "Inyección de dependencias" = "architecture/di.md" },
     { "Sistema de diseño" = "architecture/design_system.md" },
+    { "Glosario" = "architecture/glossary.md" },
     { "Pantallas" = [
       { "Home" = "architecture/screens/home_screen.md" },
       { "Detalle de presentación" = "architecture/screens/presentation_detail.md" },
       { "Búsqueda" = "architecture/screens/search_screen.md" },
-      { "Lista de presentaciones" = "architecture/screens/slot_presentation_list.md" }
+      { "Lista de presentaciones" = "architecture/screens/slot_presentation_list.md" },
+      { "Diary" = "architecture/screens/diary_screen.md" },
+      { "Mi agenda" = "architecture/screens/my_schedule_screen.md" },
+      { "Ajustes" = "architecture/screens/settings_screen.md" }
     ]},
     { "Decisiones (ADR)" = [
       { "Pattern Result" = "architecture/adr/0001_usar_pattern_result.md" },
@@ -71,8 +78,10 @@ nav = [
   { "Guías" = [
     { "Inicio rápido" = "guides/onboarding.md" },
     { "Comandos útiles" = "guides/commands.md" },
+    { "Convenciones de código" = "guides/conventions.md" },
     { "Glosario UX/UI" = "guides/ux_ui_glossary.md" },
-    { "Publicación en tiendas" = "guides/publish_stores.md" }
+    { "Publicación en tiendas" = "guides/publish_stores.md" },
+    { "Actualizar datos del congreso" = "guides/update_data.md" }
   ]}
 ]
 
