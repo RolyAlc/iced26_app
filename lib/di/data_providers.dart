@@ -6,6 +6,7 @@ import 'package:iced26/data/repositories/presentation_favorites_repository_impl.
 import 'package:iced26/data/repositories/recent_searches_repository_impl.dart';
 import 'package:iced26/data/repositories/recently_viewed_repository_impl.dart';
 import 'package:iced26/data/repositories/schedule_repository_impl.dart';
+import 'package:iced26/data/sources/app_data_source.dart';
 import 'package:iced26/data/sources/local/json/local_json_service.dart';
 import 'package:iced26/di/core_providers.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
@@ -39,7 +40,7 @@ HomeRepository homeRepository(Ref ref) {
 @riverpod
 ConfigRepository configRepository(Ref ref) {
   final db = ref.watch(appDatabaseProvider);
-  final jsonService = const LocalJsonService();
+  final AppDataSource jsonService = const LocalJsonService();
   return ConfigRepositoryImpl(db, jsonService);
 }
 

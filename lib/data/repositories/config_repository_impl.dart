@@ -7,8 +7,8 @@ import 'package:iced26/data/mappers/app_data_mapper.dart';
 import 'package:iced26/data/mappers/conference_theme_mapper.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/data/mappers/zone_mapper.dart';
+import 'package:iced26/data/sources/app_data_source.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
-import 'package:iced26/data/sources/local/json/local_json_service.dart';
 import 'package:iced26/domain/entities/app_data.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
@@ -17,7 +17,7 @@ import 'package:iced26/domain/repositories/config_repository.dart';
 class ConfigRepositoryImpl implements ConfigRepository {
   ConfigRepositoryImpl(this._db, this._jsonService);
   final AppDatabase _db;
-  final LocalJsonService _jsonService;
+  final AppDataSource _jsonService;
 
   /// Sincroniza los datos de la aplicación desde el JSON bundled.
   @override
