@@ -67,7 +67,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
     final jsonString = await _jsonService.loadAppDataJson();
     final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
 
-    return AppDataMapper.fromRaw(jsonMap);
+    return AppDataMapper.fromMap(jsonMap);
   }
 
   /// Limpia las tablas antes de insertar datos.
@@ -145,6 +145,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
     );
   }
 
+  /// Inserta las zonas en la tabla zones.
   void _insertZones(Batch batch, AppData appData) {
     batch.insertAll(
       _db.zones,

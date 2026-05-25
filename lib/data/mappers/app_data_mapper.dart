@@ -7,37 +7,25 @@ import 'package:iced26/data/mappers/metadata_mapper.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/domain/entities/app_data.dart';
 
-// TODO: Revisar unificación
-
 /// Mapper para AppData.
 abstract final class AppDataMapper {
   /// Crea un [AppData] a partir de un json string.
   static AppData fromJsonString(String source) {
-    return fromRaw(jsonDecode(source));
+    return fromMap(jsonDecode(source) as Map<String, dynamic>);
   }
 
-  /// Crea un [AppData] a partir de un mapa.
-  static AppData fromRaw(dynamic decodedRaw) {
-    final Map<String, dynamic> json = decodedRaw is Map<String, dynamic>
-        ? decodedRaw
-        : const {};
-
+  /// Crea un [AppData] a partir de un mapa ya decodificado.
+  static AppData fromMap(Map<String, dynamic> json) {
     final configMap = json.getMap('config');
     final collectionsMap = json.getMap('collections');
 
     final metadata = MetadataMapper.fromMap(json.getMap('metadata'));
     final theme = ThemeMapper.fromMap(configMap.getMap('theme'));
     final collections = CollectionsMapper.fromMap(collectionsMap);
-
-    // El JSON tiene dos fuentes para ConferenceMapper:
-    //   config.conference   → { "name": "...", ... }     (metadatos de la conferencia)
-    //   collections.conferenceThemes → [ {...}, ... ]    (lista de temas)
-    // Se mezclan aquí para que ConferenceMapper reciba un único mapa uniforme.
-    final conferenceJson = <String, dynamic>{
-      ...configMap.getMap('conference'),
-      'conferenceThemes': collectionsMap.getList('conferenceThemes'),
-    };
-    final conference = ConferenceMapper.fromMap(conferenceJson);
+    final conference = ConferenceMapper.fromSplitMaps(
+      config: configMap.getMap('conference'),
+      rawThemes: collectionsMap.getList('conferenceThemes'),
+    );
 
     return AppData(
       metadata: metadata,
