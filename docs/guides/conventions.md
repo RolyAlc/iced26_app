@@ -9,9 +9,9 @@ audience: tecnico
 
 # Convenciones de código
 
-Reglas obligatorias en todo el proyecto. Su objetivo es que el código sea legible y coherente para cualquier persona del equipo, independientemente de su nivel.
+Reglas obligatorias en todo el proyecto.
 
----
+> Su objetivo es que el código sea legible y coherente para cualquier persona del equipo, independientemente de su nivel.
 
 ## 1. Cuerpos de método siempre con llaves
 
@@ -34,11 +34,11 @@ Widget build(BuildContext context) => Text(label);
 
 > La forma larga es más fácil de leer para quien llega al código por primera vez y facilita añadir lógica sin refactorizar.
 
----
-
 ## 2. Constantes privadas con prefijo `_k`
 
-Las constantes locales de un fichero o clase se nombran con el prefijo `_k` (de *k*onstant, convención de Google). Esto las distingue visualmente de variables y parámetros.
+Las constantes locales de un fichero o clase se nombran con el prefijo `_k` (de *k*onstant, convención de Google).
+
+Esto las distingue visualmente de variables y parámetros.
 
 ```dart
 // Correcto
@@ -50,8 +50,6 @@ const _kPadding = EdgeInsets.all(16);
 const cardHeight = 80.0;
 const double animDuration = 300;
 ```
-
----
 
 ## 3. Listas con `for` collection literal
 
@@ -73,11 +71,11 @@ final widgets = items.map((item) => ItemWidget(item)).toList();
 final visibles = items.where((item) => item.isVisible).map((item) => ItemWidget(item)).toList();
 ```
 
----
-
 ## 4. Comentarios solo explican el POR QUÉ
 
-Un comentario nunca debe describir lo que hace el código (el código ya lo dice). Solo se añade cuando el motivo de una decisión no es obvio: restricciones del framework, workarounds, invariantes no evidentes.
+Los comentarios, en todo lo posible, deben de describir la justificación de su implementación, no lo que hace el código.
+
+Solo se añade cuando el motivo de una decisión no es obvio: restricciones del framework, workarounds, invariantes no evidentes.
 
 ```dart
 // Correcto
@@ -89,21 +87,11 @@ ref.onDispose(db.close);
 ref.onDispose(db.close); // cierra la base de datos
 ```
 
-```dart
-// Correcto
-const _kActionButtonMinSize = 36.0;
-// Intencionalmente por debajo del mínimo táctil M3 (48dp): la lista de
-// sesiones es densa y el espacio es limitado — decisión de diseño aceptada.
-
-// Incorrecto
-const _kActionButtonMinSize = 36.0; // tamaño mínimo del botón de acción
-```
-
----
-
 ## 5. Strings de UI en `AppStrings`
 
-Ningún literal de texto visible para el usuario se escribe directamente en los widgets. Todos van a `lib/core/constants/app_strings.dart`.
+Se inenta evitar los hardcodeados.
+
+Los texto visible para el usuario se escribe directamente en los widgets. Todos van a `lib/core/constants/app_strings.dart`.
 
 ```dart
 // Correcto
@@ -117,11 +105,11 @@ Text('Light')
 
 > Centralizar los strings facilita la búsqueda, los cambios de redacción y una futura internacionalización.
 
----
-
 ## 6. Patrón Result para errores
 
-Los repositorios y casos de uso no lanzan excepciones. Devuelven `Result<T>`, que puede ser `Success(data)` o `Failure(message)`. Esto hace los errores explícitos en el tipo de retorno.
+Los repositorios y casos de uso no lanzan excepciones.
+
+Devuelven `Result<T>`, que puede ser `Success(data)` o `Failure(message)`. Esto hace los errores explícitos en el tipo de retorno.
 
 ```dart
 // Devolver un resultado
@@ -142,8 +130,6 @@ return switch (result) {
   Failure(message: final m) => HomeState.error(m),
 };
 ```
-
----
 
 ## 7. `dispose()` en `StatefulWidget` con `ChangeNotifier`
 
@@ -170,19 +156,17 @@ class _MyWidgetState extends State<MyWidget> {
 
 > Sin `dispose()`, cada instancia del widget que sale del árbol deja un listener colgado — memory leak real y acumulativo.
 
----
-
 ## 8. Nomenclatura de ficheros y clases
 
 Dart tiene convenciones estrictas que el proyecto respeta:
 
-| Elemento | Convención | Ejemplo |
-|---|---|---|
-| Ficheros | `snake_case` | `home_view.dart`, `app_data_mapper.dart` |
-| Clases y enums | `PascalCase` | `HomeView`, `AppDataMapper`, `EventStatus` |
-| Miembros privados | prefijo `_` | `_controller`, `_isLoading` |
-| Constantes locales | prefijo `_k` | `_kCardHeight`, `_kPadding` |
-| Providers Riverpod | `camelCase` + sufijo `Provider` (generado) | `scheduleRepositoryProvider` |
+| Elemento           | Convención                                 | Ejemplo                                    |
+| ------------------ | ------------------------------------------ | ------------------------------------------ |
+| Ficheros           | `snake_case`                               | `home_view.dart`, `app_data_mapper.dart`   |
+| Clases y enums     | `PascalCase`                               | `HomeView`, `AppDataMapper`, `EventStatus` |
+| Miembros privados  | prefijo `_`                                | `_controller`, `_isLoading`                |
+| Constantes locales | prefijo `_k`                               | `_kCardHeight`, `_kPadding`                |
+| Providers Riverpod | `camelCase` + sufijo `Provider` (generado) | `scheduleRepositoryProvider`               |
 
 ## 9. Patrón `_buildXxx()` en `State`
 
@@ -207,14 +191,14 @@ Widget _buildHeader() {
 
 > Se usa `_buildXxx` cuando el fragmento es privado y específico de esa pantalla. Si el widget se reutiliza en otro sitio, se extrae a un fichero propio en `widgets/`.
 
-## Resumen rápido
+## 10. Resumen rápido
 
-| Regla | Si | No |
-|---|---|---|
-| Cuerpo de métodos | `{ return x; }` | `=> x` |
-| Constantes locales | `_kNombre` | `nombre`, `NOMBRE` |
-| Listas | `[for (final x in list) ...]` | `.map().toList()` |
-| Comentarios | explicar el POR QUÉ | describir el QUÉ |
-| Strings UI | `AppStrings.clave` | `'texto literal'` |
-| Errores | `Result<T>` | `throw Exception(...)` |
-| Controladores | `dispose()` obligatorio | sin liberar |
+| Regla              | Si                            | No                     |
+| ------------------ | ----------------------------- | ---------------------- |
+| Cuerpo de métodos  | `{ return x; }`               | `=> x`                 |
+| Constantes locales | `_kNombre`                    | `nombre`, `NOMBRE`     |
+| Listas             | `[for (final x in list) ...]` | `.map().toList()`      |
+| Comentarios        | explicar el POR QUÉ           | describir el QUÉ       |
+| Strings UI         | `AppStrings.clave`            | `'texto literal'`      |
+| Errores            | `Result<T>`                   | `throw Exception(...)` |
+| Controladores      | `dispose()` obligatorio       | sin liberar            |
