@@ -7,6 +7,7 @@ import 'package:iced26/data/repositories/recent_searches_repository_impl.dart';
 import 'package:iced26/data/repositories/recently_viewed_repository_impl.dart';
 import 'package:iced26/data/repositories/schedule_repository_impl.dart';
 import 'package:iced26/data/sources/app_data_source.dart';
+import 'package:iced26/data/sources/conference_data_seeder.dart';
 import 'package:iced26/data/sources/local/json/local_json_service.dart';
 import 'package:iced26/di/core_providers.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
@@ -40,8 +41,9 @@ HomeRepository homeRepository(Ref ref) {
 @riverpod
 ConfigRepository configRepository(Ref ref) {
   final db = ref.watch(appDatabaseProvider);
-  final AppDataSource jsonService = const LocalJsonService();
-  return ConfigRepositoryImpl(db, jsonService);
+  final AppDataSource source = const LocalJsonService();
+  final seeder = ConferenceDataSeeder(db, source);
+  return ConfigRepositoryImpl(db, seeder);
 }
 
 /// Provee el repositorio de favoritos.
