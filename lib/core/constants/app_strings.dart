@@ -5,7 +5,7 @@ import 'package:iced26/domain/entities/event_status.dart';
 abstract final class AppStrings {
   static const String genericErrorMessage =
       'Something went wrong. Please try again.';
-  // TODO: Eliminar paulativamente
+  // TODO: Eliminar paulativamente el separator o reemplazarlo por otro más acorde.
   static const String separator = '  ·  ';
   static const String retry = 'Retry';
   static const String myScheduleTitle = 'My schedule';
