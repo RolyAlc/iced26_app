@@ -43,10 +43,11 @@ class AppNavigationBar extends ConsumerWidget {
               for (final item in mainNavigationItems)
                 _NavigationItem(
                   label: item.label,
-                  icon: item.icon,
+                  icon: item.feature == AppFeature.diary && hasDiaryBadge
+                      ? item.selectedIcon
+                      : item.icon,
                   selectedIcon: item.selectedIcon,
                   isSelected: !item.isAction && currentFeature == item.feature,
-                  showBadge: item.feature == AppFeature.diary && hasDiaryBadge,
                   onTap: item.isAction
                       ? () => SmartSearchBar.open(context, searchNotifier)
                       : () => notifier.select(item.feature),
@@ -99,28 +100,23 @@ class _NavigationItem extends StatelessWidget {
     required this.selectedIcon,
     required this.isSelected,
     required this.onTap,
-    this.showBadge = false,
   });
 
   final String label;
   final IconData icon;
   final IconData selectedIcon;
   final bool isSelected;
-  final bool showBadge;
   final VoidCallback onTap;
 
   Widget _buildIcon(Color activeColor, Color inactiveColor) {
-    return Badge(
-      isLabelVisible: showBadge,
-      child: AnimatedSwitcher(
-        duration: AppDuration.fast,
-        child: Icon(
-          isSelected ? selectedIcon : icon,
-          // ValueKey explícito — AnimatedSwitcher necesita keys distintas
-          // para identificar los hijos y animar la transición correctamente.
-          key: ValueKey(isSelected),
-          color: isSelected ? activeColor : inactiveColor,
-        ),
+    return AnimatedSwitcher(
+      duration: AppDuration.fast,
+      child: Icon(
+        isSelected ? selectedIcon : icon,
+        // ValueKey explícito — AnimatedSwitcher necesita keys distintas
+        // para identificar los hijos y animar la transición correctamente.
+        key: ValueKey(isSelected),
+        color: isSelected ? activeColor : inactiveColor,
       ),
     );
   }

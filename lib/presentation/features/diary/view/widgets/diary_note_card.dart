@@ -60,9 +60,10 @@ class DiaryNoteCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  note.color != null
-                      ? _MoodDot(color: note.color!)
-                      : const SizedBox.shrink(),
+                  if (note.color case final c?)
+                    _MoodDot(color: c)
+                  else
+                    const SizedBox.shrink(),
                   Text(
                     DateHelper.formatTime(note.createdAt),
                     style: theme.textTheme.labelSmall?.copyWith(

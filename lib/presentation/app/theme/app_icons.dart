@@ -9,8 +9,8 @@ abstract final class AppIcons {
   static const scheduleOn = Icons.calendar_month_rounded;
   static const searchOff = Icons.search_outlined;
   static const searchOn = Icons.search_rounded;
-  static const diaryOff = bookmarkOff;
-  static const diaryOn = bookmarkOn;
+  static const diaryOff = Icons.menu_book_outlined;
+  static const diaryOn = Icons.menu_book_rounded;
   static const settingsOff = Icons.settings_outlined;
   static const settingsOn = Icons.settings_rounded;
 
