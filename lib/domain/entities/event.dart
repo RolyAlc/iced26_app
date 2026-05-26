@@ -3,8 +3,6 @@ import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
 
-// TODO: Revisar EventX
-
 /// Entidad que representa un evento
 class Event {
   const Event({

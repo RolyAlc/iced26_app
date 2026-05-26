@@ -28,6 +28,15 @@ const _kUnknownRoom = 'Unknown Room';
 final _kMaxDate = DateTime(9999);
 final _kMinDate = DateTime(0);
 
+// Tipos que tienen valor de discovery para el asistente al congreso.
+const _kDiscoverableTypes = {
+  EventType.keynote,
+  EventType.workshop,
+  EventType.sessions,
+  EventType.internationalPanel,
+  EventType.presidents,
+};
+
 // Asigna una prioridad numérica al estado del evento para ordenación.
 // Menor número = mayor relevancia en la UI.
 int _statusPriority(EventStatus s) {
@@ -106,7 +115,13 @@ List<EventUIModel> _buildFeaturedEvents({
   required List<Room> allRooms,
   required Map<String, Person> peopleById,
 }) {
-  final topEvents = _sortedByRelevance(allEvents).take(_kMaxFeaturedEvents);
+  final discoverableEvents = [
+    for (final e in allEvents)
+      if (_kDiscoverableTypes.contains(e.type)) e,
+  ];
+  final topEvents = _sortedByRelevance(
+    discoverableEvents,
+  ).take(_kMaxFeaturedEvents);
   return topEvents.map((event) {
     final roomName = _resolveRoomName(event, allRooms);
     final imageUrl = _resolveSpeakerPhoto(event, peopleById);
