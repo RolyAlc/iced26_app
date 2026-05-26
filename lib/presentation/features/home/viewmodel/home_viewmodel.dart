@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-
 import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
@@ -18,7 +17,7 @@ import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_mode
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
-
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_viewmodel.g.dart';
@@ -138,21 +137,30 @@ KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
   required Person speaker,
   required List<Event> keynoteEvents,
   required List<Presentation> keynotePresentations,
+  required DateTime today,
 }) {
   final presentation = keynotePresentations.firstWhereOrNull(
     (p) => p.speakers.any((s) => s.personId == speaker.id),
   );
+
+  final events = _buildSpeakerSessions(
+    speaker: speaker,
+    keynoteEvents: keynoteEvents,
+  );
+
+  final isPresentingToday = events.any((s) {
+    final d = s.event.startDate;
+    return d != null && DateHelper.isSameDay(d, today);
+  });
 
   return KeynoteSpeakerUIModel(
     id: speaker.id,
     name: speaker.name.resolve(AppConfig.defaultLocale),
     institution: speaker.institution,
     photoUrl: speaker.photoUrl,
-    events: _buildSpeakerSessions(
-      speaker: speaker,
-      keynoteEvents: keynoteEvents,
-    ),
+    events: events,
     presentation: presentation,
+    isPresentingToday: isPresentingToday,
   );
 }
 
@@ -161,6 +169,7 @@ List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
   required List<Presentation> keynotePresentations,
   required List<Event> allEvents,
   required List<Person> allPeople,
+  required DateTime today,
 }) {
   final peopleById = {for (final p in allPeople) p.id: p};
   final keynoteEvents = allEvents
@@ -173,13 +182,15 @@ List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
 
   final speakers = speakerIds.map((id) => peopleById[id]).whereType<Person>();
 
-  return speakers.map((speaker) {
-    return _buildKeynoteSpeakerModel(
-      speaker: speaker,
-      keynoteEvents: keynoteEvents,
-      keynotePresentations: keynotePresentations,
-    );
-  }).toList();
+  return [
+    for (final speaker in speakers)
+      _buildKeynoteSpeakerModel(
+        speaker: speaker,
+        keynoteEvents: keynoteEvents,
+        keynotePresentations: keynotePresentations,
+        today: today,
+      ),
+  ];
 }
 
 /// Construye la lista de [Category] a partir de los subtipos del evento.
@@ -222,6 +233,7 @@ class HomeViewModel extends _$HomeViewModel {
         keynotePresentations: data.keynotePresentations,
         allEvents: data.allEvents,
         allPeople: data.allPeople,
+        today: now,
       ),
       categories: _buildCategories(data.subTypes),
       news: data.news,
