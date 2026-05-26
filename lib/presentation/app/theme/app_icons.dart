@@ -32,6 +32,7 @@ abstract final class AppIcons {
   static const expandMore = Icons.expand_more_rounded;
   static const chevronLeft = Icons.chevron_left_rounded;
   static const chevronRight = Icons.chevron_right_rounded;
+  static const keyboardArrowRight = Icons.keyboard_arrow_right_rounded;
   static const arrowForward = Icons.arrow_forward_rounded;
   static const openInNew = Icons.open_in_new_rounded;
   static const refresh = Icons.refresh_rounded;

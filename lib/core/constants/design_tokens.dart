@@ -85,10 +85,6 @@ class AppOverlayColors {
   // Texto blanco fijo sobre imagen (el gradiente/fondo garantiza la legibilidad).
   static const Color heroText = Color(0xFFFFFFFF); // white
   static const Color heroTextSecondary = Color(0xB3FFFFFF); // white 70%
-  // Texto secundario sobre cards con imagen de fondo.
-  static const Color cardTextSecondary = Color(0xCCFFFFFF); // white 80%
-  // Extremo oscuro del degradado en speaker cards (negro 80% — más suave que heroGradientEnd).
-  static const Color speakerCardGradientEnd = Color(0xCC000000); // black 80%
   // Fondo semitransparente del badge de tiempo sobre imagen.
   static const Color timeBadgeBackground = Color(0x66000000); // black 40%
   // Scrim (barrera) de bottom sheets y modales.
