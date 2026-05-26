@@ -108,32 +108,17 @@ class DiaryNoteCard extends StatelessWidget {
   }
 }
 
-/// Pequeño indicador circular de color con etiqueta para el estado de ánimo.
+/// Indicador circular de color para la etiqueta de nota.
 class _MoodDot extends StatelessWidget {
   const _MoodDot({required this.color});
   final NoteColor color;
 
   @override
   Widget build(BuildContext context) {
-    final paintColor = AppNoteColors.colorOf(color);
-    final label = AppNoteColors.labelOf(color);
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(color: paintColor, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: AppSpacing.xs),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ],
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(color: color.color, shape: BoxShape.circle),
     );
   }
 }

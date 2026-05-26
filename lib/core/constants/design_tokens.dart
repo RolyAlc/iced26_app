@@ -106,28 +106,13 @@ class AppCategoryColors {
   static const fallback = Color(0xFF00796B); // Teal 700  — otros
 }
 
-/// Paleta de las etiquetas "Mood Tags" en la UI de notas. Fijos — no siguen el ColorScheme.
-class AppNoteColors {
-  static const _colors = {
-    NoteColor.focus: Color(0xFF2196F3), // Blue 500
-    NoteColor.success: Color(0xFF4CAF50), // Green 500
-    NoteColor.idea: Color(0xFFFFB300), // Amber 600
-    NoteColor.mood: Color(0xFF9C27B0), // Purple 500
+/// Color fijo de cada etiqueta de nota. No sigue el ColorScheme.
+/// Switch exhaustivo: añadir un NoteColor sin actualizar aquí produce error de compilación.
+extension NoteColorX on NoteColor {
+  Color get color => switch (this) {
+    NoteColor.insight => const Color(0xFF2196F3), // Blue 500
+    NoteColor.action => const Color(0xFF4CAF50), // Green 500
+    NoteColor.question => const Color(0xFFFFB300), // Amber 600
+    NoteColor.highlight => const Color(0xFF9C27B0), // Purple 500
   };
-
-  static const _labels = {
-    NoteColor.focus: 'Focus',
-    NoteColor.success: 'Success',
-    NoteColor.idea: 'Idea',
-    NoteColor.mood: 'Mood',
-  };
-
-  static Color colorOf(NoteColor color) {
-    return _colors[color]!;
-  }
-
-  static String labelOf(NoteColor? color) {
-    if (color == null) return 'None';
-    return _labels[color]!;
-  }
 }

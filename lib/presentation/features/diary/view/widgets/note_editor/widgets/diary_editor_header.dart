@@ -26,8 +26,7 @@ class DiaryEditorHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final c = color;
-    final paintColor = c != null ? AppNoteColors.colorOf(c) : null;
+    final paintColor = color?.color;
 
     return Row(
       children: [

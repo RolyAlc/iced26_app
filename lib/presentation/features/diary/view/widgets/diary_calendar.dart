@@ -10,7 +10,6 @@ import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dar
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-
 // Cambios manuales implementado en las variables.
 const double _kDaysOfWeekBaseHeight = 20.0;
 const double _kDaysOfWeekHeightPad = 4.0;
@@ -290,7 +289,7 @@ class _CalendarDayMarkers extends StatelessWidget {
     // Set<Color> elimina duplicados preservando el orden de inserción (LinkedHashSet).
     final moodColors = <Color>{
       for (final n in notes)
-        if (n.color != null) AppNoteColors.colorOf(n.color!),
+        if (n.color case final c?) c.color,
     }.take(3).toList();
 
     return Row(

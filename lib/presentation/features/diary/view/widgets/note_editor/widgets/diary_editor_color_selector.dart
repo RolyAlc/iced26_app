@@ -49,13 +49,7 @@ class DiaryEditorColorSelector extends StatelessWidget {
     NoteColor? option,
     ColorScheme scheme,
   ) {
-    final Color? paintColor;
-
-    if (option != null) {
-      paintColor = AppNoteColors.colorOf(option);
-    } else {
-      paintColor = null;
-    }
+    final paintColor = option?.color;
     final isSelected = selectedColor == option;
 
     // Material con clipBehavior recorta el ripple a la forma circular.
