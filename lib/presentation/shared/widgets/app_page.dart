@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/ui_metrics.dart';
 import 'package:iced26/presentation/shared/widgets/app_page_header_delegate.dart';
 
+// TODO: Revisar
+
+// Extra scroll clearance so the last list item is never hidden under a floatingChild.
+const double _kFabExtraClearance = 64.0;
+
 /// Contenedor maestro que gestiona el layout de una página completa.
-///
-/// Los [assert] validan el uso correcto de la API en tiempo de desarrollo.
-/// Solo se ejecutan en modo debug — en release se eliminan sin coste.
-class AppPage extends StatefulWidget {
+class AppPage extends ConsumerStatefulWidget {
   const AppPage({
     super.key,
     this.children = const [],
@@ -18,6 +21,7 @@ class AppPage extends StatefulWidget {
     this.backgroundColor,
     this.headerFallbackHeight,
     this.collapsedHeaderFallbackHeight,
+    this.floatingChild,
   }) : assert(
          children.length > 0 || fillChild != null,
          'AppPage requires either children or fillChild',
@@ -34,17 +38,18 @@ class AppPage extends StatefulWidget {
   final Color? backgroundColor;
   final double? headerFallbackHeight;
   final double? collapsedHeaderFallbackHeight;
+  final Widget? floatingChild;
 
   @override
-  State<AppPage> createState() => _AppPageState();
+  ConsumerState<AppPage> createState() => _AppPageState();
 }
 
-class _AppPageState extends State<AppPage> {
-  // TODO: Mejorar medición del header.
+class _AppPageState extends ConsumerState<AppPage> {
   double _headerHeight = 0;
 
   void _onHeaderHeightChanged(double newHeight) {
-    if ((newHeight - _headerHeight).abs() > 0.5) {
+    final bool shouldUpdate = (newHeight - _headerHeight).abs() > 0.5;
+    if (shouldUpdate) {
       setState(() {
         _headerHeight = newHeight;
       });
@@ -56,6 +61,11 @@ class _AppPageState extends State<AppPage> {
     final bgColor =
         widget.backgroundColor ?? Theme.of(context).colorScheme.surface;
 
+    final navMetrics = ref.watch(uiMetricsProvider);
+    final navBarHeight = navMetrics.navBarHeight > 0
+        ? navMetrics.navBarHeight
+        : AppLayout.navBarClearanceFallback;
+
     return NotificationListener<UIMetricsNotification>(
       onNotification: (notification) {
         final height = notification.headerHeight;
@@ -66,13 +76,24 @@ class _AppPageState extends State<AppPage> {
       // El contenido se acota a maxContentWidth y se centra en pantallas anchas.
       child: Material(
         color: bgColor,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: AppLayout.maxContentWidth,
+        child: Stack(
+          children: [
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppLayout.maxContentWidth,
+                ),
+                child: _buildSliverLayout(bgColor),
+              ),
             ),
-            child: _buildSliverLayout(bgColor),
-          ),
+            if (widget.floatingChild != null)
+              Positioned(
+                bottom: navBarHeight,
+                left: 0,
+                right: 0,
+                child: Center(child: widget.floatingChild!),
+              ),
+          ],
         ),
       ),
     );
@@ -99,7 +120,11 @@ class _AppPageState extends State<AppPage> {
           )
         else
           _buildSliverContent(),
-        const SliverClearanceSpacer(),
+        SliverClearanceSpacer(
+          extraPadding: widget.floatingChild != null
+              ? _kFabExtraClearance
+              : 0.0,
+        ),
       ],
     );
   }
