@@ -20,6 +20,8 @@ abstract final class AppStrings {
       'No sessions match your filters';
   static const String scheduleNoSessionsMessage =
       'Try a different category or clear the filter';
+  static const String scheduleViewFormatList = 'List';
+  static const String scheduleViewFormatAgenda = 'Agenda';
 
   static const String searchDone = 'Done';
   static String searchShowResults(int count) {

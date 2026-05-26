@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
@@ -9,6 +8,7 @@ import 'package:iced26/presentation/features/my_schedule/view/my_schedule_view.d
 import 'package:iced26/presentation/features/my_schedule/viewmodel/my_schedule_viewmodel.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_header.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_timeline_body.dart';
+import 'package:iced26/presentation/features/schedule/view/widgets/schedule_view_fab.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
@@ -66,8 +66,8 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isMySchedule =
-        ref.watch(scheduleTopTabProvider) == ScheduleTab.mySchedule;
+    final topTab = ref.watch(scheduleTopTabProvider);
+    final isMySchedule = topTab == ScheduleTab.mySchedule;
 
     // Sincroniza el tab cuando el día cambia externamente al TabBar
     ref.listen(safeDayIndexProvider, (_, next) {
@@ -89,8 +89,10 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
         tabController: _tabController,
         categories: widget.state.categories,
         sections: widget.state.sections,
+        topTab: topTab,
       ),
       fillChild: slot.fillChild,
+      floatingChild: isMySchedule ? null : const ScheduleViewFab(),
       children: slot.children,
     );
   }

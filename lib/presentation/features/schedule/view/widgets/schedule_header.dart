@@ -10,26 +10,25 @@ import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
-// TODO: revisar Expanded
-
 const _kFilterIconSize = 12.0;
 
-/// Header del schedule — lee su propio estado de providers.
+/// Header del schedule. Recibe [topTab] del padre para evitar un watch duplicado.
 class ScheduleHeader extends ConsumerWidget {
   const ScheduleHeader({
     super.key,
     required this.tabController,
     required this.categories,
     required this.sections,
+    required this.topTab,
   });
 
   final TabController tabController;
   final List<EventType> categories;
   final List<ScheduleDaySection> sections;
+  final ScheduleTab topTab;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final topTab = ref.watch(scheduleTopTabProvider);
     final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
     final isFiltered = selectedCategory != null;
     final isMySchedule = topTab == ScheduleTab.mySchedule;
@@ -46,7 +45,6 @@ class ScheduleHeader extends ConsumerWidget {
             onSelect: (tab) {
               ref.read(scheduleTopTabProvider.notifier).select(tab);
             },
-            trailing: isMySchedule ? null : const _ViewFormatToggle(),
           ),
         ),
         AnimatedSize(
@@ -147,45 +145,31 @@ class _ViewingAllDaysLabel extends StatelessWidget {
 
 /// Tab bar superior Schedule / My Schedule.
 class _TopTabBar extends StatelessWidget {
-  const _TopTabBar({
-    required this.selected,
-    required this.onSelect,
-    this.trailing,
-  });
+  const _TopTabBar({required this.selected, required this.onSelect});
+
   final ScheduleTab selected;
   final ValueChanged<ScheduleTab> onSelect;
-  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // Expanded da a los tabs todo el espacio disponible menos el icono.
-        // Flexible dentro permite que cada tab encoja si el texto es largo
-        // (ej. font size XL del sistema), sin que el icono compita por espacio.
-        Expanded(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: _TopTab(
-                  label: AppStrings.scheduleTitle,
-                  isSelected: selected == ScheduleTab.timeline,
-                  onTap: () => onSelect(ScheduleTab.timeline),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.m),
-              Flexible(
-                child: _TopTab(
-                  label: AppStrings.myScheduleTitle,
-                  isSelected: selected == ScheduleTab.mySchedule,
-                  onTap: () => onSelect(ScheduleTab.mySchedule),
-                ),
-              ),
-            ],
+        Flexible(
+          child: _TopTab(
+            label: AppStrings.scheduleTitle,
+            isSelected: selected == ScheduleTab.timeline,
+            onTap: () => onSelect(ScheduleTab.timeline),
           ),
         ),
-        ?trailing,
+        const SizedBox(width: AppSpacing.m),
+        Flexible(
+          child: _TopTab(
+            label: AppStrings.myScheduleTitle,
+            isSelected: selected == ScheduleTab.mySchedule,
+            onTap: () => onSelect(ScheduleTab.mySchedule),
+          ),
+        ),
       ],
     );
   }
@@ -219,26 +203,6 @@ class _DayTabBar extends ConsumerWidget {
       tabs: sections
           .map((s) => Tab(text: DateHelper.formatShortDate(s.date)))
           .toList(),
-    );
-  }
-}
-
-/// Botón toggle lista/agenda en el header superior.
-class _ViewFormatToggle extends ConsumerWidget {
-  const _ViewFormatToggle();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).colorScheme;
-    final isAgenda =
-        ref.watch(selectedScheduleViewFormatProvider) ==
-        ScheduleViewFormat.agenda;
-    return IconButton(
-      onPressed: () =>
-          ref.read(selectedScheduleViewFormatProvider.notifier).toggle(),
-      icon: Icon(isAgenda ? AppIcons.viewList : AppIcons.viewAgenda),
-      color: isAgenda ? colors.primary : colors.onSurfaceVariant,
-      tooltip: isAgenda ? 'Vista lista' : 'Vista agenda',
     );
   }
 }
