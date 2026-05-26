@@ -4,8 +4,6 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/ui_metrics.dart';
 import 'package:iced26/presentation/shared/widgets/app_page_header_delegate.dart';
 
-// TODO: Revisar
-
 // Extra scroll clearance so the last list item is never hidden under a floatingChild.
 const double _kFabExtraClearance = 64.0;
 

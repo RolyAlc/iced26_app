@@ -31,7 +31,6 @@ class ScheduleHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
     final isFiltered = selectedCategory != null;
-    final isMySchedule = topTab == ScheduleTab.mySchedule;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -50,7 +49,7 @@ class ScheduleHeader extends ConsumerWidget {
         AnimatedSize(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
-          child: isMySchedule
+          child: topTab == ScheduleTab.mySchedule
               ? const SizedBox.shrink()
               : _ScheduleSubHeader(
                   isFiltered: isFiltered,
