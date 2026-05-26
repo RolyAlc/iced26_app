@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 
-import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/featured_card/widgets/info_row.dart';
 import 'package:iced26/presentation/features/home/widgets/featured_card/widgets/save_button.dart';
 
-/// Pie de la tarjeta de evento destacado.
-class FeaturedCardFooter extends ConsumerWidget {
-  const FeaturedCardFooter({super.key, required this.event});
+/// Pie de la tarjeta de evento destacado — widget puramente presentacional.
+///
+/// No sabe nada de providers. El estado de guardado y la acción de toggle
+/// vienen del padre ([FeaturedCard]).
+class FeaturedCardFooter extends StatelessWidget {
+  const FeaturedCardFooter({
+    super.key,
+    required this.event,
+    required this.isSaved,
+    required this.onToggle,
+  });
+
   final EventUIModel event;
+  final bool isSaved;
+  final VoidCallback onToggle;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final favoriteIds = ref.watch(
-      favoriteIdsProvider.select((ids) => ids.value ?? <String>{}),
-    );
-    final isSaved = favoriteIds.contains(event.id);
-
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(child: _EventInfo(event: event)),
-        SaveButton(
-          isSaved: isSaved,
-          onTap: () =>
-              ref.read(toggleFavoriteUseCaseProvider).execute(event.id),
-        ),
+        SaveButton(isSaved: isSaved, onTap: onToggle),
       ],
     );
   }
@@ -54,7 +55,7 @@ class _EventInfo extends StatelessWidget {
             color: colors.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: AppSpacing.xxs),
         InfoRow(
           icon: AppIcons.scheduleOutline,
           text: event.duration,
