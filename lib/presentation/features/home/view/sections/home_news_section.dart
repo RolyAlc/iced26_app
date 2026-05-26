@@ -13,13 +13,74 @@ import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _kReadFullArticle = 'Read full article';
+const _kAllNewsSheetTitle = 'All news';
 const _kModalImageHeight = 200.0;
 
-/// Sección de noticias con bottom sheet de detalle.
+void _showNewsDetails(BuildContext context, NewsItem item, String locale) {
+  AppBottomSheet.show(
+    context: context,
+    title: item.title.resolve(locale),
+    actions: [
+      FilledButton.icon(
+        onPressed: () {
+          Navigator.pop(context);
+          _launchURL(context, item.webUrl);
+        },
+        icon: const Icon(AppIcons.openInNew, size: 18),
+        label: const Text(_kReadFullArticle),
+        style: FilledButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.m),
+          ),
+        ),
+      ),
+    ],
+    child: _NewsDetailContent(item: item, locale: locale),
+  );
+}
+
+Future<void> _launchURL(BuildContext context, String urlString) async {
+  final Uri url = Uri.parse(urlString);
+
+  try {
+    final bool canLaunch = await canLaunchUrl(url);
+
+    if (!context.mounted) {
+      return;
+    }
+
+    if (canLaunch) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+      return;
+    }
+    _showError(context, urlString);
+  } catch (error) {
+    AppLogger.e('Error launching URL: $error');
+  }
+}
+
+void _showError(BuildContext context, String urlString) {
+  if (!context.mounted) {
+    return;
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Could not open the link: $urlString')),
+  );
+}
+
+/// Sección de noticias con cap de visibilidad y bottom sheet de detalle.
+///
+/// Muestra hasta [maxVisible] noticias. Si hay más, el padre puede
+/// ofrecer un "See all" que abre [HomeNewsAllSheet].
 class HomeNewsSection extends StatelessWidget {
   const HomeNewsSection({super.key, required this.news});
 
   final List<NewsItem> news;
+
+  /// Máximo de noticias visibles en la home antes de necesitar "See all".
+  static const int maxVisible = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +89,12 @@ class HomeNewsSection extends StatelessWidget {
     }
 
     final locale = Localizations.localeOf(context).languageCode;
+    final visible = news.take(maxVisible).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (final (i, item) in news.indexed) ...[
+        for (final (i, item) in visible.indexed) ...[
           if (i > 0) const SizedBox(height: AppSpacing.sm),
           NewsCard(
             variant: i == 0 ? NewsCardVariant.hero : NewsCardVariant.compact,
@@ -45,58 +107,41 @@ class HomeNewsSection extends StatelessWidget {
       ],
     );
   }
+}
 
-  void _showNewsDetails(BuildContext context, NewsItem item, String locale) {
+/// Bottom sheet que muestra todas las noticias en formato compacto.
+///
+/// Se abre desde [home_view.dart] cuando hay más de [HomeNewsSection.maxVisible]
+/// noticias. Cada ítem sigue abriendo el detalle completo al tocar.
+class HomeNewsAllSheet extends StatelessWidget {
+  const HomeNewsAllSheet({super.key, required this.news});
+
+  final List<NewsItem> news;
+
+  static void show(BuildContext context, List<NewsItem> news) {
     AppBottomSheet.show(
       context: context,
-      title: item.title.resolve(locale),
-      actions: [
-        FilledButton.icon(
-          onPressed: () {
-            Navigator.pop(context);
-            _launchURL(context, item.webUrl);
-          },
-          icon: const Icon(AppIcons.openInNew, size: 18),
-          label: const Text(_kReadFullArticle),
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.m),
-            ),
-          ),
-        ),
-      ],
-      child: _NewsDetailContent(item: item, locale: locale),
+      title: _kAllNewsSheetTitle,
+      child: HomeNewsAllSheet(news: news),
     );
   }
 
-  Future<void> _launchURL(BuildContext context, String urlString) async {
-    final Uri url = Uri.parse(urlString);
+  @override
+  Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
 
-    try {
-      final bool canLaunch = await canLaunchUrl(url);
-
-      if (!context.mounted) {
-        return;
-      }
-
-      if (canLaunch) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-        return;
-      }
-      _showError(context, urlString);
-    } catch (error) {
-      AppLogger.e('Error launching URL: $error');
-    }
-  }
-
-  void _showError(BuildContext context, String urlString) {
-    if (!context.mounted) {
-      return;
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Could not open the link: $urlString')),
+    return Column(
+      children: [
+        for (final (i, item) in news.indexed) ...[
+          if (i > 0) const SizedBox(height: AppSpacing.sm),
+          NewsCard(
+            title: item.title.resolve(locale),
+            subtitle: item.content.resolve(locale),
+            imageUrl: item.imgUrl,
+            onTap: () => _showNewsDetails(context, item, locale),
+          ),
+        ],
+      ],
     );
   }
 }

@@ -189,10 +189,26 @@ class _HomeNewsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasMore = news.length > HomeNewsSection.maxVisible;
+
     return StaggeredFadeIn(
       delay: _kNewsFadeDelay,
       child: AppSection.resolved(
         title: 'Latest news',
+        trailing: hasMore
+            ? TextButton.icon(
+                onPressed: () => HomeNewsAllSheet.show(context, news),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                  ),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  visualDensity: VisualDensity.compact,
+                ),
+                label: const Text('See all'),
+                iconAlignment: IconAlignment.end,
+              )
+            : null,
         hasData: news.isNotEmpty,
         dataChild: HomeNewsSection(news: news),
         emptyChild: const AppEmptyState(
