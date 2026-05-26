@@ -112,38 +112,23 @@ class _NavigationItem extends StatelessWidget {
   Widget _buildIcon(Color activeColor, Color inactiveColor) {
     return Badge(
       isLabelVisible: showBadge,
-      child: Icon(
-        isSelected ? selectedIcon : icon,
-        color: isSelected ? activeColor : inactiveColor,
+      child: AnimatedSwitcher(
+        duration: AppDuration.fast,
+        child: Icon(
+          isSelected ? selectedIcon : icon,
+          // ValueKey explícito — AnimatedSwitcher necesita keys distintas
+          // para identificar los hijos y animar la transición correctamente.
+          key: ValueKey(isSelected),
+          color: isSelected ? activeColor : inactiveColor,
+        ),
       ),
-    );
-  }
-
-  Widget _buildLabel(ThemeData theme, Color activeColor) {
-    // ValueKey explícito — AnimatedSwitcher necesita keys distintas para
-    // identificar los hijos y animar la transición correctamente.
-    return AnimatedSwitcher(
-      duration: AppDuration.fast,
-      child: isSelected
-          ? Text(
-              label,
-              key: const ValueKey(true),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: activeColor,
-                fontWeight: FontWeight.bold,
-              ),
-            )
-          : const SizedBox.shrink(key: ValueKey(false)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final activeColor = theme.colorScheme.primary;
-    final inactiveColor = theme.colorScheme.onSurfaceVariant;
+    final activeColor = Theme.of(context).colorScheme.primary;
+    final inactiveColor = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return InkWell(
       onTap: onTap,
@@ -160,17 +145,7 @@ class _NavigationItem extends StatelessWidget {
               : Colors.transparent,
           borderRadius: BorderRadius.circular(AppRadius.m),
         ),
-        child: AnimatedSize(
-          duration: AppDuration.medium,
-          curve: Curves.easeInOut,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildIcon(activeColor, inactiveColor),
-              _buildLabel(theme, activeColor),
-            ],
-          ),
-        ),
+        child: _buildIcon(activeColor, inactiveColor),
       ),
     );
   }
