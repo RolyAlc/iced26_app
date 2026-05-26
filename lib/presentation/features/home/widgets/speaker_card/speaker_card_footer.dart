@@ -12,9 +12,6 @@ class SpeakerCardFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.m,
@@ -29,8 +26,9 @@ class SpeakerCardFooter extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildNameRow(textTheme, colors),
-                ..._buildInstitution(textTheme, colors),
+                _NameRow(speaker: speaker),
+                if (speaker.institution != null)
+                  _InstitutionText(institution: speaker.institution!),
               ],
             ),
           ),
@@ -40,8 +38,19 @@ class SpeakerCardFooter extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildNameRow(TextTheme textTheme, ColorScheme colors) {
+/// Fila con el nombre del speaker y el badge "Today" si presenta hoy.
+class _NameRow extends StatelessWidget {
+  const _NameRow({required this.speaker});
+
+  final KeynoteSpeakerUIModel speaker;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+
     return Row(
       children: [
         Expanded(
@@ -62,25 +71,35 @@ class SpeakerCardFooter extends StatelessWidget {
       ],
     );
   }
+}
 
-  List<Widget> _buildInstitution(TextTheme textTheme, ColorScheme colors) {
-    final institution = speaker.institution;
-    if (institution == null) {
-      return [];
-    }
+/// Texto con la institución del speaker.
+class _InstitutionText extends StatelessWidget {
+  const _InstitutionText({required this.institution});
 
-    return [
-      const SizedBox(height: AppSpacing.s),
-      Text(
-        institution,
-        style: textTheme.bodySmall?.copyWith(
-          color: colors.onSurfaceVariant,
-          fontWeight: FontWeight.w500,
+  final String institution;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: AppSpacing.s),
+        Text(
+          institution,
+          style: textTheme.bodySmall?.copyWith(
+            color: colors.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-    ];
+      ],
+    );
   }
 }
 
