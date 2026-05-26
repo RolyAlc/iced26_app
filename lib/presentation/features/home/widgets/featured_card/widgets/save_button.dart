@@ -11,7 +11,7 @@ class SaveButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    return IconButton(
+    return IconButton.filledTonal(
       onPressed: onTap,
       icon: Icon(
         isSaved ? AppIcons.bookmarkOn : AppIcons.bookmarkOff,

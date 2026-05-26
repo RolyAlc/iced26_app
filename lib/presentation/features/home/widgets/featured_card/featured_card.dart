@@ -19,7 +19,7 @@ class FeaturedCard extends ConsumerWidget {
   const FeaturedCard({super.key, required this.event});
   final EventUIModel event;
 
-  static const double widthFactor = 0.85;
+  static const double widthFactor = 0.92;
   static const double aspectRatio = 0.82;
 
   @override

@@ -50,7 +50,7 @@ class _EventInfo extends StatelessWidget {
           icon: AppIcons.meetingRoomOutline,
           text: event.room,
           color: colors.primary,
-          style: theme.textTheme.bodySmall?.copyWith(
+          style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: colors.onSurfaceVariant,
           ),
@@ -60,7 +60,7 @@ class _EventInfo extends StatelessWidget {
           icon: AppIcons.scheduleOutline,
           text: event.duration,
           color: colors.primary,
-          style: theme.textTheme.bodySmall?.copyWith(
+          style: theme.textTheme.bodyMedium?.copyWith(
             color: colors.onSurfaceVariant.withValues(alpha: 0.7),
           ),
         ),
