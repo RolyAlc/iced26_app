@@ -136,14 +136,20 @@ class _AppPageState extends ConsumerState<AppPage> {
   }
 
   /// Construye el [SliverAppBar] con snap nativo y crossfade entre estados.
+  /// floating + snap: al soltar el dedo a mitad de transición,
+  /// el header hace snap automático al estado más cercano (expanded o collapsed).
   Widget _buildSliverHeader(Color bgColor) {
     return SliverAppBar(
       pinned: true,
+      floating: true,
+      snap: true,
       backgroundColor: bgColor,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
+      // + AppSpacing.s compensa el gap visual que SliverAppBar introduce
+      // entre el flexibleSpace y el contenido del sliver al hacer snap.
       expandedHeight: _resolveExpandedHeaderHeight() + AppSpacing.s,
       toolbarHeight: _resolveCollapsedHeaderHeight() + AppSpacing.s,
       flexibleSpace: AppPageFlexibleSpace(
