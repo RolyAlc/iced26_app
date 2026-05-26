@@ -136,8 +136,8 @@ class _NavigationItem extends StatelessWidget {
       child: AnimatedContainer(
         duration: AppDuration.medium,
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.s,
-          vertical: AppSpacing.s,
+          horizontal: AppSpacing.m,
+          vertical: AppSpacing.m,
         ),
         decoration: BoxDecoration(
           color: isSelected

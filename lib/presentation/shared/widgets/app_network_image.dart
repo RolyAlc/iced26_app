@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
@@ -39,17 +40,14 @@ class AppNetworkImage extends StatelessWidget {
       );
     }
 
-    return Image.network(
-      url,
+    final colors = Theme.of(context).colorScheme;
+    return CachedNetworkImage(
+      imageUrl: url,
       width: width,
       height: height,
       fit: fit,
-      errorBuilder: (_, _, _) => _fallback(context),
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) {
-          return child;
-        }
-        final colors = Theme.of(context).colorScheme;
+      errorWidget: (_, _, _) => _fallback(context),
+      placeholder: (_, _) {
         return SizedBox(
           width: width,
           height: height,
