@@ -6,45 +6,37 @@ import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speak
 
 /// Footer de la card del keynote speaker: nombre, institución, badge y acceso al detalle.
 class SpeakerCardFooter extends StatelessWidget {
-  const SpeakerCardFooter({
-    super.key,
-    required this.speaker,
-    required this.color,
-  });
+  const SpeakerCardFooter({super.key, required this.speaker});
 
   final KeynoteSpeakerUIModel speaker;
-  final Color color;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
 
-    return ColoredBox(
-      color: color,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.m,
-          AppSpacing.sm,
-          AppSpacing.m,
-          AppSpacing.m,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildNameRow(textTheme, colors),
-                  ..._buildInstitution(textTheme, colors),
-                ],
-              ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.m,
+        AppSpacing.sm,
+        AppSpacing.m,
+        AppSpacing.m,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildNameRow(textTheme, colors),
+                ..._buildInstitution(textTheme, colors),
+              ],
             ),
-            const SizedBox(width: AppSpacing.m),
-            const _GoCircle(),
-          ],
-        ),
+          ),
+          const SizedBox(width: AppSpacing.m),
+          const _GoCircle(),
+        ],
       ),
     );
   }
@@ -101,8 +93,8 @@ class _GoCircle extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     return Container(
-      width: 36,
-      height: 36,
+      width: 48,
+      height: 48,
       decoration: BoxDecoration(color: colors.primary, shape: BoxShape.circle),
       child: Icon(
         AppIcons.keyboardArrowRight,

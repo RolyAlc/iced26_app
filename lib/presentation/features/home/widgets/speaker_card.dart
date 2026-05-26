@@ -28,20 +28,24 @@ class SpeakerCard extends StatelessWidget {
       colors.surface,
     );
 
-    return AppCard(
-      onTap: onTap,
-      color: footerColor,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: _imageRadius,
-              child: SpeakerCardImage(photoUrl: speaker.photoUrl),
+    return Semantics(
+      label: speaker.name,
+      button: true,
+      child: AppCard(
+        onTap: onTap,
+        color: footerColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: _imageRadius,
+                child: SpeakerCardImage(photoUrl: speaker.photoUrl),
+              ),
             ),
-          ),
-          SpeakerCardFooter(speaker: speaker, color: footerColor),
-        ],
+            SpeakerCardFooter(speaker: speaker),
+          ],
+        ),
       ),
     );
   }
