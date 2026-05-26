@@ -27,6 +27,10 @@ class AppPage extends ConsumerStatefulWidget {
        assert(
          collapsedHeaderFallbackHeight == null || collapsedHeader != null,
          'collapsedHeaderFallbackHeight requires collapsedHeader',
+       ),
+       assert(
+         fillChild == null || floatingChild == null,
+         'fillChild and floatingChild cannot be used simultaneously — the FAB would overlap centered content',
        );
   final List<Widget> children;
   final Widget? fillChild;
@@ -84,13 +88,17 @@ class _AppPageState extends ConsumerState<AppPage> {
                 child: _buildSliverLayout(bgColor),
               ),
             ),
-            if (widget.floatingChild != null)
-              Positioned(
-                bottom: navBarHeight,
-                left: 0,
-                right: 0,
-                child: Center(child: widget.floatingChild!),
+            Positioned(
+              bottom: navBarHeight,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: AnimatedSwitcher(
+                  duration: AppDuration.fast,
+                  child: widget.floatingChild ?? const SizedBox.shrink(),
+                ),
               ),
+            ),
           ],
         ),
       ),
