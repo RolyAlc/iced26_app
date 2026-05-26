@@ -23,6 +23,7 @@ class HomeState {
     required this.socialActivities,
     required this.conferenceThemes,
     required this.headerInfoLabel,
+    required this.today,
   });
   final List<Day> days;
   final List<Event> allEvents;
@@ -35,4 +36,5 @@ class HomeState {
   final List<SocialActivity> socialActivities;
   final List<ConferenceTheme> conferenceThemes;
   final String headerInfoLabel;
+  final DateTime today;
 }

@@ -14,19 +14,19 @@ class HomeExpandedHeader extends StatelessWidget {
   const HomeExpandedHeader({
     super.key,
     required this.infoLabel,
+    required this.today,
     required this.searchNotifier,
   });
 
   final String infoLabel;
+  final DateTime today;
   final Search searchNotifier;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final dateLabel = MaterialLocalizations.of(
-      context,
-    ).formatFullDate(DateTime.now());
+    final dateLabel = MaterialLocalizations.of(context).formatFullDate(today);
 
     return Column(
       mainAxisSize: MainAxisSize.min,

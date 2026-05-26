@@ -206,6 +206,7 @@ class HomeViewModel extends _$HomeViewModel {
   /// Orquesta la construcción del [HomeState] a partir de los datos crudos.
   HomeState _buildStateFromData(HomeDataResult data) {
     final peopleById = _buildPeopleIndex(data.allPeople);
+    final now = DateTime.now();
 
     return HomeState(
       days: data.days,
@@ -227,6 +228,7 @@ class HomeViewModel extends _$HomeViewModel {
       socialActivities: data.socialActivities,
       conferenceThemes: data.conferenceThemes,
       headerInfoLabel: AppConfig.welcomeLabel,
+      today: now,
     );
   }
 }

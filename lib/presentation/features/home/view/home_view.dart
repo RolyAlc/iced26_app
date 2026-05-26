@@ -71,6 +71,7 @@ class _HomeContent extends ConsumerWidget {
       data: (state) => AppPage(
         header: HomeExpandedHeader(
           infoLabel: state.headerInfoLabel,
+          today: state.today,
           searchNotifier: searchNotifier,
         ),
         collapsedHeader: HomeHeaderSection(
