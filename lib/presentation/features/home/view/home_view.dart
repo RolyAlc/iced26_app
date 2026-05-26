@@ -74,9 +74,7 @@ class _HomeContent extends ConsumerWidget {
           today: state.today,
           searchNotifier: searchNotifier,
         ),
-        collapsedHeader: HomeHeaderSection(
-          onSearchTap: () => SmartSearchBar.open(context, searchNotifier),
-        ),
+        collapsedHeader: HomeHeaderSection(searchNotifier: searchNotifier),
         headerFallbackHeight: _expandedHeaderHeight,
         collapsedHeaderFallbackHeight: _collapsedHeaderHeight,
         children: [
@@ -122,6 +120,16 @@ class _HomeFeaturedSection extends StatelessWidget {
       delay: _kFeaturedFadeDelay,
       child: AppSection(
         title: 'Featured sessions',
+        trailing: TextButton.icon(
+          onPressed: onExploreTap,
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            visualDensity: VisualDensity.compact,
+          ),
+          label: const Text('See all'),
+          iconAlignment: IconAlignment.end,
+        ),
         edgeToEdge: true,
         child: HomeFeaturedSection(
           featuredEvents: featuredEvents,
