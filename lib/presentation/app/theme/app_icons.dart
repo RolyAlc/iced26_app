@@ -9,8 +9,8 @@ abstract final class AppIcons {
   static const scheduleOn = Icons.calendar_month_rounded;
   static const searchOff = Icons.search_outlined;
   static const searchOn = Icons.search_rounded;
-  static const diaryOff = Icons.bookmark_border_rounded;
-  static const diaryOn = Icons.bookmark_rounded;
+  static const diaryOff = bookmarkOff;
+  static const diaryOn = bookmarkOn;
   static const settingsOff = Icons.settings_outlined;
   static const settingsOn = Icons.settings_rounded;
 
@@ -43,7 +43,6 @@ abstract final class AppIcons {
   // --- Guardar / Favorito ---
   static const bookmarkOff = Icons.bookmark_border_rounded;
   static const bookmarkOn = Icons.bookmark_rounded;
-  static const bookmarkOutline = Icons.bookmark_outlined;
   static const bookmarkAdd = Icons.bookmark_add_rounded;
   static const bookmarkRemove = Icons.bookmark_remove_rounded;
 
@@ -86,7 +85,7 @@ abstract final class AppIcons {
   // --- Categorías y contenido ---
   static const category = Icons.category_rounded;
   static const news = Icons.newspaper_rounded;
-  static const social = Icons.celebration_rounded;
+  static const social = celebration;
   static const event = Icons.event_rounded;
   static const workspacePremium = Icons.workspace_premium_rounded;
   static const playCircleOutline = Icons.play_circle_outline_rounded;

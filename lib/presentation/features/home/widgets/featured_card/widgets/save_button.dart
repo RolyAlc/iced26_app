@@ -14,7 +14,7 @@ class SaveButton extends StatelessWidget {
     return IconButton(
       onPressed: onTap,
       icon: Icon(
-        isSaved ? AppIcons.bookmarkOn : AppIcons.bookmarkOutline,
+        isSaved ? AppIcons.bookmarkOn : AppIcons.bookmarkOff,
         color: isSaved ? colors.primary : colors.onSurfaceVariant,
       ),
     );
