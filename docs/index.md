@@ -10,16 +10,15 @@ tags: [inicio, navegacion, indice]
 
 # ICED26 — Documentación del proyecto
 
-Bienvenido a la documentación técnica de **ICED26**, la app del congreso desarrollada en Flutter.
-Esta documentación está pensada para que cualquier persona pueda orientarse rápidamente.
+Bienvenido a la documentación técnica de **ICED26**. Esta documentación está pensada para que cualquier persona pueda orientarse rápidamente.
 
 ## 1. ¿Por dónde comienzo?
 
-| Si eres...                    | Ve a...                                            |
-| ----------------------------- | -------------------------------------------------- |
-| Nuevo en el proyecto          | [Guía de inicio rápido](guides/onboarding.md)      |
-| Desarrollador con experiencia | [Arquitectura y capas](architecture/layers.md)     |
-| Organizador del congreso      | [Publicación en tiendas](guides/publish_stores.md) |
+| Si eres...                    | Ve a...                                               |
+| ----------------------------- | ----------------------------------------------------- |
+| Nuevo en el proyecto          | [Guía de inicio rápido](guides/onboarding.md)         |
+| Desarrollador con experiencia | [Arquitectura y capas](architecture/layers.md)        |
+| Organizador del congreso      | [Qué hace cada pantalla](guides/features_overview.md) |
 
 ## 2. Secciones de la documentación
 
@@ -29,15 +28,20 @@ Esta documentación está pensada para que cualquier persona pueda orientarse r�
 - [Comandos útiles](guides/commands.md) — referencia rápida de comandos del día a día
 - [Glosario UX/UI](guides/ux_ui_glossary.md) — terminología visual del proyecto
 - [Publicación en tiendas](guides/publish_stores.md) — Google Play Store y Apple App Store
+- [Qué hace cada pantalla](guides/features_overview.md) — descripción no técnica de cada pantalla para el organizador del congreso
 
 ### 2.2. Arquitectura
 
+- [Glosario](architecture/glossary.md) — definiciones centralizadas: `Result<T>`, `I18nStr`, `UseCase`, `Mapper`, `Entity` y más
 - [Sistema de diseño](architecture/design_system.md) — tokens de espaciado, color, tipografía y animación
 - **Pantallas documentadas:**
     - [Home](architecture/screens/home_screen.md)
     - [Detalle de presentación](architecture/screens/presentation_detail.md)
     - [Búsqueda](architecture/screens/search_screen.md)
     - [Lista de presentaciones](architecture/screens/slot_presentation_list.md)
+    - [Diary](architecture/screens/diary_screen.md)
+    - [Mi agenda](architecture/screens/my_schedule_screen.md)
+    - [Ajustes](architecture/screens/settings_screen.md)
 
 ### 2.3. Decisiones técnicas (ADR)
 
