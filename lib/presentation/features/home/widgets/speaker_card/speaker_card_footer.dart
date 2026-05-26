@@ -30,7 +30,6 @@ class SpeakerCardFooter extends StatelessWidget {
           AppSpacing.m,
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: Column(
