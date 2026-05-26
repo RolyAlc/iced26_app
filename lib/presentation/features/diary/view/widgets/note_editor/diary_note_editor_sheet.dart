@@ -87,17 +87,23 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
 
   bool get _canSave {
     final content = _contentController.text.trim();
-    if (content.isEmpty) return false;
-    if (!_isEditing) return true;
+    if (content.isEmpty) {
+      return false;
+    }
+    if (!_isEditing) {
+      return true;
+    }
 
     // _isEditing garantiza existingNote != null — variable local evita
     // repetir la comprobación y el operador ! en cada campo.
     final existing = widget.existingNote!;
     final title = _titleController.text.trim();
-    return title != (existing.title ?? '') ||
-        content != (existing.content) ||
-        _selectedColor != existing.color ||
-        !DateUtils.isSameDay(_selectedDate, existing.date);
+    final titleChanged = title != (existing.title ?? '');
+    final contentChanged = content != existing.content;
+    final colorChanged = _selectedColor != existing.color;
+    final dateChanged = !DateUtils.isSameDay(_selectedDate, existing.date);
+
+    return titleChanged || contentChanged || colorChanged || dateChanged;
   }
 
   Future<void> _selectDate() async {
@@ -214,6 +220,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
             label: 'Title',
             color: colorScheme.onSurfaceVariant,
           ),
+          const SizedBox(height: AppSpacing.s),
           DiaryEditorTitleInput(controller: _titleController),
           const SizedBox(height: AppSpacing.m),
           DiaryEditorSectionLabel(
