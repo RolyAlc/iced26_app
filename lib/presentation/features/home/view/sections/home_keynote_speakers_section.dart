@@ -21,7 +21,7 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
   late final PageController _controller;
   int _currentPage = 0;
 
-  static const double _viewportFraction = 0.78;
+  static const double _viewportFraction = 0.90;
 
   @override
   void initState() {
