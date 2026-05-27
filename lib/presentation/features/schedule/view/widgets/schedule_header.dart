@@ -36,8 +36,10 @@ class ScheduleHeader extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppLayout.horizontalPadding(context),
+          padding: EdgeInsets.only(
+            left: AppLayout.horizontalPadding(context),
+            right: AppLayout.horizontalPadding(context),
+            top: AppSpacing.xl,
           ),
           child: _TopTabBar(
             selected: topTab,
@@ -244,7 +246,7 @@ class _TopTab extends StatelessWidget {
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.headlineSmall?.copyWith(
+          style: theme.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: isSelected ? colors.onSurface : colors.outline,
           ),
