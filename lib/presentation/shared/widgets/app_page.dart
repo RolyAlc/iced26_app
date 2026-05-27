@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/ui_metrics.dart';
-import 'package:iced26/presentation/shared/widgets/app_page_header_delegate.dart';
+import 'package:iced26/presentation/shared/widgets/app_page_flexible_space.dart';
 
 // Extra scroll clearance so the last list item is never hidden under a floatingChild.
 const double _kFabExtraClearance = 64.0;
