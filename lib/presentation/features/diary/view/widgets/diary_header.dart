@@ -15,15 +15,15 @@ class DiaryHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isRedundant = ref.watch(diaryIsChipRedundantProvider);
+    final showTodayChip = ref.watch(diaryShowTodayChipProvider);
 
     return AppPageTitle(
       title: _kTitle,
       trailing: AnimatedOpacity(
-        opacity: isRedundant ? 0.0 : 1.0,
+        opacity: showTodayChip ? 1.0 : 0.0,
         duration: AppDuration.fast,
         child: IgnorePointer(
-          ignoring: isRedundant,
+          ignoring: !showTodayChip,
           child: ActionChip(
             label: Text(
               _kTodayLabel,

@@ -6,9 +6,9 @@ import 'package:table_calendar/table_calendar.dart';
 
 part 'diary_viewmodel.g.dart';
 
-// Devuelve true cuando el chip "Today" sería redundante.
+// Devuelve true cuando el chip "Today" debe mostrarse.
 @riverpod
-bool diaryIsChipRedundant(Ref ref) {
+bool diaryShowTodayChip(Ref ref) {
   final selected = ref.watch(selectedDiaryDateProvider);
   final focusedMonth = ref.watch(diaryFocusedMonthProvider);
   final format = ref.watch(diaryCalendarFormatProvider);
@@ -35,7 +35,7 @@ bool diaryIsChipRedundant(Ref ref) {
         focusedMonth.month == today.month && focusedMonth.year == today.year;
   }
 
-  return isSelectedToday && isTodayVisible;
+  return !(isSelectedToday && isTodayVisible);
 }
 
 /// Índice de eventos del congreso por día.
