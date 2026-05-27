@@ -13,6 +13,7 @@ import 'package:iced26/presentation/features/schedule/view/widgets/event_card.da
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
+import 'package:iced26/presentation/shared/widgets/app_page_title.dart';
 
 const _kUnscheduled = 'Unscheduled';
 const _kIllustrationIconSize = 48.0;
@@ -29,16 +30,24 @@ class MyScheduleView extends ConsumerWidget {
     final items = asyncItems.asData?.value;
     final hasItems = items != null && items.isNotEmpty;
 
+    final totalCount = hasItems
+        ? items.whereType<MyScheduleRow>().length
+        : null;
+    final title = totalCount != null
+        ? '${AppStrings.myScheduleTitle} ($totalCount)'
+        : AppStrings.myScheduleTitle;
+    final header = AppPageTitle(title: title);
+
     if (asyncItems.isLoading) {
       return AppPage(
-        header: const _MyScheduleHeader(),
+        header: header,
         fillChild: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (asyncItems.hasError) {
       return AppPage(
-        header: const _MyScheduleHeader(),
+        header: header,
         fillChild: Center(
           child: AppEmptyState(
             illustration: Icon(
@@ -59,7 +68,7 @@ class MyScheduleView extends ConsumerWidget {
 
     if (!hasItems) {
       return AppPage(
-        header: const _MyScheduleHeader(),
+        header: header,
         fillChild: Center(
           child: AppEmptyState(
             illustration: Icon(
@@ -74,10 +83,8 @@ class MyScheduleView extends ConsumerWidget {
       );
     }
 
-    final totalCount = items.whereType<MyScheduleRow>().length;
-
     return AppPage(
-      header: _MyScheduleHeader(count: totalCount),
+      header: header,
       children: [
         const SizedBox(height: AppSpacing.m),
         Padding(
@@ -159,33 +166,6 @@ class _MyScheduleDayHeader extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Header general de la pantalla [MyScheduleView].
-class _MyScheduleHeader extends StatelessWidget {
-  const _MyScheduleHeader({this.count});
-
-  final int? count;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final title = count != null
-        ? '${AppStrings.myScheduleTitle} ($count)'
-        : AppStrings.myScheduleTitle;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppLayout.horizontalPadding(context),
-      ),
-      child: Text(
-        title,
-        style: theme.textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
       ),
     );
   }
