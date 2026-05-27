@@ -130,7 +130,7 @@ class _DayTab extends StatelessWidget {
     final labelColor = isSelected ? colors.primary : colors.onSurfaceVariant;
     final backgroundColor = isSelected
         ? colors.secondaryContainer
-        : Colors.transparent;
+        : colors.secondaryContainer.withValues(alpha: 0.0);
 
     return AnimatedContainer(
       duration: AppDuration.fast,
@@ -174,10 +174,9 @@ class _DayTab extends StatelessWidget {
     bool isToday,
     Color labelColor,
   ) {
-    final circleColor = isToday ? colors.primaryContainer : Colors.transparent;
-
-    // Cuando es hoy: primary si está seleccionado, onPrimaryContainer si no.
-    // Cuando no es hoy: labelColor (primary o onSurfaceVariant según selección).
+    final circleColor = isToday
+        ? colors.primaryContainer
+        : colors.primaryContainer.withValues(alpha: 0.0);
     final dayNumberColor = isToday
         ? (isSelected ? colors.primary : colors.onPrimaryContainer)
         : labelColor;

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
+import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 
 const double _kTabIndicatorHeight = 3.0;
 
