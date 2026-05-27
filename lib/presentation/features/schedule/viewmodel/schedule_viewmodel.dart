@@ -16,9 +16,6 @@ part 'schedule_viewmodel.g.dart';
 
 const _kUnknownDate = 'Unknown date';
 
-/// Tabs del header superior de Schedule.
-enum ScheduleTab { timeline, mySchedule }
-
 /// Formato de visualización de la lista de sesiones.
 enum ScheduleViewFormat { list, agenda }
 
