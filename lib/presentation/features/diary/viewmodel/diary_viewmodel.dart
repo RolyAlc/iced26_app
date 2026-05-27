@@ -6,6 +6,38 @@ import 'package:table_calendar/table_calendar.dart';
 
 part 'diary_viewmodel.g.dart';
 
+// Devuelve true cuando el chip "Today" sería redundante.
+@riverpod
+bool diaryIsChipRedundant(Ref ref) {
+  final selected = ref.watch(selectedDiaryDateProvider);
+  final focusedMonth = ref.watch(diaryFocusedMonthProvider);
+  final format = ref.watch(diaryCalendarFormatProvider);
+  final today = DateTime.now();
+  final todayNorm = DateTime(today.year, today.month, today.day);
+
+  final isSelectedToday = isSameDay(selected, today);
+
+  final bool isTodayVisible;
+  if (format == CalendarFormat.week) {
+    final weekStart = focusedMonth.subtract(
+      Duration(days: focusedMonth.weekday - 1),
+    );
+    final weekStartNorm = DateTime(
+      weekStart.year,
+      weekStart.month,
+      weekStart.day,
+    );
+    final weekEnd = weekStartNorm.add(const Duration(days: 6));
+    isTodayVisible =
+        !todayNorm.isBefore(weekStartNorm) && !todayNorm.isAfter(weekEnd);
+  } else {
+    isTodayVisible =
+        focusedMonth.month == today.month && focusedMonth.year == today.year;
+  }
+
+  return isSelectedToday && isTodayVisible;
+}
+
 /// Índice de eventos del congreso por día.
 @riverpod
 Future<Map<DateTime, List<Event>>> diaryConferenceEvents(Ref ref) async {

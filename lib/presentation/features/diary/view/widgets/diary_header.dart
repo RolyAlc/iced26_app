@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
 import 'package:iced26/presentation/shared/widgets/app_page_title.dart';
-
-import 'package:table_calendar/table_calendar.dart';
 
 const _kTitle = 'My diary';
 const _kTodayLabel = 'Today';
@@ -18,20 +15,7 @@ class DiaryHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final selectedDate = ref.watch(selectedDiaryDateProvider);
-    final focusedMonth = ref.watch(diaryFocusedMonthProvider);
-
-    final format = ref.watch(diaryCalendarFormatProvider);
-    final isSelectedToday = DiaryHelpers.isToday(selectedDate);
-
-    // El chip es redundante solo cuando hoy ya está seleccionado
-    // Y la vista actual del calendario muestra hoy (semana o mes correctos).
-    final isTodayVisible = format == CalendarFormat.week
-        ? DiaryHelpers.isTodayInSameCalendarWeek(focusedMonth)
-        : focusedMonth.month == DateTime.now().month &&
-              focusedMonth.year == DateTime.now().year;
-
-    final isRedundant = isSelectedToday && isTodayVisible;
+    final isRedundant = ref.watch(diaryIsChipRedundantProvider);
 
     return AppPageTitle(
       title: _kTitle,
@@ -51,6 +35,7 @@ class DiaryHeader extends ConsumerWidget {
             side: BorderSide.none,
             elevation: 0,
             shadowColor: Colors.transparent,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             onPressed: () {
               ref.read(selectedDiaryDateProvider.notifier).selectToday();
               ref.read(diaryFocusedMonthProvider.notifier).set(DateTime.now());
