@@ -19,6 +19,7 @@ const double _kCalendarIconSize = 20.0;
 const double _kDotSize = 6.0;
 const double _kDotMargin = 1.0;
 const double _kCellMarginBottom = 10.0;
+const double _kNoteBorderWidth = 1.5;
 const _kCalendarFormats = {
   CalendarFormat.month: 'Month',
   CalendarFormat.week: 'Week',
@@ -71,6 +72,11 @@ class _DiaryCalendarState extends ConsumerState<DiaryCalendar> {
         textScaler.scale(_kDaysOfWeekBaseHeight) + _kDaysOfWeekHeightPad;
     final format = ref.watch(diaryCalendarFormatProvider);
 
+    final daysWithNotes = {
+      for (final note in widget.allNotes)
+        DateTime(note.date.year, note.date.month, note.date.day),
+    };
+
     return Column(
       children: [
         TableCalendar<Object>(
@@ -105,6 +111,13 @@ class _DiaryCalendarState extends ConsumerState<DiaryCalendar> {
             },
             dowBuilder: (context, day) {
               return _CalendarDowCell(day: day, today: widget.today);
+            },
+            defaultBuilder: (context, day, focusedDay) {
+              final normalized = DateTime(day.year, day.month, day.day);
+              if (!daysWithNotes.contains(normalized)) {
+                return null;
+              }
+              return _NoteOutlineCell(day: day, colors: colors);
             },
             markerBuilder: (context, day, items) {
               return _CalendarDayMarkers(items: items);
@@ -301,6 +314,31 @@ class _CalendarDayMarkers extends StatelessWidget {
         else if (notes.isNotEmpty)
           _Dot(color: colors.secondary),
       ],
+    );
+  }
+}
+
+/// Celda de día con nota — círculo outline sin relleno.
+///
+/// `defaultBuilder` en table_calendar no aplica cellMargin automáticamente,
+/// por eso este widget incluye el mismo margin que CalendarStyle.cellMargin.
+class _NoteOutlineCell extends StatelessWidget {
+  const _NoteOutlineCell({required this.day, required this.colors});
+
+  final DateTime day;
+  final ColorScheme colors;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      margin: const EdgeInsets.fromLTRB(6, 6, 6, _kCellMarginBottom),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: colors.primary, width: _kNoteBorderWidth),
+      ),
+      alignment: Alignment.center,
+      child: Text('${day.day}', style: TextStyle(color: colors.onSurface)),
     );
   }
 }
