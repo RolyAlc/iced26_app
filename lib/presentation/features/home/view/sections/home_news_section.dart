@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/services/logger/logger.dart';
-import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/news_item.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card_variant.dart';

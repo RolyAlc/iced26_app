@@ -8,7 +8,7 @@ import 'package:iced26/data/mappers/home/social_activity_mapper.dart';
 import 'package:iced26/data/mappers/submission_type_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/conference_theme.dart';
-import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/news_item.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 import 'package:iced26/domain/repositories/home_repository.dart';

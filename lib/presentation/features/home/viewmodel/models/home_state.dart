@@ -2,7 +2,7 @@ import 'package:iced26/domain/entities/category.dart';
 import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
-import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/news_item.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/zone.dart';

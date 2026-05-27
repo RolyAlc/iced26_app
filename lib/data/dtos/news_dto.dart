@@ -1,5 +1,5 @@
 import 'package:iced26/data/mappers/i18n_mapper.dart';
-import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/news_item.dart';
 
 /// DTO para noticias.
 class NewsDTO {

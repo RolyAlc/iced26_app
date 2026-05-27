@@ -1,6 +1,6 @@
 import 'package:iced26/data/dtos/news_dto.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
-import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/news_item.dart';
 
 /// Mapper para [NewsItem]
 abstract final class NewsMapper {
