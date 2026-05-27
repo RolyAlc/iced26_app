@@ -52,3 +52,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Archivo generado automáticamente por flutter pub get. Cambia solo cuando cambian los plugins.
+macos/Flutter/GeneratedPluginRegistrant.swift
