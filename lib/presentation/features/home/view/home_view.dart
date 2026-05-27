@@ -6,8 +6,6 @@ import 'package:iced26/di/bootstrap.dart';
 import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
-import 'package:iced26/presentation/app/navigation_constants.dart';
-import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_conference_themes_section.dart';
@@ -20,8 +18,6 @@ import 'package:iced26/presentation/features/home/view/sections/home_social_acti
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
-import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
-import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
@@ -93,7 +89,7 @@ class _HomeContent extends ConsumerWidget {
             ),
           if (state.conferenceThemes.isNotEmpty)
             _HomeThemesSection(themes: state.conferenceThemes),
-          _HomeNewsSection(news: state.news),
+          _HomeNewsSection(news: state.news, hasMoreNews: state.hasMoreNews),
           _HomeSocialSection(socialActivities: state.socialActivities),
         ],
       ),
@@ -101,8 +97,7 @@ class _HomeContent extends ConsumerWidget {
   }
 
   void _navigateToSchedule(WidgetRef ref) {
-    ref.read(scheduleTopTabProvider.notifier).select(ScheduleTab.timeline);
-    ref.read(navigationProvider.notifier).select(AppFeature.schedule);
+    ref.read(homeViewModelProvider.notifier).navigateToScheduleTimeline();
   }
 }
 
@@ -122,16 +117,7 @@ class _HomeFeaturedSection extends StatelessWidget {
       delay: _kFeaturedFadeDelay,
       child: AppSection(
         title: 'Featured sessions',
-        trailing: TextButton.icon(
-          onPressed: onExploreTap,
-          style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            visualDensity: VisualDensity.compact,
-          ),
-          label: const Text('See all'),
-          iconAlignment: IconAlignment.end,
-        ),
+        trailing: _SeeAllButton(onPressed: onExploreTap),
         edgeToEdge: true,
         child: HomeFeaturedSection(
           featuredEvents: featuredEvents,
@@ -155,16 +141,7 @@ class _HomeKeynoteSection extends StatelessWidget {
       delay: _kKeynoteFadeDelay,
       child: AppSection(
         title: 'Keynote speakers',
-        trailing: TextButton.icon(
-          onPressed: onViewAll,
-          style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            visualDensity: VisualDensity.compact,
-          ),
-          label: const Text('See all'),
-          iconAlignment: IconAlignment.end,
-        ),
+        trailing: _SeeAllButton(onPressed: onViewAll),
         edgeToEdge: true,
         child: HomeKeynoteSection(speakers: speakers),
       ),
@@ -193,30 +170,20 @@ class _HomeThemesSection extends StatelessWidget {
 
 /// Sección de últimas noticias.
 class _HomeNewsSection extends StatelessWidget {
-  const _HomeNewsSection({required this.news});
+  const _HomeNewsSection({required this.news, required this.hasMoreNews});
 
   final List<NewsItem> news;
+  final bool hasMoreNews;
 
   @override
   Widget build(BuildContext context) {
-    final hasMore = news.length > HomeNewsSection.maxVisible;
-
     return StaggeredFadeIn(
       delay: _kNewsFadeDelay,
       child: AppSection.resolved(
         title: 'Latest news',
-        trailing: hasMore
-            ? TextButton.icon(
+        trailing: hasMoreNews
+            ? _SeeAllButton(
                 onPressed: () => HomeNewsAllSheet.show(context, news),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xs,
-                  ),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  visualDensity: VisualDensity.compact,
-                ),
-                label: const Text('See all'),
-                iconAlignment: IconAlignment.end,
               )
             : null,
         hasData: news.isNotEmpty,
@@ -227,6 +194,27 @@ class _HomeNewsSection extends StatelessWidget {
           illustration: Icon(AppIcons.news, size: _kEmptyIllustrationSize),
         ),
       ),
+    );
+  }
+}
+
+/// Botón "See all" compacto reutilizado en los headers de sección.
+class _SeeAllButton extends StatelessWidget {
+  const _SeeAllButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.compact,
+      ),
+      label: const Text('See all'),
+      iconAlignment: IconAlignment.end,
     );
   }
 }
