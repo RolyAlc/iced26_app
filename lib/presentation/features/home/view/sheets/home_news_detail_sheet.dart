@@ -19,9 +19,9 @@ void showNewsDetail(BuildContext context, NewsItemUIModel item) {
     title: item.title,
     actions: [
       FilledButton.icon(
-        onPressed: () {
+        onPressed: () async {
           Navigator.pop(context);
-          _launchURL(context, item.webUrl);
+          await _launchURL(context, item.webUrl);
         },
         icon: const Icon(AppIcons.openInNew, size: 18),
         label: const Text(_kReadFullArticle),

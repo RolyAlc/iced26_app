@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -114,7 +116,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
       lastDate: AppConfig.lastDay,
     );
     if (picked != null && picked != _selectedDate) {
-      HapticFeedback.selectionClick();
+      unawaited(HapticFeedback.selectionClick());
       setState(() => _selectedDate = picked);
     }
   }

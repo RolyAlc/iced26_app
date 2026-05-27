@@ -40,7 +40,6 @@ class HomeNewsSection extends StatelessWidget {
         ),
         for (final item in rest)
           NewsCard(
-            variant: NewsCardVariant.compact,
             title: item.title,
             subtitle: item.content,
             imageUrl: item.imgUrl,
