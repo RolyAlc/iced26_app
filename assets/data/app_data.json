@@ -12867,7 +12867,20 @@
         "defaultLang": "en"
       },
       {
-        "id": "news-004",
+        "id": "news-004", 
+        "title": {
+          "en": "CED26 CONFERENCE"
+        },
+        "content": {
+          "en": "Agency and Academic Development 24 - 26 June 2026."
+        },
+        "datePublish": "2026-06-23",
+        "imgUrl": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "webUrl": "https://iced26.es/",
+        "defaultLang": "en"
+      },
+      {
+        "id": "news-005",
         "title": {
           "en": "CED26 CONFERENCE"
         },
