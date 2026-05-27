@@ -62,6 +62,9 @@ class ScheduleHeader extends ConsumerWidget {
                         .read(selectedScheduleCategoryProvider.notifier)
                         .select(cat);
                   },
+                  onDaySelected: (index) {
+                    ref.read(selectedDayIndexProvider.notifier).set(index);
+                  },
                 ),
         ),
       ],
@@ -78,6 +81,7 @@ class _ScheduleSubHeader extends StatelessWidget {
     required this.tabController,
     required this.selectedCategory,
     required this.onCategorySelect,
+    required this.onDaySelected,
   });
 
   final bool isFiltered;
@@ -86,6 +90,7 @@ class _ScheduleSubHeader extends StatelessWidget {
   final TabController tabController;
   final EventType? selectedCategory;
   final ValueChanged<EventType?> onCategorySelect;
+  final ValueChanged<int> onDaySelected;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +106,11 @@ class _ScheduleSubHeader extends StatelessWidget {
             ),
             child: isFiltered
                 ? const _ViewingAllDaysLabel()
-                : _DayTabBar(tabController: tabController, sections: sections),
+                : _DayTabBar(
+                    tabController: tabController,
+                    sections: sections,
+                    onDaySelected: onDaySelected,
+                  ),
           ),
         ],
         if (categories.isNotEmpty) ...[
@@ -175,19 +184,24 @@ class _TopTabBar extends StatelessWidget {
 }
 
 /// Fila de tabs de días.
-class _DayTabBar extends ConsumerWidget {
-  const _DayTabBar({required this.tabController, required this.sections});
+class _DayTabBar extends StatelessWidget {
+  const _DayTabBar({
+    required this.tabController,
+    required this.sections,
+    required this.onDaySelected,
+  });
 
   final TabController tabController;
   final List<ScheduleDaySection> sections;
+  final ValueChanged<int> onDaySelected;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return TabBar(
       controller: tabController,
-      onTap: (index) => ref.read(selectedDayIndexProvider.notifier).set(index),
+      onTap: onDaySelected,
       isScrollable: true,
       tabAlignment: TabAlignment.start,
       padding: EdgeInsets.zero,
