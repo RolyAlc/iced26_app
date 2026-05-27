@@ -15,7 +15,7 @@ abstract final class AppStrings {
   static const String myScheduleErrorTitle = 'Could not load your schedule';
 
   static const String scheduleTitle = 'Schedule';
-  static const String scheduleViewingAllDays = 'Viewing all days';
+  static const String scheduleAllDays = 'All days';
   static const String scheduleNoSessionsTitle =
       'No sessions match your filters';
   static const String scheduleNoSessionsMessage =

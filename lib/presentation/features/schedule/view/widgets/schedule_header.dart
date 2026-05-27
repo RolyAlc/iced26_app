@@ -10,7 +10,8 @@ import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
-const _kFilterIconSize = 12.0;
+const double _kFilterIconSize = 12.0;
+const double _kTabIndicatorHeight = 3.0;
 
 /// Header del schedule. Recibe [topTab] del padre para evitar un watch duplicado.
 class ScheduleHeader extends ConsumerWidget {
@@ -31,17 +32,19 @@ class ScheduleHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
     final isFiltered = selectedCategory != null;
+    final horizontal = AppLayout.horizontalPadding(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: EdgeInsets.only(
-            left: AppLayout.horizontalPadding(context),
-            right: AppLayout.horizontalPadding(context),
+            left: horizontal,
+            right: horizontal,
             top: AppSpacing.xl,
           ),
-          child: _TopTabBar(
+          child: _ScheduleTabBar(
             selected: topTab,
             onSelect: (tab) {
               ref.read(scheduleTopTabProvider.notifier).select(tab);
@@ -74,7 +77,90 @@ class ScheduleHeader extends ConsumerWidget {
   }
 }
 
-/// Contenido bajo el tab bar: selector de día y filtro de categoría.
+/// Fila de tabs "Schedule / My Schedule" con indicador underline animado.
+class _ScheduleTabBar extends StatelessWidget {
+  const _ScheduleTabBar({required this.selected, required this.onSelect});
+
+  final ScheduleTab selected;
+  final ValueChanged<ScheduleTab> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _ScheduleTab(
+          label: AppStrings.scheduleTitle,
+          isSelected: selected == ScheduleTab.timeline,
+          onTap: () => onSelect(ScheduleTab.timeline),
+        ),
+        const SizedBox(width: AppSpacing.l),
+        _ScheduleTab(
+          label: AppStrings.myScheduleTitle,
+          isSelected: selected == ScheduleTab.mySchedule,
+          onTap: () => onSelect(ScheduleTab.mySchedule),
+        ),
+      ],
+    );
+  }
+}
+
+/// Tab individual con texto headline y underline animado.
+///
+/// IntrinsicWidth acota el ancho al del Text para que CrossAxisAlignment.stretch
+/// pueda estirar el AnimatedContainer al mismo ancho sin recibir constraints infinitos.
+class _ScheduleTab extends StatelessWidget {
+  const _ScheduleTab({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadius.s),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+        child: IntrinsicWidth(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                label,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: isSelected
+                      ? colors.onSurface
+                      : colors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              AnimatedContainer(
+                duration: AppDuration.fast,
+                curve: Curves.easeInOut,
+                height: _kTabIndicatorHeight,
+                decoration: BoxDecoration(
+                  color: isSelected ? colors.primary : Colors.transparent,
+                  borderRadius: BorderRadius.circular(_kTabIndicatorHeight / 2),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Contenido bajo los tabs: selector de día y filtro de categoría.
 class _ScheduleSubHeader extends StatelessWidget {
   const _ScheduleSubHeader({
     required this.isFiltered,
@@ -107,7 +193,7 @@ class _ScheduleSubHeader extends StatelessWidget {
               horizontal: AppLayout.horizontalPadding(context),
             ),
             child: isFiltered
-                ? const _ViewingAllDaysLabel()
+                ? _ViewingAllDaysLabel(category: selectedCategory!)
                 : _DayTabBar(
                     tabController: tabController,
                     sections: sections,
@@ -128,9 +214,12 @@ class _ScheduleSubHeader extends StatelessWidget {
   }
 }
 
-/// Etiqueta "Viewing all days" que aparece cuando hay un filtro de categoría activo.
+/// Etiqueta que reemplaza el selector de días cuando hay un filtro de categoría activo.
+/// Muestra "All days · [categoría]" para que el usuario sepa qué está filtrando.
 class _ViewingAllDaysLabel extends StatelessWidget {
-  const _ViewingAllDaysLabel();
+  const _ViewingAllDaysLabel({required this.category});
+
+  final EventType category;
 
   @override
   Widget build(BuildContext context) {
@@ -145,40 +234,8 @@ class _ViewingAllDaysLabel extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.xs),
         Text(
-          AppStrings.scheduleViewingAllDays,
+          '${AppStrings.scheduleAllDays} · ${category.label}',
           style: theme.textTheme.labelSmall?.copyWith(color: colors.outline),
-        ),
-      ],
-    );
-  }
-}
-
-/// Tab bar superior Schedule / My Schedule.
-class _TopTabBar extends StatelessWidget {
-  const _TopTabBar({required this.selected, required this.onSelect});
-
-  final ScheduleTab selected;
-  final ValueChanged<ScheduleTab> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Flexible(
-          child: _TopTab(
-            label: AppStrings.scheduleTitle,
-            isSelected: selected == ScheduleTab.timeline,
-            onTap: () => onSelect(ScheduleTab.timeline),
-          ),
-        ),
-        const SizedBox(width: AppSpacing.m),
-        Flexible(
-          child: _TopTab(
-            label: AppStrings.myScheduleTitle,
-            isSelected: selected == ScheduleTab.mySchedule,
-            onTap: () => onSelect(ScheduleTab.mySchedule),
-          ),
         ),
       ],
     );
@@ -218,40 +275,6 @@ class _DayTabBar extends StatelessWidget {
       tabs: sections
           .map((s) => Tab(text: DateHelper.formatShortDate(s.date)))
           .toList(),
-    );
-  }
-}
-
-/// Tab individual de la barra superior.
-class _TopTab extends StatelessWidget {
-  const _TopTab({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadius.s),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-        child: Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: isSelected ? colors.onSurface : colors.onSurfaceVariant,
-          ),
-        ),
-      ),
     );
   }
 }
