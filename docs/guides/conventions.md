@@ -9,9 +9,9 @@ audience: tecnico
 
 # Convenciones de código
 
-Reglas obligatorias en todo el proyecto.
+Para este proyecto se ha seguido una serie de reglas de estilo y arquitectura con el fin de facilitar el mantenimiento del código.
 
-> Su objetivo es que el código sea legible y coherente para cualquier persona del equipo, independientemente de su nivel.
+No obstante, estas mismas reglas son orientativas.
 
 ## 1. Cuerpos de método siempre con llaves
 

@@ -65,10 +65,15 @@ zensical serve
 
 ## 4. Comandos recomendados de desarrollo
 
+Mientras se ejecuta `flutter run`, se pueden usar los siguientes comandos para recargar o actualizar en caliente:
+
 ```bash
 # Hot Reload
+# Permite recargar al app sin perder el estado
 r
 # Hot Restart
+# Permite recarga la app pero perdiendo el estado lo cual
+# es util si algo falla de forma extraña. (recomendable)
 R
 ```
 
@@ -87,6 +92,8 @@ flutter run
 ```bash
 dart format .
 dart analyze .
+# O en todo caso
+dart format . && dart analyze .
 ```
 
 ### 5.3. Si algo falla de forma extraña
@@ -96,4 +103,15 @@ flutter clean
 flutter pub get
 flutter run --uninstall-first
 # En todo caso, se recomienda borrar la aplicación del dispositivo físico.
+```
+
+### Si se teco base de datos (Drift)
+
+```bash
+# Para la ejecución
+# Después se procede a construir la BD
+dart run build_runner watch --delete-conflicting-outputs
+# Se debe de eliminar la app para que pueda generar la base de datos nueva
+# Volver a dar formato
+# Volver a ejecutar con run
 ```
