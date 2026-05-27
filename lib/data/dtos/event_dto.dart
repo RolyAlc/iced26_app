@@ -23,9 +23,16 @@ class EventDTO {
     this.speakers = const [],
     this.slotLabel,
     this.parentId,
+    this.sessionId,
+    this.track,
+    this.abstract_,
+    this.number,
+    this.isSession,
     this.extraRooms = const [],
     this.submissionFormats = const [],
     this.externalRef,
+    this.aboutPresentationUrl,
+    this.videoPresentationUrl,
   });
 
   factory EventDTO.fromMap(Map<String, dynamic> json) {
@@ -47,9 +54,17 @@ class EventDTO {
       speakers: _mapSpeakers(json['speakers']),
       slotLabel: json['slotLabel']?.toString(),
       parentId: json['parentId']?.toString(),
+      sessionId:
+          json['sessionId']?.toString() ?? json['sessionBlockId']?.toString(),
+      track: json['track']?.toString(),
+      abstract_: json['abstract'],
+      number: json['number']?.toString() ?? json['submissionRef']?.toString(),
+      isSession: _mapBool(json['isSession']) ?? _inferIsSession(json),
       extraRooms: _mapStringList(json['extraRooms']),
       submissionFormats: _mapStringList(json['submissionFormats']),
       externalRef: json['externalRef']?.toString(),
+      aboutPresentationUrl: json['aboutPresentationUrl']?.toString(),
+      videoPresentationUrl: json['videoPresentationUrl']?.toString(),
     );
   }
   final String id;
@@ -69,9 +84,16 @@ class EventDTO {
   final List<SpeakerEntry> speakers;
   final String? slotLabel;
   final String? parentId;
+  final String? sessionId;
+  final String? track;
+  final dynamic abstract_;
+  final String? number;
+  final bool? isSession;
   final List<String> extraRooms;
   final List<String> submissionFormats;
   final String? externalRef;
+  final String? aboutPresentationUrl;
+  final String? videoPresentationUrl;
 
   Event toEntity() {
     return Event(
@@ -92,9 +114,16 @@ class EventDTO {
       speakers: speakers,
       slotLabel: slotLabel,
       parentId: parentId,
+      sessionId: sessionId,
+      track: track,
+      abstract_: abstract_ != null ? I18nMapper.fromRaw(abstract_) : null,
+      number: number,
+      isSession: isSession,
       extraRooms: extraRooms,
       submissionFormats: submissionFormats,
       externalRef: externalRef,
+      aboutPresentationUrl: aboutPresentationUrl,
+      videoPresentationUrl: videoPresentationUrl,
     );
   }
 
@@ -117,6 +146,30 @@ class EventDTO {
   static List<String> _mapStringList(dynamic raw) {
     if (raw is! List) return const [];
     return raw.map((e) => e.toString()).toList();
+  }
+
+  static bool? _mapBool(dynamic raw) {
+    if (raw is bool) {
+      return raw;
+    }
+    if (raw is String) {
+      switch (raw.toLowerCase()) {
+        case 'true':
+          return true;
+        case 'false':
+          return false;
+      }
+    }
+    return null;
+  }
+
+  static bool? _inferIsSession(Map<String, dynamic> json) {
+    if (json['sessionBlockId'] != null ||
+        json['abstract'] != null ||
+        json['submissionRef'] != null) {
+      return false;
+    }
+    return null;
   }
 
   /// Helper para mapear fechas

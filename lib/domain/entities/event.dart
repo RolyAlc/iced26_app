@@ -25,9 +25,16 @@ class Event {
     this.speakers = const [],
     this.slotLabel,
     this.parentId,
+    this.sessionId,
+    this.track,
+    this.abstract_,
+    this.number,
+    this.isSession,
     this.extraRooms = const [],
     this.submissionFormats = const [],
     this.externalRef,
+    this.aboutPresentationUrl,
+    this.videoPresentationUrl,
   });
   final String id;
   final I18nStr title;
@@ -46,13 +53,23 @@ class Event {
   final List<SpeakerEntry> speakers;
   final String? slotLabel;
   final String? parentId;
+  final String? sessionId;
+  final String? track;
+  final I18nStr? abstract_;
+  final String? number;
+  final bool? isSession;
   final List<String> extraRooms;
   final List<String> submissionFormats;
   final String? externalRef;
+  final String? aboutPresentationUrl;
+  final String? videoPresentationUrl;
 }
 
 extension EventX on Event {
   /// Formato fecha y hora del evento
   String get formattedDateTime =>
       [?filterDate, ?filterTime].join(AppStrings.separator);
+
+  /// Los talks son eventos hijos de un bloque de sesión o marcados explícitamente.
+  bool get isTalk => isSession == false || sessionId != null;
 }

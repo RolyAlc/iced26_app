@@ -61,13 +61,9 @@ class ClearFavouritesItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final eventCount = ref
+    final totalCount = ref
         .watch(favoriteIdsProvider)
         .when(data: (ids) => ids.length, loading: () => 0, error: (_, _) => 0);
-    final presentationCount = ref
-        .watch(presentationFavoriteIdsProvider)
-        .when(data: (ids) => ids.length, loading: () => 0, error: (_, _) => 0);
-    final totalCount = eventCount + presentationCount;
     final hasItems = totalCount > 0;
 
     return SettingsItem(

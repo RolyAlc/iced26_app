@@ -84,9 +84,16 @@ class Events extends Table {
   TextColumn get speakersJson => text().nullable()();
   TextColumn get slotLabel => text().nullable()();
   TextColumn get parentId => text().nullable()();
+  TextColumn get sessionId => text().nullable()();
+  TextColumn get track => text().nullable()();
+  TextColumn get abstract_ => text().nullable().map(const I18nConverter())();
+  TextColumn get number => text().nullable()();
+  BoolColumn get isSession => boolean().nullable()();
   TextColumn get extraRoomsJson => text().nullable()();
   TextColumn get submissionFormatsJson => text().nullable()();
   TextColumn get externalRef => text().nullable()();
+  TextColumn get aboutPresentationUrl => text().nullable()();
+  TextColumn get videoPresentationUrl => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -105,32 +112,6 @@ class SessionBlocks extends Table {
   TextColumn get submissionFormatsJson => text().nullable()();
   TextColumn get defaultLang => text().nullable()();
   TextColumn get externalRef => text().nullable()();
-
-  @override
-  Set<Column> get primaryKey => {id};
-}
-
-/// N3 — presentation
-@DataClassName('PresentationTable')
-class Presentations extends Table {
-  TextColumn get id => text()();
-  TextColumn get type => text()();
-  TextColumn get subtype => text().nullable()();
-  TextColumn get sessionBlockId => text().nullable()();
-  TextColumn get title => text().nullable().map(const I18nConverter())();
-  TextColumn get abstract_ => text().nullable().map(const I18nConverter())();
-  TextColumn get description => text().nullable()();
-  TextColumn get submissionRef => text().nullable()();
-  IntColumn get durationMin => integer().nullable()();
-  DateTimeColumn get startDate => dateTime().nullable()();
-  DateTimeColumn get endDate => dateTime().nullable()();
-  TextColumn get speakersJson => text().nullable()();
-  TextColumn get tagsJson => text().nullable()();
-  TextColumn get track => text().nullable()();
-  TextColumn get defaultLang => text().nullable()();
-  TextColumn get externalRef => text().nullable()();
-  TextColumn get aboutPresentationUrl => text().nullable()();
-  TextColumn get videoPresentationUrl => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -202,16 +183,6 @@ class Favorites extends Table {
   Set<Column> get primaryKey => {eventId};
 }
 
-/// Favoritos de presentaciones
-@DataClassName('SavedPresentationTable')
-class SavedPresentations extends Table {
-  TextColumn get presentationId => text()();
-  DateTimeColumn get savedAt => dateTime().clientDefault(DateTime.now)();
-
-  @override
-  Set<Column> get primaryKey => {presentationId};
-}
-
 /// Notas personales del diario del usuario
 @DataClassName('DiaryNoteTable')
 class DiaryNotes extends Table {
@@ -246,14 +217,12 @@ class SubmissionTypes extends Table {
     Zones,
     Events,
     SessionBlocks,
-    Presentations,
     News,
     SocialActivities,
     AppConfigs,
     SubmissionTypes,
     Favorites,
     People,
-    SavedPresentations,
     DiaryNotes,
   ],
 )
@@ -261,13 +230,13 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 15;
+  int get schemaVersion => 16;
 
   // Dos tipos de tablas con estrategias distintas:
-  // - Configuración (Events, Zones, Presentations…): ConfigRepositoryImpl las
+  // - Configuración (Events, Zones…): ConfigRepositoryImpl las
   //   borra y recrea en cada arranque desde el JSON remoto. Sus migraciones son
   //   destructivas por diseño — no guardan datos del usuario.
-  // - Locales (DiaryNotes, Favorites, SavedPresentations): requieren migraciones
+  // - Locales (DiaryNotes, Favorites): requieren migraciones
   //   no destructivas porque el usuario no puede recuperar esos datos.
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -296,10 +265,6 @@ class AppDatabase extends _$AppDatabase {
         await customStatement('DROP TABLE IF EXISTS "events"');
         await m.createTable(events);
         await m.createTable(sessionBlocks);
-        await m.createTable(presentations);
-      }
-      if (from < 13) {
-        await m.createTable(savedPresentations);
       }
       if (from < 14) {
         await m.createTable(diaryNotes);
@@ -307,6 +272,21 @@ class AppDatabase extends _$AppDatabase {
       if (from < 15) {
         await m.addColumn(diaryNotes, diaryNotes.title);
         await m.addColumn(diaryNotes, diaryNotes.colorIndex);
+      }
+      if (from < 16) {
+        await m.addColumn(events, events.sessionId);
+        await m.addColumn(events, events.track);
+        await m.addColumn(events, events.abstract_);
+        await m.addColumn(events, events.number);
+        await m.addColumn(events, events.isSession);
+        await m.addColumn(events, events.aboutPresentationUrl);
+        await m.addColumn(events, events.videoPresentationUrl);
+        await customStatement(
+          'INSERT OR IGNORE INTO favorites (event_id, saved_at) '
+          'SELECT presentation_id, saved_at FROM saved_presentations',
+        );
+        await customStatement('DROP TABLE IF EXISTS "presentations"');
+        await customStatement('DROP TABLE IF EXISTS "saved_presentations"');
       }
     },
   );

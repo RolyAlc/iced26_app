@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
-import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
@@ -17,7 +17,7 @@ class PresentationSpeakerList extends StatelessWidget {
   });
   final List<SpeakerEntry> speakers;
   final Map<String, Person> people;
-  final Map<String, List<Presentation>> presentationsByPerson;
+  final Map<String, List<Event>> presentationsByPerson;
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
-import 'package:iced26/domain/entities/presentation.dart';
+import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/widgets/presentation_detail_ui_parts.dart';
@@ -22,61 +22,60 @@ const _kMinSuffix = 'min';
 const _kSpeakersCollapseThreshold = 3;
 
 /// Muestra el sheet de detalle de la presentación.
-void showPresentationDetail(BuildContext context, Presentation presentation) {
+void showPresentationDetail(BuildContext context, Event talk) {
   AppBottomSheet.show(
     context: context,
     title: '',
     isFullHeight: true,
-    stickyBottom: _PresentationSaveButton(presentationId: presentation.id),
-    child: _PresentationDetailContent(presentation: presentation),
+    stickyBottom: _PresentationSaveButton(eventId: talk.id),
+    child: _PresentationDetailContent(talk: talk),
   );
 }
 
 /// Contenido del sheet de detalle de la presentación.
 class _PresentationDetailContent extends StatelessWidget {
-  const _PresentationDetailContent({required this.presentation});
-  final Presentation presentation;
+  const _PresentationDetailContent({required this.talk});
+  final Event talk;
 
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
-    final title = presentation.resolvedTitle(locale);
-    final abstract_ = presentation.abstract_?.resolve(locale);
+    final title = talk.title.resolve(locale);
+    final abstract_ = talk.abstract_?.resolve(locale);
     final timeRange = DateHelper.formatTimeRange(
-      presentation.startDate,
-      presentation.endDate,
+      talk.startDate,
+      talk.endDate,
     );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _PresentationTitle(title: title),
-        const SizedBox(height: AppSpacing.sm),
-        _PresentationMetadata(presentation: presentation, timeRange: timeRange),
-        if (presentation.speakers.isNotEmpty)
-          _PresentationSpeakersCard(presentation: presentation),
-        if (abstract_ != null && abstract_.isNotEmpty)
-          _PresentationSection(
-            child: _PresentationAbstractSection(abstract_: abstract_),
-          ),
-        if (presentation.tags.isNotEmpty)
-          _PresentationSection(
-            child: Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: presentation.tags
-                  .map((tag) => PresentationChip(label: '#$tag'))
-                  .toList(),
+        children: [
+          _PresentationTitle(title: title),
+          const SizedBox(height: AppSpacing.sm),
+          _PresentationMetadata(talk: talk, timeRange: timeRange),
+          if (talk.speakers.isNotEmpty) _PresentationSpeakersCard(talk: talk),
+          if (abstract_ != null && abstract_.isNotEmpty)
+            _PresentationSection(
+              child: _PresentationAbstractSection(abstract_: abstract_),
             ),
-          ),
-        if (presentation.aboutPresentationUrl != null ||
-            presentation.videoPresentationUrl != null)
-          _PresentationSection(
-            child: PresentationLinkButtons(
-              aboutUrl: presentation.aboutPresentationUrl,
-              videoUrl: presentation.videoPresentationUrl,
+          if (talk.tags.isNotEmpty)
+            _PresentationSection(
+              child: Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                children: talk.tags
+                    .map((tag) => PresentationChip(label: '#$tag'))
+                    .toList(),
+              ),
             ),
-          ),
+          if (talk.aboutPresentationUrl != null ||
+              talk.videoPresentationUrl != null)
+            _PresentationSection(
+              child: PresentationLinkButtons(
+                aboutUrl: talk.aboutPresentationUrl,
+                videoUrl: talk.videoPresentationUrl,
+              ),
+            ),
         const SizedBox(height: AppSpacing.m),
       ],
     );
@@ -100,11 +99,8 @@ class _PresentationTitle extends StatelessWidget {
 // chips compactos para no competir visualmente con el título principal.
 // ConsumerWidget para resolver el nombre de sala via sessionBlockId → allSessionBlocksIndex → allRoomsIndex.
 class _PresentationMetadata extends ConsumerWidget {
-  const _PresentationMetadata({
-    required this.presentation,
-    required this.timeRange,
-  });
-  final Presentation presentation;
+  const _PresentationMetadata({required this.talk, required this.timeRange});
+  final Event talk;
   final String timeRange;
 
   @override
@@ -113,7 +109,7 @@ class _PresentationMetadata extends ConsumerWidget {
     final blocksIndex = ref.watch(allSessionBlocksIndexProvider).value ?? {};
     final roomsIndex = ref.watch(allRoomsIndexProvider).value ?? {};
 
-    final block = blocksIndex[presentation.sessionBlockId];
+    final block = blocksIndex[talk.sessionId];
     final roomName = block != null
         ? roomsIndex[block.roomId]?.name.resolve(locale)
         : null;
@@ -122,16 +118,16 @@ class _PresentationMetadata extends ConsumerWidget {
       spacing: AppSpacing.s,
       runSpacing: AppSpacing.xs,
       children: [
-        if (presentation.track != null)
+        if (talk.track != null)
           PresentationChip(
-            label: '$_kTrackPrefix ${presentation.track!}',
+            label: '$_kTrackPrefix ${talk.track!}',
             primary: true,
           ),
         if (timeRange.isNotEmpty)
           PresentationChip(label: timeRange, icon: AppIcons.time),
-        if (presentation.durationMin != null)
+        if (talk.durationMin != null)
           PresentationChip(
-            label: '${presentation.durationMin} $_kMinSuffix',
+            label: '${talk.durationMin} $_kMinSuffix',
             icon: AppIcons.duration,
           ),
         if (roomName != null)
@@ -196,8 +192,8 @@ class _PresentationAbstractSection extends StatelessWidget {
 /// Card semirredondeada que agrupa los ponentes — da separación visual sin divider.
 /// Se colapsa a los primeros [_kSpeakersCollapseThreshold] speakers si hay más.
 class _PresentationSpeakersCard extends StatefulWidget {
-  const _PresentationSpeakersCard({required this.presentation});
-  final Presentation presentation;
+  const _PresentationSpeakersCard({required this.talk});
+  final Event talk;
 
   @override
   State<_PresentationSpeakersCard> createState() =>
@@ -210,7 +206,7 @@ class _PresentationSpeakersCardState extends State<_PresentationSpeakersCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final speakers = widget.presentation.speakers;
+    final speakers = widget.talk.speakers;
     final needsCollapse = speakers.length > _kSpeakersCollapseThreshold;
     final visibleSpeakers = needsCollapse && !_isExpanded
         ? speakers.sublist(0, _kSpeakersCollapseThreshold)
@@ -307,20 +303,18 @@ class _SpeakersToggleFooter extends StatelessWidget {
 
 /// Botón CTA full-width al pie del sheet — acción principal de guardar.
 class _PresentationSaveButton extends ConsumerWidget {
-  const _PresentationSaveButton({required this.presentationId});
-  final String presentationId;
+  const _PresentationSaveButton({required this.eventId});
+  final String eventId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final favoriteIds = ref.watch(presentationFavoriteIdsProvider).value ?? {};
-    final isSaved = favoriteIds.contains(presentationId);
+    final favoriteIds = ref.watch(favoriteIdsProvider).value ?? {};
+    final isSaved = favoriteIds.contains(eventId);
 
     return AppButton(
       onPressed: () {
         HapticFeedback.lightImpact();
-        ref
-            .read(togglePresentationFavoriteUseCaseProvider)
-            .execute(presentationId);
+        ref.read(toggleFavoriteUseCaseProvider).execute(eventId);
       },
       icon: isSaved ? AppIcons.bookmarkOn : AppIcons.bookmarkAdd,
       label: isSaved

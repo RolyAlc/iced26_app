@@ -1,17 +1,12 @@
 import 'package:iced26/domain/repositories/favorites_repository.dart';
-import 'package:iced26/domain/repositories/presentation_favorites_repository.dart';
 
 /// Caso de uso: eliminar todos los items guardados por el usuario.
 class ClearAllSavedItemsUseCase {
-  ClearAllSavedItemsUseCase(this._eventsRepo, this._presentationsRepo);
+  ClearAllSavedItemsUseCase(this._favoritesRepo);
 
-  final FavoritesRepository _eventsRepo;
-  final PresentationFavoritesRepository _presentationsRepo;
+  final FavoritesRepository _favoritesRepo;
 
   Future<void> execute() async {
-    await Future.wait([
-      _eventsRepo.clearAllFavorites(),
-      _presentationsRepo.clearAllFavorites(),
-    ]);
+    await _favoritesRepo.clearAllFavorites();
   }
 }

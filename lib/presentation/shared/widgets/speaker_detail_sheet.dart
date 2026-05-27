@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
-import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
@@ -11,21 +11,21 @@ import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 void showSpeakerDetail(
   BuildContext context,
   Person person,
-  List<Presentation> presentations,
+  List<Event> talks,
 ) {
   final locale = Localizations.localeOf(context).languageCode;
   AppBottomSheet.show(
     context: context,
     title: person.name.resolve(locale),
-    child: _SpeakerDetailBody(person: person, presentations: presentations),
+    child: _SpeakerDetailBody(person: person, talks: talks),
   );
 }
 
 class _SpeakerDetailBody extends StatelessWidget {
-  const _SpeakerDetailBody({required this.person, required this.presentations});
+  const _SpeakerDetailBody({required this.person, required this.talks});
 
   final Person person;
-  final List<Presentation> presentations;
+  final List<Event> talks;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +35,7 @@ class _SpeakerDetailBody extends StatelessWidget {
         _SpeakerHeader(person: person),
         if (person.bio != null && person.bio!.isNotEmpty)
           _SpeakerBio(bio: person.bio!),
-        if (presentations.isNotEmpty)
-          _SpeakerPresentationList(presentations: presentations),
+        if (talks.isNotEmpty) _SpeakerPresentationList(talks: talks),
         const SizedBox(height: AppSpacing.l),
       ],
     );
@@ -117,9 +116,9 @@ class _SpeakerBio extends StatelessWidget {
 
 /// Lista de presentaciones del ponente — cada fila navega al detalle completo.
 class _SpeakerPresentationList extends StatelessWidget {
-  const _SpeakerPresentationList({required this.presentations});
+  const _SpeakerPresentationList({required this.talks});
 
-  final List<Presentation> presentations;
+  final List<Event> talks;
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +134,7 @@ class _SpeakerPresentationList extends StatelessWidget {
             style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: AppSpacing.s),
-          ...presentations.map((p) => _PresentationRow(presentation: p)),
+          ...talks.map((talk) => _PresentationRow(talk: talk)),
         ],
       ),
     );
@@ -144,21 +143,20 @@ class _SpeakerPresentationList extends StatelessWidget {
 
 /// Fila tappable — abre el sheet de detalle de presentación sobre el actual.
 class _PresentationRow extends StatelessWidget {
-  const _PresentationRow({required this.presentation});
+  const _PresentationRow({required this.talk});
 
-  final Presentation presentation;
+  final Event talk;
 
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final title =
-        presentation.title?.resolve(locale) ?? presentation.externalRef ?? '—';
+    final title = talk.title.resolve(locale);
 
     return InkWell(
       onTap: () {
-        showPresentationDetail(context, presentation);
+        showPresentationDetail(context, talk);
       },
       borderRadius: BorderRadius.circular(AppRadius.s),
       child: Padding(

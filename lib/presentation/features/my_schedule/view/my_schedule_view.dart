@@ -6,7 +6,6 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/features/my_schedule/view/widgets/saved_presentation_card.dart';
 import 'package:iced26/presentation/features/my_schedule/viewmodel/models/my_schedule_display_item.dart';
 import 'package:iced26/presentation/features/my_schedule/viewmodel/my_schedule_viewmodel.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
@@ -107,9 +106,6 @@ class MyScheduleContent extends StatelessWidget {
   static Widget _buildScheduleItem(MyScheduleItem item) {
     return switch (item) {
       SavedEventItem(:final event) => EventCard(event: event),
-      SavedPresentationItem(:final presentation) => SavedPresentationCard(
-        presentation: presentation,
-      ),
     };
   }
 

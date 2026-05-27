@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/core/services/logger/logger.dart';
+import 'package:iced26/data/mappers/app_data_mapper.dart';
+import 'package:iced26/data/sources/app_data_source.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/data/sources/conference_data_seeder.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
+import 'package:iced26/domain/entities/app_data.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
 
@@ -13,10 +16,11 @@ import 'package:iced26/domain/repositories/config_repository.dart';
 /// Decide cuándo sincronizar datos y gestiona la configuración persistida.
 /// La lógica de cómo insertar datos vive en [ConferenceDataSeeder].
 class ConfigRepositoryImpl implements ConfigRepository {
-  ConfigRepositoryImpl(this._db, this._seeder);
+  ConfigRepositoryImpl(this._db, this._seeder, this._source);
 
   final AppDatabase _db;
   final ConferenceDataSeeder _seeder;
+  final AppDataSource _source;
 
   /// Sincroniza los datos del congreso solo si la edición cambió.
   ///
@@ -26,7 +30,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   @override
   Future<Result<void>> initializeDataIfNeeded() async {
     try {
-      final appData = await _seeder.loadAppData();
+      final appData = await _loadAppData();
       final storedEventId = await _loadStoredEventId();
       final newEventId = appData.metadata.eventId;
 
@@ -88,13 +92,16 @@ class ConfigRepositoryImpl implements ConfigRepository {
     return row?.value;
   }
 
-  /// Elimina favoritos y presentaciones guardadas al detectar nueva edición.
+  Future<AppData> _loadAppData() async {
+    final jsonString = await _source.loadAppDataJson();
+    final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+    return AppDataMapper.fromMap(jsonMap);
+  }
+
+  /// Elimina favoritos al detectar nueva edición.
   /// Las notas del diario NO se eliminan — son contenido personal del usuario.
   Future<void> _clearUserReferentialData() async {
     await _db.delete(_db.favorites).go();
-    await _db.delete(_db.savedPresentations).go();
-    AppLogger.i(
-      'Favoritos y presentaciones guardadas eliminados (nueva edición).',
-    );
+    AppLogger.i('Favoritos eliminados (nueva edición).');
   }
 }

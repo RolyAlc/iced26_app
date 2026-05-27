@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
-import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
@@ -20,15 +20,15 @@ const _kActionButtonMinSize = 36.0;
 class SlotPresentationTile extends ConsumerWidget {
   const SlotPresentationTile({
     super.key,
-    required this.presentation,
+    required this.talk,
     required this.peopleIndex,
   });
 
-  final Presentation presentation;
+  final Event talk;
   final Map<String, Person> peopleIndex;
 
   String? _speakerNames(String locale) {
-    final names = presentation.speakers
+    final names = talk.speakers
         .map((s) => peopleIndex[s.personId]?.name.resolve(locale))
         .whereType<String>()
         .toList();
@@ -78,7 +78,7 @@ class SlotPresentationTile extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: AppSpacing.s),
-          _TileActions(presentationId: presentation.id, isFavorite: isFavorite),
+          _TileActions(eventId: talk.id, isFavorite: isFavorite),
         ],
       ),
     );
@@ -88,18 +88,18 @@ class SlotPresentationTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final locale = Localizations.localeOf(context).languageCode;
-    final title = presentation.resolvedTitle(locale);
+    final title = talk.title.resolve(locale);
     final speakerNames = _speakerNames(locale);
     final isFavorite = ref.watch(
-      presentationFavoriteIdsProvider.select(
-        (ids) => ids.value?.contains(presentation.id) ?? false,
+      favoriteIdsProvider.select(
+        (ids) => ids.value?.contains(talk.id) ?? false,
       ),
     );
 
     return Column(
       children: [
         InkWell(
-          onTap: () => showPresentationDetail(context, presentation),
+          onTap: () => showPresentationDetail(context, talk),
           child: _buildTileContent(theme, title, speakerNames, isFavorite),
         ),
         Divider(
@@ -114,9 +114,9 @@ class SlotPresentationTile extends ConsumerWidget {
 /// Columna de acciones del tile: bookmark arriba, chevron abajo.
 // ConsumerWidget (no StatelessWidget) porque necesita ref.read en el handler del botón.
 class _TileActions extends ConsumerWidget {
-  const _TileActions({required this.presentationId, required this.isFavorite});
+  const _TileActions({required this.eventId, required this.isFavorite});
 
-  final String presentationId;
+  final String eventId;
   final bool isFavorite;
 
   @override
@@ -141,9 +141,7 @@ class _TileActions extends ConsumerWidget {
           ),
           onPressed: () {
             HapticFeedback.lightImpact();
-            ref
-                .read(togglePresentationFavoriteUseCaseProvider)
-                .execute(presentationId);
+            ref.read(toggleFavoriteUseCaseProvider).execute(eventId);
           },
           visualDensity: VisualDensity.compact,
           padding: EdgeInsets.zero,

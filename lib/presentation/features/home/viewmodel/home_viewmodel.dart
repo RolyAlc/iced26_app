@@ -8,7 +8,6 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/person.dart';
-import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
@@ -137,10 +136,10 @@ List<SessionUIModel> _buildSpeakerSessions({
 KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
   required Person speaker,
   required List<Event> keynoteEvents,
-  required List<Presentation> keynotePresentations,
+  required List<Event> keynoteTalks,
 }) {
-  final presentation = keynotePresentations.firstWhereOrNull(
-    (p) => p.speakers.any((s) => s.personId == speaker.id),
+  final talk = keynoteTalks.firstWhereOrNull(
+    (event) => event.speakers.any((s) => s.personId == speaker.id),
   );
 
   return KeynoteSpeakerUIModel(
@@ -152,13 +151,13 @@ KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
       speaker: speaker,
       keynoteEvents: keynoteEvents,
     ),
-    presentation: presentation,
+    talk: talk,
   );
 }
 
 /// Construye la lista de [KeynoteSpeakerUIModel] para la pantalla Home.
 List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
-  required List<Presentation> keynotePresentations,
+  required List<Event> keynoteTalks,
   required List<Event> allEvents,
   required List<Person> allPeople,
 }) {
@@ -167,18 +166,18 @@ List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
       .where((e) => e.type == EventType.keynote)
       .toList();
 
-  final speakerIds = keynotePresentations
-      .expand((p) => p.speakers.map((s) => s.personId))
+  final speakerIds = keynoteTalks
+      .expand((event) => event.speakers.map((s) => s.personId))
       .toSet();
 
   final speakers = speakerIds.map((id) => peopleById[id]).whereType<Person>();
 
   return speakers.map((speaker) {
-    return _buildKeynoteSpeakerModel(
-      speaker: speaker,
-      keynoteEvents: keynoteEvents,
-      keynotePresentations: keynotePresentations,
-    );
+      return _buildKeynoteSpeakerModel(
+        speaker: speaker,
+        keynoteEvents: keynoteEvents,
+        keynoteTalks: keynoteTalks,
+      );
   }).toList();
 }
 
@@ -219,7 +218,7 @@ class HomeViewModel extends _$HomeViewModel {
         peopleById: peopleById,
       ),
       keynoteSpeakers: _buildKeynoteSpeakers(
-        keynotePresentations: data.keynotePresentations,
+        keynoteTalks: data.keynoteTalks,
         allEvents: data.allEvents,
         allPeople: data.allPeople,
       ),

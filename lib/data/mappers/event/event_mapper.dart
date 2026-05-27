@@ -31,11 +31,18 @@ abstract final class EventMapper {
       speakers: JsonParsers.parseSpeakers(data.speakersJson),
       slotLabel: data.slotLabel,
       parentId: data.parentId,
+      sessionId: data.sessionId,
+      track: data.track,
+      abstract_: data.abstract_,
+      number: data.number,
+      isSession: data.isSession,
       extraRooms: JsonParsers.parseStringList(data.extraRoomsJson),
       submissionFormats: JsonParsers.parseStringList(
         data.submissionFormatsJson,
       ),
       externalRef: data.externalRef,
+      aboutPresentationUrl: data.aboutPresentationUrl,
+      videoPresentationUrl: data.videoPresentationUrl,
     );
   }
 }

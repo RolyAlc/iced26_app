@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/domain/entities/presentation.dart';
+import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
@@ -44,8 +44,7 @@ class _SpeakerDetailContent extends StatelessWidget {
         if (speaker.institution != null)
           _SpeakerInstitution(institution: speaker.institution!),
         _SpeakerSessions(events: speaker.events),
-        if (speaker.presentation != null)
-          _PresentationRow(presentation: speaker.presentation!),
+        if (speaker.talk != null) _PresentationRow(talk: speaker.talk!),
       ],
     );
   }
@@ -144,9 +143,9 @@ class _SpeakerSessions extends StatelessWidget {
 
 /// Row de una presentación dentro del detalle de un keynote speaker.
 class _PresentationRow extends StatelessWidget {
-  const _PresentationRow({required this.presentation});
+  const _PresentationRow({required this.talk});
 
-  final Presentation presentation;
+  final Event talk;
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +165,7 @@ class _PresentationRow extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.s),
           InkWell(
-            onTap: () => showPresentationDetail(context, presentation),
+            onTap: () => showPresentationDetail(context, talk),
             borderRadius: BorderRadius.circular(AppRadius.s),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
@@ -180,7 +179,7 @@ class _PresentationRow extends StatelessWidget {
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Text(
-                      presentation.resolvedTitle(locale),
+                      talk.title.resolve(locale),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),

@@ -4,7 +4,6 @@ import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/person.dart';
-import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
@@ -21,7 +20,7 @@ typedef HomeDataResult = ({
   List<Room> allRooms,
   List<Zone> allZones,
   List<Person> allPeople,
-  List<Presentation> keynotePresentations,
+  List<Event> keynoteTalks,
   List<NewsItem> news,
   List<SocialActivity> socialActivities,
   List<SubmissionType> subTypes,
@@ -41,7 +40,7 @@ class GetHomeDataUseCase {
     final roomsF = _scheduleRepo.getAllRooms();
     final zonesF = _scheduleRepo.getAllZones();
     final peopleF = _scheduleRepo.getAllPeople();
-    final keynotesF = _scheduleRepo.getPresentationsByType(_kKeynoteType);
+    final keynotesF = _scheduleRepo.getEventsByType(_kKeynoteType);
     final newsF = _homeRepo.getAllNews();
     final socialsF = _homeRepo.getAllSocialActivities();
     final subTypesF = _homeRepo.getAllSubmissionTypes();
@@ -83,7 +82,7 @@ class GetHomeDataUseCase {
       allRooms: (rooms as Success<List<Room>>).data,
       allZones: (zones as Success<List<Zone>>).data,
       allPeople: (people as Success<List<Person>>).data,
-      keynotePresentations: (keynotes as Success<List<Presentation>>).data,
+      keynoteTalks: (keynotes as Success<List<Event>>).data,
       news: (news as Success<List<NewsItem>>).data,
       socialActivities: (socials as Success<List<SocialActivity>>).data,
       subTypes: (subTypes as Success<List<SubmissionType>>).data,

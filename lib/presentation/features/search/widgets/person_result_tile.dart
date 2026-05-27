@@ -22,7 +22,7 @@ class PersonResultTile extends ConsumerWidget {
     final locale = Localizations.localeOf(context).languageCode;
     final name = person.name.resolve(locale);
     final colors = Theme.of(context).colorScheme;
-    final presentations =
+    final talks =
         ref.watch(presentationsByPersonIdProvider).value?[person.id] ?? [];
     final query = ref.watch(searchProvider.select((s) => s.query));
 
@@ -40,9 +40,9 @@ class PersonResultTile extends ConsumerWidget {
               style: TextStyle(color: colors.onSurfaceVariant),
             )
           : null,
-      trailing: presentations.isNotEmpty
+      trailing: talks.isNotEmpty
           ? Text(
-              AppStrings.talkCountLabel(presentations.length),
+              AppStrings.talkCountLabel(talks.length),
               style: Theme.of(
                 context,
               ).textTheme.labelSmall?.copyWith(color: colors.onSurfaceVariant),
@@ -50,7 +50,7 @@ class PersonResultTile extends ConsumerWidget {
           : null,
       onTap: () {
         onTap?.call();
-        showSpeakerDetail(context, person, presentations);
+        showSpeakerDetail(context, person, talks);
       },
     );
   }

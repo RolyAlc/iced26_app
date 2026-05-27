@@ -23,7 +23,6 @@ class AppData {
         days: [],
         events: [],
         sessionBlocks: [],
-        presentations: [],
         people: [],
         rooms: [],
         zones: [],

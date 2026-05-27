@@ -8,7 +8,6 @@ import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/person.dart';
-import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
 import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
@@ -243,7 +242,7 @@ class _SpeakerSection extends StatelessWidget {
 
   final List<SpeakerEntry> speakers;
   final Map<String, Person> people;
-  final Map<String, List<Presentation>> presentationsByPerson;
+  final Map<String, List<Event>> presentationsByPerson;
 
   @override
   Widget build(BuildContext context) {
@@ -282,7 +281,7 @@ class _SpeakerRow extends StatelessWidget {
 
   final SpeakerEntry entry;
   final Person? person;
-  final List<Presentation> presentations;
+  final List<Event> presentations;
 
   @override
   Widget build(BuildContext context) {

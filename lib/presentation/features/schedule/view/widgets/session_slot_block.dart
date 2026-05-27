@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/person.dart';
-import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
@@ -91,7 +91,7 @@ class SessionSlotBlock extends StatelessWidget {
   }
 }
 
-/// Lista de presentaciones agrupadas por bloque.
+  /// Lista de talks agrupados por bloque.
 class _SlotPresentationList extends ConsumerWidget {
   _SlotPresentationList({required this.blocks})
     : blockIds = [for (final b in blocks) b.id];
@@ -101,14 +101,14 @@ class _SlotPresentationList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncPresentations = ref.watch(
+    final asyncTalks = ref.watch(
       presentationsForSlotProvider(blockIds),
     );
     final peopleIndex = ref.watch(allPeopleIndexProvider).value ?? {};
     final roomsIndex = ref.watch(allRoomsIndexProvider).value ?? {};
     final locale = Localizations.localeOf(context).languageCode;
 
-    return asyncPresentations.when(
+    return asyncTalks.when(
       loading: () => const Padding(
         padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
         child: Center(child: CircularProgressIndicator()),
@@ -120,7 +120,7 @@ class _SlotPresentationList extends ConsumerWidget {
           for (final (index, block) in blocks.indexed)
             _BlockSection(
               block: block,
-              presentations: grouped[block.id] ?? [],
+              talks: grouped[block.id] ?? [],
               peopleIndex: peopleIndex,
               isFirstBlock: index == 0,
               // Fallback al roomId raw si el nombre no está en el índice.
@@ -134,18 +134,18 @@ class _SlotPresentationList extends ConsumerWidget {
   }
 }
 
-/// Sección que muestra las presentaciones de un bloque.
+/// Sección que muestra los talks de un bloque.
 class _BlockSection extends StatefulWidget {
   const _BlockSection({
     required this.block,
-    required this.presentations,
+    required this.talks,
     required this.peopleIndex,
     required this.isFirstBlock,
     this.roomName,
   });
 
   final SessionBlock block;
-  final List<Presentation> presentations;
+  final List<Event> talks;
   final Map<String, Person> peopleIndex;
   final bool isFirstBlock;
   final String? roomName;
@@ -178,7 +178,7 @@ class _BlockSectionState extends State<_BlockSection> {
       widget.block.startDate,
       widget.block.endDate,
     );
-    final talkCount = widget.presentations.length;
+    final talkCount = widget.talks.length;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.s),
@@ -248,7 +248,7 @@ class _BlockSectionState extends State<_BlockSection> {
 
   List<Widget> _buildPresentationItems(ThemeData theme, int talkCount) {
     return [
-      if (widget.presentations.isEmpty)
+      if (widget.talks.isEmpty)
         Padding(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
           child: Text(
@@ -259,9 +259,9 @@ class _BlockSectionState extends State<_BlockSection> {
           ),
         )
       else
-        for (final p in widget.presentations)
+        for (final talk in widget.talks)
           SlotPresentationTile(
-            presentation: p,
+            talk: talk,
             peopleIndex: widget.peopleIndex,
           ),
       if (talkCount > _kCollapseThreshold)

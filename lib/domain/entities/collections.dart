@@ -2,7 +2,6 @@ import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/person.dart';
-import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
@@ -15,7 +14,6 @@ class Collections {
     required this.days,
     required this.events,
     required this.sessionBlocks,
-    required this.presentations,
     required this.people,
     required this.rooms,
     required this.zones,
@@ -26,7 +24,6 @@ class Collections {
   final List<Day> days;
   final List<Event> events;
   final List<SessionBlock> sessionBlocks;
-  final List<Presentation> presentations;
   final List<Person> people;
   final List<Room> rooms;
   final List<Zone> zones;
