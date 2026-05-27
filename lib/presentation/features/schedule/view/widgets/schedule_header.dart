@@ -12,6 +12,8 @@ import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
 const double _kFilterIconSize = 12.0;
 const double _kTabIndicatorHeight = 3.0;
+const double _kDayCircleSize = 40.0;
+const double _kMonthIconSize = 16.0;
 
 /// Header del schedule. Recibe [topTab] del padre para evitar un watch duplicado.
 class ScheduleHeader extends ConsumerWidget {
@@ -31,7 +33,6 @@ class ScheduleHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
-    final isFiltered = selectedCategory != null;
     final horizontal = AppLayout.horizontalPadding(context);
 
     return Column(
@@ -52,12 +53,11 @@ class ScheduleHeader extends ConsumerWidget {
           ),
         ),
         AnimatedSize(
-          duration: const Duration(milliseconds: 200),
+          duration: AppDuration.fast,
           curve: Curves.easeInOut,
           child: topTab == ScheduleTab.mySchedule
               ? const SizedBox.shrink()
               : _ScheduleSubHeader(
-                  isFiltered: isFiltered,
                   sections: sections,
                   categories: categories,
                   tabController: tabController,
@@ -163,7 +163,6 @@ class _ScheduleTab extends StatelessWidget {
 /// Contenido bajo los tabs: selector de día y filtro de categoría.
 class _ScheduleSubHeader extends StatelessWidget {
   const _ScheduleSubHeader({
-    required this.isFiltered,
     required this.sections,
     required this.categories,
     required this.tabController,
@@ -172,7 +171,6 @@ class _ScheduleSubHeader extends StatelessWidget {
     required this.onDaySelected,
   });
 
-  final bool isFiltered;
   final List<ScheduleDaySection> sections;
   final List<EventType> categories;
   final TabController tabController;
@@ -182,6 +180,7 @@ class _ScheduleSubHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final category = selectedCategory;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,8 +191,8 @@ class _ScheduleSubHeader extends StatelessWidget {
             padding: EdgeInsets.symmetric(
               horizontal: AppLayout.horizontalPadding(context),
             ),
-            child: isFiltered
-                ? _ViewingAllDaysLabel(category: selectedCategory!)
+            child: category != null
+                ? _ViewingAllDaysLabel(category: category)
                 : _DayTabBar(
                     tabController: tabController,
                     sections: sections,
@@ -242,7 +241,10 @@ class _ViewingAllDaysLabel extends StatelessWidget {
   }
 }
 
-/// Fila de tabs de días.
+/// Strip de días envuelto en una superficie tonal.
+///
+/// [Material] en lugar de [AppCard] para que los [InkWell] de cada [_DayTab]
+/// puedan pintar su ripple correctamente sobre la misma superficie.
 class _DayTabBar extends StatelessWidget {
   const _DayTabBar({
     required this.tabController,
@@ -256,25 +258,160 @@ class _DayTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final firstDate = sections.isNotEmpty
+        ? DateTime.tryParse(sections.first.date)
+        : null;
+    final monthLabel = firstDate != null
+        ? DateHelper.monthFull(firstDate)
+        : '';
+
+    return Material(
+      color: colors.surfaceContainerHigh,
+      borderRadius: BorderRadius.circular(AppRadius.m),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.m,
+          AppSpacing.s,
+          AppSpacing.m,
+          AppSpacing.s,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  AppIcons.calendarOutline,
+                  size: _kMonthIconSize,
+                  color: colors.onSurfaceVariant,
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                Text(
+                  monthLabel,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: colors.onSurfaceVariant,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: AppTextStyle.labelLetterSpacing,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            AnimatedBuilder(
+              animation: tabController,
+              builder: (context, _) {
+                return Row(
+                  children: [
+                    for (int i = 0; i < sections.length; i++)
+                      Expanded(
+                        child: _DayTab(
+                          date: DateTime.tryParse(sections[i].date) ??
+                              DateTime.now(),
+                          isSelected: tabController.index == i,
+                          onTap: () {
+                            tabController.animateTo(i);
+                            onDaySelected(i);
+                          },
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Tab individual de día: weekday, número y marcadores de selección/hoy.
+///
+/// Tonal Glow (primaryContainer) cuando el día es hoy — independiente de si
+/// está seleccionado. Underline animado cuando está seleccionado — igual que
+/// [_ScheduleTab] para mantener consistencia visual en toda la pantalla.
+class _DayTab extends StatelessWidget {
+  const _DayTab({
+    required this.date,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final DateTime date;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    return TabBar(
-      controller: tabController,
-      onTap: onDaySelected,
-      isScrollable: true,
-      tabAlignment: TabAlignment.start,
-      padding: EdgeInsets.zero,
-      labelStyle: theme.textTheme.bodyMedium?.copyWith(
-        fontWeight: FontWeight.w900,
-        color: colors.primary,
+    final isToday = DateHelper.isSameDay(date, DateTime.now());
+    final labelColor = isSelected ? colors.primary : colors.onSurfaceVariant;
+
+    return AnimatedContainer(
+      duration: AppDuration.fast,
+      curve: Curves.easeInOut,
+      decoration: BoxDecoration(
+        color: isSelected
+            ? colors.secondaryContainer
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(AppRadius.s),
       ),
-      unselectedLabelStyle: theme.textTheme.bodyMedium?.copyWith(
-        fontWeight: FontWeight.normal,
-        color: colors.onSurfaceVariant,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.s),
+        splashColor: colors.onSecondaryContainer.withValues(alpha: 0.12),
+        highlightColor: colors.onSecondaryContainer.withValues(alpha: 0.08),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: AppSpacing.s,
+            horizontal: AppSpacing.xs,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                DateHelper.weekdayShort(date),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: labelColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              AnimatedContainer(
+                duration: AppDuration.fast,
+                curve: Curves.easeInOut,
+                width: _kDayCircleSize,
+                height: _kDayCircleSize,
+                decoration: BoxDecoration(
+                  color: isToday
+                      ? colors.primaryContainer
+                      : Colors.transparent,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '${date.day}',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isToday
+                        ? (isSelected
+                            ? colors.primary
+                            : colors.onPrimaryContainer)
+                        : labelColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      tabs: sections
-          .map((s) => Tab(text: DateHelper.formatShortDate(s.date)))
-          .toList(),
     );
   }
 }

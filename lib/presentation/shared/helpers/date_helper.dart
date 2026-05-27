@@ -54,6 +54,16 @@ class DateHelper {
     return '${date.day} ${_months[date.month - 1]}';
   }
 
+  // "Jun", "Jul"… — mes corto.
+  static String monthShort(DateTime date) {
+    return _months[date.month - 1];
+  }
+
+  // "June", "July"… — mes completo.
+  static String monthFull(DateTime date) {
+    return _fullMonths[date.month - 1];
+  }
+
   // "Mon", "Tue"… — nombre corto del día de la semana.
   static String weekdayShort(DateTime date) {
     return _weekdays[date.weekday - 1];
