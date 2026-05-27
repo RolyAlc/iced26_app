@@ -10,19 +10,58 @@
 include: package:flutter_lints/flutter.yaml
 
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # --- Tipos y seguridad ---
+    always_declare_return_types: true
+    # Obliga a castear antes de llamar métodos sobre dynamic.
+    avoid_dynamic_calls: true
+    unnecessary_this: true
+    use_super_parameters: true
+    camel_case_types: true
+
+    # --- Variables y campos ---
+    prefer_final_locals: true
+    prefer_final_fields: true
+    avoid_redundant_argument_values: true
+    # `() => foo()` > `foo` directamente cuando es equivalente.
+    unnecessary_lambdas: true
+
+    # --- Estilo y formato ---
+    # Comillas simples salvo que el string contenga una comilla simple.
+    prefer_single_quotes: true
+    # Orden de imports: dart: > package: > relativas.
+    directives_ordering: true
+    # Coma trailing en multilínea — produce diffs más limpios en git.
+    require_trailing_commas: true
+    avoid_empty_else: true
+    sort_constructors_first: true
+
+    # --- Widgets: usar el widget más específico ---
+    # Container solo para decoración > DecoratedBox.
+    use_decorated_box: true
+    # Container sin propiedades > eliminarlo.
+    avoid_unnecessary_containers: true
+    # Container solo para tamaño > SizedBox.
+    sized_box_for_whitespace: true
+    prefer_const_literals_to_create_immutables: true
+    # Flutter reutiliza widgets const entre rebuilds — mejora rendimiento.
+    prefer_const_constructors: true
+
+    # --- Design system ---
+    # Fuerza Color(0xFFxxxxxx) con alpha explícito. Complementa los tokens
+    # de design_tokens.dart pero NO impide Colors.red — para eso usar
+    # avoid_hardcoded_colors de very_good_analysis.
+    use_full_hex_values_for_flutter_colors: true
+
+    # --- Seguridad en producción ---
+    # Usar AppLogger en su lugar.
+    avoid_print: true
+
+    # --- Rendimiento ---
+    # Concatenaciones en bucles > StringBuffer (evita O(n²) de memoria).
+    use_string_buffers: true
+    # Future ignorado silenciosamente > bug difícil de rastrear.
+    unawaited_futures: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
