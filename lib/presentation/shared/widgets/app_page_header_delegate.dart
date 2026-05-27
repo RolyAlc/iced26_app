@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 
+// Ventana del crossfade entre expanded y collapsed header [0 -> 1].
+// Fuera de [_kFadeStart, _kFadeEnd] solo un header tiene opacity > 0.
+const double _kFadeStart = 0.45;
+const double _kFadeEnd = 0.55;
+const double _kFadeRange = _kFadeEnd - _kFadeStart;
+
 /// Es un widget para el [flexibleSpace] de [SliverAppBar] en [AppPage]
 /// que se encarga de manejar la animación de expansión y contracción.
 class AppPageFlexibleSpace extends StatelessWidget {
@@ -41,7 +47,7 @@ class AppPageFlexibleSpace extends StatelessWidget {
   }
 
   // Animación de crossfade entre expandedChild y collapsedChild
-  // en ventana estrecha [0.45→0.55] del recorrido total para evitar
+  // en ventana estrecha [0.45 -> 0.55] del recorrido total para evitar
   // que ambos headers sean visibles a la vez durante el scroll.
   // Fuera de esa ventana, solo un header tiene opacity > 0.
   Widget _buildAnimated(double progress) {
@@ -65,14 +71,14 @@ class AppPageFlexibleSpace extends StatelessWidget {
     );
   }
 
-  // Visible completo [0→0.45], fade-out rápido [0.45→0.55], invisible [0.55→1].
+  // Visible completo [0 -> _kFadeStart], fade-out rápido, invisible [_kFadeEnd -> 1].
   double _expandedOpacity(double progress) {
-    return ((0.55 - progress) / 0.1).clamp(0.0, 1.0);
+    return ((_kFadeEnd - progress) / _kFadeRange).clamp(0.0, 1.0);
   }
 
-  // Invisible [0→0.45], fade-in rápido [0.45→0.55], visible completo [0.55→1].
+  // Invisible [0 -> _kFadeStart], fade-in rápido, visible completo [_kFadeEnd -> 1].
   double _collapsedOpacity(double progress) {
-    return ((progress - 0.45) / 0.1).clamp(0.0, 1.0);
+    return ((progress - _kFadeStart) / _kFadeRange).clamp(0.0, 1.0);
   }
 
   // OverflowBox permite que el header crezca más allá del maxExtent del SliverAppBar
