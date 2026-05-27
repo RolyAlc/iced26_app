@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/data/repositories/config_repository_impl.dart';
 import 'package:iced26/data/repositories/diary_repository_impl.dart';
 import 'package:iced26/data/repositories/favorites_repository_impl.dart';
@@ -8,6 +10,8 @@ import 'package:iced26/data/repositories/schedule_repository_impl.dart';
 import 'package:iced26/data/sources/app_data_source.dart';
 import 'package:iced26/data/sources/conference_data_seeder.dart';
 import 'package:iced26/data/sources/local/json/local_json_service.dart';
+import 'package:iced26/data/sources/remote/portal_api_client.dart';
+import 'package:iced26/data/sources/remote/portal_data_source.dart';
 import 'package:iced26/di/core_providers.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
 import 'package:iced26/domain/repositories/diary_repository.dart';
@@ -39,9 +43,46 @@ HomeRepository homeRepository(Ref ref) {
 @riverpod
 ConfigRepository configRepository(Ref ref) {
   final db = ref.watch(appDatabaseProvider);
-  final AppDataSource source = const LocalJsonService();
+  final localSource = ref.watch(localAppDataSourceProvider);
+  final portalSource = ref.watch(portalAppDataSourceProvider);
+  final portalClient = ref.watch(portalApiClientProvider);
   final seeder = ConferenceDataSeeder(db);
-  return ConfigRepositoryImpl(db, seeder, source);
+  return ConfigRepositoryImpl(
+    db,
+    seeder,
+    localSource,
+    portalSource,
+    portalClient,
+  );
+}
+
+@riverpod
+Dio dio(Ref ref) {
+  return Dio(
+    BaseOptions(
+      baseUrl: AppConfig.portalApiBaseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      responseType: ResponseType.json,
+      headers: const {'Accept': 'application/json'},
+    ),
+  );
+}
+
+@riverpod
+PortalApiClient portalApiClient(Ref ref) {
+  final dio = ref.watch(dioProvider);
+  return PortalApiClient(dio);
+}
+
+@riverpod
+AppDataSource localAppDataSource(Ref ref) {
+  return const LocalJsonService();
+}
+
+@riverpod
+AppDataSource portalAppDataSource(Ref ref) {
+  final client = ref.watch(portalApiClientProvider);
+  return PortalDataSource(client);
 }
 
 /// Provee el repositorio de favoritos.

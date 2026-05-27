@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'dart:convert';
 
 import 'package:iced26/core/errors/result.dart';
@@ -6,8 +7,10 @@ import 'package:iced26/data/mappers/app_data_mapper.dart';
 import 'package:iced26/data/sources/app_data_source.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/data/sources/conference_data_seeder.dart';
+import 'package:iced26/data/sources/remote/portal_api_client.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/app_data.dart';
+import 'package:iced26/domain/entities/collections.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
 
@@ -16,47 +19,78 @@ import 'package:iced26/domain/repositories/config_repository.dart';
 /// Decide cuándo sincronizar datos y gestiona la configuración persistida.
 /// La lógica de cómo insertar datos vive en [ConferenceDataSeeder].
 class ConfigRepositoryImpl implements ConfigRepository {
-  ConfigRepositoryImpl(this._db, this._seeder, this._source);
+  ConfigRepositoryImpl(
+    this._db,
+    this._seeder,
+    this._localSource,
+    this._portalSource,
+    this._portalClient,
+  );
 
   final AppDatabase _db;
   final ConferenceDataSeeder _seeder;
-  final AppDataSource _source;
+  final AppDataSource _localSource;
+  final AppDataSource _portalSource;
+  final PortalApiClient _portalClient;
 
   /// Sincroniza los datos del congreso solo si la edición cambió.
   ///
-  /// - Misma edición: no hace nada (arranque rápido).
-  /// - Nueva edición: limpia favoritos y presentaciones guardadas, reinsertta todo.
-  /// - Primera instalación (sin edición guardada): inserta sin limpiar.
+  /// - Sin datos locales: si puede, mezcla el schedule remoto; si no, siembra asset.
+  /// - Datos locales + portal más nuevo: re-siembra solo tablas de conferencia.
+  /// - Portal igual/caído: deja la caché local intacta.
   @override
   Future<Result<void>> initializeDataIfNeeded() async {
     try {
-      final appData = await _loadAppData();
-      final storedEventId = await _loadStoredEventId();
-      final newEventId = appData.metadata.eventId;
+      final localAppData = await _loadLocalAppData();
+      final hasLocalConferenceData = await _hasSeededConferenceData();
+      final storedLastSyncAt = await _loadConfigValue(_lastSyncAtKey);
+      final remoteLastUpdated = await _tryFetchRemoteLastUpdated();
 
-      if (storedEventId == newEventId) {
-        AppLogger.i(
-          'Edición sin cambios ($newEventId) — sincronización omitida.',
+      if (!hasLocalConferenceData) {
+        final appData = await _loadBootstrapAppData(
+          localAppData: localAppData,
+          remoteLastUpdated: remoteLastUpdated,
+        );
+
+        await _replaceConferenceData(appData, lastSyncAt: remoteLastUpdated);
+        AppLogger.i('Conference data seeded for first launch.');
+        return const Success(null);
+      }
+
+      if (!_isRemoteNewer(remoteLastUpdated, storedLastSyncAt)) {
+        AppLogger.i('Portal schedule unchanged — sync skipped.');
+        return const Success(null);
+      }
+
+      final hybridAppData = await _tryLoadHybridAppData(localAppData);
+      if (hybridAppData == null) {
+        AppLogger.w(
+          'Remote schedule unavailable — keeping local conference cache.',
         );
         return const Success(null);
       }
 
-      AppLogger.i(
-        'Nueva edición detectada: $storedEventId → $newEventId. Sincronizando...',
+      await _replaceConferenceData(
+        hybridAppData,
+        lastSyncAt: remoteLastUpdated,
       );
-
-      await _db.transaction(() async {
-        if (storedEventId != null) {
-          await _clearUserReferentialData();
-        }
-        await _seeder.reset();
-        await _seeder.seed(appData);
-      });
-
-      AppLogger.i('Sincronización completada correctamente.');
+      AppLogger.i('Portal schedule synced successfully.');
       return const Success(null);
-    } catch (e) {
-      AppLogger.e('Error en Config Init: $e');
+    } on DioException catch (e, stackTrace) {
+      AppLogger.e('Config init failed due to network error', e, stackTrace);
+      return Failure('Error de red al inicializar la configuración: $e');
+    } on FormatException catch (e, stackTrace) {
+      AppLogger.e('Config init failed due to invalid JSON', e, stackTrace);
+      return Failure('Error al parsear la configuración: $e');
+    } on StateError catch (e, stackTrace) {
+      AppLogger.e(
+        'Config init failed due to invalid portal payload',
+        e,
+        stackTrace,
+      );
+      return Failure('Respuesta inválida del portal: $e');
+    } on Object catch (e, stackTrace) {
+      AppLogger.e('Error en Config Init', e, stackTrace);
       return Failure('Error al inicializar la configuración: $e');
     }
   }
@@ -83,25 +117,123 @@ class ConfigRepositoryImpl implements ConfigRepository {
     }
   }
 
-  /// Lee el event_id guardado en la última sincronización.
-  /// Devuelve null si es la primera instalación.
-  Future<String?> _loadStoredEventId() async {
-    final query = _db.select(_db.appConfigs)
-      ..where((t) => t.key.equals('event_id'));
+  Future<String?> _loadConfigValue(String key) async {
+    final query = _db.select(_db.appConfigs)..where((t) => t.key.equals(key));
     final row = await query.getSingleOrNull();
     return row?.value;
   }
 
-  Future<AppData> _loadAppData() async {
-    final jsonString = await _source.loadAppDataJson();
-    final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-    return AppDataMapper.fromMap(jsonMap);
+  Future<bool> _hasSeededConferenceData() async {
+    return _loadConfigValue('event_id').then((value) => value != null);
   }
 
-  /// Elimina favoritos al detectar nueva edición.
-  /// Las notas del diario NO se eliminan — son contenido personal del usuario.
-  Future<void> _clearUserReferentialData() async {
-    await _db.delete(_db.favorites).go();
-    AppLogger.i('Favoritos eliminados (nueva edición).');
+  Future<AppData> _loadLocalAppData() async {
+    final jsonString = await _localSource.loadAppDataJson();
+    return AppDataMapper.fromJsonString(jsonString);
+  }
+
+  Future<String?> _tryFetchRemoteLastUpdated() async {
+    try {
+      return await _portalClient.fetchLastUpdated();
+    } on DioException catch (e, stackTrace) {
+      AppLogger.w(
+        'Portal sync-status unreachable. Falling back to local data.',
+      );
+      AppLogger.e('Portal sync-status error', e, stackTrace);
+      return null;
+    } on StateError catch (e, stackTrace) {
+      AppLogger.e('Portal sync-status payload invalid', e, stackTrace);
+      return null;
+    }
+  }
+
+  bool _isRemoteNewer(String? remoteLastUpdated, String? localLastSyncAt) {
+    if (remoteLastUpdated == null) {
+      return false;
+    }
+
+    if (localLastSyncAt == null) {
+      return true;
+    }
+
+    return DateTime.parse(
+      remoteLastUpdated,
+    ).isAfter(DateTime.parse(localLastSyncAt));
+  }
+
+  Future<AppData?> _tryLoadHybridAppData(AppData localAppData) async {
+    try {
+      final remoteJson = await _portalSource.loadAppDataJson();
+      final remoteAppData = AppDataMapper.fromJsonString(remoteJson);
+      return _mergeSchedule(
+        localAppData: localAppData,
+        remoteAppData: remoteAppData,
+      );
+    } on DioException catch (e, stackTrace) {
+      AppLogger.e('Portal schedule fetch failed', e, stackTrace);
+      return null;
+    } on FormatException catch (e, stackTrace) {
+      AppLogger.e('Portal schedule JSON invalid', e, stackTrace);
+      return null;
+    } on StateError catch (e, stackTrace) {
+      AppLogger.e('Portal schedule payload invalid', e, stackTrace);
+      return null;
+    }
+  }
+
+  Future<AppData> _loadBootstrapAppData({
+    required AppData localAppData,
+    required String? remoteLastUpdated,
+  }) async {
+    if (remoteLastUpdated == null) {
+      return localAppData;
+    }
+
+    final remoteAppData = await _tryLoadHybridAppData(localAppData);
+    return remoteAppData ?? localAppData;
+  }
+
+  AppData _mergeSchedule({
+    required AppData localAppData,
+    required AppData remoteAppData,
+  }) {
+    return AppData(
+      metadata: localAppData.metadata,
+      conference: localAppData.conference,
+      theme: localAppData.theme,
+      collections: Collections(
+        days: localAppData.collections.days,
+        events: remoteAppData.collections.events,
+        sessionBlocks: remoteAppData.collections.sessionBlocks,
+        people: remoteAppData.collections.people,
+        rooms: remoteAppData.collections.rooms,
+        zones: localAppData.collections.zones,
+        submissionTypes: localAppData.collections.submissionTypes,
+        socials: localAppData.collections.socials,
+        news: localAppData.collections.news,
+      ),
+    );
+  }
+
+  Future<void> _replaceConferenceData(
+    AppData appData, {
+    required String? lastSyncAt,
+  }) async {
+    await _db.transaction(() async {
+      await _seeder.reset();
+      await _seeder.seed(appData);
+      if (lastSyncAt != null) {
+        await _db
+            .into(_db.appConfigs)
+            .insertOnConflictUpdate(
+              AppConfigsCompanion.insert(
+                key: _lastSyncAtKey,
+                value: lastSyncAt,
+              ),
+            );
+      }
+    });
   }
 }
+
+const _lastSyncAtKey = 'last_sync_at';
