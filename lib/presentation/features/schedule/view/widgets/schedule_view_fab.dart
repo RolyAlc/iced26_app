@@ -43,28 +43,35 @@ class ScheduleViewFab extends ConsumerWidget {
               horizontal: _kFabPaddingH,
               vertical: _kFabPaddingV,
             ),
-            child: AnimatedSwitcher(
+            // AnimatedSize anima el ancho de la píldora cuando el label cambia
+            // (List <-> Schedule tienen anchos distintos).
+            // AnimatedSwitcher hace el crossfade del contenido.
+            child: AnimatedSize(
               duration: AppDuration.fast,
-              child: Row(
-                // ValueKey explícito — AnimatedSwitcher necesita keys distintas
-                // para identificar los hijos y animar la transición correctamente.
-                key: ValueKey(isAgenda),
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    icon,
-                    size: _kFabIconSize,
-                    color: colors.onPrimaryContainer,
-                  ),
-                  const SizedBox(width: AppSpacing.s),
-                  Text(
-                    label,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              curve: Curves.easeInOut,
+              child: AnimatedSwitcher(
+                duration: AppDuration.fast,
+                child: Row(
+                  // ValueKey explícito — AnimatedSwitcher necesita keys distintas
+                  // para identificar los hijos y animar la transición correctamente.
+                  key: ValueKey(isAgenda),
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      icon,
+                      size: _kFabIconSize,
                       color: colors.onPrimaryContainer,
-                      fontWeight: FontWeight.w600,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: AppSpacing.s),
+                    Text(
+                      label,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: colors.onPrimaryContainer,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
