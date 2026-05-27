@@ -1,24 +1,31 @@
 import 'package:collection/collection.dart';
+
 import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/category.dart';
+import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/event_type.dart';
+import 'package:iced26/domain/entities/news_item.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/room.dart';
+import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/domain/usecases/get_home_data_use_case.dart';
+import 'package:iced26/presentation/app/navigation_constants.dart';
+import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/features/home/viewmodel/mappers/event_ui_mapper.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/conference_theme_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/news_item_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
-import 'package:iced26/presentation/app/navigation_constants.dart';
-import 'package:iced26/presentation/app/state/navigation_provider.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/social_activity_ui_model.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
@@ -239,6 +246,59 @@ class HomeViewModel extends _$HomeViewModel {
     ref.read(navigationProvider.notifier).select(AppFeature.schedule);
   }
 
+  /// Convierte las noticias de dominio en modelos de presentación.
+  List<NewsItemUIModel> _buildNews(List<NewsItem> rawNews) {
+    final locale = AppConfig.defaultLocale;
+    return [
+      for (final item in rawNews)
+        NewsItemUIModel(
+          id: item.id,
+          title: item.title.resolve(locale),
+          content: item.content.resolve(locale),
+          imgUrl: item.imgUrl,
+          webUrl: item.webUrl,
+        ),
+    ];
+  }
+
+  /// Convierte las actividades sociales de dominio en modelos de presentación.
+  List<SocialActivityUIModel> _buildSocialActivities(
+    List<SocialActivity> rawActivities,
+  ) {
+    final locale = AppConfig.defaultLocale;
+    return [
+      for (final activity in rawActivities)
+        SocialActivityUIModel(
+          id: activity.id,
+          title: activity.title.resolve(locale),
+          date: activity.date,
+          time: activity.time,
+          location: activity.location.resolve(locale),
+          imgUrl: activity.imgUrl,
+        ),
+    ];
+  }
+
+  /// Convierte los temas de la conferencia de dominio en modelos de presentación.
+  List<ConferenceThemeUIModel> _buildConferenceThemes(
+    List<ConferenceTheme> rawThemes,
+  ) {
+    final locale = AppConfig.defaultLocale;
+    return [
+      for (final theme in rawThemes)
+        ConferenceThemeUIModel(
+          id: theme.id,
+          name: theme.name.resolve(locale),
+          description: theme.description.resolve(locale),
+          topics: theme.topicsInclude
+              .map((t) => t.resolve(locale))
+              .where((t) => t.isNotEmpty)
+              .toList(),
+          readMinutes: theme.estimatedReadMinutes(locale),
+        ),
+    ];
+  }
+
   /// Orquesta la construcción del [HomeState] a partir de los datos crudos.
   HomeState _buildStateFromData(HomeDataResult data) {
     final peopleById = _buildPeopleIndex(data.allPeople);
@@ -261,9 +321,9 @@ class HomeViewModel extends _$HomeViewModel {
         today: now,
       ),
       categories: _buildCategories(data.subTypes),
-      news: data.news,
-      socialActivities: data.socialActivities,
-      conferenceThemes: data.conferenceThemes,
+      news: _buildNews(data.news),
+      socialActivities: _buildSocialActivities(data.socialActivities),
+      conferenceThemes: _buildConferenceThemes(data.conferenceThemes),
       headerInfoLabel: AppConfig.welcomeLabel,
       today: now,
     );
