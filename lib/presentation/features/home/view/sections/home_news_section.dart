@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/assets.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/services/logger/logger.dart';
-import 'package:iced26/domain/entities/news_item.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/news_item_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card.dart';
 import 'package:iced26/presentation/features/home/widgets/news_card_variant.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
@@ -16,10 +16,10 @@ const _kReadFullArticle = 'Read full article';
 const _kAllNewsSheetTitle = 'All news';
 const _kModalImageHeight = 200.0;
 
-void _showNewsDetails(BuildContext context, NewsItem item, String locale) {
+void _showNewsDetails(BuildContext context, NewsItemUIModel item) {
   AppBottomSheet.show(
     context: context,
-    title: item.title.resolve(locale),
+    title: item.title,
     actions: [
       FilledButton.icon(
         onPressed: () {
@@ -36,7 +36,7 @@ void _showNewsDetails(BuildContext context, NewsItem item, String locale) {
         ),
       ),
     ],
-    child: _NewsDetailContent(item: item, locale: locale),
+    child: _NewsDetailContent(item: item),
   );
 }
 
@@ -77,7 +77,7 @@ void _showError(BuildContext context, String urlString) {
 class HomeNewsSection extends StatelessWidget {
   const HomeNewsSection({super.key, required this.news});
 
-  final List<NewsItem> news;
+  final List<NewsItemUIModel> news;
 
   /// Máximo de noticias visibles en la home antes de necesitar "See all".
   static const int maxVisible = 4;
@@ -88,7 +88,6 @@ class HomeNewsSection extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final locale = Localizations.localeOf(context).languageCode;
     final visible = news.take(maxVisible).toList();
 
     return Column(
@@ -98,10 +97,10 @@ class HomeNewsSection extends StatelessWidget {
           if (i > 0) const SizedBox(height: AppSpacing.sm),
           NewsCard(
             variant: i == 0 ? NewsCardVariant.hero : NewsCardVariant.compact,
-            title: item.title.resolve(locale),
-            subtitle: item.content.resolve(locale),
+            title: item.title,
+            subtitle: item.content,
             imageUrl: item.imgUrl,
-            onTap: () => _showNewsDetails(context, item, locale),
+            onTap: () => _showNewsDetails(context, item),
           ),
         ],
       ],
@@ -116,9 +115,9 @@ class HomeNewsSection extends StatelessWidget {
 class HomeNewsAllSheet extends StatelessWidget {
   const HomeNewsAllSheet({super.key, required this.news});
 
-  final List<NewsItem> news;
+  final List<NewsItemUIModel> news;
 
-  static void show(BuildContext context, List<NewsItem> news) {
+  static void show(BuildContext context, List<NewsItemUIModel> news) {
     AppBottomSheet.show(
       context: context,
       title: _kAllNewsSheetTitle,
@@ -128,17 +127,15 @@ class HomeNewsAllSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale = Localizations.localeOf(context).languageCode;
-
     return Column(
       children: [
         for (final (i, item) in news.indexed) ...[
           if (i > 0) const SizedBox(height: AppSpacing.sm),
           NewsCard(
-            title: item.title.resolve(locale),
-            subtitle: item.content.resolve(locale),
+            title: item.title,
+            subtitle: item.content,
             imageUrl: item.imgUrl,
-            onTap: () => _showNewsDetails(context, item, locale),
+            onTap: () => _showNewsDetails(context, item),
           ),
         ],
       ],
@@ -148,10 +145,9 @@ class HomeNewsAllSheet extends StatelessWidget {
 
 /// Contenido del bottom sheet de detalle de una noticia.
 class _NewsDetailContent extends StatelessWidget {
-  const _NewsDetailContent({required this.item, required this.locale});
+  const _NewsDetailContent({required this.item});
 
-  final NewsItem item;
-  final String locale;
+  final NewsItemUIModel item;
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +173,7 @@ class _NewsDetailContent extends StatelessWidget {
           ),
         ),
         Text(
-          item.content.resolve(locale),
+          item.content,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
             height: 1.5,

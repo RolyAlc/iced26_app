@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/domain/entities/social_activity.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/social_activity_ui_model.dart';
 
 /// Contenido principal de la card (categoría + título).
 class SocialCardContent extends StatelessWidget {
   const SocialCardContent({super.key, required this.activity});
 
-  final SocialActivity activity;
+  final SocialActivityUIModel activity;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class SocialCardContent extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          activity.title.resolve('en'),
+          activity.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: theme.textTheme.titleMedium?.copyWith(

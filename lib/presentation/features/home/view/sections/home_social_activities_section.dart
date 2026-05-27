@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/domain/entities/social_activity.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/social_activity_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/social_card.dart';
 
 /// Sección de actividades sociales — carrusel horizontal edge-to-edge.
@@ -12,9 +12,9 @@ class HomeSocialActivitiesSection extends StatelessWidget {
     this.onTap,
   });
 
-  final List<SocialActivity> socials;
+  final List<SocialActivityUIModel> socials;
   // Callback al pulsar una tarjeta. null = sin navegación (pendiente de implementar).
-  final void Function(SocialActivity)? onTap;
+  final void Function(SocialActivityUIModel)? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +59,9 @@ class _SocialCarousel extends StatelessWidget {
     this.onTap,
   });
 
-  final List<SocialActivity> socials;
+  final List<SocialActivityUIModel> socials;
   final _CardDimensions dimensions;
-  final void Function(SocialActivity)? onTap;
+  final void Function(SocialActivityUIModel)? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -103,9 +103,9 @@ class _SocialCardItem extends StatelessWidget {
     this.onTap,
   });
 
-  final SocialActivity activity;
+  final SocialActivityUIModel activity;
   final double cardWidth;
-  final void Function(SocialActivity)? onTap;
+  final void Function(SocialActivityUIModel)? onTap;
 
   @override
   Widget build(BuildContext context) {

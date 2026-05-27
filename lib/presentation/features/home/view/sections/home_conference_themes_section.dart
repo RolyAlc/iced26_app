@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/view/pages/conference_theme_detail_page.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/conference_theme_ui_model.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
 
 const _kReadMore = 'Read more';
@@ -14,7 +13,7 @@ const _kSnippetLines = 2;
 class HomeConferenceThemesSection extends StatelessWidget {
   const HomeConferenceThemesSection({super.key, required this.themes});
 
-  final List<ConferenceTheme> themes;
+  final List<ConferenceThemeUIModel> themes;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class HomeConferenceThemesSection extends StatelessWidget {
       children: [
         for (int i = 0; i < themes.length; i++) ...[
           if (i > 0) const SizedBox(height: AppSpacing.m),
-          _ThemeCard(conferenceTheme: themes[i]),
+          _ThemeCard(theme: themes[i]),
         ],
       ],
     );
@@ -31,17 +30,14 @@ class HomeConferenceThemesSection extends StatelessWidget {
 
 /// Card con título, snippet de descripción y CTA "Read more".
 class _ThemeCard extends StatelessWidget {
-  const _ThemeCard({required this.conferenceTheme});
+  const _ThemeCard({required this.theme});
 
-  final ConferenceTheme conferenceTheme;
+  final ConferenceThemeUIModel theme;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final name = conferenceTheme.name.resolve(AppConfig.defaultLocale);
-    final description = conferenceTheme.description.resolve(
-      AppConfig.defaultLocale,
-    );
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
 
     return Card(
       margin: EdgeInsets.zero,
@@ -51,18 +47,18 @@ class _ThemeCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              name,
-              style: theme.textTheme.titleMedium?.copyWith(
+              theme.name,
+              style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: AppSpacing.s),
             Text(
-              description,
+              theme.description,
               maxLines: _kSnippetLines,
               overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+              style: textTheme.bodyMedium?.copyWith(
+                color: colors.onSurfaceVariant,
                 height: 1.5,
               ),
             ),
@@ -70,8 +66,7 @@ class _ThemeCard extends StatelessWidget {
             AppButton(
               label: _kReadMore,
               trailingIcon: AppIcons.arrowForward,
-              onPressed: () =>
-                  ConferenceThemeDetailPage.open(context, conferenceTheme),
+              onPressed: () => ConferenceThemeDetailPage.open(context, theme),
             ),
           ],
         ),
