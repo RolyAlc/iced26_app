@@ -237,9 +237,9 @@ class _TopTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      behavior: HitTestBehavior.opaque,
+      borderRadius: BorderRadius.circular(AppRadius.s),
       child: Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.xs),
         child: Text(
@@ -248,7 +248,7 @@ class _TopTab extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: theme.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: isSelected ? colors.onSurface : colors.outline,
+            color: isSelected ? colors.onSurface : colors.onSurfaceVariant,
           ),
         ),
       ),
