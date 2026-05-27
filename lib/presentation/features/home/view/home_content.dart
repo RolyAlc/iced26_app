@@ -11,6 +11,7 @@ import 'package:iced26/presentation/features/home/view/sections/home_header_sect
 import 'package:iced26/presentation/features/home/view/sections/home_keynote_speakers_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_news_section.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_social_activities_section.dart';
+import 'package:iced26/presentation/features/home/view/sheets/home_news_all_sheet.dart';
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/conference_theme_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
@@ -83,9 +84,7 @@ class HomeContent extends ConsumerWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
 // Secciones privadas — wrappers que añaden animación y chrome de AppSection.
-// ---------------------------------------------------------------------------
 
 /// Sección de eventos destacados.
 class _HomeFeaturedSection extends StatelessWidget {
