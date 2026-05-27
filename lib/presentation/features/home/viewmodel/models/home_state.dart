@@ -37,4 +37,10 @@ class HomeState {
   final List<ConferenceTheme> conferenceThemes;
   final String headerInfoLabel;
   final DateTime today;
+
+  /// Cantidad de noticias a mostrar en la home.
+  static const int _maxVisibleNews = 4;
+  
+  /// Verifica si hay más noticias que mostrar.
+  bool get hasMoreNews => news.length > _maxVisibleNews;
 }
