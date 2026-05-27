@@ -17,6 +17,10 @@ import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_mode
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
+import 'package:iced26/presentation/app/navigation_constants.dart';
+import 'package:iced26/presentation/app/state/navigation_provider.dart';
+import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
+import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -227,6 +231,12 @@ class HomeViewModel extends _$HomeViewModel {
       Success(data: final data) => _buildStateFromData(data),
       Failure(message: final msg) => throw msg,
     };
+  }
+
+  /// Navega al Schedule reseteando el tab a Timeline.
+  void navigateToScheduleTimeline() {
+    ref.read(scheduleTopTabProvider.notifier).select(ScheduleTab.timeline);
+    ref.read(navigationProvider.notifier).select(AppFeature.schedule);
   }
 
   /// Orquesta la construcción del [HomeState] a partir de los datos crudos.
