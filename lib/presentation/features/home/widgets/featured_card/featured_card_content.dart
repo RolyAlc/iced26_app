@@ -13,6 +13,7 @@ class FeaturedCardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(child: _ImageBlock(event: event)),
         const SizedBox(height: AppSpacing.l),

@@ -27,8 +27,10 @@ class SpeakerCardFooter extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _NameRow(speaker: speaker),
-                if (speaker.institution != null)
+                if (speaker.institution != null) ...[
+                  const SizedBox(height: AppSpacing.s),
                   _InstitutionText(institution: speaker.institution!),
+                ],
               ],
             ),
           ),
@@ -84,21 +86,14 @@ class _InstitutionText extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: AppSpacing.s),
-        Text(
-          institution,
-          style: textTheme.bodySmall?.copyWith(
-            color: colors.onSurfaceVariant,
-            fontWeight: FontWeight.w500,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
+    return Text(
+      institution,
+      style: textTheme.bodySmall?.copyWith(
+        color: colors.onSurfaceVariant,
+        fontWeight: FontWeight.w500,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

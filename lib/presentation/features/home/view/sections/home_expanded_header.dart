@@ -85,7 +85,11 @@ class _DateInfo extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(AppIcons.calendarOutline, size: _kDateIconSize, color: colors.primary),
+            Icon(
+              AppIcons.calendarOutline,
+              size: _kDateIconSize,
+              color: colors.primary,
+            ),
             const SizedBox(width: AppSpacing.xs),
             Text(
               dateLabel,
