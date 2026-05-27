@@ -13,6 +13,7 @@ class SpeakerCard extends StatelessWidget {
   final KeynoteSpeakerUIModel speaker;
   final VoidCallback onTap;
 
+  static const double widthFactor = 0.92;
   static const double aspectRatio = 3 / 4;
 
   static const _imageRadius = BorderRadius.only(

@@ -21,12 +21,10 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
   late final PageController _controller;
   int _currentPage = 0;
 
-  static const double _viewportFraction = 0.92;
-
   @override
   void initState() {
     super.initState();
-    _controller = PageController(viewportFraction: _viewportFraction);
+    _controller = PageController(viewportFraction: SpeakerCard.widthFactor);
     _controller.addListener(_onScroll);
   }
 
@@ -53,8 +51,13 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildCarousel(),
-        const SizedBox(height: AppSpacing.l),
-        AppDotsIndicator(count: widget.speakers.length, current: _currentPage),
+        if (widget.speakers.length > 1) ...[
+          const SizedBox(height: AppSpacing.l),
+          AppDotsIndicator(
+            count: widget.speakers.length,
+            current: _currentPage,
+          ),
+        ],
       ],
     );
   }
@@ -62,7 +65,7 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
   Widget _buildCarousel() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final cardWidth = constraints.maxWidth * _viewportFraction;
+        final cardWidth = constraints.maxWidth * SpeakerCard.widthFactor;
         final cardHeight = cardWidth / SpeakerCard.aspectRatio;
 
         return SizedBox(
