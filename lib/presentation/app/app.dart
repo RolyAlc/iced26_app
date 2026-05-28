@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/app_config.dart';
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/text_size_preference.dart';
 import 'package:iced26/di/bootstrap.dart';
@@ -14,7 +15,9 @@ import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/app/theme/app_theme.dart';
 import 'package:iced26/presentation/shared/widgets/loading_screen.dart';
 
-/// Raíz de la aplicación.
+/// Widget raíz de la aplicación. Permite gestionar el estado inicial de la aplicación,
+/// como el tema, el tamaño de la fuente y el idioma,
+/// así como el arranque de la aplicación.
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -45,6 +48,7 @@ class MyApp extends ConsumerWidget {
       themeAnimationCurve: Curves.easeInOut,
       builder: (context, child) {
         final pref = textSizeAsync.value ?? TextSizePreference.medium;
+        // child nunca es null cuando se usa junto a `home`.
         return MediaQuery(
           data: MediaQuery.of(
             context,
@@ -52,14 +56,23 @@ class MyApp extends ConsumerWidget {
           child: child!,
         );
       },
-      home: switch ((isReady, hasError)) {
-        (_, true) => const _StartupErrorScreen(),
-        (true, _) => const AppShell(),
-        _ => const LoadingScreen(),
-      },
+      home: _buildHome(isReady: isReady, hasError: hasError),
     );
   }
+
+  /// Construye la pantalla de inicio de la aplicación.
+  Widget _buildHome({required bool isReady, required bool hasError}) {
+    if (hasError) {
+      return const _StartupErrorScreen();
+    }
+    if (isReady) {
+      return const AppShell();
+    }
+    return const LoadingScreen();
+  }
 }
+
+const _kStartupErrorIconSize = 48.0;
 
 /// Pantalla de error que se muestra si el arranque de la aplicación falla.
 class _StartupErrorScreen extends StatelessWidget {
@@ -73,12 +86,19 @@ class _StartupErrorScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(AppIcons.error, size: 48, color: theme.colorScheme.error),
-            const SizedBox(height: 16),
-            Text('Could not start the app', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
+            Icon(
+              AppIcons.error,
+              size: _kStartupErrorIconSize,
+              color: theme.colorScheme.error,
+            ),
+            const SizedBox(height: AppSpacing.m),
             Text(
-              'Try restarting the application',
+              AppStrings.startupErrorTitle,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: AppSpacing.s),
+            Text(
+              AppStrings.startupErrorMessage,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

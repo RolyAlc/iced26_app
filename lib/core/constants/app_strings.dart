@@ -101,4 +101,7 @@ abstract final class AppStrings {
   static String diaryErrorSavingNote(Object error) {
     return 'Error saving note: $error';
   }
+
+  static const String startupErrorTitle = 'Could not start the app';
+  static const String startupErrorMessage = 'Try restarting the application';
 }
