@@ -1,9 +1,12 @@
 ---
 version: 1.0.0
 status: activo
-last_updated: 2026-05-25
+last_updated: 2026-05-28
 icon: lucide/layers
-tags: [arquitectura, capas, clean-architecture]
+tags:
+  - arquitectura
+  - capas
+  - clean-architecture
 audience: tecnico
 ---
 
@@ -43,7 +46,35 @@ graph TD
 >
 > `presentation` puede importar `domain`. `domain` no puede importar nada de `data` ni de `presentation`.
 
-## 2. Capa `core/`
+## 2. Clean Architecture + MVVM
+
+El proyecto combina dos patrones que actúan en niveles distintos.
+
+**Clean Architecture** organiza el proyecto en capas con una regla de dependencias estricta:
+las capas externas conocen a las internas, nunca al revés.
+Esto permite cambiar la base de datos o el framework de UI sin tocar la lógica de negocio.
+
+**MVVM** (Model-View-ViewModel) organiza la capa `presentation/` internamente.
+Define cómo fluye el estado dentro de una feature:
+
+```bash
+Model  →  ViewModel  →  View
+datos      estado UI     pantalla
+```
+
+| Concepto MVVM | En este proyecto                                   |
+| ------------- | -------------------------------------------------- |
+| **Model**     | Entidades de `domain/` + UI models de `viewmodel/` |
+| **ViewModel** | Provider Riverpod en `viewmodel/`                  |
+| **View**      | Widgets en `view/`                                 |
+
+La relación entre los dos patrones es simple:
+**Clean Architecture define las 5 capas del proyecto. MVVM define la estructura interna de `presentation/`.**
+
+Son complementarios: uno resuelve el macro (cómo se organiza el código entre capas),
+el otro resuelve el micro (cómo fluye el estado dentro de una pantalla).
+
+## 3. Capa `core/`
 
 Utilidades globales que cualquier otra capa puede usar. No depende de ninguna otra capa del proyecto.
 
@@ -55,7 +86,7 @@ Utilidades globales que cualquier otra capa puede usar. No depende de ninguna ot
 | `services/logger/` | Logger centralizado                                              |
 | `config/`          | Configuración de entorno                                         |
 
-## 3. Capa `domain/`
+## 4. Capa `domain/`
 
 El núcleo del negocio. Define **qué** hace la aplicación, sin saber **cómo** se almacenan los datos ni cómo se muestran.
 
@@ -84,7 +115,7 @@ abstract interface class BaseRepository<T> {
 }
 ```
 
-## 4. Capa `data/`
+## 5. Capa `data/`
 
 Implementa los contratos definidos en `domain`.
 
@@ -98,7 +129,7 @@ Sabe cómo hablar con SQLite y cómo parsear el JSON. Si mañana se añade una A
 | `sources/local/database/` | `AppDatabase` — base de datos Drift (SQLite)            |
 | `sources/local/json/`     | `LocalJsonService` — carga el JSON desde los assets     |
 
-## 5. Capa `di/`
+## 6. Capa `di/`
 
 Conecta todas las capas usando **Riverpod**.
 
@@ -113,7 +144,7 @@ No contiene lógica de negocio: su único trabajo es instanciar objetos y establ
 
 > Ver el documento completo de inyección de dependencias en [di.md](di.md).
 
-## 6. Capa `presentation/`
+## 7. Capa `presentation/`
 
 Todo lo que ve el usuario. Se organiza en features (una carpeta por pantalla) y en widgets compartidos.
 
@@ -133,7 +164,7 @@ feature/
 └── widgets/      > widgets privados de la feature
 ```
 
-## 7. `I18nStr` — textos multilingües
+## 8. `I18nStr` — textos multilingües
 
 Varios campos de las entidades (`Event.title`, `ConferenceTheme.description`…) pueden contener texto en varios idiomas. En lugar de usar un `String` plano, se usa **`I18nStr`**: un contenedor con un `Map<String, String>` donde la clave es el código de idioma (`'en'`, `'es'`…).
 
@@ -154,7 +185,7 @@ class I18nStr {
 >
 > La decisión de cuándo resolverlo es de `presentation`, no de `domain` — la entidad solo almacena los valores.
 
-## 8. Resumen de responsabilidades
+## 9. Resumen de responsabilidades
 
 | Capa           | Pregunta que responde                        |
 | -------------- | -------------------------------------------- |
