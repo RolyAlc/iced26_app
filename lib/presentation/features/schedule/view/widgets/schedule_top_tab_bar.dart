@@ -76,7 +76,8 @@ class _ScheduleTopTab extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: theme.textTheme.headlineMedium?.copyWith(
+                // fix manual para que no ocupe overflow
+                style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: textColor,
                 ),
