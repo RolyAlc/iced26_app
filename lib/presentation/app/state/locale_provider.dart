@@ -11,6 +11,15 @@ part 'locale_provider.g.dart';
 class LocaleNotifier extends _$LocaleNotifier {
   static const _kKey = 'app_locale';
 
+  /// Idiomas disponibles para el usuario.
+  /// `null` representa el idioma del sistema (automático).
+  /// Este es el único lugar donde se declaran los idiomas soportados.
+  static const List<Locale?> supportedLocales = [
+    null,
+    Locale('en'),
+    Locale('es'),
+  ];
+
   @override
   Future<Locale?> build() async {
     final prefs = await SharedPreferences.getInstance();
@@ -28,11 +37,13 @@ class LocaleNotifier extends _$LocaleNotifier {
   }
 
   // Convierte el string guardado en Locale. null = sistema.
+  // Busca en supportedLocales para no duplicar la lista de idiomas.
   static Locale? _parse(String? value) {
-    return switch (value) {
-      'en' => const Locale('en'),
-      'es' => const Locale('es'),
-      _ => null,
-    };
+    for (final locale in supportedLocales) {
+      if (locale?.languageCode == value) {
+        return locale;
+      }
+    }
+    return null;
   }
 }

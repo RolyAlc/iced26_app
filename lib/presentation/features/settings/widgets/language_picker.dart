@@ -15,8 +15,6 @@ const _kTitleDialog = 'Language';
 const _kActionCancel = 'Cancel';
 const _kActionDone = 'Done';
 
-const _kSupportedLocales = [null, Locale('en'), Locale('es')];
-
 /// Ítem de idioma: muestra el idioma activo y abre el picker al tocar.
 class LanguageItem extends ConsumerWidget {
   const LanguageItem({super.key});
@@ -79,7 +77,7 @@ class _LanguagePickerDialogState extends ConsumerState<_LanguagePickerDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            for (final locale in _kSupportedLocales)
+            for (final locale in LocaleNotifier.supportedLocales)
               _LanguageOptionTile(locale: locale),
           ],
         ),
