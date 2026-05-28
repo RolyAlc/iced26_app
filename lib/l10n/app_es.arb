@@ -30,5 +30,10 @@
   "diaryNoteEditorSaveNote": "Guardar nota",
   "diaryErrorSavingNote": "Error al guardar la nota: {error}",
 
-  "diaryTodayHeader": "Hoy · {date}"
+  "diaryTodayHeader": "Hoy · {date}",
+
+  "diaryCongress": "Congreso",
+  "diaryMyNotes": "Mis notas",
+  "diaryEmptyNoteTitle": "Sin notas para este día",
+  "diaryEmptyNoteMessage": "Pulsa + para escribir tu primera nota"
 }

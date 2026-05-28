@@ -87,5 +87,17 @@
         "description": "The error description"
       }
     }
-  }
+  },
+
+  "diaryCongress": "Congress",
+  "@diaryCongress": { "description": "Section label for congress events in the diary day view" },
+
+  "diaryMyNotes": "My notes",
+  "@diaryMyNotes": { "description": "Section label for the user's personal notes in the diary day view" },
+
+  "diaryEmptyNoteTitle": "No notes for this day",
+  "@diaryEmptyNoteTitle": { "description": "Empty state title when the user has no notes for the selected day" },
+
+  "diaryEmptyNoteMessage": "Tap + to write your first note",
+  "@diaryEmptyNoteMessage": { "description": "Empty state message prompting the user to add their first note" }
 }
