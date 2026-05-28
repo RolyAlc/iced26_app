@@ -194,7 +194,7 @@ List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
   required List<Person> allPeople,
   required DateTime today,
 }) {
-  final peopleById = {for (final p in allPeople) p.id: p};
+  final peopleById = _buildPeopleIndex(allPeople);
   final keynoteEvents = allEvents
       .where((e) => e.type == EventType.keynote)
       .toList();
