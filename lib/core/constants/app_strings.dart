@@ -8,20 +8,6 @@ abstract final class AppStrings {
   // TODO: Eliminar paulativamente el separator o reemplazarlo por otro más acorde.
   static const String separator = '  ·  ';
   static const String retry = 'Retry';
-  static const String myScheduleTitle = 'My schedule';
-  static const String myScheduleNothingSavedTitle = 'Nothing saved yet';
-  static const String myScheduleNothingSavedMessage =
-      'Bookmark sessions and talks to build your schedule';
-  static const String myScheduleErrorTitle = 'Could not load your schedule';
-
-  static const String scheduleTitle = 'Schedule';
-  static const String scheduleAllDays = 'All days';
-  static const String scheduleNoSessionsTitle =
-      'No sessions match your filters';
-  static const String scheduleNoSessionsMessage =
-      'Try a different category or clear the filter';
-  static const String scheduleViewFormatList = 'List';
-  static const String scheduleViewFormatAgenda = 'Schedule';
 
   static const String searchDone = 'Done';
   static String searchShowResults(int count) {
@@ -82,20 +68,6 @@ abstract final class AppStrings {
     return '$count talk${count == 1 ? '' : 's'}';
   }
 
-  static const String labelSpeakers = 'Speakers';
-  static const String scheduleButtonSaved = 'Saved to my schedule';
-  static const String scheduleButtonAdd = 'Add to my schedule';
-
-  // Overflow de ponentes en listas compactas: "Name & +N more".
-  static String speakersOverflow(int count) {
-    return '& +$count more';
-  }
-
-  static const String themeLight = 'Light';
-  static const String themeDark = 'Dark';
-  static const String themeSystem = 'System';
-  static const String cancel = 'Cancel';
-  static const String delete = 'Delete';
   static const String diaryDeleteNoteTitle = 'Delete note?';
   static const String diaryDeleteNoteConfirm = 'This action cannot be undone.';
   static const String startupErrorTitle = 'Could not start the app';

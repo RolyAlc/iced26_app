@@ -3,6 +3,8 @@
 
   "cancel": "Cancelar",
   "delete": "Eliminar",
+  "retry": "Reintentar",
+  "genericErrorMessage": "Algo salió mal. Por favor, inténtalo de nuevo.",
   "diaryDeleteNoteTitle": "¿Eliminar nota?",
   "diaryDeleteNoteConfirm": "Esta acción no se puede deshacer.",
 
@@ -35,5 +37,85 @@
   "diaryCongress": "Congreso",
   "diaryMyNotes": "Mis notas",
   "diaryEmptyNoteTitle": "Sin notas para este día",
-  "diaryEmptyNoteMessage": "Pulsa + para escribir tu primera nota"
+  "diaryEmptyNoteMessage": "Pulsa + para escribir tu primera nota",
+
+  "done": "Hecho",
+
+  "settingsTitle": "Ajustes",
+  "settingsSectionAppearance": "Apariencia",
+  "settingsSectionLanguage": "Idioma",
+  "settingsSectionData": "Datos",
+  "settingsSectionAbout": "Acerca de",
+  "settingsVersionTitle": "Versión",
+  "settingsWebsiteTitle": "Sitio web oficial",
+
+  "settingsReloadDataTitle": "Recargar datos",
+  "settingsReloadDataSubtitle": "Actualizar el programa desde el paquete",
+  "settingsReloadDialogTitle": "¿Recargar datos?",
+  "settingsReloadDialogBody": "El programa se actualizará desde los datos del paquete. Tus favoritos se conservarán.",
+  "settingsReload": "Recargar",
+
+  "settingsClearFavouritesTitle": "Borrar favoritos",
+  "settingsClearFavouritesEmpty": "Sin elementos guardados",
+  "settingsClearFavouritesOne": "1 elemento guardado",
+  "settingsClearFavouritesMany": "{count} elementos guardados",
+  "settingsClearFavouritesDialogTitle": "¿Borrar favoritos?",
+  "settingsClearFavouritesDialogBodyOne": "¿Eliminar 1 elemento guardado? Esta acción no se puede deshacer.",
+  "settingsClearFavouritesDialogBodyMany": "¿Eliminar los {count} elementos guardados? Esta acción no se puede deshacer.",
+  "settingsClearAll": "Borrar todo",
+
+  "settingsTextSizeTitle": "Tamaño de texto",
+  "settingsTextSizeDefault": "Predeterminado",
+  "settingsTextSizeSmall": "Pequeño",
+  "settingsTextSizeMedium": "Mediano",
+  "settingsTextSizeLarge": "Grande",
+  "settingsTextSizeXl": "Extra grande",
+
+  "settingsThemeTitle": "Tema",
+  "settingsThemeLight": "Claro",
+  "settingsThemeDark": "Oscuro",
+  "settingsThemeSystem": "Sistema",
+
+  "settingsLanguageItemTitle": "Idioma de la app",
+  "settingsLanguageDialogTitle": "Idioma",
+
+  "readingControlsBackToTop": "Volver arriba",
+
+  "scheduleTitle": "Programa",
+  "scheduleViewFormatList": "Lista",
+  "scheduleViewFormatAgenda": "Agenda",
+  "scheduleAllDays": "Todos los días",
+  "scheduleFilterAll": "Todo",
+  "scheduleNoSessionsTitle": "Sin sesiones para este filtro",
+  "scheduleNoSessionsMessage": "Prueba otra categoría o elimina el filtro",
+
+  "scheduleAttrTime": "Hora",
+  "scheduleAttrRoom": "Sala",
+  "scheduleAttrDuration": "Duración",
+  "scheduleAttrLanguage": "Idioma",
+  "scheduleRoomTba": "Por confirmar",
+
+  "scheduleLabelSpeakers": "Ponentes",
+  "scheduleButtonAdd": "Añadir a mi agenda",
+  "scheduleButtonSaved": "Guardado en mi agenda",
+
+  "scheduleTracks": "{count, plural, one{# track} other{# tracks}}",
+  "scheduleTalks": "{count, plural, one{# charla} other{# charlas}}",
+  "scheduleSessions": "{count, plural, one{# sesión} other{# sesiones}}",
+  "scheduleNoPresentations": "Sin presentaciones",
+  "scheduleCollapse": "Contraer",
+  "scheduleSpeakersOverflow": "& +{count} más",
+
+  "myScheduleTitle": "Mi agenda",
+  "myScheduleTitleWithCount": "Mi agenda ({count})",
+  "myScheduleErrorTitle": "No se pudo cargar tu agenda",
+  "myScheduleNothingSavedTitle": "Nada guardado aún",
+  "myScheduleNothingSavedMessage": "Guarda sesiones y charlas para crear tu agenda",
+
+  "scheduleSpeakersHeaderCount": "Ponentes · {count}",
+  "scheduleDetailAbstract": "Resumen",
+  "scheduleDetailTrack": "Track {track}",
+  "scheduleDetailDuration": "{minutes} min",
+  "scheduleDetailShowAll": "Ver todos ({count})",
+  "scheduleDetailShowLess": "Ver menos"
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 
 const double _kTabIndicatorHeight = 3.0;
@@ -19,11 +18,12 @@ class ScheduleTopTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         _ScheduleTopTab(
-          label: AppStrings.scheduleTitle,
+          label: l10n.scheduleTitle,
           isSelected: selected == ScheduleTab.timeline,
           onTap: () {
             onSelect(ScheduleTab.timeline);
@@ -31,7 +31,7 @@ class ScheduleTopTabBar extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.l),
         _ScheduleTopTab(
-          label: AppStrings.myScheduleTitle,
+          label: l10n.myScheduleTitle,
           isSelected: selected == ScheduleTab.mySchedule,
           onTap: () {
             onSelect(ScheduleTab.mySchedule);

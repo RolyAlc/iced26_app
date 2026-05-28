@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_type.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/schedule_category_filter_bar.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_day_tab_bar.dart';
@@ -137,6 +136,7 @@ class _ViewingAllDaysLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return Row(
@@ -148,7 +148,7 @@ class _ViewingAllDaysLabel extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.xs),
         Text(
-          '${AppStrings.scheduleAllDays} · ${category.label}',
+          '${l10n.scheduleAllDays} · ${category.label}',
           style: theme.textTheme.labelSmall?.copyWith(color: colors.outline),
         ),
       ],

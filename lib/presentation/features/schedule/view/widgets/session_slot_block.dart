@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event_status.dart';
@@ -8,6 +7,7 @@ import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/slot_presentation_tile.dart';
@@ -17,12 +17,6 @@ import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
 
-const _kSingularTalk = 'talk';
-const _kPluralTalks = 'talks';
-const _kSingularSession = 'session';
-const _kPluralSessions = 'sessions';
-const _kNoPresentations = 'No presentations';
-const _kCollapseLabel = 'Collapse';
 const _kCollapseThreshold = 4;
 const _kCollapseIconSize = 18.0;
 const _kChevronIconSize = 22.0;
@@ -52,6 +46,7 @@ class SessionSlotBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
     final time = item.event.filterTime;
@@ -72,8 +67,7 @@ class SessionSlotBlock extends StatelessWidget {
                 icon: item.event.type.style(Theme.of(context).colorScheme).icon,
               ),
             ScheduleInfoChip(
-              label:
-                  '${item.blocks.length} ${item.blocks.length == 1 ? _kSingularSession : _kPluralSessions}',
+              label: l10n.scheduleSessions(item.blocks.length),
               icon: AppIcons.sessions,
               variant: ScheduleChipVariant.tertiary,
             ),
@@ -173,6 +167,7 @@ class _BlockSectionState extends State<_BlockSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final timeRange = DateHelper.formatTimeRange(
       widget.block.startDate,
@@ -203,21 +198,25 @@ class _BlockSectionState extends State<_BlockSection> {
           title: Wrap(
             spacing: AppSpacing.s,
             runSpacing: AppSpacing.xs,
-            children: _buildChips(timeRange, talkCount),
+            children: _buildChips(l10n, timeRange, talkCount),
           ),
           children: [
             Divider(
               height: 1,
               color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
             ),
-            ..._buildPresentationItems(theme, talkCount),
+            ..._buildPresentationItems(l10n, theme, talkCount),
           ],
         ),
       ),
     );
   }
 
-  List<Widget> _buildChips(String timeRange, int talkCount) {
+  List<Widget> _buildChips(
+    AppLocalizations l10n,
+    String timeRange,
+    int talkCount,
+  ) {
     return [
       if (widget.block.track != null)
         ScheduleInfoChip(
@@ -238,21 +237,24 @@ class _BlockSectionState extends State<_BlockSection> {
         ),
       if (talkCount > 0)
         ScheduleInfoChip(
-          label:
-              '$talkCount ${talkCount == 1 ? _kSingularTalk : _kPluralTalks}',
+          label: l10n.scheduleTalks(talkCount),
           icon: AppIcons.mic,
           size: ScheduleChipSize.medium,
         ),
     ];
   }
 
-  List<Widget> _buildPresentationItems(ThemeData theme, int talkCount) {
+  List<Widget> _buildPresentationItems(
+    AppLocalizations l10n,
+    ThemeData theme,
+    int talkCount,
+  ) {
     return [
       if (widget.presentations.isEmpty)
         Padding(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
           child: Text(
-            _kNoPresentations,
+            l10n.scheduleNoPresentations,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.outline,
             ),
@@ -279,6 +281,7 @@ class _CollapseFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final actionColor = theme.colorScheme.primary;
 
@@ -299,7 +302,7 @@ class _CollapseFooter extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.xs),
             Text(
-              _kCollapseLabel,
+              l10n.scheduleCollapse,
               style: theme.textTheme.labelMedium?.copyWith(color: actionColor),
             ),
           ],

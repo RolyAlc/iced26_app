@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_type.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 
@@ -34,9 +34,10 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
 
   /// Construye los chips de filtro.
   List<Widget> _buildChips(BuildContext context, ColorScheme colors) {
+    final l10n = AppLocalizations.of(context)!;
     return [
       _CategoryChip(
-        label: 'All',
+        label: l10n.scheduleFilterAll,
         icon: AppIcons.apps,
         color: colors.primary,
         selected: selected == null,

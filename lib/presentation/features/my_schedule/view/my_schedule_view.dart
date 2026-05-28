@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
@@ -25,6 +24,7 @@ class MyScheduleView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final asyncItems = ref.watch(myScheduleGroupedProvider);
     final items = asyncItems.asData?.value;
     final hasItems = items != null && items.isNotEmpty;
@@ -33,8 +33,8 @@ class MyScheduleView extends ConsumerWidget {
         ? items.whereType<MyScheduleRow>().length
         : null;
     final title = totalCount != null
-        ? '${AppStrings.myScheduleTitle} ($totalCount)'
-        : AppStrings.myScheduleTitle;
+        ? l10n.myScheduleTitleWithCount(totalCount)
+        : l10n.myScheduleTitle;
     final header = AppPageTitle(title: title);
 
     if (asyncItems.isLoading) {
@@ -54,11 +54,11 @@ class MyScheduleView extends ConsumerWidget {
               size: _kIllustrationIconSize,
               color: theme.colorScheme.error,
             ),
-            title: AppStrings.myScheduleErrorTitle,
-            message: AppStrings.genericErrorMessage,
+            title: l10n.myScheduleErrorTitle,
+            message: l10n.genericErrorMessage,
             actionButton: TextButton(
               onPressed: () => ref.invalidate(myScheduleItemsProvider),
-              child: const Text(AppStrings.retry),
+              child: Text(l10n.retry),
             ),
           ),
         ),
@@ -75,8 +75,8 @@ class MyScheduleView extends ConsumerWidget {
               size: _kIllustrationIconSize,
               color: theme.colorScheme.outlineVariant,
             ),
-            title: AppStrings.myScheduleNothingSavedTitle,
-            message: AppStrings.myScheduleNothingSavedMessage,
+            title: l10n.myScheduleNothingSavedTitle,
+            message: l10n.myScheduleNothingSavedMessage,
           ),
         ),
       );

@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/locale_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/settings/widgets/settings_section.dart';
 
-// Los nombres de idioma se muestran en su propio idioma.
+// Los nombres de idioma se muestran en su propio idioma, independientemente
+// del locale activo — no van a ARB.
 const _kLabelSystem = 'System';
 const _kLabelEnglish = 'English';
 const _kLabelSpanish = 'Español';
-const _kTitleAppLanguage = 'App language';
-const _kTitleDialog = 'Language';
-const _kActionCancel = 'Cancel';
-const _kActionDone = 'Done';
 
 /// Ítem de idioma: muestra el idioma activo y abre el picker al tocar.
 class LanguageItem extends ConsumerWidget {
@@ -21,11 +19,12 @@ class LanguageItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final locale = ref.watch(localeProvider).value;
 
     return SettingsItem(
       icon: AppIcons.translate,
-      title: _kTitleAppLanguage,
+      title: l10n.settingsLanguageItemTitle,
       subtitle: _localeLabel(locale),
       onTap: () {
         showDialog<void>(
@@ -68,8 +67,10 @@ class _LanguagePickerDialogState extends ConsumerState<_LanguagePickerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
-      title: const Text(_kTitleDialog),
+      title: Text(l10n.settingsLanguageDialogTitle),
       contentPadding: const EdgeInsets.only(top: AppSpacing.s),
       content: RadioGroup<Locale?>(
         groupValue: _selected,
@@ -85,7 +86,7 @@ class _LanguagePickerDialogState extends ConsumerState<_LanguagePickerDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text(_kActionCancel),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: () {
@@ -94,7 +95,7 @@ class _LanguagePickerDialogState extends ConsumerState<_LanguagePickerDialog> {
             }
             Navigator.pop(context);
           },
-          child: const Text(_kActionDone),
+          child: Text(l10n.done),
         ),
       ],
     );
@@ -127,7 +128,7 @@ class _LanguageOptionTile extends StatelessWidget {
   }
 }
 
-/// Devuelve la etiqueta del idioma seleccionado.
+/// Devuelve el nombre del idioma en su propio idioma.
 String _localeLabel(Locale? locale) {
   return switch (locale?.languageCode) {
     'en' => _kLabelEnglish,

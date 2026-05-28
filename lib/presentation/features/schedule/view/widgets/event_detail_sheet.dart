@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
@@ -12,6 +10,7 @@ import 'package:iced26/domain/entities/presentation.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
 import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 import 'package:iced26/presentation/shared/models/icon_color_style.dart';
@@ -23,12 +22,7 @@ import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_detail_sheet.dart';
 
 const _kFallbackTime = '--:--';
-const _kFallbackRoom = 'TBA';
 const _kFallbackValue = '--';
-const _kLabelTime = 'Time';
-const _kLabelRoom = 'Room';
-const _kLabelDuration = 'Duration';
-const _kLabelLanguage = 'Language';
 
 const _kTypeIconSize = 12.0;
 const _kChevronSize = 16.0;
@@ -150,6 +144,7 @@ class _EventAttributesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Container(
@@ -163,13 +158,13 @@ class _EventAttributesGrid extends StatelessWidget {
           _buildAttributeRow(
             AttributeCell(
               icon: AppIcons.accessTime,
-              label: _kLabelTime,
+              label: l10n.scheduleAttrTime,
               value: event.filterTime ?? _kFallbackTime,
             ),
             AttributeCell(
               icon: AppIcons.meetingRoom,
-              label: _kLabelRoom,
-              value: event.roomId ?? _kFallbackRoom,
+              label: l10n.scheduleAttrRoom,
+              value: event.roomId ?? l10n.scheduleRoomTba,
             ),
           ),
           Padding(
@@ -182,12 +177,12 @@ class _EventAttributesGrid extends StatelessWidget {
           _buildAttributeRow(
             AttributeCell(
               icon: AppIcons.duration,
-              label: _kLabelDuration,
+              label: l10n.scheduleAttrDuration,
               value: duration ?? _kFallbackValue,
             ),
             AttributeCell(
               icon: AppIcons.translate,
-              label: _kLabelLanguage,
+              label: l10n.scheduleAttrLanguage,
               value: event.defaultLang?.toUpperCase() ?? _kFallbackValue,
             ),
           ),
@@ -214,6 +209,7 @@ class _EventFavoriteButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final isFavorite = ref.watch(
       favoriteIdsProvider.select(
         (ids) => ids.value?.contains(eventId) ?? false,
@@ -226,9 +222,7 @@ class _EventFavoriteButton extends ConsumerWidget {
         ref.read(toggleFavoriteUseCaseProvider).execute(eventId);
       },
       icon: isFavorite ? AppIcons.bookmarkOn : AppIcons.bookmarkAdd,
-      label: isFavorite
-          ? AppStrings.scheduleButtonSaved
-          : AppStrings.scheduleButtonAdd,
+      label: isFavorite ? l10n.scheduleButtonSaved : l10n.scheduleButtonAdd,
     );
   }
 }
@@ -247,13 +241,14 @@ class _SpeakerSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppStrings.labelSpeakers,
+          l10n.scheduleLabelSpeakers,
           style: theme.textTheme.labelMedium?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.bold,

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 
@@ -18,13 +17,14 @@ class ScheduleViewFab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final format = ref.watch(selectedScheduleViewFormatProvider);
+    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
     final isAgenda = format == ScheduleViewFormat.agenda;
 
     final icon = isAgenda ? AppIcons.viewList : AppIcons.viewAgenda;
     final label = isAgenda
-        ? AppStrings.scheduleViewFormatList
-        : AppStrings.scheduleViewFormatAgenda;
+        ? l10n.scheduleViewFormatList
+        : l10n.scheduleViewFormatAgenda;
 
     return Material(
       color: colors.primaryContainer,

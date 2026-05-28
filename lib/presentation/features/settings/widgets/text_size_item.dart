@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/text_size_preference.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/text_size_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/settings/widgets/settings_section.dart';
+import 'package:iced26/presentation/shared/utils/text_size_l10n.dart';
 
 /// Ítem de tamaño de texto: muestra la preferencia activa y abre el picker al tocar.
 class TextSizeItem extends ConsumerWidget {
@@ -13,12 +15,13 @@ class TextSizeItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final pref = ref.watch(textSizeProvider).value ?? TextSizePreference.medium;
 
     return SettingsItem(
       icon: AppIcons.textField,
-      title: 'Text size',
-      subtitle: pref.displayName,
+      title: l10n.settingsTextSizeTitle,
+      subtitle: textSizeLabel(pref, l10n),
       onTap: () {
         showDialog<void>(
           context: context,
@@ -62,8 +65,10 @@ class _TextSizePickerDialogState extends ConsumerState<_TextSizePickerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
-      title: const Text('Text size'),
+      title: Text(l10n.settingsTextSizeTitle),
       // Sin padding lateral para que el InkWell de cada opción llegue al borde.
       contentPadding: const EdgeInsets.only(top: AppSpacing.s),
       content: RadioGroup<TextSizePreference>(
@@ -92,13 +97,13 @@ class _TextSizePickerDialogState extends ConsumerState<_TextSizePickerDialog> {
             }
             Navigator.pop(context);
           },
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('Done'),
+          child: Text(l10n.done),
         ),
       ],
     );
@@ -114,6 +119,8 @@ class _TextSizeOptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Material(
       color: Colors.transparent,
       clipBehavior: Clip.antiAlias,
@@ -132,14 +139,14 @@ class _TextSizeOptionTile extends StatelessWidget {
                 context,
               ).copyWith(textScaler: TextScaler.linear(pref.scaleFactor)),
               child: Text(
-                pref.displayName,
+                textSizeLabel(pref, l10n),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
             if (pref == TextSizePreference.medium) ...[
               const SizedBox(width: AppSpacing.s),
               Text(
-                'Default',
+                l10n.settingsTextSizeDefault,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                 ),

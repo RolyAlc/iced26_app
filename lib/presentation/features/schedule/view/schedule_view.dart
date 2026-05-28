@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/my_schedule/view/my_schedule_view.dart';
 import 'package:iced26/presentation/features/my_schedule/viewmodel/my_schedule_viewmodel.dart';
@@ -66,6 +66,7 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final topTab = ref.watch(scheduleTopTabProvider);
     final isMySchedule = topTab == ScheduleTab.mySchedule;
 
@@ -77,7 +78,7 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
     });
 
     final slot = isMySchedule
-        ? _buildMyScheduleSlot(context, theme)
+        ? _buildMyScheduleSlot(context, theme, l10n)
         : _ContentSlot.scrollable(
             _buildPaddedContent(context, const ScheduleTimelineBody()),
           );
@@ -97,7 +98,11 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
     );
   }
 
-  _ContentSlot _buildMyScheduleSlot(BuildContext context, ThemeData theme) {
+  _ContentSlot _buildMyScheduleSlot(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     final asyncItems = ref.watch(myScheduleGroupedProvider);
 
     if (asyncItems.isLoading) {
@@ -106,19 +111,19 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
       );
     }
     if (asyncItems.hasError) {
-      return _ContentSlot.fill(_buildMyScheduleError(theme));
+      return _ContentSlot.fill(_buildMyScheduleError(theme, l10n));
     }
 
     final items = asyncItems.value ?? const [];
     if (items.isEmpty) {
-      return _ContentSlot.fill(_buildMyScheduleEmpty(theme));
+      return _ContentSlot.fill(_buildMyScheduleEmpty(theme, l10n));
     }
     return _ContentSlot.scrollable(
       _buildPaddedContent(context, MyScheduleContent(items: items)),
     );
   }
 
-  Widget _buildMyScheduleError(ThemeData theme) {
+  Widget _buildMyScheduleError(ThemeData theme, AppLocalizations l10n) {
     return Center(
       child: AppEmptyState(
         illustration: Icon(
@@ -126,17 +131,17 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
           size: _kEmptyStateIconSize,
           color: theme.colorScheme.error,
         ),
-        title: AppStrings.myScheduleErrorTitle,
-        message: AppStrings.genericErrorMessage,
+        title: l10n.myScheduleErrorTitle,
+        message: l10n.genericErrorMessage,
         actionButton: TextButton(
           onPressed: () => ref.invalidate(myScheduleItemsProvider),
-          child: const Text(AppStrings.retry),
+          child: Text(l10n.retry),
         ),
       ),
     );
   }
 
-  Widget _buildMyScheduleEmpty(ThemeData theme) {
+  Widget _buildMyScheduleEmpty(ThemeData theme, AppLocalizations l10n) {
     return Center(
       child: AppEmptyState(
         illustration: Icon(
@@ -144,8 +149,8 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
           size: _kEmptyStateIconSize,
           color: theme.colorScheme.outlineVariant,
         ),
-        title: AppStrings.myScheduleNothingSavedTitle,
-        message: AppStrings.myScheduleNothingSavedMessage,
+        title: l10n.myScheduleNothingSavedTitle,
+        message: l10n.myScheduleNothingSavedMessage,
       ),
     );
   }
