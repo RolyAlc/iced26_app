@@ -1,0 +1,15 @@
+{
+  "@@locale": "en",
+
+  "cancel": "Cancel",
+  "@cancel": { "description": "Generic cancel action label" },
+
+  "delete": "Delete",
+  "@delete": { "description": "Generic delete action label" },
+
+  "diaryDeleteNoteTitle": "Delete note?",
+  "@diaryDeleteNoteTitle": { "description": "Confirmation dialog title when deleting a diary note" },
+
+  "diaryDeleteNoteConfirm": "This action cannot be undone.",
+  "@diaryDeleteNoteConfirm": { "description": "Confirmation dialog body when deleting a diary note" }
+}

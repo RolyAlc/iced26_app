@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/app_config.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/text_size_preference.dart';
 import 'package:iced26/di/bootstrap.dart';
 import 'package:iced26/presentation/app/app_shell.dart';
+import 'package:iced26/presentation/app/state/locale_provider.dart';
 import 'package:iced26/presentation/app/state/text_size_provider.dart';
 import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
 import 'package:iced26/presentation/app/state/theme_provider.dart';
@@ -26,10 +29,14 @@ class MyApp extends ConsumerWidget {
 
     final themeModeAsync = ref.watch(themeModeProvider);
     final textSizeAsync = ref.watch(textSizeProvider);
+    final localeAsync = ref.watch(localeProvider);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: AppConfig.title,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: localeAsync.value,
       theme: themeAsync.value ?? AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       highContrastTheme: AppTheme.highContrastTheme,

@@ -54,3 +54,8 @@ app.*.map.json
 
 # Archivo generado automáticamente por flutter pub get. Cambia solo cuando cambian los plugins.
 macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Generados por flutter gen-l10n
+lib/l10n/app_localizations.dart
+lib/l10n/app_localizations_en.dart
+lib/l10n/app_localizations_es.dart

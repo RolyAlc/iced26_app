@@ -1,0 +1,8 @@
+{
+  "@@locale": "es",
+
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "diaryDeleteNoteTitle": "¿Eliminar nota?",
+  "diaryDeleteNoteConfirm": "Esta acción no se puede deshacer."
+}
