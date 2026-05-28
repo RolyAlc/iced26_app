@@ -5,16 +5,24 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/app_config.dart';
+import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/note_color.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_color_selector.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_header.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_inputs.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_section_label.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
+
+const _kLabelTitle = 'Title';
+const _kLabelContent = 'Content';
+const _kLabelMoodTag = 'Mood Tag';
+const _kSaving = 'Saving...';
+const _kSaveNote = 'Save note';
 
 /// Hoja modal para editar o crear una nota del diario.
 class DiaryNoteEditorSheet extends ConsumerStatefulWidget {
@@ -141,9 +149,9 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error saving note: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.diaryErrorSavingNote(e))),
+      );
     }
   }
 
@@ -152,19 +160,19 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Delete note?'),
-          content: const Text('This action cannot be undone.'),
+          title: Text(AppLocalizations.of(context)!.diaryDeleteNoteTitle),
+          content: Text(AppLocalizations.of(context)!.diaryDeleteNoteConfirm),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () {
                 HapticFeedback.mediumImpact();
                 Navigator.pop(dialogContext, true);
               },
-              child: const Text('Delete'),
+              child: Text(AppLocalizations.of(context)!.delete),
             ),
           ],
         );
@@ -219,7 +227,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
           const SizedBox(height: AppSpacing.l),
           DiaryEditorSectionLabel(
             icon: AppIcons.title,
-            label: 'Title',
+            label: _kLabelTitle,
             color: colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: AppSpacing.s),
@@ -227,7 +235,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
           const SizedBox(height: AppSpacing.m),
           DiaryEditorSectionLabel(
             icon: AppIcons.notes,
-            label: 'Content',
+            label: _kLabelContent,
             color: colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: AppSpacing.s),
@@ -238,7 +246,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
           const SizedBox(height: AppSpacing.l),
           DiaryEditorSectionLabel(
             icon: AppIcons.palette,
-            label: 'Mood Tag',
+            label: _kLabelMoodTag,
             color: colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: AppSpacing.s),
@@ -265,7 +273,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
       child: AppButton(
         onPressed: (_saving || !_canSave) ? null : _save,
         isLoading: _saving,
-        label: _saving ? 'Saving...' : 'Save note',
+        label: _saving ? _kSaving : _kSaveNote,
         icon: _saving ? null : AppIcons.check,
       ),
     );

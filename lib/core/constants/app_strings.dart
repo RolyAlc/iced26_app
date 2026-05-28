@@ -94,4 +94,11 @@ abstract final class AppStrings {
   static const String themeLight = 'Light';
   static const String themeDark = 'Dark';
   static const String themeSystem = 'System';
+  static const String cancel = 'Cancel';
+  static const String delete = 'Delete';
+  static const String diaryDeleteNoteTitle = 'Delete note?';
+  static const String diaryDeleteNoteConfirm = 'This action cannot be undone.';
+  static String diaryErrorSavingNote(Object error) {
+    return 'Error saving note: $error';
+  }
 }

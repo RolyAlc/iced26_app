@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/note_color.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
@@ -30,7 +31,8 @@ class DiaryNoteCard extends StatelessWidget {
         key: ValueKey(note.id),
         direction: DismissDirection.endToStart,
         background: const _DismissDeleteBackground(),
-        confirmDismiss: (_) => _showDeleteConfirmation(context),
+        confirmDismiss: (_) =>
+            _showDeleteConfirmation(context, AppLocalizations.of(context)!),
         onDismissed: (_) => onDelete(),
         child: AppCard(
           onTap: onEdit,
@@ -80,25 +82,28 @@ class DiaryNoteCard extends StatelessWidget {
   }
 
   /// Muestra un diálogo de confirmación de eliminación.
-  Future<bool> _showDeleteConfirmation(BuildContext context) async {
+  Future<bool> _showDeleteConfirmation(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     if (!context.mounted) return false;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Delete note?'),
-          content: const Text('This action cannot be undone.'),
+          title: Text(l10n.diaryDeleteNoteTitle),
+          content: Text(l10n.diaryDeleteNoteConfirm),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               onPressed: () {
                 HapticFeedback.mediumImpact();
                 Navigator.pop(dialogContext, true);
               },
-              child: const Text('Delete'),
+              child: Text(l10n.delete),
             ),
           ],
         );
