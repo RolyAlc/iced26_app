@@ -72,12 +72,14 @@ nav = [
       { "Design tokens" = "architecture/adr/0005_design_tokens.md" },
       { "App icons" = "architecture/adr/0006_app_icons.md" },
       { "Migración datos nueva edición" = "architecture/adr/0007_migracion_datos_nueva_edicion.md" },
-      { "SQLite3 Flutter libs" = "architecture/adr/0008_sqlite3_flutter_libs.md" }
+      { "SQLite3 Flutter libs" = "architecture/adr/0008_sqlite3_flutter_libs.md" },
+      { "ARB y flutter_localizations" = "architecture/adr/0009_arb_flutter_localizations.md" }
     ]}
   ]},
   { "Guías" = [
     { "Inicio rápido" = "guides/onboarding.md" },
     { "Comandos útiles" = "guides/commands.md" },
+    { "Internacionalización (i18n)" = "guides/i18n.md" },
     { "Convenciones de código" = "guides/conventions.md" },
     { "Glosario UX/UI" = "guides/ux_ui_glossary.md" },
     { "Publicación en tiendas" = "guides/publish_stores.md" },

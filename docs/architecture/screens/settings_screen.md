@@ -1,7 +1,7 @@
 ---
 version: 1.0.0
 status: activo
-last_updated: 2026-05-25
+last_updated: 2026-05-28
 icon: lucide/settings
 tags:
   - pantalla
@@ -39,7 +39,7 @@ graph TD
 | Sección        | Ítems                                   | Estado                                  |
 | -------------- | --------------------------------------- | --------------------------------------- |
 | **Appearance** | `TextSizeItem`, `ThemeItem`             | `textSizeProvider`, `themeModeProvider` |
-| **Language**   | `SettingsItem` (App language)           | `ComingSoonBadge` — no implementado     |
+| **Language**   | `LanguagePicker` (selector de idioma)   | `localeProvider` — EN / ES              |
 | **Data**       | `ReloadDataItem`, `ClearFavouritesItem` | Acciones destructivas con confirmación  |
 | **About**      | Edición, versión, web oficial           | Solo lectura                            |
 
@@ -54,4 +54,5 @@ graph TD
 ## 4. Notas
 
 - La versión real de la app (`package_info_plus`) está pendiente — actualmente muestra `'—'`.
-- El idioma está fijado en inglés; la localización completa no está implementada.
+- El selector de idioma usa `LocaleNotifier` (Riverpod) con `SharedPreferences` para persistir la elección. La lista de idiomas soportados se lee de `LocaleNotifier.supportedLocales` — fuente de verdad única.
+- Todos los strings de la pantalla están migrados a ARB (`app_en.arb` / `app_es.arb`).
