@@ -6,5 +6,7 @@
   "diaryDeleteNoteTitle": "¿Eliminar nota?",
   "diaryDeleteNoteConfirm": "Esta acción no se puede deshacer.",
 
-  "myScheduleUnscheduled": "Sin programar"
+  "myScheduleUnscheduled": "Sin programar",
+
+  "diaryTodayHeader": "Hoy · {date}"
 }

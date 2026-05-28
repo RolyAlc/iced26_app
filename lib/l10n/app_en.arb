@@ -14,5 +14,16 @@
   "@diaryDeleteNoteConfirm": { "description": "Confirmation dialog body when deleting a diary note" },
 
   "myScheduleUnscheduled": "Unscheduled",
-  "@myScheduleUnscheduled": { "description": "Section header for saved sessions without an assigned date" }
+  "@myScheduleUnscheduled": { "description": "Section header for saved sessions without an assigned date" },
+
+  "diaryTodayHeader": "Today · {date}",
+  "@diaryTodayHeader": {
+    "description": "Day header in the diary when the selected day is today",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "description": "Short date string, e.g. '3 May'"
+      }
+    }
+  }
 }
