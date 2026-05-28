@@ -3,7 +3,11 @@ version: 1.1.0
 status: activo
 last_updated: 2026-05-25
 icon: lucide/file-json
-tags: [guia, datos, actualizacion, congreso]
+tags:
+  - guia
+  - datos
+  - actualizacion
+  - congreso
 audience: organizador
 ---
 

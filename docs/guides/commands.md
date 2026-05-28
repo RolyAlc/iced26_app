@@ -3,7 +3,8 @@ version: 1.0.0
 status: activo
 last_updated: 2026-05-26
 icon: lucide/square-terminal
-tags: [comandos]
+tags:
+  - comandos
 ---
 
 <!-- TOOD: Añadir script para que el dev siguiente no tenga que recordarselo -->
