@@ -4,12 +4,12 @@ import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/settings/widgets/data_items.dart';
+import 'package:iced26/presentation/features/settings/widgets/language_picker.dart';
 import 'package:iced26/presentation/features/settings/widgets/settings_section.dart';
 import 'package:iced26/presentation/features/settings/widgets/text_size_item.dart';
 import 'package:iced26/presentation/features/settings/widgets/theme_picker.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
 import 'package:iced26/presentation/shared/widgets/app_page_title.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 
 const String _kSectionAppearance = 'Appearance';
@@ -17,8 +17,6 @@ const String _kSectionLanguage = 'Language';
 const String _kSectionData = 'Data';
 const String _kSectionAbout = 'About';
 const String _kTitleSettings = 'Settings';
-const String _kAppLanguageTitle = 'App language';
-const String _kAppLanguageValue = 'English';
 const String _kVersionTitle = 'Version';
 const String _kVersionValue = '—';
 const String _kWebsiteTitle = 'Official website';
@@ -39,14 +37,7 @@ class SettingsView extends StatelessWidget {
         const SizedBox(height: AppSpacing.m),
         const SettingsSection(
           title: _kSectionLanguage,
-          items: [
-            SettingsItem(
-              icon: AppIcons.translate,
-              title: _kAppLanguageTitle,
-              subtitle: _kAppLanguageValue,
-              trailing: ComingSoonBadge(),
-            ),
-          ],
+          items: [LanguageItem()],
         ),
         const SizedBox(height: AppSpacing.m),
         const SettingsSection(
@@ -72,8 +63,8 @@ class SettingsView extends StatelessWidget {
               icon: AppIcons.language,
               title: _kWebsiteTitle,
               subtitle: AppConfig.websiteLabel,
-              onTap: () {
-                launchUrl(
+              onTap: () async {
+                await launchUrl(
                   Uri.parse(AppConfig.websiteUrl),
                   mode: LaunchMode.externalApplication,
                 );
