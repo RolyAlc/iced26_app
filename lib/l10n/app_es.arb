@@ -4,5 +4,7 @@
   "cancel": "Cancelar",
   "delete": "Eliminar",
   "diaryDeleteNoteTitle": "¿Eliminar nota?",
-  "diaryDeleteNoteConfirm": "Esta acción no se puede deshacer."
+  "diaryDeleteNoteConfirm": "Esta acción no se puede deshacer.",
+
+  "myScheduleUnscheduled": "Sin programar"
 }

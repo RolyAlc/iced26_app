@@ -11,5 +11,8 @@
   "@diaryDeleteNoteTitle": { "description": "Confirmation dialog title when deleting a diary note" },
 
   "diaryDeleteNoteConfirm": "This action cannot be undone.",
-  "@diaryDeleteNoteConfirm": { "description": "Confirmation dialog body when deleting a diary note" }
+  "@diaryDeleteNoteConfirm": { "description": "Confirmation dialog body when deleting a diary note" },
+
+  "myScheduleUnscheduled": "Unscheduled",
+  "@myScheduleUnscheduled": { "description": "Section header for saved sessions without an assigned date" }
 }

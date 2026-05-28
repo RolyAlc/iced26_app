@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/my_schedule/view/widgets/saved_presentation_card.dart';
 import 'package:iced26/presentation/features/my_schedule/viewmodel/models/my_schedule_display_item.dart';
@@ -15,7 +15,6 @@ import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
 import 'package:iced26/presentation/shared/widgets/app_page_title.dart';
 
-const _kUnscheduled = 'Unscheduled';
 const _kIllustrationIconSize = 48.0;
 
 /// Pantalla completa de My Schedule. Envuelve [MyScheduleContent] con su propio
@@ -137,9 +136,10 @@ class _MyScheduleDayHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final label = header.date != null
         ? DateHelper.formatDayLabel(header.date!)
-        : _kUnscheduled;
+        : l10n.myScheduleUnscheduled;
 
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.l, bottom: AppSpacing.s),
