@@ -98,10 +98,6 @@ abstract final class AppStrings {
   static const String delete = 'Delete';
   static const String diaryDeleteNoteTitle = 'Delete note?';
   static const String diaryDeleteNoteConfirm = 'This action cannot be undone.';
-  static String diaryErrorSavingNote(Object error) {
-    return 'Error saving note: $error';
-  }
-
   static const String startupErrorTitle = 'Could not start the app';
   static const String startupErrorMessage = 'Try restarting the application';
 }

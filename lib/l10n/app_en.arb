@@ -16,6 +16,9 @@
   "myScheduleUnscheduled": "Unscheduled",
   "@myScheduleUnscheduled": { "description": "Section header for saved sessions without an assigned date" },
 
+  "speakerPresentingToday": "Today",
+  "@speakerPresentingToday": { "description": "Badge label on a speaker card when the speaker is presenting today" },
+
   "diaryTodayHeader": "Today · {date}",
   "@diaryTodayHeader": {
     "description": "Day header in the diary when the selected day is today",
@@ -23,6 +26,65 @@
       "date": {
         "type": "String",
         "description": "Short date string, e.g. '3 May'"
+      }
+    }
+  },
+
+  "socialActivityLabel": "Social activity",
+  "@socialActivityLabel": { "description": "Category label shown on social activity cards" },
+
+  "homeFeaturedSessions": "Featured sessions",
+  "@homeFeaturedSessions": { "description": "Section title for featured sessions on the home screen" },
+
+  "homeKeynoteSpeakers": "Keynote speakers",
+  "@homeKeynoteSpeakers": { "description": "Section title for keynote speakers on the home screen" },
+
+  "homeConferenceThemes": "Conference themes",
+  "@homeConferenceThemes": { "description": "Section title for conference themes on the home screen" },
+
+  "homeLatestNews": "Latest news",
+  "@homeLatestNews": { "description": "Section title for latest news on the home screen" },
+
+  "homeNewsEmptyTitle": "No news available",
+  "@homeNewsEmptyTitle": { "description": "Empty state title when there are no news items" },
+
+  "homeNewsEmptyMessage": "Check back later for the latest updates.",
+  "@homeNewsEmptyMessage": { "description": "Empty state message when there are no news items" },
+
+  "homeSocialActivities": "Social activities",
+  "@homeSocialActivities": { "description": "Section title for social activities on the home screen" },
+
+  "homeSocialEmptyTitle": "No social activities found",
+  "@homeSocialEmptyTitle": { "description": "Empty state title when there are no social activities" },
+
+  "homeSocialEmptyMessage": "Check back later for upcoming events.",
+  "@homeSocialEmptyMessage": { "description": "Empty state message when there are no social activities" },
+
+  "homeSeeAll": "See all",
+  "@homeSeeAll": { "description": "Button label to navigate to the full list of a home section" },
+
+  "diaryNoteEditorLabelTitle": "Title",
+  "@diaryNoteEditorLabelTitle": { "description": "Section label for the title field in the diary note editor" },
+
+  "diaryNoteEditorLabelContent": "Content",
+  "@diaryNoteEditorLabelContent": { "description": "Section label for the content field in the diary note editor" },
+
+  "diaryNoteEditorLabelMoodTag": "Mood Tag",
+  "@diaryNoteEditorLabelMoodTag": { "description": "Section label for the mood tag selector in the diary note editor" },
+
+  "diaryNoteEditorSaving": "Saving...",
+  "@diaryNoteEditorSaving": { "description": "Save button label while the note is being saved" },
+
+  "diaryNoteEditorSaveNote": "Save note",
+  "@diaryNoteEditorSaveNote": { "description": "Save button label in the diary note editor" },
+
+  "diaryErrorSavingNote": "Error saving note: {error}",
+  "@diaryErrorSavingNote": {
+    "description": "Snackbar error message when saving a diary note fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "The error description"
       }
     }
   }

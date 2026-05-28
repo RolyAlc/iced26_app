@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/social_activity_ui_model.dart';
 
 /// Contenido principal de la card (categoría + título).
@@ -17,7 +18,7 @@ class SocialCardContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Social activity',
+          AppLocalizations.of(context)!.socialActivityLabel,
           style: theme.textTheme.labelMedium?.copyWith(
             color: colors.onTertiaryContainer.withValues(alpha: 0.7),
             fontWeight: FontWeight.bold,

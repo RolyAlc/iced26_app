@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
+
+const _kGoCircleSize = 48.0;
+const _kGoCircleIconSize = 30.0;
 
 /// Footer de la card del keynote speaker: nombre, institución, badge y acceso al detalle.
 class SpeakerCardFooter extends StatelessWidget {
@@ -107,12 +111,12 @@ class _GoCircle extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     return Container(
-      width: 48,
-      height: 48,
+      width: _kGoCircleSize,
+      height: _kGoCircleSize,
       decoration: BoxDecoration(color: colors.primary, shape: BoxShape.circle),
       child: Icon(
         AppIcons.keyboardArrowRight,
-        size: 30,
+        size: _kGoCircleIconSize,
         color: colors.onPrimary,
       ),
     );
@@ -125,7 +129,8 @@ class _TodayBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -137,8 +142,8 @@ class _TodayBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.s),
       ),
       child: Text(
-        'Today',
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        AppLocalizations.of(context)!.speakerPresentingToday,
+        style: theme.textTheme.labelSmall?.copyWith(
           color: colors.onPrimary,
           fontWeight: FontWeight.bold,
         ),

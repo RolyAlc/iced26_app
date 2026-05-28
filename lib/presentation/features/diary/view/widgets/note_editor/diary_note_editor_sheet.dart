@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/app_config.dart';
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
@@ -18,11 +17,7 @@ import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widg
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_section_label.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
 
-const _kLabelTitle = 'Title';
-const _kLabelContent = 'Content';
-const _kLabelMoodTag = 'Mood Tag';
-const _kSaving = 'Saving...';
-const _kSaveNote = 'Save note';
+// TODO: revisar
 
 /// Hoja modal para editar o crear una nota del diario.
 class DiaryNoteEditorSheet extends ConsumerStatefulWidget {
@@ -132,7 +127,9 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
   Future<void> _save() async {
     final title = _titleController.text.trim();
     final content = _contentController.text.trim();
-    if (content.isEmpty) return;
+    if (content.isEmpty) {
+      return;
+    }
 
     setState(() => _saving = true);
     try {
@@ -147,10 +144,16 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
           );
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() => _saving = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.diaryErrorSavingNote(e))),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.diaryErrorSavingNote('$e'),
+          ),
+        ),
       );
     }
   }
@@ -227,7 +230,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
           const SizedBox(height: AppSpacing.l),
           DiaryEditorSectionLabel(
             icon: AppIcons.title,
-            label: _kLabelTitle,
+            label: AppLocalizations.of(context)!.diaryNoteEditorLabelTitle,
             color: colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: AppSpacing.s),
@@ -235,7 +238,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
           const SizedBox(height: AppSpacing.m),
           DiaryEditorSectionLabel(
             icon: AppIcons.notes,
-            label: _kLabelContent,
+            label: AppLocalizations.of(context)!.diaryNoteEditorLabelContent,
             color: colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: AppSpacing.s),
@@ -246,7 +249,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
           const SizedBox(height: AppSpacing.l),
           DiaryEditorSectionLabel(
             icon: AppIcons.palette,
-            label: _kLabelMoodTag,
+            label: AppLocalizations.of(context)!.diaryNoteEditorLabelMoodTag,
             color: colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: AppSpacing.s),
@@ -273,7 +276,9 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
       child: AppButton(
         onPressed: (_saving || !_canSave) ? null : _save,
         isLoading: _saving,
-        label: _saving ? _kSaving : _kSaveNote,
+        label: _saving
+            ? AppLocalizations.of(context)!.diaryNoteEditorSaving
+            : AppLocalizations.of(context)!.diaryNoteEditorSaveNote,
         icon: _saving ? null : AppIcons.check,
       ),
     );

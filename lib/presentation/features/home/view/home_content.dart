@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/view/sections/home_conference_themes_section.dart';
@@ -98,10 +99,11 @@ class _HomeFeaturedSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return StaggeredFadeIn(
       delay: _kFeaturedFadeDelay,
       child: AppSection(
-        title: 'Featured sessions',
+        title: l10n.homeFeaturedSessions,
         trailing: _SeeAllButton(onPressed: onExploreTap),
         edgeToEdge: true,
         child: HomeFeaturedSection(
@@ -122,10 +124,11 @@ class _HomeKeynoteSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return StaggeredFadeIn(
       delay: _kKeynoteFadeDelay,
       child: AppSection(
-        title: 'Keynote speakers',
+        title: l10n.homeKeynoteSpeakers,
         trailing: _SeeAllButton(onPressed: onViewAll),
         edgeToEdge: true,
         child: HomeKeynoteSection(speakers: speakers),
@@ -142,10 +145,11 @@ class _HomeThemesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return StaggeredFadeIn(
       delay: _kThemesFadeDelay,
       child: AppSection(
-        title: 'Conference themes',
+        title: l10n.homeConferenceThemes,
         child: HomeConferenceThemesSection(themes: themes),
       ),
     );
@@ -161,10 +165,11 @@ class _HomeNewsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return StaggeredFadeIn(
       delay: _kNewsFadeDelay,
       child: AppSection.resolved(
-        title: 'Latest news',
+        title: l10n.homeLatestNews,
         trailing: hasMoreNews
             ? _SeeAllButton(
                 onPressed: () => HomeNewsAllSheet.show(context, news),
@@ -172,10 +177,13 @@ class _HomeNewsSection extends StatelessWidget {
             : null,
         hasData: news.isNotEmpty,
         dataChild: HomeNewsSection(news: news),
-        emptyChild: const AppEmptyState(
-          title: 'No news available',
-          message: 'Check back later for the latest updates.',
-          illustration: Icon(AppIcons.news, size: _kEmptyIllustrationSize),
+        emptyChild: AppEmptyState(
+          title: l10n.homeNewsEmptyTitle,
+          message: l10n.homeNewsEmptyMessage,
+          illustration: const Icon(
+            AppIcons.news,
+            size: _kEmptyIllustrationSize,
+          ),
         ),
       ),
     );
@@ -190,10 +198,11 @@ class _HomeSocialSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return StaggeredFadeIn(
       delay: _kSocialFadeDelay,
       child: AppSection.resolved(
-        title: 'Social activities',
+        title: l10n.homeSocialActivities,
         edgeToEdge: true,
         hasData: socialActivities.isNotEmpty,
         dataChild: HomeSocialActivitiesSection(socials: socialActivities),
@@ -201,10 +210,13 @@ class _HomeSocialSection extends StatelessWidget {
           padding: EdgeInsets.symmetric(
             horizontal: AppLayout.horizontalPadding(context),
           ),
-          child: const AppEmptyState(
-            title: 'No social activities found',
-            message: 'Check back later for upcoming events.',
-            illustration: Icon(AppIcons.social, size: _kEmptyIllustrationSize),
+          child: AppEmptyState(
+            title: l10n.homeSocialEmptyTitle,
+            message: l10n.homeSocialEmptyMessage,
+            illustration: const Icon(
+              AppIcons.social,
+              size: _kEmptyIllustrationSize,
+            ),
           ),
         ),
       ),
@@ -227,7 +239,7 @@ class _SeeAllButton extends StatelessWidget {
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: VisualDensity.compact,
       ),
-      label: const Text('See all'),
+      label: Text(AppLocalizations.of(context)!.homeSeeAll),
       iconAlignment: IconAlignment.end,
     );
   }

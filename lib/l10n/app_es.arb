@@ -8,5 +8,27 @@
 
   "myScheduleUnscheduled": "Sin programar",
 
+  "speakerPresentingToday": "Hoy",
+
+  "socialActivityLabel": "Actividad social",
+
+  "homeFeaturedSessions": "Sesiones destacadas",
+  "homeKeynoteSpeakers": "Ponentes principales",
+  "homeConferenceThemes": "Temas de la conferencia",
+  "homeLatestNews": "Últimas noticias",
+  "homeNewsEmptyTitle": "Sin noticias disponibles",
+  "homeNewsEmptyMessage": "Vuelve pronto para ver las últimas actualizaciones.",
+  "homeSocialActivities": "Actividades sociales",
+  "homeSocialEmptyTitle": "No se encontraron actividades sociales",
+  "homeSocialEmptyMessage": "Vuelve pronto para ver los próximos eventos.",
+  "homeSeeAll": "Ver todo",
+
+  "diaryNoteEditorLabelTitle": "Título",
+  "diaryNoteEditorLabelContent": "Contenido",
+  "diaryNoteEditorLabelMoodTag": "Etiqueta de ánimo",
+  "diaryNoteEditorSaving": "Guardando...",
+  "diaryNoteEditorSaveNote": "Guardar nota",
+  "diaryErrorSavingNote": "Error al guardar la nota: {error}",
+
   "diaryTodayHeader": "Hoy · {date}"
 }
