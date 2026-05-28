@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/app_config.dart';
-import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/text_size_preference.dart';
 import 'package:iced26/di/bootstrap.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/app_shell.dart';
 import 'package:iced26/presentation/app/state/locale_provider.dart';
 import 'package:iced26/presentation/app/state/text_size_provider.dart';
