@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/domain/entities/event_status.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/features/search/widgets/active_filter_chip.dart';
@@ -94,7 +95,7 @@ class _CollapsedFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chips = _buildActiveChips();
+    final chips = _buildActiveChips(context);
 
     return AnimatedSize(
       duration: AppDuration.fast,
@@ -138,7 +139,8 @@ class _CollapsedFilterBar extends StatelessWidget {
 
   // Collection literal — mismo patrón for/if que los widget trees de Flutter.
   // Sin lista mutable ni .add(): cada fuente de filtros contribuye sus chips directamente.
-  List<Widget> _buildActiveChips() {
+  List<Widget> _buildActiveChips(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return [
       if (filters.selectedDay != null)
         ActiveFilterChip(
@@ -157,12 +159,16 @@ class _CollapsedFilterBar extends StatelessWidget {
         ),
       for (final d in filters.selectedDurations)
         ActiveFilterChip(
-          label: AppStrings.searchDurationLabel(d),
+          label: l10n.searchDurationLabel(d),
           onRemove: () => notifier.toggleDuration(d),
         ),
       for (final s in filters.selectedStatuses)
         ActiveFilterChip(
-          label: AppStrings.searchStatusLabel(s),
+          label: switch (s) {
+            EventStatus.live => l10n.searchStatusLiveNow,
+            EventStatus.next => l10n.searchStatusUpNext,
+            EventStatus.ended => l10n.searchStatusEnded,
+          },
           onRemove: () => notifier.toggleStatus(s),
         ),
     ];

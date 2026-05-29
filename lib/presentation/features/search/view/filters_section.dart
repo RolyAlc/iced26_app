@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/features/search/view/search_filter_panel.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
@@ -20,6 +20,7 @@ class FiltersSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final resultsCount = ref.watch(
       searchProvider.select((s) => s.results.length),
     );
@@ -28,8 +29,8 @@ class FiltersSection extends ConsumerWidget {
     );
 
     final buttonLabel = filtersActive
-        ? AppStrings.searchShowResults(resultsCount)
-        : AppStrings.searchDone;
+        ? l10n.searchShowResults(resultsCount)
+        : l10n.done;
 
     return Column(
       children: [

@@ -4,6 +4,7 @@
   "cancel": "Cancelar",
   "delete": "Eliminar",
   "retry": "Reintentar",
+  "errorScreenTitle": "¡Ups! Algo salió mal",
   "genericErrorMessage": "Algo salió mal. Por favor, inténtalo de nuevo.",
   "diaryDeleteNoteTitle": "¿Eliminar nota?",
   "diaryDeleteNoteConfirm": "Esta acción no se puede deshacer.",
@@ -33,6 +34,8 @@
   "diaryErrorSavingNote": "Error al guardar la nota: {error}",
 
   "diaryTodayHeader": "Hoy · {date}",
+
+  "diaryErrorTitle": "No se pudo cargar el diario",
 
   "diaryCongress": "Congreso",
   "diaryMyNotes": "Mis notas",
@@ -117,5 +120,35 @@
   "scheduleDetailTrack": "Track {track}",
   "scheduleDetailDuration": "{minutes} min",
   "scheduleDetailShowAll": "Ver todos ({count})",
-  "scheduleDetailShowLess": "Ver menos"
+  "scheduleDetailShowLess": "Ver menos",
+
+  "searchExploreTitle": "Explorar",
+  "searchExploreSubtitle": "Busca por texto o filtra por día, tipo e idioma.",
+  "searchNoResultsTitle": "Sin resultados",
+  "searchNoResultsSubtitle": "Prueba a ajustar tu búsqueda o los filtros.",
+  "searchBarHint": "Sesiones, autores, salas...",
+  "searchInputHint": "Busca autor, título o sala...",
+  "searchFilters": "Filtros",
+  "searchFiltersActive": "Filtros ({count})",
+  "searchRecentTitle": "Recientes",
+  "searchClearAll": "Borrar todo",
+  "searchRecentlyViewedTitle": "Vistos recientemente",
+  "searchRecentlyViewedPeopleTitle": "Ponentes vistos recientemente",
+  "searchRemoveRecent": "Eliminar de recientes",
+  "searchNoRoom": "Sin sala",
+  "searchPeopleLabel": "Ponentes",
+  "searchSessionsLabel": "Sesiones",
+  "searchResultsCount": "{count, plural, one{# resultado} other{# resultados}}",
+  "searchShowMore": "Mostrar {count} más",
+  "searchShowResults": "{count, plural, one{Mostrar # resultado} other{Mostrar # resultados}}",
+  "searchFilterDay": "Día",
+  "searchFilterType": "Tipo",
+  "searchFilterZone": "Zona",
+  "searchFilterDuration": "Duración",
+  "searchFilterStatus": "Estado",
+  "searchDurationLabel": "{minutes} min",
+  "searchStatusLiveNow": "En directo",
+  "searchStatusUpNext": "Próximamente",
+  "searchStatusEnded": "Finalizada",
+  "searchTalkCount": "{count, plural, one{# charla} other{# charlas}}"
 }

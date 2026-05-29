@@ -10,6 +10,9 @@
   "retry": "Retry",
   "@retry": { "description": "Generic retry action label" },
 
+  "errorScreenTitle": "Oops! Something went wrong",
+  "@errorScreenTitle": { "description": "Title shown on the generic error screen" },
+
   "genericErrorMessage": "Something went wrong. Please try again.",
   "@genericErrorMessage": { "description": "Generic error message shown when an operation fails unexpectedly" },
 
@@ -94,6 +97,9 @@
       }
     }
   },
+
+  "diaryErrorTitle": "Could not load diary",
+  "@diaryErrorTitle": { "description": "Error state title when the diary fails to load" },
 
   "diaryCongress": "Congress",
   "@diaryCongress": { "description": "Section label for congress events in the diary day view" },
@@ -358,5 +364,122 @@
   },
 
   "scheduleDetailShowLess": "Show less",
-  "@scheduleDetailShowLess": { "description": "Footer action to collapse the speakers list in presentation detail" }
+  "@scheduleDetailShowLess": { "description": "Footer action to collapse the speakers list in presentation detail" },
+
+  "searchExploreTitle": "Explore",
+  "@searchExploreTitle": { "description": "Title of the explore overlay when search is idle and history is empty" },
+
+  "searchExploreSubtitle": "Search by text, or filter by day, type and language.",
+  "@searchExploreSubtitle": { "description": "Subtitle of the explore overlay when search is idle and history is empty" },
+
+  "searchNoResultsTitle": "No results",
+  "@searchNoResultsTitle": { "description": "Title of the empty state overlay when search returns no results" },
+
+  "searchNoResultsSubtitle": "Try adjusting your search or filters.",
+  "@searchNoResultsSubtitle": { "description": "Subtitle of the empty state overlay when search returns no results" },
+
+  "searchBarHint": "Search sessions, authors, rooms...",
+  "@searchBarHint": { "description": "Hint text shown in the collapsed smart search bar" },
+
+  "searchInputHint": "Type author, title or room...",
+  "@searchInputHint": { "description": "Hint text shown in the search text field when the modal is open" },
+
+  "searchFilters": "Filters",
+  "@searchFilters": { "description": "Label on the filter toggle button when no filters are active" },
+
+  "searchFiltersActive": "Filters ({count})",
+  "@searchFiltersActive": {
+    "description": "Label on the filter toggle button when one or more filters are active",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of active filters" }
+    }
+  },
+
+  "searchRecentTitle": "Recent",
+  "@searchRecentTitle": { "description": "Section label for recent searches" },
+
+  "searchClearAll": "Clear all",
+  "@searchClearAll": { "description": "Action label to clear all recent searches or filters" },
+
+  "searchRecentlyViewedTitle": "Recently viewed",
+  "@searchRecentlyViewedTitle": { "description": "Section label for recently viewed sessions" },
+
+  "searchRecentlyViewedPeopleTitle": "Recently viewed people",
+  "@searchRecentlyViewedPeopleTitle": { "description": "Section label for recently viewed speakers" },
+
+  "searchRemoveRecent": "Remove from recent",
+  "@searchRemoveRecent": { "description": "Tooltip for the remove button on a recent search tile" },
+
+  "searchNoRoom": "No room",
+  "@searchNoRoom": { "description": "Fallback label on a search result tile when the event has no assigned room" },
+
+  "searchPeopleLabel": "People",
+  "@searchPeopleLabel": { "description": "Section label for the speakers group in search results" },
+
+  "searchSessionsLabel": "Sessions",
+  "@searchSessionsLabel": { "description": "Section label for the sessions group in search results" },
+
+  "searchResultsCount": "{count, plural, one{# result} other{# results}}",
+  "@searchResultsCount": {
+    "description": "Summary count shown above the search results list",
+    "placeholders": {
+      "count": { "type": "int", "description": "Total number of results" }
+    }
+  },
+
+  "searchShowMore": "Show {count} more",
+  "@searchShowMore": {
+    "description": "Button label to expand a capped results section",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of remaining hidden items" }
+    }
+  },
+
+  "searchShowResults": "{count, plural, one{Show # result} other{Show # results}}",
+  "@searchShowResults": {
+    "description": "Button label in the filter panel to confirm and show matching results",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of matching results" }
+    }
+  },
+
+  "searchFilterDay": "Day",
+  "@searchFilterDay": { "description": "Section label for the day filter in the search filter panel" },
+
+  "searchFilterType": "Type",
+  "@searchFilterType": { "description": "Section label for the session type filter in the search filter panel" },
+
+  "searchFilterZone": "Zone",
+  "@searchFilterZone": { "description": "Section label for the zone filter in the search filter panel" },
+
+  "searchFilterDuration": "Duration",
+  "@searchFilterDuration": { "description": "Section label for the duration filter in the search filter panel" },
+
+  "searchFilterStatus": "Status",
+  "@searchFilterStatus": { "description": "Section label for the status filter in the search filter panel" },
+
+  "searchDurationLabel": "{minutes} min",
+  "@searchDurationLabel": {
+    "description": "Chip label for a duration filter option",
+    "placeholders": {
+      "minutes": { "type": "int", "description": "Duration in minutes" }
+    }
+  },
+
+  "searchStatusLiveNow": "Live now",
+  "@searchStatusLiveNow": { "description": "Status filter chip label for sessions currently live" },
+
+  "searchStatusUpNext": "Up next",
+  "@searchStatusUpNext": { "description": "Status filter chip label for sessions starting soon" },
+
+  "searchStatusEnded": "Ended",
+  "@searchStatusEnded": { "description": "Status filter chip label for sessions that have ended" },
+
+  "searchTalkCount": "{count, plural, one{# talk} other{# talks}}",
+  "@searchTalkCount": {
+    "description": "Trailing label on a speaker result tile showing how many talks they have",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of talks by this speaker" }
+    }
+  }
 }

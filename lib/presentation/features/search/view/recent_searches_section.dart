@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/features/search/widgets/recent_query_tile.dart';
 import 'package:iced26/presentation/features/search/widgets/section_label.dart';
 
@@ -21,6 +21,7 @@ class RecentSearchesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
@@ -30,11 +31,11 @@ class RecentSearchesSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SectionLabel(label: AppStrings.searchRecentTitle),
+            SectionLabel(label: l10n.searchRecentTitle),
             GestureDetector(
               onTap: onClearAll,
               child: Text(
-                AppStrings.searchClearAll,
+                l10n.searchClearAll,
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: colors.primary,
                 ),

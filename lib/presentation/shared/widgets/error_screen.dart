@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Pantalla de error genérica para mostrar mensajes de error de forma amigable.
@@ -10,11 +10,10 @@ class ErrorScreen extends StatelessWidget {
   final String error;
   final VoidCallback? onRetry;
 
-  static const _kTitle = 'Oops! Something went wrong';
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -25,7 +24,7 @@ class ErrorScreen extends StatelessWidget {
               Icon(AppIcons.error, color: theme.colorScheme.error, size: 60),
               const SizedBox(height: 16),
               Text(
-                _kTitle,
+                l10n.errorScreenTitle,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.titleLarge,
               ),
@@ -39,10 +38,7 @@ class ErrorScreen extends StatelessWidget {
               ),
               if (onRetry != null) ...[
                 const SizedBox(height: 24),
-                FilledButton.tonal(
-                  onPressed: onRetry,
-                  child: const Text(AppStrings.retry),
-                ),
+                FilledButton.tonal(onPressed: onRetry, child: Text(l10n.retry)),
               ],
             ],
           ),

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/features/search/widgets/search_highlight_text.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
@@ -19,6 +18,7 @@ class PersonResultTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     final name = person.name.resolve(locale);
     final colors = Theme.of(context).colorScheme;
@@ -42,7 +42,7 @@ class PersonResultTile extends ConsumerWidget {
           : null,
       trailing: presentations.isNotEmpty
           ? Text(
-              AppStrings.talkCountLabel(presentations.length),
+              l10n.searchTalkCount(presentations.length),
               style: Theme.of(
                 context,
               ).textTheme.labelSmall?.copyWith(color: colors.onSurfaceVariant),

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/recent_searches_provider.dart';
 import 'package:iced26/presentation/app/state/recently_viewed_people_provider.dart';
 import 'package:iced26/presentation/app/state/recently_viewed_provider.dart';
@@ -151,12 +150,13 @@ class _CombinedResultsListState extends State<_CombinedResultsList> {
   }
 
   List<Widget> _buildPeopleItems(List<Person> visible, int remaining) {
+    final l10n = AppLocalizations.of(context)!;
     final onPersonTap = widget.onPersonTap;
     return [
       Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.s),
         child: SectionLabel(
-          label: AppStrings.searchPeopleLabel,
+          label: l10n.searchPeopleLabel,
           icon: AppIcons.peopleOutline,
           count: widget.people.length,
         ),
@@ -188,12 +188,13 @@ class _CombinedResultsListState extends State<_CombinedResultsList> {
     int remaining, {
     required bool hasPeopleAbove,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     return [
       if (hasPeopleAbove) const SizedBox(height: AppSpacing.m),
       Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.s),
         child: SectionLabel(
-          label: AppStrings.searchSessionsLabel,
+          label: l10n.searchSessionsLabel,
           icon: AppIcons.sessions,
           count: widget.events.length,
         ),
@@ -253,11 +254,12 @@ class _ResultsCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.s),
       child: Text(
-        AppStrings.searchResultsCount(total),
+        l10n.searchResultsCount(total),
         style: Theme.of(
           context,
         ).textTheme.labelSmall?.copyWith(color: colors.onSurfaceVariant),
@@ -279,7 +281,7 @@ class _ShowMoreButton extends StatelessWidget {
         child: OutlinedButton.icon(
           onPressed: onTap,
           icon: const Icon(AppIcons.expandMore, size: 18),
-          label: Text(AppStrings.searchShowMore(remaining)),
+          label: Text(AppLocalizations.of(context)!.searchShowMore(remaining)),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.l,

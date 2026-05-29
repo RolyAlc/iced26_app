@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 const _kClearIconSize = 16.0;
@@ -14,6 +14,7 @@ class ClearAllButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
@@ -38,7 +39,7 @@ class ClearAllButton extends StatelessWidget {
             Icon(AppIcons.close, size: _kClearIconSize, color: colors.error),
             const SizedBox(width: AppSpacing.xs),
             Text(
-              AppStrings.searchClearAll,
+              l10n.searchClearAll,
               style: theme.textTheme.labelMedium?.copyWith(
                 color: colors.error,
                 fontWeight: FontWeight.w600,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_body.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_fab.dart';
@@ -11,7 +11,7 @@ import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dar
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 import 'package:iced26/presentation/shared/widgets/app_page.dart';
 
-const _kErrorTitle = 'Could not load diary';
+const _kErrorIconSize = 48.0;
 
 /// Pantalla completa de Diary. Envuelve [DiaryBody] con su propio
 /// [AppPage] para poder usarse como destino de navegación independiente.
@@ -25,23 +25,24 @@ class DiaryView extends ConsumerWidget {
     final hasError = notesAsync.hasError || eventsAsync.hasError;
 
     if (hasError) {
+      final l10n = AppLocalizations.of(context)!;
       return AppPage(
         header: const DiaryHeader(),
         fillChild: Center(
           child: AppEmptyState(
             illustration: Icon(
               AppIcons.error,
-              size: 48,
+              size: _kErrorIconSize,
               color: Theme.of(context).colorScheme.error,
             ),
-            title: _kErrorTitle,
-            message: AppStrings.genericErrorMessage,
+            title: l10n.diaryErrorTitle,
+            message: l10n.genericErrorMessage,
             actionButton: TextButton(
               onPressed: () {
                 ref.invalidate(diaryNotesProvider);
                 ref.invalidate(diaryConferenceEventsProvider);
               },
-              child: const Text(AppStrings.retry),
+              child: Text(l10n.retry),
             ),
           ),
         ),
