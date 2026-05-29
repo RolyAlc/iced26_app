@@ -1,0 +1,267 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/core/constants/text_size_preference.dart';
+import 'package:iced26/l10n/app_localizations.dart';
+import 'package:iced26/presentation/app/state/text_size_provider.dart';
+import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
+import 'package:iced26/presentation/app/theme/app_icons.dart';
+import 'package:iced26/presentation/shared/utils/text_size_l10n.dart';
+
+const double _kFabIconSize = 22.0;
+const double _kFabButtonPaddingH = 18.0;
+const double _kFabButtonPaddingV = 14.0;
+const double _kFabDividerHeight = 22.0;
+const double _kFabElevation = 3.0;
+
+/// Píldora flotante centrada con controles de lectura: tamaño de texto y tema.
+class ReadingControlsFab extends ConsumerWidget {
+  const ReadingControlsFab({
+    super.key,
+    this.scrollController,
+    this.showScrollToTop = false,
+  });
+
+  // Controlador del scroll. Necesario para el botón "back to top".
+  final ScrollController? scrollController;
+  // Si es true y [scrollController] no es null, muestra el botón "↑".
+  final bool showScrollToTop;
+
+  void _openSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (_) => const _ReadingControlsSheet(),
+    );
+  }
+
+  void _scrollToTop() {
+    scrollController?.animateTo(
+      0,
+      duration: AppDuration.entrance,
+      curve: Curves.easeOut,
+    );
+  }
+
+  Widget _buildScrollToTopSlot(ColorScheme colors, String tooltip) {
+    if (scrollController == null) {
+      return const SizedBox.shrink();
+    }
+
+    // AnimatedSize colapsa el ancho cuando el botón no es visible,
+    // evitando que la píldora ocupe espacio extra innecesariamente.
+    return AnimatedSize(
+      duration: AppDuration.fast,
+      curve: Curves.easeOut,
+      child: showScrollToTop
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _PillIconButton(
+                  icon: AppIcons.collapse,
+                  color: colors.onPrimaryContainer,
+                  tooltip: tooltip,
+                  onTap: _scrollToTop,
+                ),
+                _PillDivider(color: colors.onPrimaryContainer),
+              ],
+            )
+          : const SizedBox.shrink(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
+    final colors = Theme.of(context).colorScheme;
+
+    return Material(
+      color: colors.primaryContainer,
+      elevation: _kFabElevation,
+      shadowColor: colors.shadow,
+      borderRadius: BorderRadius.circular(AppRadius.full),
+      clipBehavior: Clip.antiAlias,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildScrollToTopSlot(colors, l10n.readingControlsBackToTop),
+          _PillIconButton(
+            icon: AppIcons.textField,
+            color: colors.onPrimaryContainer,
+            tooltip: l10n.settingsTextSizeTitle,
+            onTap: () => _openSheet(context),
+          ),
+          _PillDivider(color: colors.onPrimaryContainer),
+          _PillIconButton(
+            icon: AppIcons.forThemeMode(themeMode),
+            color: colors.onPrimaryContainer,
+            tooltip: l10n.settingsThemeTitle,
+            onTap: () => _openSheet(context),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Botón de icono interno de la píldora. Ripple rectangular acotado al área del botón.
+class _PillIconButton extends StatelessWidget {
+  const _PillIconButton({
+    required this.icon,
+    required this.color,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: _kFabButtonPaddingH,
+            vertical: _kFabButtonPaddingV,
+          ),
+          child: Icon(icon, size: _kFabIconSize, color: color),
+        ),
+      ),
+    );
+  }
+}
+
+/// Separador visual de 1px entre botones de la píldora.
+class _PillDivider extends StatelessWidget {
+  const _PillDivider({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: _kFabDividerHeight,
+      color: color.withValues(alpha: 0.15),
+    );
+  }
+}
+
+/// Panel de controles de lectura: tamaño de texto y modo de tema.
+/// Los cambios son globales, en tiempo real y persisten entre sesiones.
+class _ReadingControlsSheet extends ConsumerWidget {
+  const _ReadingControlsSheet();
+
+  Widget _buildSection(ThemeData theme, String label, Widget control) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.s),
+        SizedBox(width: double.infinity, child: control),
+      ],
+    );
+  }
+
+  Widget _buildTextSizeControl(
+    WidgetRef ref,
+    TextSizePreference current,
+    AppLocalizations l10n,
+  ) {
+    return SegmentedButton<TextSizePreference>(
+      segments: [
+        for (final pref in TextSizePreference.values)
+          ButtonSegment<TextSizePreference>(
+            value: pref,
+            label: Text(pref.label),
+            tooltip: textSizeLabel(pref, l10n),
+          ),
+      ],
+      selected: {current},
+      onSelectionChanged: (selection) {
+        ref.read(textSizeProvider.notifier).setPreference(selection.first);
+      },
+    );
+  }
+
+  Widget _buildThemeModeControl(
+    WidgetRef ref,
+    ThemeMode current,
+    AppLocalizations l10n,
+  ) {
+    return SegmentedButton<ThemeMode>(
+      segments: [
+        ButtonSegment<ThemeMode>(
+          value: ThemeMode.light,
+          icon: const Icon(AppIcons.lightTheme),
+          label: Text(l10n.settingsThemeLight),
+        ),
+        ButtonSegment<ThemeMode>(
+          value: ThemeMode.system,
+          icon: const Icon(AppIcons.systemTheme),
+          label: Text(l10n.settingsThemeSystem),
+        ),
+        ButtonSegment<ThemeMode>(
+          value: ThemeMode.dark,
+          icon: const Icon(AppIcons.darkTheme),
+          label: Text(l10n.settingsThemeDark),
+        ),
+      ],
+      selected: {current},
+      onSelectionChanged: (selection) {
+        ref.read(themeModeProvider.notifier).setMode(selection.first);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final textSize =
+        ref.watch(textSizeProvider).value ?? TextSizePreference.medium;
+    final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
+    final theme = Theme.of(context);
+
+    return SafeArea(
+      child: Padding(
+        // Top reducido: showDragHandle ya añade espacio visual suficiente arriba.
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.l,
+          AppSpacing.s,
+          AppSpacing.l,
+          AppSpacing.l,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSection(
+              theme,
+              l10n.settingsTextSizeTitle,
+              _buildTextSizeControl(ref, textSize, l10n),
+            ),
+            const SizedBox(height: AppSpacing.l),
+            _buildSection(
+              theme,
+              l10n.settingsThemeTitle,
+              _buildThemeModeControl(ref, themeMode, l10n),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

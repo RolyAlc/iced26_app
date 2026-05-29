@@ -1,0 +1,485 @@
+{
+  "@@locale": "en",
+
+  "cancel": "Cancel",
+  "@cancel": { "description": "Generic cancel action label" },
+
+  "delete": "Delete",
+  "@delete": { "description": "Generic delete action label" },
+
+  "retry": "Retry",
+  "@retry": { "description": "Generic retry action label" },
+
+  "errorScreenTitle": "Oops! Something went wrong",
+  "@errorScreenTitle": { "description": "Title shown on the generic error screen" },
+
+  "genericErrorMessage": "Something went wrong. Please try again.",
+  "@genericErrorMessage": { "description": "Generic error message shown when an operation fails unexpectedly" },
+
+  "diaryDeleteNoteTitle": "Delete note?",
+  "@diaryDeleteNoteTitle": { "description": "Confirmation dialog title when deleting a diary note" },
+
+  "diaryDeleteNoteConfirm": "This action cannot be undone.",
+  "@diaryDeleteNoteConfirm": { "description": "Confirmation dialog body when deleting a diary note" },
+
+  "myScheduleUnscheduled": "Unscheduled",
+  "@myScheduleUnscheduled": { "description": "Section header for saved sessions without an assigned date" },
+
+  "speakerPresentingToday": "Today",
+  "@speakerPresentingToday": { "description": "Badge label on a speaker card when the speaker is presenting today" },
+
+  "diaryTodayHeader": "Today · {date}",
+  "@diaryTodayHeader": {
+    "description": "Day header in the diary when the selected day is today",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "description": "Short date string, e.g. '3 May'"
+      }
+    }
+  },
+
+  "socialActivityLabel": "Social activity",
+  "@socialActivityLabel": { "description": "Category label shown on social activity cards" },
+
+  "homeFeaturedSessions": "Featured sessions",
+  "@homeFeaturedSessions": { "description": "Section title for featured sessions on the home screen" },
+
+  "homeKeynoteSpeakers": "Keynote speakers",
+  "@homeKeynoteSpeakers": { "description": "Section title for keynote speakers on the home screen" },
+
+  "homeConferenceThemes": "Conference themes",
+  "@homeConferenceThemes": { "description": "Section title for conference themes on the home screen" },
+
+  "homeLatestNews": "Latest news",
+  "@homeLatestNews": { "description": "Section title for latest news on the home screen" },
+
+  "homeNewsEmptyTitle": "No news available",
+  "@homeNewsEmptyTitle": { "description": "Empty state title when there are no news items" },
+
+  "homeNewsEmptyMessage": "Check back later for the latest updates.",
+  "@homeNewsEmptyMessage": { "description": "Empty state message when there are no news items" },
+
+  "homeSocialActivities": "Social activities",
+  "@homeSocialActivities": { "description": "Section title for social activities on the home screen" },
+
+  "homeSocialEmptyTitle": "No social activities found",
+  "@homeSocialEmptyTitle": { "description": "Empty state title when there are no social activities" },
+
+  "homeSocialEmptyMessage": "Check back later for upcoming events.",
+  "@homeSocialEmptyMessage": { "description": "Empty state message when there are no social activities" },
+
+  "homeSeeAll": "See all",
+  "@homeSeeAll": { "description": "Button label to navigate to the full list of a home section" },
+
+  "diaryNoteEditorLabelTitle": "Title",
+  "@diaryNoteEditorLabelTitle": { "description": "Section label for the title field in the diary note editor" },
+
+  "diaryNoteEditorLabelContent": "Content",
+  "@diaryNoteEditorLabelContent": { "description": "Section label for the content field in the diary note editor" },
+
+  "diaryNoteEditorLabelMoodTag": "Mood Tag",
+  "@diaryNoteEditorLabelMoodTag": { "description": "Section label for the mood tag selector in the diary note editor" },
+
+  "diaryNoteEditorSaving": "Saving...",
+  "@diaryNoteEditorSaving": { "description": "Save button label while the note is being saved" },
+
+  "diaryNoteEditorSaveNote": "Save note",
+  "@diaryNoteEditorSaveNote": { "description": "Save button label in the diary note editor" },
+
+  "diaryErrorSavingNote": "Error saving note: {error}",
+  "@diaryErrorSavingNote": {
+    "description": "Snackbar error message when saving a diary note fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "The error description"
+      }
+    }
+  },
+
+  "diaryErrorTitle": "Could not load diary",
+  "@diaryErrorTitle": { "description": "Error state title when the diary fails to load" },
+
+  "diaryCongress": "Congress",
+  "@diaryCongress": { "description": "Section label for congress events in the diary day view" },
+
+  "diaryMyNotes": "My notes",
+  "@diaryMyNotes": { "description": "Section label for the user's personal notes in the diary day view" },
+
+  "diaryEmptyNoteTitle": "No notes for this day",
+  "@diaryEmptyNoteTitle": { "description": "Empty state title when the user has no notes for the selected day" },
+
+  "diaryEmptyNoteMessage": "Tap + to write your first note",
+  "@diaryEmptyNoteMessage": { "description": "Empty state message prompting the user to add their first note" },
+
+  "done": "Done",
+  "@done": { "description": "Generic confirm action label in dialogs" },
+
+  "settingsTitle": "Settings",
+  "@settingsTitle": { "description": "Page title for the Settings screen" },
+
+  "settingsSectionAppearance": "Appearance",
+  "@settingsSectionAppearance": { "description": "Settings section header for appearance options" },
+
+  "settingsSectionLanguage": "Language",
+  "@settingsSectionLanguage": { "description": "Settings section header for language options" },
+
+  "settingsSectionData": "Data",
+  "@settingsSectionData": { "description": "Settings section header for data management options" },
+
+  "settingsSectionAbout": "About",
+  "@settingsSectionAbout": { "description": "Settings section header for app information" },
+
+  "settingsVersionTitle": "Version",
+  "@settingsVersionTitle": { "description": "Label for the app version item in Settings > About" },
+
+  "settingsWebsiteTitle": "Official website",
+  "@settingsWebsiteTitle": { "description": "Label for the official website link in Settings > About" },
+
+  "settingsReloadDataTitle": "Reload data",
+  "@settingsReloadDataTitle": { "description": "Settings item title to reload app data from the bundle" },
+
+  "settingsReloadDataSubtitle": "Update the programme from the bundle",
+  "@settingsReloadDataSubtitle": { "description": "Settings item subtitle for the reload data action" },
+
+  "settingsReloadDialogTitle": "Reload data?",
+  "@settingsReloadDialogTitle": { "description": "Confirmation dialog title for reloading app data" },
+
+  "settingsReloadDialogBody": "The programme will be refreshed from the bundled data. Your favourites will be kept.",
+  "@settingsReloadDialogBody": { "description": "Confirmation dialog body for reloading app data" },
+
+  "settingsReload": "Reload",
+  "@settingsReload": { "description": "Confirm action label in the reload data dialog" },
+
+  "settingsClearFavouritesTitle": "Clear favourites",
+  "@settingsClearFavouritesTitle": { "description": "Settings item title to clear all saved favourites" },
+
+  "settingsClearFavouritesEmpty": "No saved items",
+  "@settingsClearFavouritesEmpty": { "description": "Subtitle when the user has no saved favourites" },
+
+  "settingsClearFavouritesOne": "1 saved item",
+  "@settingsClearFavouritesOne": { "description": "Subtitle when the user has exactly 1 saved favourite" },
+
+  "settingsClearFavouritesMany": "{count} saved items",
+  "@settingsClearFavouritesMany": {
+    "description": "Subtitle when the user has 2 or more saved favourites",
+    "placeholders": {
+      "count": { "type": "int", "description": "Total number of saved favourites" }
+    }
+  },
+
+  "settingsClearFavouritesDialogTitle": "Clear favourites?",
+  "@settingsClearFavouritesDialogTitle": { "description": "Confirmation dialog title for clearing all favourites" },
+
+  "settingsClearFavouritesDialogBodyOne": "Remove 1 saved item? This cannot be undone.",
+  "@settingsClearFavouritesDialogBodyOne": { "description": "Confirmation dialog body when clearing exactly 1 favourite" },
+
+  "settingsClearFavouritesDialogBodyMany": "Remove all {count} saved items? This cannot be undone.",
+  "@settingsClearFavouritesDialogBodyMany": {
+    "description": "Confirmation dialog body when clearing 2 or more favourites",
+    "placeholders": {
+      "count": { "type": "int", "description": "Total number of saved favourites to clear" }
+    }
+  },
+
+  "settingsClearAll": "Clear all",
+  "@settingsClearAll": { "description": "Confirm action label in the clear favourites dialog" },
+
+  "settingsTextSizeTitle": "Text size",
+  "@settingsTextSizeTitle": { "description": "Settings item title and dialog title for text size picker" },
+
+  "settingsTextSizeDefault": "Default",
+  "@settingsTextSizeDefault": { "description": "Label shown next to the medium text size option to indicate it is the default" },
+
+  "settingsTextSizeSmall": "Small",
+  "@settingsTextSizeSmall": { "description": "Label for the small text size option" },
+
+  "settingsTextSizeMedium": "Medium",
+  "@settingsTextSizeMedium": { "description": "Label for the medium text size option" },
+
+  "settingsTextSizeLarge": "Large",
+  "@settingsTextSizeLarge": { "description": "Label for the large text size option" },
+
+  "settingsTextSizeXl": "Extra Large",
+  "@settingsTextSizeXl": { "description": "Label for the extra large text size option" },
+
+  "settingsThemeTitle": "Theme",
+  "@settingsThemeTitle": { "description": "Settings item title and dialog title for theme picker" },
+
+  "settingsThemeLight": "Light",
+  "@settingsThemeLight": { "description": "Label for the light theme option" },
+
+  "settingsThemeDark": "Dark",
+  "@settingsThemeDark": { "description": "Label for the dark theme option" },
+
+  "settingsThemeSystem": "System",
+  "@settingsThemeSystem": { "description": "Label for the system (follow device) theme option" },
+
+  "settingsLanguageItemTitle": "App language",
+  "@settingsLanguageItemTitle": { "description": "Settings item title for the language selector" },
+
+  "settingsLanguageDialogTitle": "Language",
+  "@settingsLanguageDialogTitle": { "description": "Dialog title for the language picker" },
+
+  "readingControlsBackToTop": "Back to top",
+  "@readingControlsBackToTop": { "description": "Tooltip for the scroll-to-top button in the reading controls FAB" },
+
+  "scheduleTitle": "Schedule",
+  "@scheduleTitle": { "description": "Top tab label for the main conference schedule view" },
+
+  "scheduleViewFormatList": "List",
+  "@scheduleViewFormatList": { "description": "FAB label to switch to list view in the schedule" },
+
+  "scheduleViewFormatAgenda": "Schedule",
+  "@scheduleViewFormatAgenda": { "description": "FAB label to switch to agenda (timeline) view in the schedule" },
+
+  "scheduleAllDays": "All days",
+  "@scheduleAllDays": { "description": "Label shown in schedule header when a category filter is active, replacing the day tab bar" },
+
+  "scheduleFilterAll": "All",
+  "@scheduleFilterAll": { "description": "Label for the 'All categories' chip in the schedule category filter bar" },
+
+  "scheduleNoSessionsTitle": "No sessions match your filters",
+  "@scheduleNoSessionsTitle": { "description": "Empty state title when no schedule items match the active category filter" },
+
+  "scheduleNoSessionsMessage": "Try a different category or clear the filter",
+  "@scheduleNoSessionsMessage": { "description": "Empty state message when no schedule items match the active category filter" },
+
+  "scheduleAttrTime": "Time",
+  "@scheduleAttrTime": { "description": "Label for the time attribute cell in the event detail sheet" },
+
+  "scheduleAttrRoom": "Room",
+  "@scheduleAttrRoom": { "description": "Label for the room attribute cell in the event detail sheet" },
+
+  "scheduleAttrDuration": "Duration",
+  "@scheduleAttrDuration": { "description": "Label for the duration attribute cell in the event detail sheet" },
+
+  "scheduleAttrLanguage": "Language",
+  "@scheduleAttrLanguage": { "description": "Label for the language attribute cell in the event detail sheet" },
+
+  "scheduleRoomTba": "TBA",
+  "@scheduleRoomTba": { "description": "Fallback room label when no room is assigned to an event" },
+
+  "scheduleLabelSpeakers": "Speakers",
+  "@scheduleLabelSpeakers": { "description": "Section label for the speakers list in event and presentation detail sheets" },
+
+  "scheduleButtonAdd": "Add to my schedule",
+  "@scheduleButtonAdd": { "description": "Button label to save an event to the user's personal schedule" },
+
+  "scheduleButtonSaved": "Saved to my schedule",
+  "@scheduleButtonSaved": { "description": "Button label shown when an event is already saved to the user's personal schedule" },
+
+  "scheduleTracks": "{count, plural, one{# track} other{# tracks}}",
+  "@scheduleTracks": {
+    "description": "Chip label showing how many parallel tracks are in a session slot",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of parallel tracks" }
+    }
+  },
+
+  "scheduleTalks": "{count, plural, one{# talk} other{# talks}}",
+  "@scheduleTalks": {
+    "description": "Chip label showing how many talks are in a session block",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of talks" }
+    }
+  },
+
+  "scheduleSessions": "{count, plural, one{# session} other{# sessions}}",
+  "@scheduleSessions": {
+    "description": "Chip label showing how many sessions are in a slot block",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of sessions" }
+    }
+  },
+
+  "scheduleNoPresentations": "No presentations",
+  "@scheduleNoPresentations": { "description": "Empty state label when a session block has no presentations" },
+
+  "scheduleCollapse": "Collapse",
+  "@scheduleCollapse": { "description": "Footer action label to collapse a long session block list" },
+
+  "scheduleSpeakersOverflow": "& +{count} more",
+  "@scheduleSpeakersOverflow": {
+    "description": "Suffix appended to speaker names when there are more speakers than shown",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of additional speakers not shown" }
+    }
+  },
+
+  "myScheduleTitle": "My schedule",
+  "@myScheduleTitle": { "description": "Top tab label for the user's personal saved schedule" },
+
+  "myScheduleTitleWithCount": "My schedule ({count})",
+  "@myScheduleTitleWithCount": {
+    "description": "Page title for My Schedule screen showing the saved item count",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of saved schedule items" }
+    }
+  },
+
+  "myScheduleErrorTitle": "Could not load your schedule",
+  "@myScheduleErrorTitle": { "description": "Error state title when the user's personal schedule fails to load" },
+
+  "myScheduleNothingSavedTitle": "Nothing saved yet",
+  "@myScheduleNothingSavedTitle": { "description": "Empty state title when the user has no saved schedule items" },
+
+  "myScheduleNothingSavedMessage": "Bookmark sessions and talks to build your schedule",
+  "@myScheduleNothingSavedMessage": { "description": "Empty state message prompting the user to save sessions" },
+
+  "scheduleSpeakersHeaderCount": "Speakers · {count}",
+  "@scheduleSpeakersHeaderCount": {
+    "description": "Speakers section header in presentation detail when there is more than one speaker",
+    "placeholders": {
+      "count": { "type": "int", "description": "Total number of speakers" }
+    }
+  },
+
+  "scheduleDetailAbstract": "Abstract",
+  "@scheduleDetailAbstract": { "description": "Section label for the abstract in the presentation detail sheet" },
+
+  "scheduleDetailTrack": "Track {track}",
+  "@scheduleDetailTrack": {
+    "description": "Chip label showing the track name/letter for a presentation",
+    "placeholders": {
+      "track": { "type": "String", "description": "Track name or letter, e.g. A, Main, Workshop" }
+    }
+  },
+
+  "scheduleDetailDuration": "{minutes} min",
+  "@scheduleDetailDuration": {
+    "description": "Chip label showing the duration of a presentation in minutes",
+    "placeholders": {
+      "minutes": { "type": "int", "description": "Duration in minutes" }
+    }
+  },
+
+  "scheduleDetailShowAll": "Show all ({count})",
+  "@scheduleDetailShowAll": {
+    "description": "Footer action to expand the full speakers list in presentation detail",
+    "placeholders": {
+      "count": { "type": "int", "description": "Total number of speakers" }
+    }
+  },
+
+  "scheduleDetailShowLess": "Show less",
+  "@scheduleDetailShowLess": { "description": "Footer action to collapse the speakers list in presentation detail" },
+
+  "searchExploreTitle": "Explore",
+  "@searchExploreTitle": { "description": "Title of the explore overlay when search is idle and history is empty" },
+
+  "searchExploreSubtitle": "Search by text, or filter by day, type and language.",
+  "@searchExploreSubtitle": { "description": "Subtitle of the explore overlay when search is idle and history is empty" },
+
+  "searchNoResultsTitle": "No results",
+  "@searchNoResultsTitle": { "description": "Title of the empty state overlay when search returns no results" },
+
+  "searchNoResultsSubtitle": "Try adjusting your search or filters.",
+  "@searchNoResultsSubtitle": { "description": "Subtitle of the empty state overlay when search returns no results" },
+
+  "searchBarHint": "Search sessions, authors, rooms...",
+  "@searchBarHint": { "description": "Hint text shown in the collapsed smart search bar" },
+
+  "searchInputHint": "Type author, title or room...",
+  "@searchInputHint": { "description": "Hint text shown in the search text field when the modal is open" },
+
+  "searchFilters": "Filters",
+  "@searchFilters": { "description": "Label on the filter toggle button when no filters are active" },
+
+  "searchFiltersActive": "Filters ({count})",
+  "@searchFiltersActive": {
+    "description": "Label on the filter toggle button when one or more filters are active",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of active filters" }
+    }
+  },
+
+  "searchRecentTitle": "Recent",
+  "@searchRecentTitle": { "description": "Section label for recent searches" },
+
+  "searchClearAll": "Clear all",
+  "@searchClearAll": { "description": "Action label to clear all recent searches or filters" },
+
+  "searchRecentlyViewedTitle": "Recently viewed",
+  "@searchRecentlyViewedTitle": { "description": "Section label for recently viewed sessions" },
+
+  "searchRecentlyViewedPeopleTitle": "Recently viewed people",
+  "@searchRecentlyViewedPeopleTitle": { "description": "Section label for recently viewed speakers" },
+
+  "searchRemoveRecent": "Remove from recent",
+  "@searchRemoveRecent": { "description": "Tooltip for the remove button on a recent search tile" },
+
+  "searchNoRoom": "No room",
+  "@searchNoRoom": { "description": "Fallback label on a search result tile when the event has no assigned room" },
+
+  "searchPeopleLabel": "People",
+  "@searchPeopleLabel": { "description": "Section label for the speakers group in search results" },
+
+  "searchSessionsLabel": "Sessions",
+  "@searchSessionsLabel": { "description": "Section label for the sessions group in search results" },
+
+  "searchResultsCount": "{count, plural, one{# result} other{# results}}",
+  "@searchResultsCount": {
+    "description": "Summary count shown above the search results list",
+    "placeholders": {
+      "count": { "type": "int", "description": "Total number of results" }
+    }
+  },
+
+  "searchShowMore": "Show {count} more",
+  "@searchShowMore": {
+    "description": "Button label to expand a capped results section",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of remaining hidden items" }
+    }
+  },
+
+  "searchShowResults": "{count, plural, one{Show # result} other{Show # results}}",
+  "@searchShowResults": {
+    "description": "Button label in the filter panel to confirm and show matching results",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of matching results" }
+    }
+  },
+
+  "searchFilterDay": "Day",
+  "@searchFilterDay": { "description": "Section label for the day filter in the search filter panel" },
+
+  "searchFilterType": "Type",
+  "@searchFilterType": { "description": "Section label for the session type filter in the search filter panel" },
+
+  "searchFilterZone": "Zone",
+  "@searchFilterZone": { "description": "Section label for the zone filter in the search filter panel" },
+
+  "searchFilterDuration": "Duration",
+  "@searchFilterDuration": { "description": "Section label for the duration filter in the search filter panel" },
+
+  "searchFilterStatus": "Status",
+  "@searchFilterStatus": { "description": "Section label for the status filter in the search filter panel" },
+
+  "searchDurationLabel": "{minutes} min",
+  "@searchDurationLabel": {
+    "description": "Chip label for a duration filter option",
+    "placeholders": {
+      "minutes": { "type": "int", "description": "Duration in minutes" }
+    }
+  },
+
+  "searchStatusLiveNow": "Live now",
+  "@searchStatusLiveNow": { "description": "Status filter chip label for sessions currently live" },
+
+  "searchStatusUpNext": "Up next",
+  "@searchStatusUpNext": { "description": "Status filter chip label for sessions starting soon" },
+
+  "searchStatusEnded": "Ended",
+  "@searchStatusEnded": { "description": "Status filter chip label for sessions that have ended" },
+
+  "searchTalkCount": "{count, plural, one{# talk} other{# talks}}",
+  "@searchTalkCount": {
+    "description": "Trailing label on a speaker result tile showing how many talks they have",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of talks by this speaker" }
+    }
+  }
+}

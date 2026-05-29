@@ -1,0 +1,36 @@
+import 'package:flutter/material.dart';
+
+import 'package:iced26/presentation/features/search/widgets/chip_container.dart';
+
+/// Chip que representa un filtro.
+class AppFilterChip extends StatelessWidget {
+  const AppFilterChip({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    return ChipContainer(
+      selected: selected,
+      accentColor: colors.primary,
+      onTap: onTap,
+      child: Text(
+        label,
+        style: chipLabelStyle(
+          theme.textTheme,
+          selected: selected,
+          color: selected ? colors.primary : colors.onSurface,
+        ),
+      ),
+    );
+  }
+}
