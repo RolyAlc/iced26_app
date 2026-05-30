@@ -25,7 +25,11 @@ class AttributeCell extends StatelessWidget {
             color: theme.colorScheme.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, size: 16, color: theme.colorScheme.primary),
+          child: Icon(
+            icon,
+            size: AppIconSize.inline,
+            color: theme.colorScheme.primary,
+          ),
         ),
         const SizedBox(width: AppSpacing.s),
         Column(

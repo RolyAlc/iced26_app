@@ -75,7 +75,7 @@ class PresentationSpeakerList extends StatelessWidget {
                   if (canTap)
                     Icon(
                       AppIcons.chevronRight,
-                      size: 16,
+                      size: AppIconSize.inline,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                 ],

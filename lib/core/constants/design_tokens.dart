@@ -61,6 +61,13 @@ class AppLayout {
   }
 }
 
+/// Tamaños de iconos semánticos — evita literales dispersos en widgets de error y estado vacío.
+class AppIconSize {
+  static const double inline = 16.0;
+  static const double errorPage = 60.0;
+  static const double errorStartup = 48.0;
+}
+
 /// Opacidades semánticas — evita literales dispersos. placeholder = contenido pendiente de carga.
 class AppOpacity {
   static const double placeholder = 0.75;

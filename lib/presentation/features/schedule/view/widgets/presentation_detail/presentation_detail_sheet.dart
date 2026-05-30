@@ -296,7 +296,7 @@ class _SpeakersToggleFooter extends StatelessWidget {
             const SizedBox(width: AppSpacing.xs),
             Icon(
               isExpanded ? AppIcons.collapse : AppIcons.expandMore,
-              size: 16,
+              size: AppIconSize.inline,
               color: theme.colorScheme.primary,
             ),
           ],

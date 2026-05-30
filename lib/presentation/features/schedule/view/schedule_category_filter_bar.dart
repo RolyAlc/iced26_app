@@ -85,7 +85,7 @@ class _CategoryChip extends StatelessWidget {
       label: Text(label),
       avatar: Icon(
         icon,
-        size: 16,
+        size: AppIconSize.inline,
         color: selected ? color : colors.onSurfaceVariant,
       ),
       selected: selected,
