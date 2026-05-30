@@ -93,7 +93,7 @@ class _SpeakerInstitution extends StatelessWidget {
         children: [
           Icon(
             AppIcons.business,
-            size: 16,
+            size: AppIconSize.inline,
             color: theme.colorScheme.onSurfaceVariant,
           ),
           const SizedBox(width: AppSpacing.s),

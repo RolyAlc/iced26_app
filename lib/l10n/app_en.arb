@@ -10,6 +10,9 @@
   "retry": "Retry",
   "@retry": { "description": "Generic retry action label" },
 
+  "readMore": "Read more",
+  "@readMore": { "description": "Generic CTA label to expand or navigate to full content" },
+
   "errorScreenTitle": "Oops! Something went wrong",
   "@errorScreenTitle": { "description": "Title shown on the generic error screen" },
 
@@ -44,6 +47,15 @@
 
   "homeFeaturedSessions": "Featured sessions",
   "@homeFeaturedSessions": { "description": "Section title for featured sessions on the home screen" },
+
+  "homeFeaturedEmptyMessage": "No sessions available today",
+  "@homeFeaturedEmptyMessage": { "description": "Empty state message when there are no featured sessions for the day" },
+
+  "homeFeaturedExploreMore": "Explore all sessions",
+  "@homeFeaturedExploreMore": { "description": "Title on the explore-more card at the end of the featured sessions carousel" },
+
+  "homeFeaturedViewSchedule": "View schedule",
+  "@homeFeaturedViewSchedule": { "description": "Subtitle CTA on the explore-more card in the featured sessions carousel" },
 
   "homeKeynoteSpeakers": "Keynote speakers",
   "@homeKeynoteSpeakers": { "description": "Section title for keynote speakers on the home screen" },
@@ -86,6 +98,15 @@
 
   "diaryNoteEditorSaveNote": "Save note",
   "@diaryNoteEditorSaveNote": { "description": "Save button label in the diary note editor" },
+
+  "diaryNoteEditorHintTitle": "Note title",
+  "@diaryNoteEditorHintTitle": { "description": "Placeholder text for the title field in the diary note editor" },
+
+  "diaryNoteEditorHintContent": "Add note content",
+  "@diaryNoteEditorHintContent": { "description": "Placeholder text for the content field in the diary note editor" },
+
+  "diaryFabAddNote": "Add note",
+  "@diaryFabAddNote": { "description": "Label on the floating action button to create a new diary note" },
 
   "diaryErrorSavingNote": "Error saving note: {error}",
   "@diaryErrorSavingNote": {
@@ -481,5 +502,11 @@
     "placeholders": {
       "count": { "type": "int", "description": "Number of talks by this speaker" }
     }
-  }
+  },
+
+  "startupErrorTitle": "Could not start the app",
+  "@startupErrorTitle": { "description": "Title shown on the startup error screen when the app fails to initialise" },
+
+  "startupErrorMessage": "Try restarting the application",
+  "@startupErrorMessage": { "description": "Body text shown on the startup error screen" }
 }

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 
 const _kMinLines = 3;
 const _kMaxLines = 6;
-const _kHintTitle = 'Note title';
-const _kHintContent = 'Add note content';
 
 /// Decoración común para los inputs del editor de notas del diario.
 InputDecoration _editorDecoration({
@@ -43,13 +42,14 @@ class DiaryEditorTitleInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return TextField(
       controller: controller,
       style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
       decoration: _editorDecoration(
         colors: theme.colorScheme,
-        hint: _kHintTitle,
+        hint: l10n.diaryNoteEditorHintTitle,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.m,
           vertical: AppSpacing.s,
@@ -72,6 +72,8 @@ class DiaryEditorContentInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return TextField(
       controller: controller,
       autofocus: autofocus,
@@ -79,7 +81,7 @@ class DiaryEditorContentInput extends StatelessWidget {
       minLines: _kMinLines,
       decoration: _editorDecoration(
         colors: Theme.of(context).colorScheme,
-        hint: _kHintContent,
+        hint: l10n.diaryNoteEditorHintContent,
       ),
       textCapitalization: TextCapitalization.sentences,
     );

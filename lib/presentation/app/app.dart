@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/app_config.dart';
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/text_size_preference.dart';
 import 'package:iced26/di/bootstrap.dart';
@@ -48,7 +47,6 @@ class MyApp extends ConsumerWidget {
       themeAnimationCurve: Curves.easeInOut,
       builder: (context, child) {
         final pref = textSizeAsync.value ?? TextSizePreference.medium;
-        // child nunca es null cuando se usa junto a `home`.
         return MediaQuery(
           data: MediaQuery.of(
             context,
@@ -60,7 +58,6 @@ class MyApp extends ConsumerWidget {
     );
   }
 
-  /// Construye la pantalla de inicio de la aplicación.
   Widget _buildHome({required bool isReady, required bool hasError}) {
     if (hasError) {
       return const _StartupErrorScreen();
@@ -72,8 +69,6 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-const _kStartupErrorIconSize = 48.0;
-
 /// Pantalla de error que se muestra si el arranque de la aplicación falla.
 class _StartupErrorScreen extends StatelessWidget {
   const _StartupErrorScreen();
@@ -81,6 +76,7 @@ class _StartupErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Center(
         child: Column(
@@ -88,17 +84,14 @@ class _StartupErrorScreen extends StatelessWidget {
           children: [
             Icon(
               AppIcons.error,
-              size: _kStartupErrorIconSize,
+              size: AppIconSize.errorStartup,
               color: theme.colorScheme.error,
             ),
             const SizedBox(height: AppSpacing.m),
-            Text(
-              AppStrings.startupErrorTitle,
-              style: theme.textTheme.titleMedium,
-            ),
+            Text(l10n.startupErrorTitle, style: theme.textTheme.titleMedium),
             const SizedBox(height: AppSpacing.s),
             Text(
-              AppStrings.startupErrorMessage,
+              l10n.startupErrorMessage,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

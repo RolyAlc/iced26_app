@@ -4,6 +4,7 @@
   "cancel": "Cancelar",
   "delete": "Eliminar",
   "retry": "Reintentar",
+  "readMore": "Leer más",
   "errorScreenTitle": "¡Ups! Algo salió mal",
   "genericErrorMessage": "Algo salió mal. Por favor, inténtalo de nuevo.",
   "diaryDeleteNoteTitle": "¿Eliminar nota?",
@@ -16,6 +17,9 @@
   "socialActivityLabel": "Actividad social",
 
   "homeFeaturedSessions": "Sesiones destacadas",
+  "homeFeaturedEmptyMessage": "No hay sesiones disponibles hoy",
+  "homeFeaturedExploreMore": "Explorar todas las sesiones",
+  "homeFeaturedViewSchedule": "Ver agenda",
   "homeKeynoteSpeakers": "Ponentes principales",
   "homeConferenceThemes": "Temas de la conferencia",
   "homeLatestNews": "Últimas noticias",
@@ -31,6 +35,9 @@
   "diaryNoteEditorLabelMoodTag": "Etiqueta de ánimo",
   "diaryNoteEditorSaving": "Guardando...",
   "diaryNoteEditorSaveNote": "Guardar nota",
+  "diaryNoteEditorHintTitle": "Título de la nota",
+  "diaryNoteEditorHintContent": "Añadir contenido a la nota",
+  "diaryFabAddNote": "Añadir nota",
   "diaryErrorSavingNote": "Error al guardar la nota: {error}",
 
   "diaryTodayHeader": "Hoy · {date}",
@@ -150,5 +157,11 @@
   "searchStatusLiveNow": "En directo",
   "searchStatusUpNext": "Próximamente",
   "searchStatusEnded": "Finalizada",
-  "searchTalkCount": "{count, plural, one{# charla} other{# charlas}}"
+  "searchTalkCount": "{count, plural, one{# charla} other{# charlas}}",
+
+  "startupErrorTitle": "No se pudo iniciar la app",
+  "@startupErrorTitle": { "description": "Título en la pantalla de error de arranque cuando la app falla al inicializarse" },
+
+  "startupErrorMessage": "Intentá reiniciar la aplicación",
+  "@startupErrorMessage": { "description": "Texto secundario en la pantalla de error de arranque" }
 }
