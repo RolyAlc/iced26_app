@@ -31,7 +31,7 @@ class SettingsSection extends StatelessWidget {
   Widget _buildItemsCard(ColorScheme colors) {
     return Material(
       clipBehavior: Clip.antiAlias,
-      color: colors.surfaceContainerLow,
+      color: colors.surfaceContainerHigh,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.m),
       ),
@@ -127,7 +127,7 @@ class ComingSoonBadge extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: colors.surfaceContainerHigh,
+        color: colors.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppRadius.s),
       ),
       child: Text(

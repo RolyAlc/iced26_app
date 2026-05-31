@@ -30,7 +30,7 @@ class SpeakerCard extends StatelessWidget {
       button: true,
       child: AppCard(
         onTap: onTap,
-        color: colors.surfaceContainerHigh,
+        color: colors.surfaceContainerHighest,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

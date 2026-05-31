@@ -214,10 +214,7 @@ class _SearchBarVisualContainer extends StatelessWidget {
       height: _kBarHeight,
       padding: _kPadding,
       decoration: BoxDecoration(
-        color: Color.alphaBlend(
-          colors.primary.withValues(alpha: 0.08),
-          colors.surface,
-        ),
+        color: colors.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppRadius.l),
         border: Border.all(color: colors.outlineVariant, width: _kBorderWidth),
       ),
