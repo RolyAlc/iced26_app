@@ -12,6 +12,7 @@ const double _selectedItemBackgroundOpacity = 0.1;
 const double _shadowOpacity = 0.08;
 const double _shadowBlurRadius = 12.0;
 const double _shadowOffsetY = 4.0;
+const double _badgeDotSize = 8.0;
 
 /// Bottom navigation bar principal con navegación por features.
 class AppNavigationBar extends ConsumerWidget {
@@ -23,7 +24,6 @@ class AppNavigationBar extends ConsumerWidget {
     final notifier = ref.read(navigationProvider.notifier);
     final searchNotifier = ref.read(searchProvider.notifier);
     final bottomInset = MediaQuery.of(context).padding.bottom;
-
     final hasDiaryBadge = ref.watch(hasDiaryNoteForTodayProvider);
 
     return UIMetricsReporter(
@@ -36,21 +36,24 @@ class AppNavigationBar extends ConsumerWidget {
           bottom: AppLayout.navBarBottomClearance + bottomInset,
         ),
         child: _NavContainer(
-          height: AppLayout.navBarHeight,
+          minHeight: AppLayout.navBarHeight,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               for (final item in mainNavigationItems)
-                _NavigationItem(
-                  label: item.label,
-                  icon: item.feature == AppFeature.diary && hasDiaryBadge
-                      ? item.selectedIcon
-                      : item.icon,
-                  selectedIcon: item.selectedIcon,
-                  isSelected: !item.isAction && currentFeature == item.feature,
-                  onTap: item.isAction
-                      ? () => SmartSearchBar.open(context, searchNotifier)
-                      : () => notifier.select(item.feature),
+                Expanded(
+                  child: _NavigationItem(
+                    label: item.label,
+                    icon: item.icon,
+                    selectedIcon: item.selectedIcon,
+                    isSelected:
+                        !item.isAction && currentFeature == item.feature,
+                    isAction: item.isAction,
+                    showBadge:
+                        item.feature == AppFeature.diary && hasDiaryBadge,
+                    onTap: item.isAction
+                        ? () => SmartSearchBar.open(context, searchNotifier)
+                        : () => notifier.select(item.feature),
+                  ),
                 ),
             ],
           ),
@@ -62,21 +65,20 @@ class AppNavigationBar extends ConsumerWidget {
 
 /// Widget contenedor del bottom navigation bar que aplica estilo visual.
 class _NavContainer extends StatelessWidget {
-  const _NavContainer({required this.child, required this.height});
+  const _NavContainer({required this.child, required this.minHeight});
 
   final Widget child;
-  final double height;
+  final double minHeight;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      height: height,
+      constraints: BoxConstraints(minHeight: minHeight),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(AppRadius.l),
-        border: Border.all(color: colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
             color: AppOverlayColors.shadowBase.withValues(
@@ -93,12 +95,17 @@ class _NavContainer extends StatelessWidget {
 }
 
 /// Widget que representa un único item del bottom navigation bar.
+///
+/// El indicator (pill) envuelve solo el icono — patrón M3 estándar.
+/// El label vive fuera del pill para no distorsionar su forma.
 class _NavigationItem extends StatelessWidget {
   const _NavigationItem({
     required this.label,
     required this.icon,
     required this.selectedIcon,
     required this.isSelected,
+    required this.isAction,
+    required this.showBadge,
     required this.onTap,
   });
 
@@ -106,42 +113,78 @@ class _NavigationItem extends StatelessWidget {
   final IconData icon;
   final IconData selectedIcon;
   final bool isSelected;
+  // True cuando el item dispara una acción modal (ej. Search) en vez de navegar a una pestaña.
+  final bool isAction;
+  final bool showBadge;
   final VoidCallback onTap;
 
-  Widget _buildIcon(Color activeColor, Color inactiveColor) {
-    return AnimatedSwitcher(
-      duration: AppDuration.fast,
-      child: Icon(
-        isSelected ? selectedIcon : icon,
-        // ValueKey explícito — AnimatedSwitcher necesita keys distintas
-        // para identificar los hijos y animar la transición correctamente.
-        key: ValueKey(isSelected),
-        color: isSelected ? activeColor : inactiveColor,
+  Widget _buildIndicator(Color activeColor) {
+    // Action items muestran siempre el icono filled — señalan disponibilidad, no selección.
+    final iconData = isSelected || isAction ? selectedIcon : icon;
+
+    return AnimatedContainer(
+      duration: AppDuration.medium,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.m,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        // Pill de selección — solo tabs, nunca actions.
+        color: isSelected
+            ? activeColor.withValues(alpha: _selectedItemBackgroundOpacity)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(AppRadius.full),
+      ),
+      child: Badge(
+        isLabelVisible: showBadge,
+        smallSize: _badgeDotSize,
+        child: AnimatedSwitcher(
+          duration: AppDuration.fast,
+          child: Icon(iconData, key: ValueKey(iconData)),
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = Theme.of(context).colorScheme.primary;
-    final inactiveColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    final activeColor = colorScheme.primary;
+    final inactiveColor = colorScheme.onSurfaceVariant;
+
+    // Action items usan onSurface (más visible que onSurfaceVariant) pero sin el color
+    // de selección — comunican "disponible" sin fingir que son una pestaña activa.
+    final itemColor = isSelected
+        ? activeColor
+        : isAction
+        ? colorScheme.onSurface
+        : inactiveColor;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadius.l),
-      child: AnimatedContainer(
-        duration: AppDuration.medium,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.m,
-          vertical: AppSpacing.m,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconTheme(
+              data: IconThemeData(color: itemColor),
+              child: _buildIndicator(activeColor),
+            ),
+            const SizedBox(height: AppSpacing.xxs),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: textTheme.labelSmall?.copyWith(
+                color: itemColor,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ],
         ),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? activeColor.withValues(alpha: _selectedItemBackgroundOpacity)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppRadius.m),
-        ),
-        child: _buildIcon(activeColor, inactiveColor),
       ),
     );
   }
