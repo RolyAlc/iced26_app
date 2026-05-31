@@ -64,6 +64,7 @@ class AppLayout {
 /// Tamaños de iconos semánticos — evita literales dispersos en widgets de error y estado vacío.
 class AppIconSize {
   static const double inline = 16.0;
+  static const double featureCard = 40.0;
   static const double errorPage = 60.0;
   static const double errorStartup = 48.0;
 }

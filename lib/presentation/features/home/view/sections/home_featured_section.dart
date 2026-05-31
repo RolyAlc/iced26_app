@@ -49,8 +49,9 @@ class _HomeFeaturedSectionState extends State<HomeFeaturedSection> {
     if (page != _currentPage) setState(() => _currentPage = page);
   }
 
-  List<EventUIModel> get _items =>
-      widget.featuredEvents.take(_maxItems).toList();
+  List<EventUIModel> get _items {
+    return widget.featuredEvents.take(_maxItems).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,12 +108,13 @@ class _ExploreMoreCard extends StatelessWidget {
 
   final VoidCallback onTap;
 
-  static const double _iconSize = 40.0;
+  static const double _iconSize = AppIconSize.featureCard;
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context)!;
 
     return AppCard(
@@ -165,7 +167,7 @@ class _ExploreMoreCard extends StatelessWidget {
 class _FeaturedEmptyState extends StatelessWidget {
   const _FeaturedEmptyState();
 
-  static const double _height = 100;
+  static const double _height = 100.0;
 
   @override
   Widget build(BuildContext context) {
