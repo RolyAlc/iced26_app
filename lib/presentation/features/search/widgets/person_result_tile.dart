@@ -18,12 +18,13 @@ class PersonResultTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     final name = person.name.resolve(locale);
-    final colors = Theme.of(context).colorScheme;
-    final presentations =
-        ref.watch(presentationsByPersonIdProvider).value?[person.id] ?? [];
+    final presentations = ref.watch(
+      presentationsByPersonIdProvider.select((v) => v.value?[person.id] ?? []),
+    );
     final query = ref.watch(searchProvider.select((s) => s.query));
 
     return ListTile(
@@ -37,15 +38,15 @@ class PersonResultTile extends ConsumerWidget {
       subtitle: person.institution != null
           ? Text(
               person.institution!,
-              style: TextStyle(color: colors.onSurfaceVariant),
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             )
           : null,
       trailing: presentations.isNotEmpty
           ? Text(
               l10n.searchTalkCount(presentations.length),
-              style: Theme.of(
-                context,
-              ).textTheme.labelSmall?.copyWith(color: colors.onSurfaceVariant),
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             )
           : null,
       onTap: () {

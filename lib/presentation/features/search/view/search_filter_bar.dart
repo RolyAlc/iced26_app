@@ -95,7 +95,8 @@ class _CollapsedFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chips = _buildActiveChips(context);
+    final l10n = AppLocalizations.of(context)!;
+    final chips = _buildActiveChips(l10n);
 
     return AnimatedSize(
       duration: AppDuration.fast,
@@ -139,8 +140,7 @@ class _CollapsedFilterBar extends StatelessWidget {
 
   // Collection literal — mismo patrón for/if que los widget trees de Flutter.
   // Sin lista mutable ni .add(): cada fuente de filtros contribuye sus chips directamente.
-  List<Widget> _buildActiveChips(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+  List<Widget> _buildActiveChips(AppLocalizations l10n) {
     return [
       if (filters.selectedDay != null)
         ActiveFilterChip(
