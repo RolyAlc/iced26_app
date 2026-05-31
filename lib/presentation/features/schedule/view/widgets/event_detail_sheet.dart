@@ -21,9 +21,6 @@ import 'package:iced26/presentation/shared/widgets/event_status_chip.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_detail_sheet.dart';
 
-const _kFallbackTime = '--:--';
-const _kFallbackValue = '--';
-
 const _kTypeIconSize = 12.0;
 const _kChevronSize = 16.0;
 // Espacio de letras para la etiqueta de tipo de evento (badge inline, más compacto que labelLetterSpacing).
@@ -142,6 +139,9 @@ class _EventAttributesGrid extends StatelessWidget {
   final Event event;
   final String? duration;
 
+  static const String _fallbackTime = '--:--';
+  static const String _fallbackValue = '--';
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -159,7 +159,7 @@ class _EventAttributesGrid extends StatelessWidget {
             AttributeCell(
               icon: AppIcons.accessTime,
               label: l10n.scheduleAttrTime,
-              value: event.filterTime ?? _kFallbackTime,
+              value: event.filterTime ?? _fallbackTime,
             ),
             AttributeCell(
               icon: AppIcons.meetingRoom,
@@ -178,12 +178,12 @@ class _EventAttributesGrid extends StatelessWidget {
             AttributeCell(
               icon: AppIcons.duration,
               label: l10n.scheduleAttrDuration,
-              value: duration ?? _kFallbackValue,
+              value: duration ?? _fallbackValue,
             ),
             AttributeCell(
               icon: AppIcons.translate,
               label: l10n.scheduleAttrLanguage,
-              value: event.defaultLang?.toUpperCase() ?? _kFallbackValue,
+              value: event.defaultLang?.toUpperCase() ?? _fallbackValue,
             ),
           ),
         ],

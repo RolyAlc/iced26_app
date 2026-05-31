@@ -207,13 +207,12 @@ class _PresentationSpeakersCardState extends State<_PresentationSpeakersCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final speakers = widget.presentation.speakers;
     final needsCollapse = speakers.length > _kSpeakersCollapseThreshold;
     final visibleSpeakers = needsCollapse && !_isExpanded
         ? speakers.sublist(0, _kSpeakersCollapseThreshold)
         : speakers;
-
-    final l10n = AppLocalizations.of(context)!;
     final headerLabel = speakers.length > 1
         ? l10n.scheduleSpeakersHeaderCount(speakers.length)
         : l10n.scheduleLabelSpeakers;

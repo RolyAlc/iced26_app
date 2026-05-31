@@ -22,19 +22,19 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.symmetric(
         horizontal: AppLayout.horizontalPadding(context),
       ),
-      child: Row(children: _buildChips(context, colors)),
+      child: Row(children: _buildChips(l10n, colors)),
     );
   }
 
   /// Construye los chips de filtro.
-  List<Widget> _buildChips(BuildContext context, ColorScheme colors) {
-    final l10n = AppLocalizations.of(context)!;
+  List<Widget> _buildChips(AppLocalizations l10n, ColorScheme colors) {
     return [
       _CategoryChip(
         label: l10n.scheduleFilterAll,
