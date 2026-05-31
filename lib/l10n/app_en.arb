@@ -297,7 +297,7 @@
   "scheduleButtonSaved": "Saved to my schedule",
   "@scheduleButtonSaved": { "description": "Button label shown when an event is already saved to the user's personal schedule" },
 
-  "scheduleTracks": "{count, plural, one{# track} other{# tracks}}",
+  "scheduleTracks": "{count, plural, one{{count} track} other{{count} tracks}}",
   "@scheduleTracks": {
     "description": "Chip label showing how many parallel tracks are in a session slot",
     "placeholders": {
@@ -305,7 +305,7 @@
     }
   },
 
-  "scheduleTalks": "{count, plural, one{# talk} other{# talks}}",
+  "scheduleTalks": "{count, plural, one{{count} talk} other{{count} talks}}",
   "@scheduleTalks": {
     "description": "Chip label showing how many talks are in a session block",
     "placeholders": {
@@ -313,7 +313,7 @@
     }
   },
 
-  "scheduleSessions": "{count, plural, one{# session} other{# sessions}}",
+  "scheduleSessions": "{count, plural, one{{count} session} other{{count} sessions}}",
   "@scheduleSessions": {
     "description": "Chip label showing how many sessions are in a slot block",
     "placeholders": {
@@ -446,7 +446,7 @@
   "searchSessionsLabel": "Sessions",
   "@searchSessionsLabel": { "description": "Section label for the sessions group in search results" },
 
-  "searchResultsCount": "{count, plural, one{# result} other{# results}}",
+  "searchResultsCount": "{count, plural, one{{count} result} other{{count} results}}",
   "@searchResultsCount": {
     "description": "Summary count shown above the search results list",
     "placeholders": {
@@ -462,7 +462,7 @@
     }
   },
 
-  "searchShowResults": "{count, plural, one{Show # result} other{Show # results}}",
+  "searchShowResults": "{count, plural, one{Show {count} result} other{Show {count} results}}",
   "@searchShowResults": {
     "description": "Button label in the filter panel to confirm and show matching results",
     "placeholders": {
@@ -502,7 +502,7 @@
   "searchStatusEnded": "Ended",
   "@searchStatusEnded": { "description": "Status filter chip label for sessions that have ended" },
 
-  "searchTalkCount": "{count, plural, one{# talk} other{# talks}}",
+  "searchTalkCount": "{count, plural, one{{count} talk} other{{count} talks}}",
   "@searchTalkCount": {
     "description": "Trailing label on a speaker result tile showing how many talks they have",
     "placeholders": {
