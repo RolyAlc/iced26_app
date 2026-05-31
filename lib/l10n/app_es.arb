@@ -33,6 +33,9 @@
   "homeSocialEmptyMessage": "Vuelve pronto para ver los próximos eventos.",
   "homeSeeAll": "Ver todo",
 
+  "keynoteSpeakerDetailSessionsLabel": "Sesiones",
+  "keynoteSpeakerDetailPresentationLabel": "Presentación",
+
   "diaryNoteEditorLabelTitle": "Título",
   "diaryNoteEditorLabelContent": "Contenido",
   "diaryNoteEditorLabelMoodTag": "Etiqueta de ánimo",
@@ -161,6 +164,8 @@
   "searchStatusUpNext": "Próximamente",
   "searchStatusEnded": "Finalizada",
   "searchTalkCount": "{count, plural, one{{count} charla} other{{count} charlas}}",
+
+  "settingsComingSoon": "En breve",
 
   "startupErrorTitle": "No se pudo iniciar la app",
   "@startupErrorTitle": { "description": "Título en la pantalla de error de arranque cuando la app falla al inicializarse" },

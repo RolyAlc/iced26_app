@@ -90,6 +90,12 @@
   "homeSeeAll": "See all",
   "@homeSeeAll": { "description": "Button label to navigate to the full list of a home section" },
 
+  "keynoteSpeakerDetailSessionsLabel": "Sessions",
+  "@keynoteSpeakerDetailSessionsLabel": { "description": "Section label for sessions inside the keynote speaker detail sheet" },
+
+  "keynoteSpeakerDetailPresentationLabel": "Presentation",
+  "@keynoteSpeakerDetailPresentationLabel": { "description": "Section label for the presentation inside the keynote speaker detail sheet" },
+
   "diaryNoteEditorLabelTitle": "Title",
   "@diaryNoteEditorLabelTitle": { "description": "Section label for the title field in the diary note editor" },
 
@@ -163,6 +169,9 @@
 
   "settingsWebsiteTitle": "Official website",
   "@settingsWebsiteTitle": { "description": "Label for the official website link in Settings > About" },
+
+  "settingsComingSoon": "Soon",
+  "@settingsComingSoon": { "description": "Badge label on settings items that are not yet implemented" },
 
   "settingsReloadDataTitle": "Reload data",
   "@settingsReloadDataTitle": { "description": "Settings item title to reload app data from the bundle" },
