@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
 import 'package:iced26/presentation/shared/widgets/app_page_title.dart';
@@ -33,7 +32,9 @@ class DiaryHeader extends ConsumerWidget {
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () {
                 ref.read(selectedDiaryDateProvider.notifier).selectToday();
-                ref.read(diaryFocusedMonthProvider.notifier).set(DateTime.now());
+                ref
+                    .read(diaryFocusedMonthProvider.notifier)
+                    .set(DateTime.now());
               },
             )
           : null,

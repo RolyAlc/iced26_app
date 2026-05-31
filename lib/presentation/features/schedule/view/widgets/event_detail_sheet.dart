@@ -60,7 +60,9 @@ class EventDetailContent extends ConsumerWidget {
         const SizedBox(height: AppSpacing.m),
         Text(
           event.title.resolve(locale),
-          style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: AppSpacing.l),
         _EventAttributesGrid(event: event, duration: duration),
@@ -137,7 +139,6 @@ class _EventAttributesGrid extends StatelessWidget {
 
   final Event event;
   final String? duration;
-
 
   @override
   Widget build(BuildContext context) {
