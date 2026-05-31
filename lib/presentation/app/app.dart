@@ -58,7 +58,7 @@ class MyApp extends ConsumerWidget {
     );
   }
 
-  Widget _buildHome({required bool isReady, required bool hasError}) {
+  static Widget _buildHome({required bool isReady, required bool hasError}) {
     if (hasError) {
       return const _StartupErrorScreen();
     }
