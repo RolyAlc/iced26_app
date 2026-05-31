@@ -19,6 +19,12 @@
   "genericErrorMessage": "Something went wrong. Please try again.",
   "@genericErrorMessage": { "description": "Generic error message shown when an operation fails unexpectedly" },
 
+  "diaryTitle": "My diary",
+  "@diaryTitle": { "description": "Title of the diary screen" },
+
+  "diaryTodayChip": "Today",
+  "@diaryTodayChip": { "description": "Label on the chip button that navigates back to today in the diary" },
+
   "diaryDeleteNoteTitle": "Delete note?",
   "@diaryDeleteNoteTitle": { "description": "Confirmation dialog title when deleting a diary note" },
 

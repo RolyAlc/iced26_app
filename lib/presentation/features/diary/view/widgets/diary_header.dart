@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
 import 'package:iced26/presentation/shared/widgets/app_page_title.dart';
-
-const _kTitle = 'My diary';
-const _kTodayLabel = 'Today';
 
 /// Header de la vista del diario con el título y un botón para volver al día actual.
 class DiaryHeader extends ConsumerWidget {
@@ -15,10 +13,11 @@ class DiaryHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final showTodayChip = ref.watch(diaryShowTodayChipProvider);
 
     return AppPageTitle(
-      title: _kTitle,
+      title: l10n.diaryTitle,
       trailing: AnimatedOpacity(
         opacity: showTodayChip ? 1.0 : 0.0,
         duration: AppDuration.fast,
@@ -26,7 +25,7 @@ class DiaryHeader extends ConsumerWidget {
           ignoring: !showTodayChip,
           child: ActionChip(
             label: Text(
-              _kTodayLabel,
+              l10n.diaryTodayChip,
               style: theme.textTheme.labelMedium?.copyWith(
                 color: theme.colorScheme.onPrimaryContainer,
               ),

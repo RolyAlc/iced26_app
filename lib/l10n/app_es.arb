@@ -7,6 +7,9 @@
   "readMore": "Leer más",
   "errorScreenTitle": "¡Ups! Algo salió mal",
   "genericErrorMessage": "Algo salió mal. Por favor, inténtalo de nuevo.",
+  "diaryTitle": "Mi diario",
+  "diaryTodayChip": "Hoy",
+
   "diaryDeleteNoteTitle": "¿Eliminar nota?",
   "diaryDeleteNoteConfirm": "Esta acción no se puede deshacer.",
 
