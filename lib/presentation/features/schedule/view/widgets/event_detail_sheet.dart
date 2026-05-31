@@ -42,6 +42,7 @@ class EventDetailContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final locale = Localizations.localeOf(context).languageCode;
     final status = EventStatusResolver.resolve(event);
     final duration = const EventFormatter().displayDuration(
@@ -59,9 +60,7 @@ class EventDetailContent extends ConsumerWidget {
         const SizedBox(height: AppSpacing.m),
         Text(
           event.title.resolve(locale),
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: AppSpacing.l),
         _EventAttributesGrid(event: event, duration: duration),
@@ -139,8 +138,6 @@ class _EventAttributesGrid extends StatelessWidget {
   final Event event;
   final String? duration;
 
-  static const String _fallbackTime = '--:--';
-  static const String _fallbackValue = '--';
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +156,7 @@ class _EventAttributesGrid extends StatelessWidget {
             AttributeCell(
               icon: AppIcons.accessTime,
               label: l10n.scheduleAttrTime,
-              value: event.filterTime ?? _fallbackTime,
+              value: event.filterTime ?? EventFormatter.noTime,
             ),
             AttributeCell(
               icon: AppIcons.meetingRoom,
@@ -178,12 +175,12 @@ class _EventAttributesGrid extends StatelessWidget {
             AttributeCell(
               icon: AppIcons.duration,
               label: l10n.scheduleAttrDuration,
-              value: duration ?? _fallbackValue,
+              value: duration ?? EventFormatter.noValue,
             ),
             AttributeCell(
               icon: AppIcons.translate,
               label: l10n.scheduleAttrLanguage,
-              value: event.defaultLang?.toUpperCase() ?? _fallbackValue,
+              value: event.defaultLang?.toUpperCase() ?? EventFormatter.noValue,
             ),
           ),
         ],

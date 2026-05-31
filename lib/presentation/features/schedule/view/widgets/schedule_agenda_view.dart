@@ -5,6 +5,7 @@ import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
+import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/session_slot_block.dart';
@@ -66,7 +67,7 @@ class _AgendaItem extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final event = _event();
-    final time = event.filterTime ?? '--:--';
+    final time = event.filterTime ?? EventFormatter.noTime;
     final isLive = EventStatusResolver.resolve(event) == EventStatus.live;
     final dotColor = isLive ? colors.primary : colors.outlineVariant;
     final lineColor = colors.outlineVariant.withValues(alpha: 0.5);
@@ -85,7 +86,7 @@ class _AgendaItem extends StatelessWidget {
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: isLive ? colors.primary : colors.onSurfaceVariant,
                     fontWeight: isLive ? FontWeight.bold : FontWeight.w500,
-                    letterSpacing: 0.5,
+                    letterSpacing: AppTextStyle.timeLetterSpacing,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
@@ -127,6 +128,8 @@ class _AgendaItemContent extends StatelessWidget {
     return switch (item) {
       SingleEventItem(:final event) => _SingleEventCard(event: event),
       SessionSlotItem() => _SessionSlotCard(item: item as SessionSlotItem),
+      // Inalcanzable en runtime — filtrado en ScheduleAgendaView.build().
+      // Requerido por el switch exhaustivo de Dart sobre ScheduleItem (sealed class).
       DaySeparatorItem() => const SizedBox.shrink(),
     };
   }

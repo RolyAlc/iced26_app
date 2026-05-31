@@ -9,6 +9,12 @@ const _kNotAvailable = 'N/A';
 class EventFormatter {
   const EventFormatter();
 
+  /// Placeholder para hora no asignada.
+  static const String noTime = '--:--';
+
+  /// Placeholder para cualquier atributo sin valor (duración, idioma, sala, etc.).
+  static const String noValue = '--';
+
   /// Formatea la duración de un evento en texto legible (ej: "1h 30m").
   String formatDuration(DateTime? start, DateTime? end) {
     if (start == null || end == null) {
