@@ -24,9 +24,26 @@ extension ColorParser on String {
 // Colores fijos de marca usados como semilla y fallback cuando el JSON no los sobreescribe.
 class AppBrandColors {
   static const Color primary = Color(0xFF75A49C);
-  static const Color secondary = Color(0xFF927363);
+  static const Color secondary = Color(0xFF7C8A84);
   static const Color accent = Color(0xFFF88E5C);
-  static const Color surface = Color(0xFFFCFCFC);
+  // Token cálido reservado para badges o detalles puntuales — no usar como secondary global.
+  static const Color earth = Color(0xFF927363);
+
+  // Light surfaces: gris azulado muy suave para evitar el blanco puro.
+  static const Color lightSurface = Color(0xFFF8FAFC);
+  static const Color lightSurfaceContainerLowest = Color(0xFFFFFFFF);
+  static const Color lightSurfaceContainerLow = Color(0xFFF8FAFC);
+  static const Color lightSurfaceContainer = Color(0xFFF1F5F9);
+  static const Color lightSurfaceContainerHigh = Color(0xFFEFF4F8);
+  static const Color lightSurfaceContainerHighest = Color(0xFFE2E8F0);
+
+  // Dark surfaces: neutros casi negros, sin llegar a negro puro.
+  static const Color darkSurface = Color(0xFF121212);
+  static const Color darkSurfaceContainerLowest = Color(0xFF0B0B0B);
+  static const Color darkSurfaceContainerLow = Color(0xFF161616);
+  static const Color darkSurfaceContainer = Color(0xFF1D1D1D);
+  static const Color darkSurfaceContainerHigh = Color(0xFF242424);
+  static const Color darkSurfaceContainerHighest = Color(0xFF2C2C2C);
 }
 
 class AppTheme {
@@ -81,8 +98,25 @@ class AppTheme {
       seedColor: primary,
       secondary: secondary,
       tertiary: accent,
-      // Surface fija en light para evitar que fromSeed calcule un tinte verdoso.
-      surface: brightness == Brightness.light ? AppBrandColors.surface : null,
+      // Surfaces fijas para evitar blanco puro, negro puro y tintes verdosos de fromSeed.
+      surface: brightness == Brightness.light
+          ? AppBrandColors.lightSurface
+          : AppBrandColors.darkSurface,
+      surfaceContainerLowest: brightness == Brightness.light
+          ? AppBrandColors.lightSurfaceContainerLowest
+          : AppBrandColors.darkSurfaceContainerLowest,
+      surfaceContainerLow: brightness == Brightness.light
+          ? AppBrandColors.lightSurfaceContainerLow
+          : AppBrandColors.darkSurfaceContainerLow,
+      surfaceContainer: brightness == Brightness.light
+          ? AppBrandColors.lightSurfaceContainer
+          : AppBrandColors.darkSurfaceContainer,
+      surfaceContainerHigh: brightness == Brightness.light
+          ? AppBrandColors.lightSurfaceContainerHigh
+          : AppBrandColors.darkSurfaceContainerHigh,
+      surfaceContainerHighest: brightness == Brightness.light
+          ? AppBrandColors.lightSurfaceContainerHighest
+          : AppBrandColors.darkSurfaceContainerHighest,
       brightness: brightness,
       contrastLevel: contrastLevel,
     );
@@ -101,17 +135,33 @@ class AppTheme {
     );
   }
 
+  // Cambiar la tipografía global debería requerir tocar solo estas dos funciones.
+  // Heading: títulos y jerarquía visual. Body: lectura, labels y controles.
+  static TextTheme _headingFont(TextTheme seed) {
+    return GoogleFonts.outfitTextTheme(seed);
+  }
+
+  static TextTheme _bodyFont(TextTheme seed) {
+    return GoogleFonts.latoTextTheme(seed);
+  }
+
   // Sin seed de brightness, GoogleFonts genera texto oscuro en dark mode.
   static TextTheme _buildTextTheme({Brightness brightness = Brightness.light}) {
     final seed = brightness == Brightness.dark
         ? ThemeData.dark().textTheme
         : ThemeData.light().textTheme;
-    final base = GoogleFonts.latoTextTheme(seed);
-    final display = GoogleFonts.outfitTextTheme(seed);
-    return base.copyWith(
-      displayLarge: display.displayLarge,
-      headlineMedium: display.headlineMedium,
-      titleLarge: base.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+    final body = _bodyFont(seed);
+    final heading = _headingFont(seed);
+    return body.copyWith(
+      displayLarge: heading.displayLarge,
+      displayMedium: heading.displayMedium,
+      displaySmall: heading.displaySmall,
+      headlineLarge: heading.headlineLarge,
+      headlineMedium: heading.headlineMedium,
+      headlineSmall: heading.headlineSmall,
+      titleLarge: heading.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+      titleMedium: heading.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+      titleSmall: heading.titleSmall?.copyWith(fontWeight: FontWeight.w700),
     );
   }
 
@@ -153,9 +203,9 @@ class AppTheme {
   ) {
     return ChipThemeData(
       shape: const StadiumBorder(),
-      backgroundColor: scheme.secondaryContainer.withValues(alpha: 0.5),
+      backgroundColor: scheme.surfaceContainerHigh,
       labelStyle: textTheme.labelLarge?.copyWith(
-        color: scheme.onSecondaryContainer,
+        color: scheme.onSurfaceVariant,
         fontWeight: FontWeight.bold,
       ),
     );
