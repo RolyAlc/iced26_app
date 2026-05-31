@@ -13,7 +13,6 @@ import 'package:iced26/presentation/features/search/view/search_helper.dart';
 import 'package:iced26/presentation/features/search/view/search_modal_body.dart';
 
 const double _kBadgeSize = 8.0;
-const double _kBadgeOffset = -3.0;
 
 List<Person> _filterPeople(Map<String, Person> allPeople, String query) {
   if (query.isEmpty) {
@@ -162,12 +161,7 @@ class _SearchScreenState extends ConsumerState<_SearchScreen> {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.l,
-                AppSpacing.m,
-                AppSpacing.l,
-                AppSpacing.m,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
               child: SearchModalBody(
                 notifier: widget.notifier,
                 people: people,
@@ -200,7 +194,6 @@ class _SearchBarVisualContainer extends StatelessWidget {
   final VoidCallback onFilterTap;
 
   static const double _kBarHeight = 56.0;
-  static const double _kBorderWidth = 1.2;
   static const EdgeInsets _kPadding = EdgeInsets.symmetric(
     horizontal: AppSpacing.m,
   );
@@ -216,7 +209,6 @@ class _SearchBarVisualContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppRadius.l),
-        border: Border.all(color: colors.outlineVariant, width: _kBorderWidth),
       ),
       child: Row(
         children: [
@@ -245,27 +237,13 @@ class _FilterIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Icon(
-          AppIcons.filter,
-          color: isActive ? colors.primary : colors.secondary,
-        ),
-        if (isActive)
-          Positioned(
-            top: _kBadgeOffset,
-            right: _kBadgeOffset,
-            child: Container(
-              width: _kBadgeSize,
-              height: _kBadgeSize,
-              decoration: BoxDecoration(
-                color: colors.primary,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-      ],
+    return Badge(
+      isLabelVisible: isActive,
+      smallSize: _kBadgeSize,
+      child: Icon(
+        AppIcons.filter,
+        color: isActive ? colors.primary : colors.secondary,
+      ),
     );
   }
 }

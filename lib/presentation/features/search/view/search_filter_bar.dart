@@ -68,12 +68,18 @@ class _ExpandedFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        FilterToggleButton(count: count, isExpanded: true, onTap: onToggle),
-        const Spacer(),
-        if (filters.isActive) ClearAllButton(onPressed: notifier.clearFilters),
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppLayout.horizontalPadding(context),
+      ),
+      child: Row(
+        children: [
+          FilterToggleButton(count: count, isExpanded: true, onTap: onToggle),
+          const Spacer(),
+          if (filters.isActive)
+            ClearAllButton(onPressed: notifier.clearFilters),
+        ],
+      ),
     );
   }
 }
@@ -106,32 +112,42 @@ class _CollapsedFilterBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              FilterToggleButton(
-                count: count,
-                isExpanded: false,
-                onTap: onToggle,
-              ),
-              const Spacer(),
-              if (filters.isActive)
-                ClearAllButton(onPressed: notifier.clearFilters),
-            ],
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppLayout.horizontalPadding(context),
+            ),
+            child: Row(
+              children: [
+                FilterToggleButton(
+                  count: count,
+                  isExpanded: false,
+                  onTap: onToggle,
+                ),
+                const Spacer(),
+                if (filters.isActive)
+                  ClearAllButton(onPressed: notifier.clearFilters),
+              ],
+            ),
           ),
           if (chips.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.s),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (final chip in chips) ...[
-                    chip,
-                    // Trailing spacer de 4px es invisible al final de un área scrollable.
-                    const SizedBox(width: AppSpacing.xs),
-                  ],
-                ],
-              ),
-            ),
+            _buildChipRow(context, chips),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChipRow(BuildContext context, List<Widget> chips) {
+    final hPad = AppLayout.horizontalPadding(context);
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.only(left: hPad, right: hPad),
+      child: Row(
+        children: [
+          for (final chip in chips) ...[
+            chip,
+            const SizedBox(width: AppSpacing.xs),
           ],
         ],
       ),

@@ -50,6 +50,9 @@ class ResultsSection extends ConsumerWidget {
         return const SizedBox.shrink();
       }
       return SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppLayout.horizontalPadding(context),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -232,6 +235,9 @@ class _CombinedResultsListState extends State<_CombinedResultsList> {
     final remainingEvents = widget.events.length - visibleEvents.length;
 
     return ListView(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppLayout.horizontalPadding(context),
+      ),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       children: [
         _ResultsCount(total: widget.people.length + widget.events.length),

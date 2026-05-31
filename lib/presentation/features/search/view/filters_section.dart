@@ -32,13 +32,20 @@ class FiltersSection extends ConsumerWidget {
         ? l10n.searchShowResults(resultsCount)
         : l10n.done;
 
+    final hPad = AppLayout.horizontalPadding(context);
     return Column(
       children: [
         Expanded(
-          child: SingleChildScrollView(child: FilterPanel(notifier: notifier)),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: hPad),
+            child: FilterPanel(notifier: notifier),
+          ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
+          padding: EdgeInsets.symmetric(
+            horizontal: hPad,
+            vertical: AppSpacing.m,
+          ),
           child: AppButton(label: buttonLabel, onPressed: onCollapse),
         ),
       ],
