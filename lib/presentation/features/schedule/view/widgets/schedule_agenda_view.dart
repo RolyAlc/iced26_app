@@ -23,8 +23,8 @@ class ScheduleAgendaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Los DaySeparatorItem solo aparecen con filtro activo, y el toggle
-    // de agenda se oculta en ese caso. Los filtramos por defensividad.
+    // DaySeparatorItem solo aparece con filtro de categoría activo.
+    // El estado vacío se gestiona en ScheduleTimelineBody antes de llegar aquí.
     final agendaItems = items
         .where((item) => item is! DaySeparatorItem)
         .toList();
