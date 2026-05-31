@@ -140,6 +140,7 @@ class AppTheme {
       colorScheme: scheme,
       textTheme: textTheme,
       scaffoldBackgroundColor: scheme.surfaceContainerLow,
+      iconTheme: IconThemeData(color: scheme.onSurface),
       cardTheme: _buildCardTheme(scheme),
       chipTheme: _buildChipTheme(scheme, textTheme),
       searchBarTheme: _buildSearchBarTheme(scheme),
