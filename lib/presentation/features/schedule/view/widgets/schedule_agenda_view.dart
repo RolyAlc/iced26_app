@@ -49,6 +49,11 @@ class _AgendaItem extends StatelessWidget {
   final bool isLast;
 
   Event _event() {
+    assert(
+      item is! DaySeparatorItem,
+      '_AgendaItem solo acepta SingleEventItem o SessionSlotItem. '
+      'Los DaySeparatorItem deben filtrarse en ScheduleAgendaView.build() antes de construir _AgendaItem.',
+    );
     return switch (item) {
       SingleEventItem(:final event) => event,
       SessionSlotItem(:final event) => event,
