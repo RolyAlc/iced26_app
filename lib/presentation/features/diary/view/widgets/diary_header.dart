@@ -18,30 +18,25 @@ class DiaryHeader extends ConsumerWidget {
 
     return AppPageTitle(
       title: l10n.diaryTitle,
-      trailing: AnimatedOpacity(
-        opacity: showTodayChip ? 1.0 : 0.0,
-        duration: AppDuration.fast,
-        child: IgnorePointer(
-          ignoring: !showTodayChip,
-          child: ActionChip(
-            label: Text(
-              l10n.diaryTodayChip,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: theme.colorScheme.onPrimaryContainer,
+      trailing: showTodayChip
+          ? ActionChip(
+              label: Text(
+                l10n.diaryTodayChip,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onPrimaryContainer,
+                ),
               ),
-            ),
-            backgroundColor: theme.colorScheme.primaryContainer,
-            side: BorderSide.none,
-            elevation: 0,
-            shadowColor: Colors.transparent,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            onPressed: () {
-              ref.read(selectedDiaryDateProvider.notifier).selectToday();
-              ref.read(diaryFocusedMonthProvider.notifier).set(DateTime.now());
-            },
-          ),
-        ),
-      ),
+              backgroundColor: theme.colorScheme.primaryContainer,
+              side: BorderSide.none,
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              onPressed: () {
+                ref.read(selectedDiaryDateProvider.notifier).selectToday();
+                ref.read(diaryFocusedMonthProvider.notifier).set(DateTime.now());
+              },
+            )
+          : null,
     );
   }
 }
