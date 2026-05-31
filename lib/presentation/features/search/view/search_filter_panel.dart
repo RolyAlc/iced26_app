@@ -27,15 +27,15 @@ class FilterPanel extends ConsumerWidget {
 
     final filters = ref.watch(searchProvider.select((s) => s.filters));
     final data = FilterPanelData.fromHomeState(homeData);
-
     final l10n = AppLocalizations.of(context)!;
     final dividerColor = Theme.of(context).colorScheme.outlineVariant;
+
     final sections = [
-      _buildDaySection(l10n, data.days, filters, notifier),
-      _buildTypeSection(l10n, data.types, filters, notifier),
-      _buildZoneSection(l10n, data.zones, filters, notifier),
-      _buildDurationSection(l10n, data.durations, filters, notifier),
-      _buildStatusSection(l10n, filters, notifier),
+      _buildDaySection(l10n, data.days, filters),
+      _buildTypeSection(l10n, data.types, filters),
+      _buildZoneSection(l10n, data.zones, filters),
+      _buildDurationSection(l10n, data.durations, filters),
+      _buildStatusSection(l10n, filters),
     ].where((s) => s.isNotEmpty).toList();
 
     final children = <Widget>[];
@@ -56,120 +56,115 @@ class FilterPanel extends ConsumerWidget {
       ),
     );
   }
-}
 
-List<Widget> _buildDaySection(
-  AppLocalizations l10n,
-  List<({String date, String label})> days,
-  SearchFilterState filters,
-  Search notifier,
-) {
-  return _filterSection(
-    l10n.searchFilterDay,
-    AppIcons.calendarOutline,
-    days.map<Widget>((d) {
-      return AppFilterChip(
-        label: d.label,
-        selected: filters.selectedDay == d.date,
+  List<Widget> _buildDaySection(
+    AppLocalizations l10n,
+    List<({String date, String label})> days,
+    SearchFilterState filters,
+  ) {
+    return _filterSection(
+      l10n.searchFilterDay,
+      AppIcons.calendarOutline,
+      days.map<Widget>((d) {
+        return AppFilterChip(
+          label: d.label,
+          selected: filters.selectedDay == d.date,
+          onTap: () {
+            notifier.toggleDay(d.date);
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  List<Widget> _buildTypeSection(
+    AppLocalizations l10n,
+    List<EventType> types,
+    SearchFilterState filters,
+  ) {
+    return _filterSection(
+      l10n.searchFilterType,
+      AppIcons.category,
+      types.map<Widget>((t) {
+        return TypeFilterChip(
+          type: t,
+          selected: filters.selectedTypes.contains(t),
+          onTap: () {
+            notifier.toggleType(t);
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  List<Widget> _buildZoneSection(
+    AppLocalizations l10n,
+    List<Zone> zones,
+    SearchFilterState filters,
+  ) {
+    return _filterSection(
+      l10n.searchFilterZone,
+      AppIcons.locationOn,
+      zones.map<Widget>((z) {
+        return AppFilterChip(
+          label: z.name.resolve('und'),
+          selected: filters.selectedZones.contains(z.id),
+          onTap: () {
+            notifier.toggleZone(z.id);
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  List<Widget> _buildDurationSection(
+    AppLocalizations l10n,
+    List<int> durations,
+    SearchFilterState filters,
+  ) {
+    return _filterSection(
+      l10n.searchFilterDuration,
+      AppIcons.duration,
+      durations.map<Widget>((d) {
+        return AppFilterChip(
+          label: l10n.searchDurationLabel(d),
+          selected: filters.selectedDurations.contains(d),
+          onTap: () {
+            notifier.toggleDuration(d);
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  List<Widget> _buildStatusSection(
+    AppLocalizations l10n,
+    SearchFilterState filters,
+  ) {
+    return _filterSection(l10n.searchFilterStatus, AppIcons.liveIndicator, [
+      AppFilterChip(
+        label: l10n.searchStatusLiveNow,
+        selected: filters.selectedStatuses.contains(EventStatus.live),
         onTap: () {
-          notifier.toggleDay(d.date);
+          notifier.toggleStatus(EventStatus.live);
         },
-      );
-    }).toList(),
-  );
-}
-
-List<Widget> _buildTypeSection(
-  AppLocalizations l10n,
-  List<EventType> types,
-  SearchFilterState filters,
-  Search notifier,
-) {
-  return _filterSection(
-    l10n.searchFilterType,
-    AppIcons.category,
-    types.map<Widget>((t) {
-      return TypeFilterChip(
-        type: t,
-        selected: filters.selectedTypes.contains(t),
+      ),
+      AppFilterChip(
+        label: l10n.searchStatusUpNext,
+        selected: filters.selectedStatuses.contains(EventStatus.next),
         onTap: () {
-          notifier.toggleType(t);
+          notifier.toggleStatus(EventStatus.next);
         },
-      );
-    }).toList(),
-  );
-}
-
-List<Widget> _buildZoneSection(
-  AppLocalizations l10n,
-  List<Zone> zones,
-  SearchFilterState filters,
-  Search notifier,
-) {
-  return _filterSection(
-    l10n.searchFilterZone,
-    AppIcons.locationOn,
-    zones.map<Widget>((z) {
-      return AppFilterChip(
-        label: z.name.resolve('und'),
-        selected: filters.selectedZones.contains(z.id),
+      ),
+      AppFilterChip(
+        label: l10n.searchStatusEnded,
+        selected: filters.selectedStatuses.contains(EventStatus.ended),
         onTap: () {
-          notifier.toggleZone(z.id);
+          notifier.toggleStatus(EventStatus.ended);
         },
-      );
-    }).toList(),
-  );
-}
-
-List<Widget> _buildDurationSection(
-  AppLocalizations l10n,
-  List<int> durations,
-  SearchFilterState filters,
-  Search notifier,
-) {
-  return _filterSection(
-    l10n.searchFilterDuration,
-    AppIcons.duration,
-    durations.map<Widget>((d) {
-      return AppFilterChip(
-        label: l10n.searchDurationLabel(d),
-        selected: filters.selectedDurations.contains(d),
-        onTap: () {
-          notifier.toggleDuration(d);
-        },
-      );
-    }).toList(),
-  );
-}
-
-List<Widget> _buildStatusSection(
-  AppLocalizations l10n,
-  SearchFilterState filters,
-  Search notifier,
-) {
-  return _filterSection(l10n.searchFilterStatus, AppIcons.liveIndicator, [
-    AppFilterChip(
-      label: l10n.searchStatusLiveNow,
-      selected: filters.selectedStatuses.contains(EventStatus.live),
-      onTap: () {
-        notifier.toggleStatus(EventStatus.live);
-      },
-    ),
-    AppFilterChip(
-      label: l10n.searchStatusUpNext,
-      selected: filters.selectedStatuses.contains(EventStatus.next),
-      onTap: () {
-        notifier.toggleStatus(EventStatus.next);
-      },
-    ),
-    AppFilterChip(
-      label: l10n.searchStatusEnded,
-      selected: filters.selectedStatuses.contains(EventStatus.ended),
-      onTap: () {
-        notifier.toggleStatus(EventStatus.ended);
-      },
-    ),
-  ]);
+      ),
+    ]);
+  }
 }
 
 List<Widget> _filterSection(String label, IconData icon, List<Widget> chips) {
