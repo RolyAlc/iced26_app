@@ -28,6 +28,8 @@ class AppTextSize {
 class AppTextStyle {
   // Espaciado de letras para etiquetas de sección en mayúsculas (labelSmall/labelMedium bold).
   static const double labelLetterSpacing = 0.8;
+  // Espaciado de letras para etiquetas de hora/tiempo (más compacto que labelLetterSpacing).
+  static const double timeLetterSpacing = 0.5;
 }
 
 class AppSpacing {

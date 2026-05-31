@@ -24,7 +24,7 @@ class TimeBadge extends StatelessWidget {
           color: AppOverlayColors.heroText,
           fontSize: AppTextSize.chip,
           fontWeight: FontWeight.w900,
-          letterSpacing: 0.5,
+          letterSpacing: AppTextStyle.timeLetterSpacing,
         ),
       ),
     );
