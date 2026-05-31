@@ -27,7 +27,7 @@ class ScheduleViewFab extends ConsumerWidget {
         : l10n.scheduleViewFormatAgenda;
 
     return Material(
-      color: colors.primaryContainer,
+      color: colors.surfaceContainerHighest,
       elevation: _kFabElevation,
       shadowColor: colors.shadow,
       borderRadius: BorderRadius.circular(AppRadius.full),
@@ -57,16 +57,12 @@ class ScheduleViewFab extends ConsumerWidget {
                   key: ValueKey(isAgenda),
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      icon,
-                      size: _kFabIconSize,
-                      color: colors.onPrimaryContainer,
-                    ),
+                    Icon(icon, size: _kFabIconSize, color: colors.onSurface),
                     const SizedBox(width: AppSpacing.s),
                     Text(
                       label,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: colors.onPrimaryContainer,
+                        color: colors.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

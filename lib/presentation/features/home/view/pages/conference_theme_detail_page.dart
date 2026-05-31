@@ -197,12 +197,12 @@ class _BackButton extends StatelessWidget {
               width: _kBackButtonSize,
               height: _kBackButtonSize,
               decoration: BoxDecoration(
-                color: colors.secondaryContainer,
+                color: colors.surfaceContainerHigh,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 AppIcons.arrowBack,
-                color: colors.onSecondaryContainer,
+                color: colors.onSurface,
                 size: _kBackButtonIconSize,
               ),
             ),
@@ -236,13 +236,11 @@ class _ReadTimeChip extends StatelessWidget {
       avatar: Icon(
         AppIcons.timerOutlined,
         size: _kChipIconSize,
-        color: colors.onSecondaryContainer,
+        color: colors.onSurface,
       ),
       label: Text('$minutes $_kReadTimeLabel'),
-      labelStyle: theme.textTheme.labelSmall?.copyWith(
-        color: colors.onSecondaryContainer,
-      ),
-      backgroundColor: colors.secondaryContainer,
+      labelStyle: theme.textTheme.labelSmall?.copyWith(color: colors.onSurface),
+      backgroundColor: colors.surfaceContainerHigh,
       side: BorderSide.none,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
       labelPadding: const EdgeInsets.only(

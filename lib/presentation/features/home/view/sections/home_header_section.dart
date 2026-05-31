@@ -77,14 +77,14 @@ class _HeaderIconButton extends StatelessWidget {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: color.primaryContainer,
+          color: color.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(AppRadius.l),
         ),
         child: Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.center,
           children: [
-            Icon(icon, color: color.onPrimaryContainer),
+            Icon(icon, color: color.onSurface),
             if (badge)
               Positioned(
                 top: _kBadgeOffset,

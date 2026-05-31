@@ -27,7 +27,7 @@ class ResultTile extends ConsumerWidget {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       leading: CircleAvatar(
-        backgroundColor: colors.primaryContainer.withValues(alpha: 0.2),
+        backgroundColor: colors.surfaceContainerHigh,
         child: Icon(AppIcons.event, color: colors.primary, size: 20),
       ),
       title: SearchHighlightText(

@@ -24,17 +24,13 @@ class SpeakerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final footerColor = Color.alphaBlend(
-      colors.primaryContainer.withValues(alpha: 0.55),
-      colors.surface,
-    );
 
     return Semantics(
       label: speaker.name,
       button: true,
       child: AppCard(
         onTap: onTap,
-        color: footerColor,
+        color: colors.surfaceContainerHigh,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

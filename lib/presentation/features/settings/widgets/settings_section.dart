@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 // Ancho del área leading de ListTile M3: icono(24dp) + gap al título(16dp).
@@ -117,6 +118,7 @@ class ComingSoonBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
 
     return Container(
@@ -125,15 +127,15 @@ class ComingSoonBadge extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: colors.secondaryContainer,
+        color: colors.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(AppRadius.s),
       ),
       child: Text(
-        'Soon',
+        l10n.settingsComingSoon,
         style: TextStyle(
           fontSize: AppTextSize.chip,
           fontWeight: FontWeight.w600,
-          color: colors.onSecondaryContainer,
+          color: colors.onSurface,
         ),
       ),
     );

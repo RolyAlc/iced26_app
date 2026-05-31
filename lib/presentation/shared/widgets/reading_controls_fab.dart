@@ -60,11 +60,11 @@ class ReadingControlsFab extends ConsumerWidget {
               children: [
                 _PillIconButton(
                   icon: AppIcons.collapse,
-                  color: colors.onPrimaryContainer,
+                  color: colors.onSurface,
                   tooltip: tooltip,
                   onTap: _scrollToTop,
                 ),
-                _PillDivider(color: colors.onPrimaryContainer),
+                _PillDivider(color: colors.onSurface),
               ],
             )
           : const SizedBox.shrink(),
@@ -78,7 +78,7 @@ class ReadingControlsFab extends ConsumerWidget {
     final colors = Theme.of(context).colorScheme;
 
     return Material(
-      color: colors.primaryContainer,
+      color: colors.surfaceContainerHighest,
       elevation: _kFabElevation,
       shadowColor: colors.shadow,
       borderRadius: BorderRadius.circular(AppRadius.full),
@@ -89,14 +89,14 @@ class ReadingControlsFab extends ConsumerWidget {
           _buildScrollToTopSlot(colors, l10n.readingControlsBackToTop),
           _PillIconButton(
             icon: AppIcons.textField,
-            color: colors.onPrimaryContainer,
+            color: colors.onSurface,
             tooltip: l10n.settingsTextSizeTitle,
             onTap: () => _openSheet(context),
           ),
-          _PillDivider(color: colors.onPrimaryContainer),
+          _PillDivider(color: colors.onSurface),
           _PillIconButton(
             icon: AppIcons.forThemeMode(themeMode),
-            color: colors.onPrimaryContainer,
+            color: colors.onSurface,
             tooltip: l10n.settingsThemeTitle,
             onTap: () => _openSheet(context),
           ),
