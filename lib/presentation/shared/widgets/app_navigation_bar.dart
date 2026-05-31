@@ -77,7 +77,7 @@ class _NavContainer extends StatelessWidget {
     return Container(
       constraints: BoxConstraints(minHeight: minHeight),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppRadius.l),
         boxShadow: [
           BoxShadow(

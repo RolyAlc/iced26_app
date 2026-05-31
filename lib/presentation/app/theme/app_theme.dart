@@ -35,7 +35,7 @@ class AppColorTokens {
   static const Color lightSurfaceContainerLow = Color(0xFFF8FAFC);
   static const Color lightSurfaceContainer = Color(0xFFF1F5F9);
   static const Color lightSurfaceContainerHigh = Color(0xFFE8EEF5);
-  static const Color lightSurfaceContainerHighest = Color(0xFFE2E8F0);
+  static const Color lightSurfaceContainerHighest = Color(0xFFDCE2EA);
 
   // Dark surfaces: neutros casi negros, sin llegar a negro puro.
   static const Color darkSurface = Color(0xFF121212);

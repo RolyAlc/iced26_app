@@ -17,7 +17,7 @@ InputDecoration _editorDecoration({
   return InputDecoration(
     hintText: hint,
     filled: true,
-    fillColor: colors.surfaceContainerHighest,
+    fillColor: colors.surfaceContainerHigh,
     border: OutlineInputBorder(
       borderRadius: borderRadius,
       borderSide: idleBorder,

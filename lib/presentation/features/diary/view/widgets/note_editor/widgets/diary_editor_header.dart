@@ -32,16 +32,39 @@ class DiaryEditorHeader extends StatelessWidget {
       children: [
         _buildDateChip(theme, paintColor),
         const Spacer(),
-        if (onDelete != null)
-          IconButton(
-            onPressed: onDelete,
-            icon: Icon(AppIcons.deleteOutline, color: theme.colorScheme.error),
-          ),
-        IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(AppIcons.close),
-        ),
+        _buildActionGroup(context, theme),
       ],
+    );
+  }
+
+  Widget _buildActionGroup(BuildContext context, ThemeData theme) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(AppRadius.full),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (onDelete != null)
+            IconButton(
+              onPressed: onDelete,
+              icon: Icon(
+                AppIcons.deleteOutline,
+                color: theme.colorScheme.error,
+              ),
+              visualDensity: VisualDensity.compact,
+            ),
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: Icon(
+              AppIcons.close,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            visualDensity: VisualDensity.compact,
+          ),
+        ],
+      ),
     );
   }
 
