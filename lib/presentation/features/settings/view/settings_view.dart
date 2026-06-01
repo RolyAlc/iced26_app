@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/settings/widgets/data_items.dart';
@@ -16,12 +18,18 @@ import 'package:url_launcher/url_launcher.dart';
 const String _kVersionValue = '—';
 
 /// Vista de ajustes de la app.
-class SettingsView extends StatelessWidget {
+class SettingsView extends ConsumerWidget {
   const SettingsView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final conference = ref.watch(conferenceConfigProvider).asData?.value;
+
+    final editionName = conference?.name ?? AppConfig.edition;
+    final location = conference?.location ?? AppConfig.location;
+    final websiteLabel = conference?.websiteLabel ?? AppConfig.websiteLabel;
+    final websiteUrl = conference?.websiteUrl ?? AppConfig.websiteUrl;
 
     return AppPage(
       header: AppPageTitle(title: l10n.settingsTitle),
@@ -44,10 +52,10 @@ class SettingsView extends StatelessWidget {
         SettingsSection(
           title: l10n.settingsSectionAbout,
           items: [
-            const SettingsItem(
+            SettingsItem(
               icon: AppIcons.info,
-              title: AppConfig.edition,
-              subtitle: AppConfig.location,
+              title: editionName,
+              subtitle: location,
             ),
             SettingsItem(
               icon: AppIcons.smartphone,
@@ -58,10 +66,10 @@ class SettingsView extends StatelessWidget {
             SettingsItem(
               icon: AppIcons.language,
               title: l10n.settingsWebsiteTitle,
-              subtitle: AppConfig.websiteLabel,
+              subtitle: websiteLabel,
               onTap: () async {
                 await launchUrl(
-                  Uri.parse(AppConfig.websiteUrl),
+                  Uri.parse(websiteUrl),
                   mode: LaunchMode.externalApplication,
                 );
               },

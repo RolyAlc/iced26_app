@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 
-import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/category.dart';
@@ -30,8 +29,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_viewmodel.g.dart';
 
-// TODO: Obtener locale dinámico desde configuración del usuario.
 const _kMaxFeaturedEvents = 3;
+const _kWelcomeLabel = 'Welcome to ICED26';
 const _kUnknownRoom = 'Unknown Room';
 final _kMaxDate = DateTime(9999);
 final _kMinDate = DateTime(0);
@@ -112,9 +111,9 @@ String? _resolveSpeakerPhoto(Event event, Map<String, Person> peopleById) {
 }
 
 /// Devuelve el nombre de la sala de [event] buscando en [allRooms].
-String _resolveRoomName(Event event, List<Room> allRooms) {
+String _resolveRoomName(Event event, List<Room> allRooms, String locale) {
   final room = allRooms.firstWhereOrNull((r) => r.id == event.roomId);
-  return room?.name.resolve(AppConfig.defaultLocale) ?? _kUnknownRoom;
+  return room?.name.resolve(locale) ?? _kUnknownRoom;
 }
 
 /// Construye la lista de [EventUIModel] para los eventos destacados.
@@ -122,6 +121,7 @@ List<EventUIModel> _buildFeaturedEvents({
   required List<Event> allEvents,
   required List<Room> allRooms,
   required Map<String, Person> peopleById,
+  required String locale,
 }) {
   final discoverableEvents = [
     for (final e in allEvents)
@@ -131,7 +131,7 @@ List<EventUIModel> _buildFeaturedEvents({
     discoverableEvents,
   ).take(_kMaxFeaturedEvents);
   return topEvents.map((event) {
-    final roomName = _resolveRoomName(event, allRooms);
+    final roomName = _resolveRoomName(event, allRooms, locale);
     final imageUrl = _resolveSpeakerPhoto(event, peopleById);
     return EventUIMapper.fromEntity(event, roomName, imageUrl: imageUrl);
   }).toList();
@@ -141,13 +141,14 @@ List<EventUIModel> _buildFeaturedEvents({
 List<SessionUIModel> _buildSpeakerSessions({
   required Person speaker,
   required List<Event> keynoteEvents,
+  required String locale,
 }) {
   return keynoteEvents
       .where((e) => e.speakers.any((s) => s.personId == speaker.id))
       .map(
         (e) => SessionUIModel(
           type: e.type,
-          title: e.title.resolve(AppConfig.defaultLocale),
+          title: e.title.resolve(locale),
           formattedDateTime: e.formattedDateTime,
           event: e,
         ),
@@ -161,6 +162,7 @@ KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
   required List<Event> keynoteEvents,
   required List<Presentation> keynotePresentations,
   required DateTime today,
+  required String locale,
 }) {
   final presentation = keynotePresentations.firstWhereOrNull(
     (p) => p.speakers.any((s) => s.personId == speaker.id),
@@ -169,6 +171,7 @@ KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
   final events = _buildSpeakerSessions(
     speaker: speaker,
     keynoteEvents: keynoteEvents,
+    locale: locale,
   );
 
   final isPresentingToday = events.any((s) {
@@ -178,7 +181,7 @@ KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
 
   return KeynoteSpeakerUIModel(
     id: speaker.id,
-    name: speaker.name.resolve(AppConfig.defaultLocale),
+    name: speaker.name.resolve(locale),
     institution: speaker.institution,
     photoUrl: speaker.photoUrl,
     events: events,
@@ -193,6 +196,7 @@ List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
   required List<Event> allEvents,
   required List<Person> allPeople,
   required DateTime today,
+  required String locale,
 }) {
   final peopleById = _buildPeopleIndex(allPeople);
   final keynoteEvents = allEvents
@@ -212,15 +216,14 @@ List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
         keynoteEvents: keynoteEvents,
         keynotePresentations: keynotePresentations,
         today: today,
+        locale: locale,
       ),
   ];
 }
 
 /// Construye la lista de [Category] a partir de los subtipos del evento.
-List<Category> _buildCategories(List<SubmissionType> subTypes) {
-  return subTypes
-      .map((st) => Category(name: st.name.resolve(AppConfig.defaultLocale)))
-      .toList();
+List<Category> _buildCategories(List<SubmissionType> subTypes, String locale) {
+  return subTypes.map((st) => Category(name: st.name.resolve(locale))).toList();
 }
 
 /// ViewModel para la pantalla Home.
@@ -229,10 +232,11 @@ class HomeViewModel extends _$HomeViewModel {
   @override
   Future<HomeState> build() async {
     final useCase = ref.watch(getHomeDataUseCaseProvider);
+    final locale = ref.watch(defaultLocaleProvider);
     final result = await useCase.execute();
 
     return switch (result) {
-      Success(data: final data) => _buildStateFromData(data),
+      Success(data: final data) => _buildStateFromData(data, locale),
       Failure(message: final msg) => throw msg,
     };
   }
@@ -244,7 +248,7 @@ class HomeViewModel extends _$HomeViewModel {
   }
 
   /// Orquesta la construcción del [HomeState] a partir de los datos crudos.
-  HomeState _buildStateFromData(HomeDataResult data) {
+  HomeState _buildStateFromData(HomeDataResult data, String locale) {
     final peopleById = _buildPeopleIndex(data.allPeople);
     final now = DateTime.now();
 
@@ -257,30 +261,26 @@ class HomeViewModel extends _$HomeViewModel {
         allEvents: data.allEvents,
         allRooms: data.allRooms,
         peopleById: peopleById,
+        locale: locale,
       ),
       keynoteSpeakers: _buildKeynoteSpeakers(
         keynotePresentations: data.keynotePresentations,
         allEvents: data.allEvents,
         allPeople: data.allPeople,
         today: now,
+        locale: locale,
       ),
-      categories: _buildCategories(data.subTypes),
+      categories: _buildCategories(data.subTypes, locale),
       news: data.news
-          .map((e) => NewsItemUIMapper.fromEntity(e, AppConfig.defaultLocale))
+          .map((e) => NewsItemUIMapper.fromEntity(e, locale))
           .toList(),
       socialActivities: data.socialActivities
-          .map(
-            (e) =>
-                SocialActivityUIMapper.fromEntity(e, AppConfig.defaultLocale),
-          )
+          .map((e) => SocialActivityUIMapper.fromEntity(e, locale))
           .toList(),
       conferenceThemes: data.conferenceThemes
-          .map(
-            (e) =>
-                ConferenceThemeUIMapper.fromEntity(e, AppConfig.defaultLocale),
-          )
+          .map((e) => ConferenceThemeUIMapper.fromEntity(e, locale))
           .toList(),
-      headerInfoLabel: AppConfig.welcomeLabel,
+      headerInfoLabel: _kWelcomeLabel,
       today: now,
     );
   }

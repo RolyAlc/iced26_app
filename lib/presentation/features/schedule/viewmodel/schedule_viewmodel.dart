@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/day.dart';
@@ -227,21 +226,20 @@ final visibleItemsProvider = Provider<List<ScheduleItem>>((ref) {
 /// ViewModel para la pantalla de Schedule.
 @riverpod
 class ScheduleViewModel extends _$ScheduleViewModel {
-  // TODO: Obtener locale dinámico desde configuración del usuario
-
   @override
   Future<ScheduleState> build() async {
     final useCase = ref.watch(getScheduleDataUseCaseProvider);
+    final locale = ref.watch(defaultLocaleProvider);
     final result = await useCase.execute();
 
     return switch (result) {
-      Success(data: final data) => _buildStateFromData(data),
+      Success(data: final data) => _buildStateFromData(data, locale),
       Failure(message: final msg) => throw msg,
     };
   }
 
   /// Construye el [ScheduleState] a partir de los datos obtenidos del use case.
-  ScheduleState _buildStateFromData(ScheduleDataResult data) {
+  ScheduleState _buildStateFromData(ScheduleDataResult data, String locale) {
     final sortedEvents = _sortEventsByDate(data.allEvents);
     final categories = _buildCategories(sortedEvents);
     final blocksByParent = _indexBlocksByParent(data.allSessionBlocks);
@@ -250,7 +248,7 @@ class ScheduleViewModel extends _$ScheduleViewModel {
       days: data.days,
       sortedEvents: sortedEvents,
       blocksByParent: blocksByParent,
-      locale: AppConfig.defaultLocale,
+      locale: locale,
     );
 
     final finalSections = sections.isEmpty
