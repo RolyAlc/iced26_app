@@ -8,7 +8,10 @@ abstract final class AppConfig {
   static const String welcomeLabel = 'Welcome to ICED26';
   static const String websiteUrl = 'https://iced26.es';
   static const String websiteLabel = 'iced26.es';
-  static const String portalApiBaseUrl = '$websiteUrl/api';
+  static const String portalApiBaseUrl = String.fromEnvironment(
+    'PORTAL_API_BASE_URL',
+    defaultValue: '$websiteUrl/api',
+  );
   // Idioma por defecto del congreso — usado para resolver textos i18n en viewmodels.
   static const String defaultLocale = 'en';
 
