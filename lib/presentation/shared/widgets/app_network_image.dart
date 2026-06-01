@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/core/services/logger/logger.dart';
+
+const Duration _kFadeIn = Duration(milliseconds: 300);
 
 /// Imagen de red con estados de carga y error unificados.
 class AppNetworkImage extends StatelessWidget {
@@ -26,37 +28,52 @@ class AppNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLogger.i('[AppNetworkImage] build — url: $url');
+
     if (url.isEmpty) {
+      AppLogger.i('[AppNetworkImage] url vacía → fallback');
       return _fallback(context);
     }
 
     if (_isAsset) {
+      AppLogger.i('[AppNetworkImage] asset local → Image.asset');
       return Image.asset(
         url,
         width: width,
         height: height,
         fit: fit,
-        errorBuilder: (_, _, _) => _fallback(context),
+        errorBuilder: (_, error, _) {
+          AppLogger.i('[AppNetworkImage] asset error: $error');
+          return _fallback(context);
+        },
       );
     }
 
+    AppLogger.i('[AppNetworkImage] red → CachedNetworkImage');
     final colors = Theme.of(context).colorScheme;
     return CachedNetworkImage(
       imageUrl: url,
       width: width,
       height: height,
       fit: fit,
-      errorWidget: (_, _, _) => _fallback(context),
-      placeholder: (_, _) {
-        return SizedBox(
-          width: width,
-          height: height,
-          child: ColoredBox(
-            color: colors.surfaceContainerLow,
-            child: const Center(
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
+      fadeInDuration: _kFadeIn,
+      fadeOutDuration: _kFadeIn,
+      imageBuilder: (_, imageProvider) {
+        AppLogger.i('[AppNetworkImage] imagen lista (caché o red): $url');
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            image: DecorationImage(image: imageProvider, fit: fit),
           ),
+        );
+      },
+      errorWidget: (_, url, error) {
+        AppLogger.i('[AppNetworkImage] error cargando $url: $error');
+        return _fallback(context);
+      },
+      placeholder: (_, url) {
+        AppLogger.i('[AppNetworkImage] placeholder activo (cargando): $url');
+        return DecoratedBox(
+          decoration: BoxDecoration(color: colors.surfaceContainerLow),
         );
       },
     );
@@ -68,10 +85,9 @@ class AppNetworkImage extends StatelessWidget {
       return placeholder!;
     }
     final colors = Theme.of(context).colorScheme;
-    return Container(
-      width: width,
-      height: height,
+    return ColoredBox(
       color: colors.surfaceContainerLow,
+      child: SizedBox(width: width, height: height),
     );
   }
 }
