@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/conference_theme_ui_model.dart';
 import 'package:iced26/presentation/shared/widgets/reading_controls_fab.dart';
 
-// --- Constants ---
+// Constants
 const _kBack = 'Back';
 const _kTopicsInclude = 'Topics include';
 const _kReadTimeLabel = 'min';
 const _kCopiedMessage = 'Copied to clipboard';
-// --- Sizes & positions ---
+// Sizes & positions
 const _kBackButtonSize = 36.0;
 const _kBackButtonIconSize = 20.0;
 const _kChipIconSize = 14.0;
@@ -25,15 +24,15 @@ const _kScrollToTopThreshold = 200.0;
 
 /// Pantalla completa de detalle de un tema de la conferencia.
 class ConferenceThemeDetailPage extends StatefulWidget {
-  const ConferenceThemeDetailPage({super.key, required this.conferenceTheme});
+  const ConferenceThemeDetailPage({super.key, required this.theme});
 
-  final ConferenceTheme conferenceTheme;
+  final ConferenceThemeUIModel theme;
 
-  static void open(BuildContext context, ConferenceTheme theme) {
+  static void open(BuildContext context, ConferenceThemeUIModel theme) {
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, _) {
-          return ConferenceThemeDetailPage(conferenceTheme: theme);
+          return ConferenceThemeDetailPage(theme: theme);
         },
         transitionsBuilder: (context, animation, _, child) {
           final curved = CurvedAnimation(
@@ -106,13 +105,9 @@ class _ConferenceThemeDetailPageState extends State<ConferenceThemeDetailPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final name = widget.conferenceTheme.name.resolve(AppConfig.defaultLocale);
-    final description = widget.conferenceTheme.description.resolve(
-      AppConfig.defaultLocale,
-    );
-    final readMinutes = widget.conferenceTheme.estimatedReadMinutes(
-      AppConfig.defaultLocale,
-    );
+    final name = widget.theme.name;
+    final description = widget.theme.description;
+    final readMinutes = widget.theme.readMinutes;
 
     return Scaffold(
       backgroundColor: colors.surface,
@@ -168,7 +163,7 @@ class _ConferenceThemeDetailPageState extends State<ConferenceThemeDetailPage> {
                 const SizedBox(height: AppSpacing.s),
                 _ReadTimeChip(minutes: readMinutes),
                 const SizedBox(height: AppSpacing.l),
-                _ThemeDetailContent(conferenceTheme: widget.conferenceTheme),
+                _ThemeDetailContent(theme: widget.theme),
               ],
             ),
           ),
@@ -202,12 +197,12 @@ class _BackButton extends StatelessWidget {
               width: _kBackButtonSize,
               height: _kBackButtonSize,
               decoration: BoxDecoration(
-                color: colors.secondaryContainer,
+                color: colors.surfaceContainerHigh,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 AppIcons.arrowBack,
-                color: colors.onSecondaryContainer,
+                color: colors.onSurface,
                 size: _kBackButtonIconSize,
               ),
             ),
@@ -241,13 +236,11 @@ class _ReadTimeChip extends StatelessWidget {
       avatar: Icon(
         AppIcons.timerOutlined,
         size: _kChipIconSize,
-        color: colors.onSecondaryContainer,
+        color: colors.onSurface,
       ),
       label: Text('$minutes $_kReadTimeLabel'),
-      labelStyle: theme.textTheme.labelSmall?.copyWith(
-        color: colors.onSecondaryContainer,
-      ),
-      backgroundColor: colors.secondaryContainer,
+      labelStyle: theme.textTheme.labelSmall?.copyWith(color: colors.onSurface),
+      backgroundColor: colors.surfaceContainerHigh,
       side: BorderSide.none,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
       labelPadding: const EdgeInsets.only(
@@ -261,28 +254,23 @@ class _ReadTimeChip extends StatelessWidget {
 
 /// Descripción completa del tema + lista de tópicos.
 class _ThemeDetailContent extends StatelessWidget {
-  const _ThemeDetailContent({required this.conferenceTheme});
+  const _ThemeDetailContent({required this.theme});
 
-  final ConferenceTheme conferenceTheme;
+  final ConferenceThemeUIModel theme;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final description = conferenceTheme.description.resolve(
-      AppConfig.defaultLocale,
-    );
-    final topics = conferenceTheme.topicsInclude
-        .map((t) => t.resolve(AppConfig.defaultLocale))
-        .where((t) => t.isNotEmpty)
-        .toList();
+    final textTheme = Theme.of(context).textTheme;
+    final description = theme.description;
+    final topics = theme.topics;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           description,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+          style: textTheme.bodyLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             height: 1.6,
           ),
         ),
@@ -290,9 +278,7 @@ class _ThemeDetailContent extends StatelessWidget {
           const SizedBox(height: AppSpacing.l),
           Text(
             _kTopicsInclude,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: AppSpacing.s),
           _TopicsList(topics: topics),

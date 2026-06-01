@@ -1,13 +1,14 @@
 ---
-version: 1.1.0
+version: 1.1.1
 status: activo
-last_updated: 2026-05-25
+last_updated: 2026-05-26
 tags: [README, presentation]
 ---
 
-# ICED26 — Aplicación oficial del congreso
+# ICED26 — Aplicación para el congreso ICED26
 
 Aplicación móvil para el congreso **ICED26** (International Conference on Engineering Design 2026), desarrollada en Flutter.
+
 Funciona sin conexión: todos los datos están empaquetados en la app.
 
 ## 1. ¿Qué puede hacer el usuario?
@@ -87,5 +88,6 @@ O consulta directamente los ficheros en `docs/`.
 ## 7. Scripts útiles
 
 ```bash
-dart format . && dart analyze .                      # formatear y analizar
+# formatear y analizar
+dart format . && dart analyze .
 ```

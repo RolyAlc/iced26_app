@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Campo de entrada de texto para la búsqueda.
@@ -25,6 +25,7 @@ class SearchInputField extends StatelessWidget {
   }
 
   Widget _buildTextField(BuildContext context, Widget? _) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
 
     return TextField(
@@ -34,10 +35,10 @@ class SearchInputField extends StatelessWidget {
       onChanged: onChanged,
       onSubmitted: onSubmitted,
       decoration: InputDecoration(
-        hintText: AppStrings.searchInputHint,
+        hintText: l10n.searchInputHint,
         prefixIcon: Icon(AppIcons.search, color: colors.primary),
         filled: true,
-        fillColor: colors.surfaceContainerLow,
+        fillColor: colors.surfaceContainerHigh,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.m),
           borderSide: BorderSide.none,

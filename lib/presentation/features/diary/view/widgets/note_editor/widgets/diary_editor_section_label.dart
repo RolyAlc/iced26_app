@@ -20,7 +20,7 @@ class DiaryEditorSectionLabel extends StatelessWidget {
 
     return Row(
       children: [
-        Icon(icon, size: 16, color: color),
+        Icon(icon, size: AppIconSize.inline, color: color),
         const SizedBox(width: AppSpacing.s),
         Text(
           label.toUpperCase(),

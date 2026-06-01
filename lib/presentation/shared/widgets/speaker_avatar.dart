@@ -31,11 +31,11 @@ class SpeakerAvatar extends StatelessWidget {
 
     return CircleAvatar(
       radius: radius,
-      backgroundColor: theme.colorScheme.primaryContainer,
+      backgroundColor: theme.colorScheme.surfaceContainerHigh,
       child: Text(
         name.isNotEmpty ? name[0].toUpperCase() : '?',
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: theme.colorScheme.onPrimaryContainer,
+          color: theme.colorScheme.onSurface,
           fontWeight: FontWeight.bold,
         ),
       ),

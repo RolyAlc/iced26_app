@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/domain/entities/event_status.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/features/home/viewmodel/home_viewmodel.dart';
 import 'package:iced26/presentation/features/search/widgets/active_filter_chip.dart';
@@ -67,12 +68,18 @@ class _ExpandedFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        FilterToggleButton(count: count, isExpanded: true, onTap: onToggle),
-        const Spacer(),
-        if (filters.isActive) ClearAllButton(onPressed: notifier.clearFilters),
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppLayout.horizontalPadding(context),
+      ),
+      child: Row(
+        children: [
+          FilterToggleButton(count: count, isExpanded: true, onTap: onToggle),
+          const Spacer(),
+          if (filters.isActive)
+            ClearAllButton(onPressed: notifier.clearFilters),
+        ],
+      ),
     );
   }
 }
@@ -94,7 +101,8 @@ class _CollapsedFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chips = _buildActiveChips();
+    final l10n = AppLocalizations.of(context)!;
+    final chips = _buildActiveChips(l10n);
 
     return AnimatedSize(
       duration: AppDuration.fast,
@@ -104,32 +112,42 @@ class _CollapsedFilterBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              FilterToggleButton(
-                count: count,
-                isExpanded: false,
-                onTap: onToggle,
-              ),
-              const Spacer(),
-              if (filters.isActive)
-                ClearAllButton(onPressed: notifier.clearFilters),
-            ],
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppLayout.horizontalPadding(context),
+            ),
+            child: Row(
+              children: [
+                FilterToggleButton(
+                  count: count,
+                  isExpanded: false,
+                  onTap: onToggle,
+                ),
+                const Spacer(),
+                if (filters.isActive)
+                  ClearAllButton(onPressed: notifier.clearFilters),
+              ],
+            ),
           ),
           if (chips.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.s),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (final chip in chips) ...[
-                    chip,
-                    // Trailing spacer de 4px es invisible al final de un área scrollable.
-                    const SizedBox(width: AppSpacing.xs),
-                  ],
-                ],
-              ),
-            ),
+            _buildChipRow(context, chips),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChipRow(BuildContext context, List<Widget> chips) {
+    final hPad = AppLayout.horizontalPadding(context);
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.only(left: hPad, right: hPad),
+      child: Row(
+        children: [
+          for (final chip in chips) ...[
+            chip,
+            const SizedBox(width: AppSpacing.xs),
           ],
         ],
       ),
@@ -138,7 +156,7 @@ class _CollapsedFilterBar extends StatelessWidget {
 
   // Collection literal — mismo patrón for/if que los widget trees de Flutter.
   // Sin lista mutable ni .add(): cada fuente de filtros contribuye sus chips directamente.
-  List<Widget> _buildActiveChips() {
+  List<Widget> _buildActiveChips(AppLocalizations l10n) {
     return [
       if (filters.selectedDay != null)
         ActiveFilterChip(
@@ -157,12 +175,16 @@ class _CollapsedFilterBar extends StatelessWidget {
         ),
       for (final d in filters.selectedDurations)
         ActiveFilterChip(
-          label: AppStrings.searchDurationLabel(d),
+          label: l10n.searchDurationLabel(d),
           onRemove: () => notifier.toggleDuration(d),
         ),
       for (final s in filters.selectedStatuses)
         ActiveFilterChip(
-          label: AppStrings.searchStatusLabel(s),
+          label: switch (s) {
+            EventStatus.live => l10n.searchStatusLiveNow,
+            EventStatus.next => l10n.searchStatusUpNext,
+            EventStatus.ended => l10n.searchStatusEnded,
+          },
           onRemove: () => notifier.toggleStatus(s),
         ),
     ];

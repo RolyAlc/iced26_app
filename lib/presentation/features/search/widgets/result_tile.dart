@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/search/widgets/search_highlight_text.dart';
@@ -17,17 +16,18 @@ class ResultTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
     final locale = Localizations.localeOf(context).languageCode;
     final roomsIndex = ref.watch(allRoomsIndexProvider).value ?? {};
     final roomName =
-        roomsIndex[event.roomId]?.name.resolve(locale) ?? AppStrings.noRoom;
+        roomsIndex[event.roomId]?.name.resolve(locale) ?? l10n.searchNoRoom;
     final query = ref.watch(searchProvider.select((s) => s.query));
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       leading: CircleAvatar(
-        backgroundColor: colors.primaryContainer.withValues(alpha: 0.2),
+        backgroundColor: colors.surfaceContainerHigh,
         child: Icon(AppIcons.event, color: colors.primary, size: 20),
       ),
       title: SearchHighlightText(

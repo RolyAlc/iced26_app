@@ -227,7 +227,7 @@ class _TimeBadge extends StatelessWidget {
           style: theme.textTheme.labelMedium?.copyWith(
             color: color,
             fontWeight: isLive ? FontWeight.bold : FontWeight.w600,
-            letterSpacing: 0.5,
+            letterSpacing: AppTextStyle.timeLetterSpacing,
           ),
         ),
       ],

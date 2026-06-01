@@ -1,5 +1,6 @@
 import 'package:iced26/domain/entities/collections.dart';
 import 'package:iced26/domain/entities/conference.dart';
+import 'package:iced26/domain/entities/conference_config.dart';
 import 'package:iced26/domain/entities/i18n_str.dart';
 import 'package:iced26/domain/entities/metadata.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
@@ -9,6 +10,7 @@ class AppData {
   AppData({
     required this.metadata,
     required this.conference,
+    required this.conferenceConfig,
     required this.theme,
     required this.collections,
   });
@@ -18,6 +20,14 @@ class AppData {
     return AppData(
       metadata: Metadata(eventId: '', version: '0.0.0', generatedAt: ''),
       conference: Conference(name: I18nStr({}), conferenceThemes: []),
+      conferenceConfig: const ConferenceConfig(
+        name: '',
+        tagline: '',
+        location: '',
+        dates: '',
+        websiteUrl: '',
+        defaultLocale: 'en',
+      ),
       theme: ThemeConfig(colors: {}, typography: {}, logo: {}),
       collections: Collections(
         days: [],
@@ -32,8 +42,10 @@ class AppData {
       ),
     );
   }
+
   final Metadata metadata;
   final Conference conference;
+  final ConferenceConfig conferenceConfig;
   final ThemeConfig theme;
   final Collections collections;
 }

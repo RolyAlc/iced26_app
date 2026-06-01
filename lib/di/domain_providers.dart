@@ -1,5 +1,6 @@
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/data_providers.dart';
+import 'package:iced26/domain/entities/conference_config.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/my_schedule_item.dart';
@@ -19,6 +20,25 @@ import 'package:iced26/domain/usecases/watch_favorites_use_case.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'domain_providers.g.dart';
+
+/// Provee los metadatos escalares de la edición del congreso.
+@riverpod
+Future<ConferenceConfig?> conferenceConfig(Ref ref) async {
+  final result = await ref
+      .watch(configRepositoryProvider)
+      .getConferenceConfig();
+  return switch (result) {
+    Success(data: final config) => config,
+    Failure(message: final msg) => throw Exception(msg),
+  };
+}
+
+/// Locale por defecto del congreso — sincrónico para uso en viewmodels.
+@riverpod
+String defaultLocale(Ref ref) {
+  return ref.watch(conferenceConfigProvider).asData?.value?.defaultLocale ??
+      'en';
+}
 
 /// Provee el caso de uso para obtener los datos de la página de inicio.
 @riverpod

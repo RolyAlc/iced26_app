@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/session_ui_model.dart';
@@ -13,8 +14,6 @@ import 'package:iced26/presentation/shared/widgets/app_network_image.dart';
 const _kIconBadgeSize = 36.0;
 const _kIconSize = 18.0;
 const _kPlaceholderIconSize = 64.0;
-const _kLabelPresentation = 'Presentation';
-const _kLabelSession = 'Sessions';
 
 /// Muestra el sheet de detalle de un keynote speaker.
 void showKeynoteSpeakerDetail(
@@ -65,7 +64,7 @@ class _SpeakerImage extends StatelessWidget {
         child: AppNetworkImage(
           url: photoUrl,
           placeholder: ColoredBox(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            color: Theme.of(context).colorScheme.surfaceContainerHigh,
             child: const Center(
               child: Icon(AppIcons.person, size: _kPlaceholderIconSize),
             ),
@@ -92,7 +91,7 @@ class _SpeakerInstitution extends StatelessWidget {
         children: [
           Icon(
             AppIcons.business,
-            size: 16,
+            size: AppIconSize.inline,
             color: theme.colorScheme.onSurfaceVariant,
           ),
           const SizedBox(width: AppSpacing.s),
@@ -123,6 +122,7 @@ class _SpeakerSessions extends StatelessWidget {
     }
 
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.l),
@@ -130,7 +130,7 @@ class _SpeakerSessions extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _kLabelSession,
+            l10n.keynoteSpeakerDetailSessionsLabel,
             style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: AppSpacing.s),
@@ -151,6 +151,7 @@ class _PresentationRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final locale = Localizations.localeOf(context).languageCode;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.l),
@@ -158,7 +159,7 @@ class _PresentationRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _kLabelPresentation,
+            l10n.keynoteSpeakerDetailPresentationLabel,
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -173,8 +174,8 @@ class _PresentationRow extends StatelessWidget {
                 children: [
                   _IconBadge(
                     icon: AppIcons.slideshow,
-                    iconColor: theme.colorScheme.onPrimaryContainer,
-                    bgColor: theme.colorScheme.primaryContainer,
+                    iconColor: theme.colorScheme.onSurface,
+                    bgColor: theme.colorScheme.surfaceContainerHigh,
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(

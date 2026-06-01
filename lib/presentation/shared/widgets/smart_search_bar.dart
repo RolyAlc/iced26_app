@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/recent_searches_provider.dart';
 import 'package:iced26/presentation/app/state/recently_viewed_people_provider.dart';
 import 'package:iced26/presentation/app/state/recently_viewed_provider.dart';
@@ -14,7 +13,6 @@ import 'package:iced26/presentation/features/search/view/search_helper.dart';
 import 'package:iced26/presentation/features/search/view/search_modal_body.dart';
 
 const double _kBadgeSize = 8.0;
-const double _kBadgeOffset = -3.0;
 
 List<Person> _filterPeople(Map<String, Person> allPeople, String query) {
   if (query.isEmpty) {
@@ -28,6 +26,7 @@ List<Person> _filterPeople(Map<String, Person> allPeople, String query) {
 }
 
 SearchHelper? _resolveOverlay({
+  required AppLocalizations l10n,
   required bool hasNoActiveSearch,
   required bool historyIsEmpty,
   required bool hasNoResults,
@@ -35,16 +34,16 @@ SearchHelper? _resolveOverlay({
   final hasNoActiveSearchAndHistoryIsEmpty =
       hasNoActiveSearch && historyIsEmpty;
   if (hasNoActiveSearchAndHistoryIsEmpty) {
-    return const SearchHelper(
-      title: AppStrings.searchExploreTitle,
-      subtitle: AppStrings.searchExploreSubtitle,
+    return SearchHelper(
+      title: l10n.searchExploreTitle,
+      subtitle: l10n.searchExploreSubtitle,
       icon: AppIcons.empty,
     );
   }
   if (hasNoResults) {
-    return const SearchHelper(
-      title: AppStrings.searchNoResultsTitle,
-      subtitle: AppStrings.searchNoResultsSubtitle,
+    return SearchHelper(
+      title: l10n.searchNoResultsTitle,
+      subtitle: l10n.searchNoResultsSubtitle,
       icon: AppIcons.searchEmpty,
     );
   }
@@ -130,6 +129,7 @@ class _SearchScreenState extends ConsumerState<_SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final state = ref.watch(searchProvider);
     final recent = ref.watch(recentSearchesProvider);
@@ -148,6 +148,7 @@ class _SearchScreenState extends ConsumerState<_SearchScreen> {
         recentlyViewedPeople.isEmpty;
 
     final overlay = _resolveOverlay(
+      l10n: l10n,
       hasNoActiveSearch: hasNoActiveSearch,
       historyIsEmpty: historyIsEmpty,
       hasNoResults:
@@ -160,12 +161,7 @@ class _SearchScreenState extends ConsumerState<_SearchScreen> {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.l,
-                AppSpacing.m,
-                AppSpacing.l,
-                AppSpacing.m,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
               child: SearchModalBody(
                 notifier: widget.notifier,
                 people: people,
@@ -198,31 +194,27 @@ class _SearchBarVisualContainer extends StatelessWidget {
   final VoidCallback onFilterTap;
 
   static const double _kBarHeight = 56.0;
-  static const double _kBorderWidth = 1.2;
   static const EdgeInsets _kPadding = EdgeInsets.symmetric(
     horizontal: AppSpacing.m,
   );
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
 
     return Container(
       height: _kBarHeight,
       padding: _kPadding,
       decoration: BoxDecoration(
-        color: Color.alphaBlend(
-          colors.primary.withValues(alpha: 0.08),
-          colors.surface,
-        ),
+        color: colors.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppRadius.l),
-        border: Border.all(color: colors.outlineVariant, width: _kBorderWidth),
       ),
       child: Row(
         children: [
           Icon(AppIcons.search, color: colors.primary),
           const SizedBox(width: AppSpacing.sm),
-          const Expanded(child: Text(AppStrings.searchBarHint)),
+          Expanded(child: Text(l10n.searchBarHint)),
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: onFilterTap,
@@ -245,27 +237,13 @@ class _FilterIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Icon(
-          AppIcons.filter,
-          color: isActive ? colors.primary : colors.secondary,
-        ),
-        if (isActive)
-          Positioned(
-            top: _kBadgeOffset,
-            right: _kBadgeOffset,
-            child: Container(
-              width: _kBadgeSize,
-              height: _kBadgeSize,
-              decoration: BoxDecoration(
-                color: colors.primary,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-      ],
+    return Badge(
+      isLabelVisible: isActive,
+      smallSize: _kBadgeSize,
+      child: Icon(
+        AppIcons.filter,
+        color: isActive ? colors.primary : colors.secondary,
+      ),
     );
   }
 }

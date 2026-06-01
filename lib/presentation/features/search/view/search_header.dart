@@ -26,21 +26,26 @@ class SearchHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            IconButton(
-              padding: const EdgeInsets.only(right: AppSpacing.s),
-              icon: const Icon(AppIcons.arrowBack),
-              onPressed: () => Navigator.pop(context),
-            ),
-            Expanded(
-              child: SearchInputField(
-                controller: controller,
-                onChanged: notifier.performSearch,
-                onSubmitted: onSubmitted,
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppLayout.horizontalPadding(context),
+          ),
+          child: Row(
+            children: [
+              IconButton(
+                padding: const EdgeInsets.only(right: AppSpacing.s),
+                icon: const Icon(AppIcons.arrowBack),
+                onPressed: () => Navigator.pop(context),
               ),
-            ),
-          ],
+              Expanded(
+                child: SearchInputField(
+                  controller: controller,
+                  onChanged: notifier.performSearch,
+                  onSubmitted: onSubmitted,
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: AppSpacing.l),
         FilterBar(

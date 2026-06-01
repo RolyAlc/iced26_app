@@ -3,7 +3,10 @@ version: 1.1.0
 status: activo
 last_updated: 2026-05-25
 icon: lucide/palette
-tags: [arquitectura, design-system, tokens]
+tags:
+  - arquitectura
+  - design-system
+  - tokens
 audience: tecnico
 ---
 

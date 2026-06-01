@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
@@ -27,7 +27,7 @@ class SlotPresentationTile extends ConsumerWidget {
   final Event talk;
   final Map<String, Person> peopleIndex;
 
-  String? _speakerNames(String locale) {
+  String? _speakerNames(String locale, AppLocalizations l10n) {
     final names = talk.speakers
         .map((s) => peopleIndex[s.personId]?.name.resolve(locale))
         .whereType<String>()
@@ -41,7 +41,7 @@ class SlotPresentationTile extends ConsumerWidget {
     if (names.length == 1) return first;
     final remaining = names.length - 1;
 
-    return '$first ${AppStrings.speakersOverflow(remaining)}';
+    return '$first ${l10n.scheduleSpeakersOverflow(remaining)}';
   }
 
   Widget _buildTileContent(
@@ -88,8 +88,9 @@ class SlotPresentationTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final locale = Localizations.localeOf(context).languageCode;
+    final l10n = AppLocalizations.of(context)!;
     final title = talk.title.resolve(locale);
-    final speakerNames = _speakerNames(locale);
+    final speakerNames = _speakerNames(locale, l10n);
     final isFavorite = ref.watch(
       favoriteIdsProvider.select(
         (ids) => ids.value?.contains(talk.id) ?? false,

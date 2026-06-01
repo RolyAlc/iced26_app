@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
+import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
@@ -12,8 +13,6 @@ import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_
 import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 
 const _kTimelineColumnWidth = 56.0;
-const _kSingularTrack = 'track';
-const _kPluralTracks = 'tracks';
 
 /// Vista agenda del schedule: timeline vertical con hora, dot y línea.
 /// Alternativa a la vista de lista — mismos datos, distinta presentación.
@@ -24,8 +23,8 @@ class ScheduleAgendaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Los DaySeparatorItem solo aparecen con filtro activo, y el toggle
-    // de agenda se oculta en ese caso. Los filtramos por defensividad.
+    // DaySeparatorItem solo aparece con filtro de categoría activo.
+    // El estado vacío se gestiona en ScheduleTimelineBody antes de llegar aquí.
     final agendaItems = items
         .where((item) => item is! DaySeparatorItem)
         .toList();
@@ -51,6 +50,11 @@ class _AgendaItem extends StatelessWidget {
   final bool isLast;
 
   Event _event() {
+    assert(
+      item is! DaySeparatorItem,
+      '_AgendaItem solo acepta SingleEventItem o SessionSlotItem. '
+      'Los DaySeparatorItem deben filtrarse en ScheduleAgendaView.build() antes de construir _AgendaItem.',
+    );
     return switch (item) {
       SingleEventItem(:final event) => event,
       SessionSlotItem(:final event) => event,
@@ -63,7 +67,7 @@ class _AgendaItem extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final event = _event();
-    final time = event.filterTime ?? '--:--';
+    final time = event.filterTime ?? EventFormatter.noTime;
     final isLive = EventStatusResolver.resolve(event) == EventStatus.live;
     final dotColor = isLive ? colors.primary : colors.outlineVariant;
     final lineColor = colors.outlineVariant.withValues(alpha: 0.5);
@@ -82,7 +86,7 @@ class _AgendaItem extends StatelessWidget {
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: isLive ? colors.primary : colors.onSurfaceVariant,
                     fontWeight: isLive ? FontWeight.bold : FontWeight.w500,
-                    letterSpacing: 0.5,
+                    letterSpacing: AppTextStyle.timeLetterSpacing,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
@@ -124,6 +128,8 @@ class _AgendaItemContent extends StatelessWidget {
     return switch (item) {
       SingleEventItem(:final event) => _SingleEventCard(event: event),
       SessionSlotItem() => _SessionSlotCard(item: item as SessionSlotItem),
+      // Inalcanzable en runtime — filtrado en ScheduleAgendaView.build().
+      // Requerido por el switch exhaustivo de Dart sobre ScheduleItem (sealed class).
       DaySeparatorItem() => const SizedBox.shrink(),
     };
   }
@@ -148,7 +154,7 @@ class _SingleEventCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.m),
         decoration: BoxDecoration(
-          color: colors.surfaceContainerLow,
+          color: colors.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(AppRadius.m),
         ),
         child: Column(
@@ -181,12 +187,12 @@ class _SessionSlotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final locale = Localizations.localeOf(context).languageCode;
     final colors = theme.colorScheme;
     final trackCount = item.blocks.length;
-    final trackLabel =
-        '$trackCount ${trackCount == 1 ? _kSingularTrack : _kPluralTracks}';
+    final trackLabel = l10n.scheduleTracks(trackCount);
 
     return InkWell(
       onTap: () => showSessionSlotDetail(context, item, locale),
@@ -194,7 +200,7 @@ class _SessionSlotCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.m),
         decoration: BoxDecoration(
-          color: colors.surfaceContainerLow,
+          color: colors.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(AppRadius.m),
         ),
         child: Row(

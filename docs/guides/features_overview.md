@@ -3,7 +3,11 @@ version: 1.0.0
 status: activo
 last_updated: 2026-05-25
 icon: lucide/layout-dashboard
-tags: [guia, pantallas, funcionalidades, congreso]
+tags:
+  - guia
+  - pantallas
+  - funcionalidades
+  - congreso
 audience: organizador
 ---
 

@@ -2,6 +2,9 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_type.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 
+/// Tabs principales de la pantalla Schedule.
+enum ScheduleTab { timeline, mySchedule }
+
 /// Base item para cada elemento de la schedule
 sealed class ScheduleItem {}
 

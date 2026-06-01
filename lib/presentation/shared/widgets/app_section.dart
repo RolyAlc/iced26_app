@@ -97,17 +97,22 @@ class AppSection extends StatelessWidget {
                 horizontal: AppLayout.horizontalPadding(context),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if (title != null)
-                    Text(
-                      title!,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: _kTitleLetterSpacing,
+                    Expanded(
+                      child: Text(
+                        title!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: _kTitleLetterSpacing,
+                        ),
                       ),
                     ),
-                  trailing ?? const SizedBox.shrink(),
+                  if (trailing != null) trailing!,
                 ],
               ),
             ),

@@ -1,10 +1,11 @@
 import 'package:iced26/core/constants/app_config.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-/// Clase abastracta final con utilidades para la pantalla de diario.
+/// Clase abstracta final con utilidades para la pantalla de diario.
 abstract final class DiaryHelpers {
   static final firstDay = AppConfig.firstDay;
   static final lastDay = AppConfig.lastDay;
@@ -34,7 +35,8 @@ abstract final class DiaryHelpers {
   }
 
   static bool hasEvent(Map<DateTime, List<Event>> eventsByDay, DateTime day) {
-    return (eventsByDay[normalizeDate(day)] ?? []).isNotEmpty;
+    final events = eventsByDay[normalizeDate(day)] ?? [];
+    return events.isNotEmpty;
   }
 
   static bool hasNote(List<DiaryNote> notes, DateTime day) {
@@ -59,14 +61,16 @@ abstract final class DiaryHelpers {
       weekStart.day,
     );
     final weekEnd = weekStartNormalized.add(const Duration(days: 6));
-    return !normalizedNow.isBefore(weekStartNormalized) &&
-        !normalizedNow.isAfter(weekEnd);
+    final isOnOrAfterStart = !normalizedNow.isBefore(weekStartNormalized);
+    final isOnOrBeforeEnd = !normalizedNow.isAfter(weekEnd);
+
+    return isOnOrAfterStart && isOnOrBeforeEnd;
   }
 
   // "Today · 3 May" cuando es hoy, nombre completo del día en otro caso.
-  static String formatDayHeader(DateTime date) {
+  static String formatDayHeader(DateTime date, AppLocalizations l10n) {
     if (isToday(date)) {
-      return 'Today · ${DateHelper.formatDayShort(date)}';
+      return l10n.diaryTodayHeader(DateHelper.formatDayShort(date));
     }
     return DateHelper.formatDayLabel(date);
   }

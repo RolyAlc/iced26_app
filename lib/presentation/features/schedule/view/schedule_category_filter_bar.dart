@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event_type.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 
@@ -22,21 +22,22 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.symmetric(
         horizontal: AppLayout.horizontalPadding(context),
       ),
-      child: Row(children: _buildChips(context, colors)),
+      child: Row(children: _buildChips(l10n, colors)),
     );
   }
 
   /// Construye los chips de filtro.
-  List<Widget> _buildChips(BuildContext context, ColorScheme colors) {
+  List<Widget> _buildChips(AppLocalizations l10n, ColorScheme colors) {
     return [
       _CategoryChip(
-        label: 'All',
+        label: l10n.scheduleFilterAll,
         icon: AppIcons.apps,
         color: colors.primary,
         selected: selected == null,
@@ -84,7 +85,7 @@ class _CategoryChip extends StatelessWidget {
       label: Text(label),
       avatar: Icon(
         icon,
-        size: 16,
+        size: AppIconSize.inline,
         color: selected ? color : colors.onSurfaceVariant,
       ),
       selected: selected,
@@ -97,7 +98,7 @@ class _CategoryChip extends StatelessWidget {
       side: selected
           ? BorderSide(color: color.withValues(alpha: 0.4))
           : BorderSide(color: colors.outlineVariant),
-      backgroundColor: colors.surfaceContainerLow,
+      backgroundColor: colors.surfaceContainerHigh,
       selectedColor: color.withValues(alpha: 0.12),
       labelStyle: theme.textTheme.labelMedium?.copyWith(
         fontWeight: selected ? FontWeight.w600 : FontWeight.normal,

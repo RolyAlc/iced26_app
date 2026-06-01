@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/note_color.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
@@ -30,7 +31,8 @@ class DiaryNoteCard extends StatelessWidget {
         key: ValueKey(note.id),
         direction: DismissDirection.endToStart,
         background: const _DismissDeleteBackground(),
-        confirmDismiss: (_) => _showDeleteConfirmation(context),
+        confirmDismiss: (_) =>
+            _showDeleteConfirmation(context, AppLocalizations.of(context)!),
         onDismissed: (_) => onDelete(),
         child: AppCard(
           onTap: onEdit,
@@ -60,9 +62,10 @@ class DiaryNoteCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  note.color != null
-                      ? _MoodDot(color: note.color!)
-                      : const SizedBox.shrink(),
+                  if (note.color case final c?)
+                    _MoodDot(color: c)
+                  else
+                    const SizedBox.shrink(),
                   Text(
                     DateHelper.formatTime(note.createdAt),
                     style: theme.textTheme.labelSmall?.copyWith(
@@ -79,25 +82,28 @@ class DiaryNoteCard extends StatelessWidget {
   }
 
   /// Muestra un diálogo de confirmación de eliminación.
-  Future<bool> _showDeleteConfirmation(BuildContext context) async {
+  Future<bool> _showDeleteConfirmation(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     if (!context.mounted) return false;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Delete note?'),
-          content: const Text('This action cannot be undone.'),
+          title: Text(l10n.diaryDeleteNoteTitle),
+          content: Text(l10n.diaryDeleteNoteConfirm),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               onPressed: () {
                 HapticFeedback.mediumImpact();
                 Navigator.pop(dialogContext, true);
               },
-              child: const Text('Delete'),
+              child: Text(l10n.delete),
             ),
           ],
         );
@@ -107,32 +113,17 @@ class DiaryNoteCard extends StatelessWidget {
   }
 }
 
-/// Pequeño indicador circular de color con etiqueta para el estado de ánimo.
+/// Indicador circular de color para la etiqueta de nota.
 class _MoodDot extends StatelessWidget {
   const _MoodDot({required this.color});
   final NoteColor color;
 
   @override
   Widget build(BuildContext context) {
-    final paintColor = AppNoteColors.colorOf(color);
-    final label = AppNoteColors.labelOf(color);
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(color: paintColor, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: AppSpacing.xs),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ],
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(color: color.color, shape: BoxShape.circle),
     );
   }
 }

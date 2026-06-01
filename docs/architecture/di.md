@@ -3,7 +3,11 @@ version: 1.0.0
 status: activo
 last_updated: 2026-05-25
 icon: lucide/plug
-tags: [arquitectura, riverpod, inyeccion-de-dependencias, providers]
+tags:
+  - arquitectura
+  - riverpod
+  - inyeccion-de-dependencias
+  - providers
 audience: tecnico
 ---
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Etiqueta reutilizable que muestra la hora de un slot y resalta si está en vivo.
 class SlotTimeLabel extends StatelessWidget {
@@ -33,7 +34,7 @@ class SlotTimeLabel extends StatelessWidget {
               style: theme.textTheme.labelSmall?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
+                letterSpacing: AppTextStyle.timeLetterSpacing,
               ),
             ),
         ],

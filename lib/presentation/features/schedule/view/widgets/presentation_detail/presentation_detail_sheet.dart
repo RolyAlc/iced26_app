@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/widgets/presentation_detail_ui_parts.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/widgets/presentation_links_section.dart';
@@ -15,10 +14,6 @@ import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
 
-const _kLabelAbstract = 'Abstract';
-const _kShowLess = 'Show less';
-const _kTrackPrefix = 'Track';
-const _kMinSuffix = 'min';
 const _kSpeakersCollapseThreshold = 3;
 
 /// Muestra el sheet de detalle de la presentación.
@@ -99,6 +94,7 @@ class _PresentationMetadata extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     final blocksIndex = ref.watch(allSessionBlocksIndexProvider).value ?? {};
     final roomsIndex = ref.watch(allRoomsIndexProvider).value ?? {};
@@ -118,14 +114,14 @@ class _PresentationMetadata extends ConsumerWidget {
       children: [
         if (talk.track != null)
           PresentationChip(
-            label: '$_kTrackPrefix ${talk.track!}',
+            label: l10n.scheduleDetailTrack(talk.track!),
             primary: true,
           ),
         if (timeRange.isNotEmpty)
           PresentationChip(label: timeRange, icon: AppIcons.time),
         if (talk.durationMin != null)
           PresentationChip(
-            label: '${talk.durationMin} $_kMinSuffix',
+            label: l10n.scheduleDetailDuration(talk.durationMin!),
             icon: AppIcons.duration,
           ),
         if (roomName != null)
@@ -162,12 +158,13 @@ class _PresentationAbstractSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          _kLabelAbstract,
+          l10n.scheduleDetailAbstract,
           style: theme.textTheme.labelMedium?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.bold,
@@ -204,15 +201,15 @@ class _PresentationSpeakersCardState extends State<_PresentationSpeakersCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final speakers = widget.talk.speakers;
     final needsCollapse = speakers.length > _kSpeakersCollapseThreshold;
     final visibleSpeakers = needsCollapse && !_isExpanded
         ? speakers.sublist(0, _kSpeakersCollapseThreshold)
         : speakers;
-
     final headerLabel = speakers.length > 1
-        ? '${AppStrings.labelSpeakers} · ${speakers.length}'
-        : AppStrings.labelSpeakers;
+        ? l10n.scheduleSpeakersHeaderCount(speakers.length)
+        : l10n.scheduleLabelSpeakers;
 
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.m),
@@ -220,7 +217,7 @@ class _PresentationSpeakersCardState extends State<_PresentationSpeakersCard> {
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.m),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerLow,
+          color: theme.colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(AppRadius.m),
         ),
         child: Column(
@@ -267,6 +264,7 @@ class _SpeakersToggleFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return InkWell(
       onTap: onToggle,
@@ -280,7 +278,9 @@ class _SpeakersToggleFooter extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              isExpanded ? _kShowLess : 'Show all ($totalCount)',
+              isExpanded
+                  ? l10n.scheduleDetailShowLess
+                  : l10n.scheduleDetailShowAll(totalCount),
               style: theme.textTheme.labelMedium?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.w600,
@@ -289,7 +289,7 @@ class _SpeakersToggleFooter extends StatelessWidget {
             const SizedBox(width: AppSpacing.xs),
             Icon(
               isExpanded ? AppIcons.collapse : AppIcons.expandMore,
-              size: 16,
+              size: AppIconSize.inline,
               color: theme.colorScheme.primary,
             ),
           ],
@@ -306,6 +306,7 @@ class _PresentationSaveButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final favoriteIds = ref.watch(favoriteIdsProvider).value ?? {};
     final isSaved = favoriteIds.contains(eventId);
 
@@ -315,9 +316,7 @@ class _PresentationSaveButton extends ConsumerWidget {
         ref.read(toggleFavoriteUseCaseProvider).execute(eventId);
       },
       icon: isSaved ? AppIcons.bookmarkOn : AppIcons.bookmarkAdd,
-      label: isSaved
-          ? AppStrings.scheduleButtonSaved
-          : AppStrings.scheduleButtonAdd,
+      label: isSaved ? l10n.scheduleButtonSaved : l10n.scheduleButtonAdd,
     );
   }
 }

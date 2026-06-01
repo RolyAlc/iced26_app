@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,7 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/note_color.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_color_selector.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/note_editor/widgets/diary_editor_header.dart';
@@ -87,17 +90,23 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
 
   bool get _canSave {
     final content = _contentController.text.trim();
-    if (content.isEmpty) return false;
-    if (!_isEditing) return true;
+    if (content.isEmpty) {
+      return false;
+    }
+    if (!_isEditing) {
+      return true;
+    }
 
     // _isEditing garantiza existingNote != null — variable local evita
     // repetir la comprobación y el operador ! en cada campo.
     final existing = widget.existingNote!;
     final title = _titleController.text.trim();
-    return title != (existing.title ?? '') ||
-        content != (existing.content) ||
-        _selectedColor != existing.color ||
-        !DateUtils.isSameDay(_selectedDate, existing.date);
+    final titleChanged = title != (existing.title ?? '');
+    final contentChanged = content != existing.content;
+    final colorChanged = _selectedColor != existing.color;
+    final dateChanged = !DateUtils.isSameDay(_selectedDate, existing.date);
+
+    return titleChanged || contentChanged || colorChanged || dateChanged;
   }
 
   Future<void> _selectDate() async {
@@ -108,7 +117,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
       lastDate: AppConfig.lastDay,
     );
     if (picked != null && picked != _selectedDate) {
-      HapticFeedback.selectionClick();
+      unawaited(HapticFeedback.selectionClick());
       setState(() => _selectedDate = picked);
     }
   }
@@ -116,7 +125,9 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
   Future<void> _save() async {
     final title = _titleController.text.trim();
     final content = _contentController.text.trim();
-    if (content.isEmpty) return;
+    if (content.isEmpty) {
+      return;
+    }
 
     setState(() => _saving = true);
     try {
@@ -131,11 +142,17 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
           );
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() => _saving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error saving note: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.diaryErrorSavingNote('$e'),
+          ),
+        ),
+      );
     }
   }
 
@@ -144,19 +161,19 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Delete note?'),
-          content: const Text('This action cannot be undone.'),
+          title: Text(AppLocalizations.of(context)!.diaryDeleteNoteTitle),
+          content: Text(AppLocalizations.of(context)!.diaryDeleteNoteConfirm),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () {
                 HapticFeedback.mediumImpact();
                 Navigator.pop(dialogContext, true);
               },
-              child: const Text('Delete'),
+              child: Text(AppLocalizations.of(context)!.delete),
             ),
           ],
         );
@@ -211,14 +228,15 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
           const SizedBox(height: AppSpacing.l),
           DiaryEditorSectionLabel(
             icon: AppIcons.title,
-            label: 'Title',
+            label: AppLocalizations.of(context)!.diaryNoteEditorLabelTitle,
             color: colorScheme.onSurfaceVariant,
           ),
+          const SizedBox(height: AppSpacing.s),
           DiaryEditorTitleInput(controller: _titleController),
           const SizedBox(height: AppSpacing.m),
           DiaryEditorSectionLabel(
             icon: AppIcons.notes,
-            label: 'Content',
+            label: AppLocalizations.of(context)!.diaryNoteEditorLabelContent,
             color: colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: AppSpacing.s),
@@ -229,7 +247,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
           const SizedBox(height: AppSpacing.l),
           DiaryEditorSectionLabel(
             icon: AppIcons.palette,
-            label: 'Mood Tag',
+            label: AppLocalizations.of(context)!.diaryNoteEditorLabelMoodTag,
             color: colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: AppSpacing.s),
@@ -256,7 +274,9 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
       child: AppButton(
         onPressed: (_saving || !_canSave) ? null : _save,
         isLoading: _saving,
-        label: _saving ? 'Saving...' : 'Save note',
+        label: _saving
+            ? AppLocalizations.of(context)!.diaryNoteEditorSaving
+            : AppLocalizations.of(context)!.diaryNoteEditorSaveNote,
         icon: _saving ? null : AppIcons.check,
       ),
     );

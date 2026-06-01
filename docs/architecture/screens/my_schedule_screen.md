@@ -3,7 +3,10 @@ version: 1.0.0
 status: activo
 last_updated: 2026-05-25
 icon: lucide/bookmark
-tags: [pantalla, my-schedule, favoritos]
+tags:
+  - pantalla
+  - my-schedule
+  - favoritos
 audience: tecnico
 ---
 

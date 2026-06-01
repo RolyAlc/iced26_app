@@ -26,7 +26,6 @@ class PresentationChip extends StatelessWidget {
         ? theme.colorScheme.onPrimaryContainer
         : theme.colorScheme.onSurfaceVariant;
 
-    final bool iconAdded = icon != null;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.s,
@@ -41,7 +40,7 @@ class PresentationChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (iconAdded) ...[
+          if (icon != null) ...[
             Icon(icon, size: _kChipIconSize, color: fgColor),
             const SizedBox(width: AppSpacing.xs),
           ],

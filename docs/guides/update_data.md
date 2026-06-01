@@ -3,7 +3,11 @@ version: 1.1.0
 status: activo
 last_updated: 2026-05-25
 icon: lucide/file-json
-tags: [guia, datos, actualizacion, congreso]
+tags:
+  - guia
+  - datos
+  - actualizacion
+  - congreso
 audience: organizador
 ---
 
@@ -47,3 +51,5 @@ Al instalar la nueva edición, los datos personales del usuario se tratan de for
 2. Reemplazar `assets/data/app_data.json` con el fichero nuevo.
 3. Verificar que el JSON es válido (cualquier validador online sirve).
 4. Recompilar la app.
+
+<!-- Mejorar la parte 4 -->

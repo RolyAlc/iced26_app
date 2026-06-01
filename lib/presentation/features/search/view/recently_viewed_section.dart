@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/search/widgets/result_tile.dart';
 import 'package:iced26/presentation/features/search/widgets/section_label.dart';
@@ -36,12 +35,14 @@ class RecentlyViewedSection extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: AppSpacing.m),
-        const SectionLabel(
-          label: AppStrings.searchRecentlyViewedTitle,
+        SectionLabel(
+          label: l10n.searchRecentlyViewedTitle,
           icon: AppIcons.history,
         ),
         const SizedBox(height: AppSpacing.xs),

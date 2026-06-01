@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/data_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -10,8 +12,8 @@ part 'recent_searches_provider.g.dart';
 class RecentSearches extends _$RecentSearches {
   @override
   List<String> build() {
-    // Iniciamos la carga asíncrona pero devolvemos un estado inicial vacío.
-    _load();
+    // build() es síncrono — la carga asíncrona arranca en segundo plano.
+    unawaited(_load());
     return [];
   }
 
@@ -29,8 +31,7 @@ class RecentSearches extends _$RecentSearches {
     final result = await repo.addSearch(query);
 
     if (result is Success) {
-      // Recargamos el estado local para reflejar el cambio.
-      _load();
+      await _load();
     }
   }
 
@@ -39,7 +40,7 @@ class RecentSearches extends _$RecentSearches {
     final result = await repo.removeSearch(query);
 
     if (result is Success) {
-      _load();
+      await _load();
     }
   }
 

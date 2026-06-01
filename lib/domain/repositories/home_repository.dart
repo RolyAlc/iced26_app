@@ -1,6 +1,6 @@
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/domain/entities/conference_theme.dart';
-import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/news_item.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
 

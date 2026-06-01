@@ -3,7 +3,11 @@ version: 1.0.0
 status: activo
 last_updated: 2026-05-25
 icon: lucide/arrow-right-left
-tags: [arquitectura, flujo-de-datos, result, persistencia]
+tags:
+  - arquitectura
+  - flujo-de-datos
+  - result
+  - persistencia
 audience: tecnico
 ---
 

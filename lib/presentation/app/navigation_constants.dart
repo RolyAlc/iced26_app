@@ -10,12 +10,10 @@ class NavigationItem {
     required this.feature,
     required this.icon,
     required this.selectedIcon,
-    required this.label,
   });
   final AppFeature feature;
   final IconData icon;
   final IconData selectedIcon;
-  final String label;
 
   bool get isAction => feature == AppFeature.search;
 }
@@ -26,30 +24,25 @@ const List<NavigationItem> mainNavigationItems = [
     feature: AppFeature.home,
     icon: AppIcons.homeOff,
     selectedIcon: AppIcons.homeOn,
-    label: 'Home',
   ),
   NavigationItem(
     feature: AppFeature.schedule,
     icon: AppIcons.scheduleOff,
     selectedIcon: AppIcons.scheduleOn,
-    label: 'Schedule',
   ),
   NavigationItem(
     feature: AppFeature.search,
     icon: AppIcons.searchOff,
     selectedIcon: AppIcons.searchOn,
-    label: 'Search',
   ),
   NavigationItem(
     feature: AppFeature.diary,
     icon: AppIcons.diaryOff,
     selectedIcon: AppIcons.diaryOn,
-    label: 'Diary',
   ),
   NavigationItem(
     feature: AppFeature.settings,
     icon: AppIcons.settingsOff,
     selectedIcon: AppIcons.settingsOn,
-    label: 'Settings',
   ),
 ];

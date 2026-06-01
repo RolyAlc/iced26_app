@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_agenda_view.dart';
@@ -50,14 +49,15 @@ class _EmptyScheduleFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AppEmptyState(
       illustration: Icon(
         AppIcons.searchOff,
         size: 48,
         color: Theme.of(context).colorScheme.outlineVariant,
       ),
-      title: AppStrings.scheduleNoSessionsTitle,
-      message: AppStrings.scheduleNoSessionsMessage,
+      title: l10n.scheduleNoSessionsTitle,
+      message: l10n.scheduleNoSessionsMessage,
     );
   }
 }

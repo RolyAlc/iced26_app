@@ -22,40 +22,63 @@ extension ColorParser on String {
 }
 
 // Colores fijos de marca usados como semilla y fallback cuando el JSON no los sobreescribe.
-class AppBrandColors {
+class AppColorTokens {
   static const Color primary = Color(0xFF75A49C);
-  static const Color secondary = Color(0xFF927363);
+  static const Color secondary = Color(0xFF7C8A84);
   static const Color accent = Color(0xFFF88E5C);
-  static const Color surface = Color(0xFFFCFCFC);
+  // Token cálido reservado para badges o detalles puntuales — no usar como secondary global.
+  static const Color earth = Color(0xFF927363);
+
+  // Light surfaces: gris azulado muy suave para evitar el blanco puro.
+  static const Color lightSurface = Color(0xFFF4F7FA);
+  static const Color lightSurfaceContainerLowest = Color(0xFFFFFFFF);
+  static const Color lightSurfaceContainerLow = Color(0xFFF8FAFC);
+  static const Color lightSurfaceContainer = Color(0xFFF1F5F9);
+  static const Color lightSurfaceContainerHigh = Color(0xFFE8EEF5);
+  static const Color lightSurfaceContainerHighest = Color(0xFFDCE2EA);
+
+  // Dark surfaces: neutros casi negros, sin llegar a negro puro.
+  static const Color darkSurface = Color(0xFF121212);
+  static const Color darkSurfaceContainerLowest = Color(0xFF0B0B0B);
+  static const Color darkSurfaceContainerLow = Color(0xFF161616);
+  static const Color darkSurfaceContainer = Color(0xFF1D1D1D);
+  static const Color darkSurfaceContainerHigh = Color(0xFF242424);
+  static const Color darkSurfaceContainerHighest = Color(0xFF2C2C2C);
+
+  // Texto: evita negro/blanco puros para reducir fatiga visual.
+  static const Color lightOnSurface = Color(0xFF1F2933);
+  static const Color lightOnSurfaceVariant = Color(0xFF64748B);
+  static const Color darkOnSurface = Color(0xFFE7E7E7);
+  static const Color darkOnSurfaceVariant = Color(0xFFA3A3A3);
 }
 
 class AppTheme {
   static ThemeData get lightTheme => _generate(
-    primary: AppBrandColors.primary,
-    secondary: AppBrandColors.secondary,
-    accent: AppBrandColors.accent,
+    primary: AppColorTokens.primary,
+    secondary: AppColorTokens.secondary,
+    accent: AppColorTokens.accent,
   );
 
   static ThemeData get darkTheme => _generate(
-    primary: AppBrandColors.primary,
-    secondary: AppBrandColors.secondary,
-    accent: AppBrandColors.accent,
+    primary: AppColorTokens.primary,
+    secondary: AppColorTokens.secondary,
+    accent: AppColorTokens.accent,
     brightness: Brightness.dark,
   );
 
   // contrastLevel 1.0 = WCAG AAA. El OS activa estos temas automáticamente
   // desde Accesibilidad — la app no necesita ningún control manual.
   static ThemeData get highContrastTheme => _generate(
-    primary: AppBrandColors.primary,
-    secondary: AppBrandColors.secondary,
-    accent: AppBrandColors.accent,
+    primary: AppColorTokens.primary,
+    secondary: AppColorTokens.secondary,
+    accent: AppColorTokens.accent,
     contrastLevel: 1.0,
   );
 
   static ThemeData get highContrastDarkTheme => _generate(
-    primary: AppBrandColors.primary,
-    secondary: AppBrandColors.secondary,
-    accent: AppBrandColors.accent,
+    primary: AppColorTokens.primary,
+    secondary: AppColorTokens.secondary,
+    accent: AppColorTokens.accent,
     brightness: Brightness.dark,
     contrastLevel: 1.0,
   );
@@ -63,10 +86,10 @@ class AppTheme {
   // Los colores del JSON sobreescriben los de marca; fallback si faltan claves.
   static ThemeData fromThemeConfig(ThemeConfig config) {
     return _generate(
-      primary: config.colors['primary']?.toColor() ?? AppBrandColors.primary,
+      primary: config.colors['primary']?.toColor() ?? AppColorTokens.primary,
       secondary:
-          config.colors['secondary']?.toColor() ?? AppBrandColors.secondary,
-      accent: config.colors['accent']?.toColor() ?? AppBrandColors.accent,
+          config.colors['secondary']?.toColor() ?? AppColorTokens.secondary,
+      accent: config.colors['accent']?.toColor() ?? AppColorTokens.accent,
     );
   }
 
@@ -81,19 +104,43 @@ class AppTheme {
       seedColor: primary,
       secondary: secondary,
       tertiary: accent,
-      // Surface fija en light para evitar que fromSeed calcule un tinte verdoso.
-      surface: brightness == Brightness.light ? AppBrandColors.surface : null,
+      // Surfaces fijas para evitar blanco puro, negro puro y tintes verdosos de fromSeed.
+      surface: brightness == Brightness.light
+          ? AppColorTokens.lightSurface
+          : AppColorTokens.darkSurface,
+      surfaceContainerLowest: brightness == Brightness.light
+          ? AppColorTokens.lightSurfaceContainerLowest
+          : AppColorTokens.darkSurfaceContainerLowest,
+      surfaceContainerLow: brightness == Brightness.light
+          ? AppColorTokens.lightSurfaceContainerLow
+          : AppColorTokens.darkSurfaceContainerLow,
+      surfaceContainer: brightness == Brightness.light
+          ? AppColorTokens.lightSurfaceContainer
+          : AppColorTokens.darkSurfaceContainer,
+      surfaceContainerHigh: brightness == Brightness.light
+          ? AppColorTokens.lightSurfaceContainerHigh
+          : AppColorTokens.darkSurfaceContainerHigh,
+      surfaceContainerHighest: brightness == Brightness.light
+          ? AppColorTokens.lightSurfaceContainerHighest
+          : AppColorTokens.darkSurfaceContainerHighest,
+      onSurface: brightness == Brightness.light
+          ? AppColorTokens.lightOnSurface
+          : AppColorTokens.darkOnSurface,
+      onSurfaceVariant: brightness == Brightness.light
+          ? AppColorTokens.lightOnSurfaceVariant
+          : AppColorTokens.darkOnSurfaceVariant,
       brightness: brightness,
       contrastLevel: contrastLevel,
     );
 
-    final textTheme = _buildTextTheme(brightness: brightness);
+    final textTheme = _buildTextTheme(brightness: brightness, colors: scheme);
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
       textTheme: textTheme,
       scaffoldBackgroundColor: scheme.surfaceContainerLow,
+      iconTheme: IconThemeData(color: scheme.onSurface),
       cardTheme: _buildCardTheme(scheme),
       chipTheme: _buildChipTheme(scheme, textTheme),
       searchBarTheme: _buildSearchBarTheme(scheme),
@@ -101,17 +148,51 @@ class AppTheme {
     );
   }
 
+  // Cambiar la tipografía global debería requerir tocar solo estas dos funciones.
+  // Heading: títulos y jerarquía visual. Body: lectura, labels y controles.
+  static TextTheme _headingFont(TextTheme seed) {
+    return GoogleFonts.outfitTextTheme(seed);
+  }
+
+  static TextTheme _bodyFont(TextTheme seed) {
+    return GoogleFonts.latoTextTheme(seed);
+  }
+
   // Sin seed de brightness, GoogleFonts genera texto oscuro en dark mode.
-  static TextTheme _buildTextTheme({Brightness brightness = Brightness.light}) {
+  static TextTheme _buildTextTheme({
+    Brightness brightness = Brightness.light,
+    required ColorScheme colors,
+  }) {
     final seed = brightness == Brightness.dark
         ? ThemeData.dark().textTheme
         : ThemeData.light().textTheme;
-    final base = GoogleFonts.latoTextTheme(seed);
-    final display = GoogleFonts.outfitTextTheme(seed);
-    return base.copyWith(
-      displayLarge: display.displayLarge,
-      headlineMedium: display.headlineMedium,
-      titleLarge: base.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+    final body = _bodyFont(seed);
+    final heading = _headingFont(seed);
+    return body.copyWith(
+      displayLarge: heading.displayLarge,
+      displayMedium: heading.displayMedium,
+      displaySmall: heading.displaySmall,
+      headlineLarge: heading.headlineLarge,
+      headlineMedium: heading.headlineMedium,
+      headlineSmall: heading.headlineSmall,
+      titleLarge: heading.titleLarge?.copyWith(
+        color: colors.onSurface,
+        fontWeight: FontWeight.w800,
+      ),
+      titleMedium: heading.titleMedium?.copyWith(
+        color: colors.onSurface,
+        fontWeight: FontWeight.w700,
+      ),
+      titleSmall: heading.titleSmall?.copyWith(
+        color: colors.onSurface,
+        fontWeight: FontWeight.w600,
+      ),
+      bodyLarge: body.bodyLarge?.copyWith(color: colors.onSurface),
+      bodyMedium: body.bodyMedium?.copyWith(color: colors.onSurface),
+      bodySmall: body.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+      labelLarge: body.labelLarge?.copyWith(color: colors.onSurfaceVariant),
+      labelMedium: body.labelMedium?.copyWith(color: colors.onSurfaceVariant),
+      labelSmall: body.labelSmall?.copyWith(color: colors.onSurfaceVariant),
     );
   }
 
@@ -153,9 +234,9 @@ class AppTheme {
   ) {
     return ChipThemeData(
       shape: const StadiumBorder(),
-      backgroundColor: scheme.secondaryContainer.withValues(alpha: 0.5),
+      backgroundColor: scheme.surfaceContainerHigh,
       labelStyle: textTheme.labelLarge?.copyWith(
-        color: scheme.onSecondaryContainer,
+        color: scheme.onSurfaceVariant,
         fontWeight: FontWeight.bold,
       ),
     );

@@ -46,7 +46,7 @@ class ChipContainer extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected
               ? accentColor.withValues(alpha: 0.12)
-              : colors.surfaceContainerLow,
+              : colors.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(AppRadius.l),
           border: Border.all(
             color: selected

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/core/constants/text_size_preference.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/text_size_provider.dart';
 import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-
-const _kTextSizeLabel = 'Text size';
-const _kThemeLabel = 'Theme';
-const _kScrollToTopTooltip = 'Back to top';
+import 'package:iced26/presentation/shared/utils/text_size_l10n.dart';
 
 const double _kFabIconSize = 22.0;
 const double _kFabButtonPaddingH = 18.0;
@@ -47,7 +44,7 @@ class ReadingControlsFab extends ConsumerWidget {
     );
   }
 
-  Widget _buildScrollToTopSlot(ColorScheme colors) {
+  Widget _buildScrollToTopSlot(ColorScheme colors, String tooltip) {
     if (scrollController == null) {
       return const SizedBox.shrink();
     }
@@ -63,11 +60,11 @@ class ReadingControlsFab extends ConsumerWidget {
               children: [
                 _PillIconButton(
                   icon: AppIcons.collapse,
-                  color: colors.onPrimaryContainer,
-                  tooltip: _kScrollToTopTooltip,
+                  color: colors.onSurface,
+                  tooltip: tooltip,
                   onTap: _scrollToTop,
                 ),
-                _PillDivider(color: colors.onPrimaryContainer),
+                _PillDivider(color: colors.onSurface),
               ],
             )
           : const SizedBox.shrink(),
@@ -76,11 +73,12 @@ class ReadingControlsFab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final colors = Theme.of(context).colorScheme;
 
     return Material(
-      color: colors.primaryContainer,
+      color: colors.surfaceContainerHighest,
       elevation: _kFabElevation,
       shadowColor: colors.shadow,
       borderRadius: BorderRadius.circular(AppRadius.full),
@@ -88,18 +86,18 @@ class ReadingControlsFab extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildScrollToTopSlot(colors),
+          _buildScrollToTopSlot(colors, l10n.readingControlsBackToTop),
           _PillIconButton(
             icon: AppIcons.textField,
-            color: colors.onPrimaryContainer,
-            tooltip: _kTextSizeLabel,
+            color: colors.onSurface,
+            tooltip: l10n.settingsTextSizeTitle,
             onTap: () => _openSheet(context),
           ),
-          _PillDivider(color: colors.onPrimaryContainer),
+          _PillDivider(color: colors.onSurface),
           _PillIconButton(
             icon: AppIcons.forThemeMode(themeMode),
-            color: colors.onPrimaryContainer,
-            tooltip: _kThemeLabel,
+            color: colors.onSurface,
+            tooltip: l10n.settingsThemeTitle,
             onTap: () => _openSheet(context),
           ),
         ],
@@ -178,14 +176,18 @@ class _ReadingControlsSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildTextSizeControl(WidgetRef ref, TextSizePreference current) {
+  Widget _buildTextSizeControl(
+    WidgetRef ref,
+    TextSizePreference current,
+    AppLocalizations l10n,
+  ) {
     return SegmentedButton<TextSizePreference>(
       segments: [
         for (final pref in TextSizePreference.values)
           ButtonSegment<TextSizePreference>(
             value: pref,
             label: Text(pref.label),
-            tooltip: pref.displayName,
+            tooltip: textSizeLabel(pref, l10n),
           ),
       ],
       selected: {current},
@@ -195,23 +197,27 @@ class _ReadingControlsSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildThemeModeControl(WidgetRef ref, ThemeMode current) {
+  Widget _buildThemeModeControl(
+    WidgetRef ref,
+    ThemeMode current,
+    AppLocalizations l10n,
+  ) {
     return SegmentedButton<ThemeMode>(
-      segments: const [
+      segments: [
         ButtonSegment<ThemeMode>(
           value: ThemeMode.light,
-          icon: Icon(AppIcons.lightTheme),
-          label: Text(AppStrings.themeLight),
+          icon: const Icon(AppIcons.lightTheme),
+          label: Text(l10n.settingsThemeLight),
         ),
         ButtonSegment<ThemeMode>(
           value: ThemeMode.system,
-          icon: Icon(AppIcons.systemTheme),
-          label: Text(AppStrings.themeSystem),
+          icon: const Icon(AppIcons.systemTheme),
+          label: Text(l10n.settingsThemeSystem),
         ),
         ButtonSegment<ThemeMode>(
           value: ThemeMode.dark,
-          icon: Icon(AppIcons.darkTheme),
-          label: Text(AppStrings.themeDark),
+          icon: const Icon(AppIcons.darkTheme),
+          label: Text(l10n.settingsThemeDark),
         ),
       ],
       selected: {current},
@@ -223,6 +229,7 @@ class _ReadingControlsSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final textSize =
         ref.watch(textSizeProvider).value ?? TextSizePreference.medium;
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
@@ -243,14 +250,14 @@ class _ReadingControlsSheet extends ConsumerWidget {
           children: [
             _buildSection(
               theme,
-              _kTextSizeLabel,
-              _buildTextSizeControl(ref, textSize),
+              l10n.settingsTextSizeTitle,
+              _buildTextSizeControl(ref, textSize, l10n),
             ),
             const SizedBox(height: AppSpacing.l),
             _buildSection(
               theme,
-              _kThemeLabel,
-              _buildThemeModeControl(ref, themeMode),
+              l10n.settingsThemeTitle,
+              _buildThemeModeControl(ref, themeMode, l10n),
             ),
           ],
         ),

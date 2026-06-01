@@ -28,6 +28,8 @@ class AppTextSize {
 class AppTextStyle {
   // Espaciado de letras para etiquetas de sección en mayúsculas (labelSmall/labelMedium bold).
   static const double labelLetterSpacing = 0.8;
+  // Espaciado de letras para etiquetas de hora/tiempo (más compacto que labelLetterSpacing).
+  static const double timeLetterSpacing = 0.5;
 }
 
 class AppSpacing {
@@ -61,6 +63,14 @@ class AppLayout {
   }
 }
 
+/// Tamaños de iconos semánticos — evita literales dispersos en widgets de error y estado vacío.
+class AppIconSize {
+  static const double inline = 16.0;
+  static const double featureCard = 40.0;
+  static const double errorPage = 60.0;
+  static const double errorStartup = 48.0;
+}
+
 /// Opacidades semánticas — evita literales dispersos. placeholder = contenido pendiente de carga.
 class AppOpacity {
   static const double placeholder = 0.75;
@@ -85,10 +95,6 @@ class AppOverlayColors {
   // Texto blanco fijo sobre imagen (el gradiente/fondo garantiza la legibilidad).
   static const Color heroText = Color(0xFFFFFFFF); // white
   static const Color heroTextSecondary = Color(0xB3FFFFFF); // white 70%
-  // Texto secundario sobre cards con imagen de fondo.
-  static const Color cardTextSecondary = Color(0xCCFFFFFF); // white 80%
-  // Extremo oscuro del degradado en speaker cards (negro 80% — más suave que heroGradientEnd).
-  static const Color speakerCardGradientEnd = Color(0xCC000000); // black 80%
   // Fondo semitransparente del badge de tiempo sobre imagen.
   static const Color timeBadgeBackground = Color(0x66000000); // black 40%
   // Scrim (barrera) de bottom sheets y modales.
@@ -106,28 +112,13 @@ class AppCategoryColors {
   static const fallback = Color(0xFF00796B); // Teal 700  — otros
 }
 
-/// Paleta de las etiquetas "Mood Tags" en la UI de notas. Fijos — no siguen el ColorScheme.
-class AppNoteColors {
-  static const _colors = {
-    NoteColor.focus: Color(0xFF2196F3), // Blue 500
-    NoteColor.success: Color(0xFF4CAF50), // Green 500
-    NoteColor.idea: Color(0xFFFFB300), // Amber 600
-    NoteColor.mood: Color(0xFF9C27B0), // Purple 500
+/// Color fijo de cada etiqueta de nota. No sigue el ColorScheme.
+/// Switch exhaustivo: añadir un NoteColor sin actualizar aquí produce error de compilación.
+extension NoteColorX on NoteColor {
+  Color get color => switch (this) {
+    NoteColor.insight => const Color(0xFF2196F3), // Blue 500
+    NoteColor.action => const Color(0xFF4CAF50), // Green 500
+    NoteColor.question => const Color(0xFFFFB300), // Amber 600
+    NoteColor.highlight => const Color(0xFF9C27B0), // Purple 500
   };
-
-  static const _labels = {
-    NoteColor.focus: 'Focus',
-    NoteColor.success: 'Success',
-    NoteColor.idea: 'Idea',
-    NoteColor.mood: 'Mood',
-  };
-
-  static Color colorOf(NoteColor color) {
-    return _colors[color]!;
-  }
-
-  static String labelOf(NoteColor? color) {
-    if (color == null) return 'None';
-    return _labels[color]!;
-  }
 }

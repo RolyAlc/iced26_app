@@ -1,6 +1,6 @@
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
-import 'package:iced26/domain/entities/new.dart';
+import 'package:iced26/domain/entities/news_item.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/session_block.dart';

@@ -43,10 +43,14 @@ class PresentationSpeakerList extends StatelessWidget {
                   }
                 : null,
             borderRadius: BorderRadius.circular(AppRadius.s),
-            child: Padding(
+            child: Container(
               padding: const EdgeInsets.symmetric(
                 vertical: AppSpacing.xs,
                 horizontal: AppSpacing.xs,
+              ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(AppRadius.s),
               ),
               child: Row(
                 children: [
@@ -75,7 +79,7 @@ class PresentationSpeakerList extends StatelessWidget {
                   if (canTap)
                     Icon(
                       AppIcons.chevronRight,
-                      size: 16,
+                      size: AppIconSize.inline,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                 ],

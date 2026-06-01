@@ -68,6 +68,9 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
     final notesForDay = DiaryHelpers.notesForDay(allNotes, selectedDate);
     final eventsForDay = DiaryHelpers.eventsForDay(eventsByDay, selectedDate);
 
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -83,6 +86,7 @@ class _DiaryBodyState extends ConsumerState<DiaryBody> {
               eventsByDay: eventsByDay,
               selectedDate: selectedDate,
               focusedMonth: focusedMonth,
+              today: today,
               onDaySelected: _selectDay,
               onPageChanged: _onPageChanged,
             ),

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/ui_metrics.dart';
-import 'package:iced26/presentation/shared/widgets/app_page_header_delegate.dart';
-
-// TODO: Revisar
+import 'package:iced26/presentation/shared/widgets/app_page_flexible_space.dart';
 
 // Extra scroll clearance so the last list item is never hidden under a floatingChild.
 const double _kFabExtraClearance = 64.0;
@@ -29,6 +27,10 @@ class AppPage extends ConsumerStatefulWidget {
        assert(
          collapsedHeaderFallbackHeight == null || collapsedHeader != null,
          'collapsedHeaderFallbackHeight requires collapsedHeader',
+       ),
+       assert(
+         fillChild == null || floatingChild == null,
+         'fillChild and floatingChild cannot be used simultaneously — the FAB would overlap centered content',
        );
   final List<Widget> children;
   final Widget? fillChild;
@@ -86,13 +88,17 @@ class _AppPageState extends ConsumerState<AppPage> {
                 child: _buildSliverLayout(bgColor),
               ),
             ),
-            if (widget.floatingChild != null)
-              Positioned(
-                bottom: navBarHeight,
-                left: 0,
-                right: 0,
-                child: Center(child: widget.floatingChild!),
+            Positioned(
+              bottom: navBarHeight,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: AnimatedSwitcher(
+                  duration: AppDuration.fast,
+                  child: widget.floatingChild ?? const SizedBox.shrink(),
+                ),
               ),
+            ),
           ],
         ),
       ),
@@ -130,14 +136,20 @@ class _AppPageState extends ConsumerState<AppPage> {
   }
 
   /// Construye el [SliverAppBar] con snap nativo y crossfade entre estados.
+  /// floating + snap: al soltar el dedo a mitad de transición,
+  /// el header hace snap automático al estado más cercano (expanded o collapsed).
   Widget _buildSliverHeader(Color bgColor) {
     return SliverAppBar(
       pinned: true,
+      floating: true,
+      snap: true,
       backgroundColor: bgColor,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
+      // + AppSpacing.s compensa el gap visual que SliverAppBar introduce
+      // entre el flexibleSpace y el contenido del sliver al hacer snap.
       expandedHeight: _resolveExpandedHeaderHeight() + AppSpacing.s,
       toolbarHeight: _resolveCollapsedHeaderHeight() + AppSpacing.s,
       flexibleSpace: AppPageFlexibleSpace(

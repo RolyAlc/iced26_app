@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 
 /// Cabecera estándar de pantalla: título grande + trailing opcional.
+///
+/// [trailing] debe usar `materialTapTargetSize: MaterialTapTargetSize.shrinkWrap`
+/// (o equivalente) si es un chip o botón — de lo contrario su tap target de 48dp
+/// infla la Row y el header queda más alto que el de otras screens.
 class AppPageTitle extends StatelessWidget {
   const AppPageTitle({super.key, required this.title, this.trailing});
 
@@ -19,15 +23,16 @@ class AppPageTitle extends StatelessWidget {
         AppSpacing.m,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
           ),
-          trailing ?? const SizedBox.shrink(),
+          ?trailing,
         ],
       ),
     );

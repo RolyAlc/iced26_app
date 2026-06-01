@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iced26/core/constants/app_strings.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/settings/widgets/settings_section.dart';
@@ -13,12 +13,13 @@ class ThemeItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final mode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
 
     return SettingsItem(
       icon: AppIcons.forThemeMode(mode),
-      title: 'Theme',
-      subtitle: _themeLabel(mode),
+      title: l10n.settingsThemeTitle,
+      subtitle: _themeLabel(mode, l10n),
       onTap: () {
         showDialog<void>(
           context: context,
@@ -62,8 +63,10 @@ class _ThemePickerDialogState extends ConsumerState<_ThemePickerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
-      title: const Text('Theme'),
+      title: Text(l10n.settingsThemeTitle),
       contentPadding: const EdgeInsets.only(top: AppSpacing.s),
       content: RadioGroup<ThemeMode>(
         groupValue: _selected,
@@ -88,13 +91,13 @@ class _ThemePickerDialogState extends ConsumerState<_ThemePickerDialog> {
             }
             Navigator.pop(context);
           },
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('Done'),
+          child: Text(l10n.done),
         ),
       ],
     );
@@ -109,6 +112,8 @@ class _ThemeOptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Material(
       color: Colors.transparent,
       clipBehavior: Clip.antiAlias,
@@ -123,7 +128,7 @@ class _ThemeOptionTile extends StatelessWidget {
             Icon(AppIcons.forThemeMode(mode), size: 20),
             const SizedBox(width: AppSpacing.s),
             Text(
-              _themeLabel(mode),
+              _themeLabel(mode, l10n),
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
@@ -133,11 +138,11 @@ class _ThemeOptionTile extends StatelessWidget {
   }
 }
 
-/// Obtiene la etiqueta textual del modo de tema.
-String _themeLabel(ThemeMode mode) {
+/// Devuelve la etiqueta localizada del modo de tema.
+String _themeLabel(ThemeMode mode, AppLocalizations l10n) {
   return switch (mode) {
-    ThemeMode.light => AppStrings.themeLight,
-    ThemeMode.dark => AppStrings.themeDark,
-    ThemeMode.system => AppStrings.themeSystem,
+    ThemeMode.light => l10n.settingsThemeLight,
+    ThemeMode.dark => l10n.settingsThemeDark,
+    ThemeMode.system => l10n.settingsThemeSystem,
   };
 }

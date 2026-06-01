@@ -6,7 +6,7 @@ import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speak
 import 'package:iced26/presentation/features/home/widgets/speaker_card.dart';
 import 'package:iced26/presentation/shared/widgets/app_dots_indicator.dart';
 
-/// Sección de keynote speakers — carousel con peek + dots.
+/// Sección de keynote speakers: carousel con peek + dots.
 class HomeKeynoteSection extends StatefulWidget {
   const HomeKeynoteSection({super.key, required this.speakers});
 
@@ -21,16 +21,13 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
   late final PageController _controller;
   int _currentPage = 0;
 
-  static const double _viewportFraction = 0.78;
-
   @override
   void initState() {
     super.initState();
-    _controller = PageController(viewportFraction: _viewportFraction);
+    _controller = PageController(viewportFraction: SpeakerCard.widthFactor);
     _controller.addListener(_onScroll);
   }
 
-  /// Libera los recursos del controlador.
   @override
   void dispose() {
     _controller.removeListener(_onScroll);
@@ -54,17 +51,21 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildCarousel(),
-        const SizedBox(height: AppSpacing.l),
-        AppDotsIndicator(count: widget.speakers.length, current: _currentPage),
+        if (widget.speakers.length > 1) ...[
+          const SizedBox(height: AppSpacing.l),
+          AppDotsIndicator(
+            count: widget.speakers.length,
+            current: _currentPage,
+          ),
+        ],
       ],
     );
   }
 
-  /// Construye el carousel de keynote speakers.
   Widget _buildCarousel() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final cardWidth = constraints.maxWidth * _viewportFraction;
+        final cardWidth = constraints.maxWidth * SpeakerCard.widthFactor;
         final cardHeight = cardWidth / SpeakerCard.aspectRatio;
 
         return SizedBox(

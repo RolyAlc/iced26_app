@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 
 /// Tile que muestra una búsqueda reciente.
@@ -17,6 +17,7 @@ class RecentQueryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
@@ -25,7 +26,7 @@ class RecentQueryTile extends StatelessWidget {
       leading: Icon(AppIcons.history, size: 20, color: colors.onSurfaceVariant),
       title: Text(query, style: theme.textTheme.bodyMedium),
       trailing: IconButton(
-        tooltip: AppStrings.searchRemoveRecent,
+        tooltip: l10n.searchRemoveRecent,
         icon: Icon(AppIcons.close, size: 18, color: colors.onSurfaceVariant),
         onPressed: onRemove,
         padding: EdgeInsets.zero,

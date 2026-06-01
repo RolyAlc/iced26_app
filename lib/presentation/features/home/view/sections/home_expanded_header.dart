@@ -24,8 +24,6 @@ class HomeExpandedHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final dateLabel = MaterialLocalizations.of(context).formatFullDate(today);
 
     return Column(
@@ -39,32 +37,48 @@ class HomeExpandedHeader extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildLogo(),
-              _buildDateInfo(theme, colorScheme, dateLabel),
+              const _LogoImage(),
+              _DateInfo(infoLabel: infoLabel, dateLabel: dateLabel),
             ],
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+          padding: EdgeInsets.symmetric(
+            horizontal: AppLayout.horizontalPadding(context),
+          ),
           child: SmartSearchBar(searchNotifier: searchNotifier),
         ),
       ],
     );
   }
+}
 
-  Widget _buildLogo() {
+/// Logo de la conferencia.
+class _LogoImage extends StatelessWidget {
+  const _LogoImage();
+
+  @override
+  Widget build(BuildContext context) {
     return Image.asset(
       Assets.logoIced26,
       height: _kLogoHeight,
       fit: BoxFit.contain,
     );
   }
+}
 
-  Widget _buildDateInfo(
-    ThemeData theme,
-    ColorScheme colorScheme,
-    String dateLabel,
-  ) {
+/// Fecha actual e infoLabel de la conferencia.
+class _DateInfo extends StatelessWidget {
+  const _DateInfo({required this.infoLabel, required this.dateLabel});
+
+  final String infoLabel;
+  final String dateLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -74,13 +88,13 @@ class HomeExpandedHeader extends StatelessWidget {
             Icon(
               AppIcons.calendarOutline,
               size: _kDateIconSize,
-              color: colorScheme.primary,
+              color: colors.primary,
             ),
             const SizedBox(width: AppSpacing.xs),
             Text(
               dateLabel,
               style: theme.textTheme.labelSmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+                color: colors.onSurfaceVariant,
               ),
             ),
           ],
@@ -90,7 +104,7 @@ class HomeExpandedHeader extends StatelessWidget {
           infoLabel,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: colorScheme.primary,
+            color: colors.primary,
           ),
         ),
       ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:iced26/core/constants/app_strings.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/search/widgets/chip_container.dart';
 
@@ -21,6 +21,7 @@ class FilterToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final isActive = count > 0;
@@ -39,9 +40,7 @@ class FilterToggleButton extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.xs),
           Text(
-            isActive
-                ? AppStrings.searchFiltersActive(count)
-                : AppStrings.searchFilters,
+            isActive ? l10n.searchFiltersActive(count) : l10n.searchFilters,
             style: theme.textTheme.labelMedium?.copyWith(
               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
               color: isActive ? colors.primary : colors.onSurface,

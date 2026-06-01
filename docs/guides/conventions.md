@@ -3,15 +3,20 @@ version: 1.0.0
 status: activo
 last_updated: 2026-05-25
 icon: lucide/book-open-check
-tags: [convenciones, codigo, estilo, dart, flutter]
+tags:
+  - convenciones
+  - codigo
+  - estilo
+  - dart
+  - flutter
 audience: tecnico
 ---
 
 # Convenciones de código
 
-Reglas obligatorias en todo el proyecto.
+Para este proyecto se ha seguido una serie de reglas de estilo y arquitectura con el fin de facilitar el mantenimiento del código.
 
-> Su objetivo es que el código sea legible y coherente para cualquier persona del equipo, independientemente de su nivel.
+No obstante, estas mismas reglas son orientativas.
 
 ## 1. Cuerpos de método siempre con llaves
 
@@ -199,6 +204,56 @@ Widget _buildHeader() {
 | Constantes locales | `_kNombre`                    | `nombre`, `NOMBRE`     |
 | Listas             | `[for (final x in list) ...]` | `.map().toList()`      |
 | Comentarios        | explicar el POR QUÉ           | describir el QUÉ       |
-| Strings UI         | `AppStrings.clave`            | `'texto literal'`      |
+| Strings UI         | ver regla 11                  | `'texto literal'`      |
 | Errores            | `Result<T>`                   | `throw Exception(...)` |
 | Controladores      | `dispose()` obligatorio       | sin liberar            |
+
+## 11. Strings de interfaz: tres niveles
+
+La app tiene tres mecanismos para gestionar los textos visibles al usuario. Cada uno tiene un propósito distinto.
+
+### 11.1. Nivel 1 — Constante local `_k`
+
+Para textos visibles **solo en un fichero** que no requieren traducción inmediata.
+
+```dart
+const _kLabelTitle = 'Title';
+const _kSaveNote = 'Save note';
+```
+
+### 11.2. Nivel 2 — `AppStrings`
+
+Para textos **compartidos entre varios ficheros** o que contienen **interpolación dinámica** y no pueden ir a ARB todavía.
+
+```dart
+// Compartido entre diary_note_card y diary_note_editor_sheet
+static const String diaryDeleteNoteTitle = 'Delete note?';
+
+// Dinámico: usa un parámetro que ARB soporta, pero aún no se ha migrado
+static String diaryErrorSavingNote(Object error) {
+  return 'Error saving note: $error';
+}
+```
+
+### 11.3. Nivel 3 — ARB (`lib/l10n/`)
+
+Para textos **visibles al usuario que cambian con el idioma** de la app. Requieren `BuildContext`.
+
+```dart
+// En el widget
+Text(AppLocalizations.of(context)!.cancel)
+```
+
+Los ficheros de traducción viven en `lib/l10n/app_en.arb` (inglés) y `lib/l10n/app_es.arb` (español).
+
+### 11.4. Regla de decisión
+
+```bash
+¿El texto cambia según el idioma del usuario?
+  Sí → ARB
+  No → ¿Lo usan varios ficheros?
+         Sí → AppStrings
+         No → constante _k local
+```
+
+> Los strings dinámicos con interpolación (por ejemplo, `'Error: $e'`) van a `AppStrings` como método estático hasta que se migren a placeholders ARB.

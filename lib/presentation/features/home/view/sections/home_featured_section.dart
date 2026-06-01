@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/widgets/featured_card/featured_card.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
 import 'package:iced26/presentation/shared/widgets/app_dots_indicator.dart';
-
-const String _kEmptyMessage = 'No sessions available today';
-const String _kExploreMoreMessage = 'Explore all sessions';
-const String _kViewScheduleMessage = 'View schedule';
 
 /// Sección de eventos destacados — carousel con snap, peek y dots.
 class HomeFeaturedSection extends StatefulWidget {
@@ -52,8 +49,9 @@ class _HomeFeaturedSectionState extends State<HomeFeaturedSection> {
     if (page != _currentPage) setState(() => _currentPage = page);
   }
 
-  List<EventUIModel> get _items =>
-      widget.featuredEvents.take(_maxItems).toList();
+  List<EventUIModel> get _items {
+    return widget.featuredEvents.take(_maxItems).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,10 +108,14 @@ class _ExploreMoreCard extends StatelessWidget {
 
   final VoidCallback onTap;
 
+  static const double _iconSize = AppIconSize.featureCard;
+
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return AppCard(
       onTap: onTap,
@@ -123,10 +125,14 @@ class _ExploreMoreCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(AppIcons.scheduleOn, size: 40, color: colors.onPrimaryContainer),
+          Icon(
+            AppIcons.scheduleOn,
+            size: _iconSize,
+            color: colors.onPrimaryContainer,
+          ),
           const SizedBox(height: AppSpacing.m),
           Text(
-            _kExploreMoreMessage,
+            l10n.homeFeaturedExploreMore,
             style: textTheme.titleMedium?.copyWith(
               color: colors.onPrimaryContainer,
               fontWeight: FontWeight.bold,
@@ -138,7 +144,7 @@ class _ExploreMoreCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                _kViewScheduleMessage,
+                l10n.homeFeaturedViewSchedule,
                 style: textTheme.labelMedium?.copyWith(
                   color: colors.onPrimaryContainer.withValues(alpha: 0.8),
                 ),
@@ -146,7 +152,7 @@ class _ExploreMoreCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.xs),
               Icon(
                 AppIcons.arrowForward,
-                size: 16,
+                size: AppIconSize.inline,
                 color: colors.onPrimaryContainer.withValues(alpha: 0.8),
               ),
             ],
@@ -161,11 +167,12 @@ class _ExploreMoreCard extends StatelessWidget {
 class _FeaturedEmptyState extends StatelessWidget {
   const _FeaturedEmptyState();
 
-  static const double _height = 100;
+  static const double _height = 100.0;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -179,7 +186,7 @@ class _FeaturedEmptyState extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            _kEmptyMessage,
+            l10n.homeFeaturedEmptyMessage,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

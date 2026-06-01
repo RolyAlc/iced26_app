@@ -4,12 +4,14 @@ import 'dart:convert';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/core/services/logger/logger.dart';
 import 'package:iced26/data/mappers/app_data_mapper.dart';
+import 'package:iced26/data/mappers/conference_mapper.dart';
 import 'package:iced26/data/sources/app_data_source.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/data/sources/conference_data_seeder.dart';
 import 'package:iced26/data/sources/remote/portal_api_client.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/app_data.dart';
+import 'package:iced26/domain/entities/conference_config.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
 
@@ -38,7 +40,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
   /// - Datos locales + portal más nuevo: re-siembra solo tablas de conferencia.
   /// - Portal igual/caído: deja la caché local intacta.
   @override
-  Future<Result<void>> initializeDataIfNeeded() async {
+  Future<Result<bool>> initializeDataIfNeeded() async {
     try {
       final localAppData = await _loadLocalAppData();
       final hasLocalConferenceData = await _hasSeededConferenceData();
@@ -58,12 +60,12 @@ class ConfigRepositoryImpl implements ConfigRepository {
               ? 'Conference data seeded for first launch.'
               : 'Conference cache repaired from source data.',
         );
-        return const Success(null);
+        return const Success(true);
       }
 
       if (!_isRemoteNewer(remoteLastUpdated, storedLastSyncAt)) {
         AppLogger.i('Portal schedule unchanged — sync skipped.');
-        return const Success(null);
+        return const Success(false);
       }
 
       final hybridAppData = await _tryLoadHybridAppData(localAppData);
@@ -71,7 +73,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
         AppLogger.w(
           'Remote schedule unavailable — keeping local conference cache.',
         );
-        return const Success(null);
+        return const Success(false);
       }
 
       await _replaceConferenceData(
@@ -79,7 +81,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
         lastSyncAt: remoteLastUpdated,
       );
       AppLogger.i('Portal schedule synced successfully.');
-      return const Success(null);
+      return const Success(true);
     } on DioException catch (e, stackTrace) {
       AppLogger.e('Config init failed due to network error', e, stackTrace);
       return Failure('Error de red al inicializar la configuración: $e');
@@ -118,6 +120,23 @@ class ConfigRepositoryImpl implements ConfigRepository {
     } catch (e) {
       AppLogger.e('Error al obtener tema: $e');
       return Failure('No se pudo cargar la configuración del tema: $e');
+    }
+  }
+
+  /// Obtiene los metadatos escalares de la edición del congreso desde la DB.
+  @override
+  Future<Result<ConferenceConfig?>> getConferenceConfig() async {
+    try {
+      final query = _db.select(_db.appConfigs)
+        ..where((t) => t.key.equals('conference_config'));
+      final result = await query.getSingleOrNull();
+      if (result == null) return const Success(null);
+      final Map<String, dynamic> data =
+          jsonDecode(result.value) as Map<String, dynamic>;
+      return Success(ConferenceMapper.configFromMap(data));
+    } catch (e) {
+      AppLogger.e('Error al obtener configuración del congreso: $e');
+      return Failure('No se pudo cargar la configuración del congreso: $e');
     }
   }
 

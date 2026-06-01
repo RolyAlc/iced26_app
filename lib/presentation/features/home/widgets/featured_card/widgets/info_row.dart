@@ -19,7 +19,7 @@ class InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 14, color: color),
+        Icon(icon, size: AppIconSize.inline, color: color),
         const SizedBox(width: AppSpacing.xs),
         Flexible(
           child: Text(

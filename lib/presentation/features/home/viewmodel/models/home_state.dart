@@ -1,13 +1,13 @@
 import 'package:iced26/domain/entities/category.dart';
-import 'package:iced26/domain/entities/conference_theme.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
-import 'package:iced26/domain/entities/new.dart';
 import 'package:iced26/domain/entities/room.dart';
-import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/zone.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/conference_theme_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/event_ui_model.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/keynote_speaker_ui_model.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/news_item_ui_model.dart';
+import 'package:iced26/presentation/features/home/viewmodel/models/social_activity_ui_model.dart';
 
 /// Modelo de presentación de la home.
 class HomeState {
@@ -32,9 +32,13 @@ class HomeState {
   final List<EventUIModel> featuredEvents;
   final List<KeynoteSpeakerUIModel> keynoteSpeakers;
   final List<Category> categories;
-  final List<NewsItem> news;
-  final List<SocialActivity> socialActivities;
-  final List<ConferenceTheme> conferenceThemes;
+  final List<NewsItemUIModel> news;
+  final List<SocialActivityUIModel> socialActivities;
+  final List<ConferenceThemeUIModel> conferenceThemes;
   final String headerInfoLabel;
   final DateTime today;
+  // Cantidad de noticias a mostrar en la home.
+  static const int _maxVisibleNews = 4;
+  // Verifica si hay más noticias que mostrar.
+  bool get hasMoreNews => news.length > _maxVisibleNews;
 }

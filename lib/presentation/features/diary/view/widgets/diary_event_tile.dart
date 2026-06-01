@@ -19,7 +19,11 @@ class DiaryEventTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
         children: [
-          Icon(AppIcons.scheduleOff, size: 16, color: colors.primary),
+          Icon(
+            AppIcons.scheduleOff,
+            size: AppIconSize.inline,
+            color: colors.primary,
+          ),
           const SizedBox(width: AppSpacing.s),
           Expanded(
             child: Text(
