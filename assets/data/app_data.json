@@ -11,7 +11,9 @@
       "name": "ICED 2026 CONFERENCE",
       "tagline": "Agency and Academic Development",
       "location": "Salamanca, Spain",
-      "dates": "June 23-26, 2026"
+      "dates": "June 23-26, 2026",
+      "website_url": "https://iced26.es",
+      "default_locale": "en"
     },
     "theme": {
       "color": {
@@ -12836,7 +12838,7 @@
           "en": "Agency and Academic Development 24 - 26 June 2026."
         },
         "datePublish": "2026-06-23",
-        "imgUrl": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "imgUrl": "assets/brand/expressive_shape.jpg",
         "webUrl": "https://iced26.es/",
         "defaultLang": "en"
       },
@@ -12849,7 +12851,7 @@
           "en": "Agency and Academic Development 24 - 26 June 2026."
         },
         "datePublish": "2026-06-23",
-        "imgUrl": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "imgUrl": "assets/brand/expressive_shape.jpg",
         "webUrl": "https://iced26.es/#keynote-speakers",
         "defaultLang": "en"
       },
@@ -12862,12 +12864,12 @@
           "en": "Agency and Academic Development 24 - 26 June 2026."
         },
         "datePublish": "2026-06-23",
-        "imgUrl": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "imgUrl": "assets/brand/expressive_shape.jpg",
         "webUrl": "https://iced26.es/",
         "defaultLang": "en"
       },
       {
-        "id": "news-004", 
+        "id": "news-004",
         "title": {
           "en": "CED26 CONFERENCE"
         },
@@ -12875,7 +12877,7 @@
           "en": "Agency and Academic Development 24 - 26 June 2026."
         },
         "datePublish": "2026-06-23",
-        "imgUrl": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "imgUrl": "assets/brand/expressive_shape.jpg",
         "webUrl": "https://iced26.es/",
         "defaultLang": "en"
       },
@@ -12888,7 +12890,7 @@
           "en": "Agency and Academic Development 24 - 26 June 2026."
         },
         "datePublish": "2026-06-23",
-        "imgUrl": "https://iuce.usal.es/wp-content/uploads/ICED2026-570x350.png",
+        "imgUrl": "assets/brand/expressive_shape.jpg",
         "webUrl": "https://iced26.es/",
         "defaultLang": "en"
       }
