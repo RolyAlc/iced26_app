@@ -18,13 +18,31 @@ class HomeKeynoteSection extends StatefulWidget {
 
 /// Estado de la sección de keynote speakers.
 class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
-  late final PageController _controller;
+  late PageController _controller;
   int _currentPage = 0;
+  Orientation? _orientation;
 
   @override
   void initState() {
     super.initState();
     _controller = PageController(viewportFraction: SpeakerCard.widthFactor);
+    _controller.addListener(_onScroll);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newOrientation = MediaQuery.orientationOf(context);
+    if (newOrientation == _orientation) return;
+    _orientation = newOrientation;
+
+    final widthFactor = newOrientation == Orientation.landscape
+        ? AppLayout.landscapeCardWidthFactor
+        : SpeakerCard.widthFactor;
+
+    _controller.removeListener(_onScroll);
+    _controller.dispose();
+    _controller = PageController(viewportFraction: widthFactor);
     _controller.addListener(_onScroll);
   }
 
@@ -35,7 +53,6 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
     super.dispose();
   }
 
-  /// Maneja el scroll del carousel.
   void _onScroll() {
     final page = _controller.page?.round() ?? 0;
     if (page != _currentPage) setState(() => _currentPage = page);
@@ -65,8 +82,21 @@ class _HomeKeynoteSectionState extends State<HomeKeynoteSection> {
   Widget _buildCarousel() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final cardWidth = constraints.maxWidth * SpeakerCard.widthFactor;
-        final cardHeight = cardWidth / SpeakerCard.aspectRatio;
+        final isLandscape =
+            MediaQuery.orientationOf(context) == Orientation.landscape;
+
+        final widthFactor = isLandscape
+            ? AppLayout.landscapeCardWidthFactor
+            : SpeakerCard.widthFactor;
+        final aspectRatio = isLandscape
+            ? AppLayout.landscapeCardAspectRatio
+            : SpeakerCard.aspectRatio;
+
+        final cardWidth = constraints.maxWidth * widthFactor;
+        final cardHeight = (cardWidth / aspectRatio).clamp(
+          AppLayout.landscapeCardMinHeight,
+          AppLayout.landscapeCardMaxHeight,
+        );
 
         return SizedBox(
           height: cardHeight,
