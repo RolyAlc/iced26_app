@@ -62,7 +62,6 @@ Dio dio(Ref ref) {
     BaseOptions(
       baseUrl: AppConfig.portalApiBaseUrl,
       connectTimeout: const Duration(seconds: 10),
-      responseType: ResponseType.json,
       headers: const {'Accept': 'application/json'},
     ),
   );

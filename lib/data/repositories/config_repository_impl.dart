@@ -1,15 +1,15 @@
-import 'package:dio/dio.dart';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/core/services/logger/logger.dart';
 import 'package:iced26/data/mappers/app_data_mapper.dart';
 import 'package:iced26/data/mappers/conference_mapper.dart';
-import 'package:iced26/data/sources/app_data_source.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
+import 'package:iced26/data/sources/app_data_source.dart';
 import 'package:iced26/data/sources/conference_data_seeder.dart';
-import 'package:iced26/data/sources/remote/portal_api_client.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
+import 'package:iced26/data/sources/remote/portal_api_client.dart';
 import 'package:iced26/domain/entities/app_data.dart';
 import 'package:iced26/domain/entities/conference_config.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
@@ -154,7 +154,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
     final eventResult = await _db
         .customSelect('SELECT COUNT(*) AS event_count FROM events')
         .getSingle();
-    final eventCount = eventResult.read<int>('event_count') ?? 0;
+    final eventCount = eventResult.read<int>('event_count');
     if (eventCount == 0) {
       return false;
     }
@@ -166,8 +166,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
               AS invalid_time_count
           FROM session_blocks
           ''').getSingle();
-    final sessionBlockCount = blockResult.read<int>('session_block_count') ?? 0;
-    final invalidTimeCount = blockResult.read<int>('invalid_time_count') ?? 0;
+    final sessionBlockCount = blockResult.read<int>('session_block_count');
+    final invalidTimeCount = blockResult.read<int>('invalid_time_count');
     if (sessionBlockCount > 0 && invalidTimeCount > 0) {
       return false;
     }
@@ -185,8 +185,9 @@ class ConfigRepositoryImpl implements ConfigRepository {
             ) AS invalid_talk_time_count
           FROM events
           ''').getSingle();
-    final invalidTalkTimeCount =
-        talkResult.read<int>('invalid_talk_time_count') ?? 0;
+    final invalidTalkTimeCount = talkResult.read<int>(
+      'invalid_talk_time_count',
+    );
 
     return invalidTalkTimeCount == 0;
   }
