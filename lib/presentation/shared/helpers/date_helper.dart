@@ -2,21 +2,19 @@ import 'package:intl/intl.dart';
 
 /// Helper para formatear fechas respetando el locale activo.
 class DateHelper {
-  // Parsea un string ISO y lo muestra como "Apr 27" / "abr. 27". Devuelve el original si no es parseable.
-  static String formatShortDate(String date, String locale) {
-    final dt = DateTime.tryParse(date);
-    if (dt == null) return date;
-    return DateFormat('MMM d', locale).format(dt);
+  // "Apr 27" / "Abr. 27" — mes abreviado y día.
+  static String formatShortDate(DateTime date, String locale) {
+    return _cap(DateFormat('MMM d', locale).format(date));
   }
 
-  // "January 8, 2026" / "enero 8, 2026" — fecha completa para cabeceras de formulario.
+  // "January 8, 2026" / "Junio 8, 2026" — fecha completa para cabeceras de formulario.
   static String formatFullDate(DateTime date, String locale) {
-    return DateFormat('MMMM d, y', locale).format(date);
+    return _cap(DateFormat('MMMM d, y', locale).format(date));
   }
 
-  // "May 2026" / "mayo 2026" — mes y año para cabeceras de calendario.
+  // "May 2026" / "Mayo 2026" — mes y año para cabeceras de calendario.
   static String formatMonthYear(DateTime date, String locale) {
-    return DateFormat('MMMM y', locale).format(date);
+    return _cap(DateFormat('MMMM y', locale).format(date));
   }
 
   // "8 May" / "8 may." — solo día y mes, sin día de la semana.
@@ -24,22 +22,22 @@ class DateHelper {
     return DateFormat('d MMM', locale).format(date);
   }
 
-  // "Jun" / "jun." — mes corto.
+  // "Jun" / "Jun." — mes corto.
   static String monthShort(DateTime date, String locale) {
-    return DateFormat('MMM', locale).format(date);
+    return _cap(DateFormat('MMM', locale).format(date));
   }
 
-  // "June" / "junio" — mes completo.
+  // "June" / "Junio" — mes completo.
   static String monthFull(DateTime date, String locale) {
-    return DateFormat('MMMM', locale).format(date);
+    return _cap(DateFormat('MMMM', locale).format(date));
   }
 
-  // "Mon" / "lun." — nombre corto del día de la semana.
+  // "Mon" / "Lun." — nombre corto del día de la semana.
   static String weekdayShort(DateTime date, String locale) {
-    return DateFormat('E', locale).format(date);
+    return _cap(DateFormat('E', locale).format(date));
   }
 
-  // "Thu · 8 May" / "jue. · 8 may." — etiqueta compacta para cabeceras de día.
+  // "Thu · 8 May" / "Lun. · 8 may." — etiqueta compacta para cabeceras de día.
   static String formatDayLabel(DateTime date, String locale) {
     return '${weekdayShort(date, locale)} · ${formatDayShort(date, locale)}';
   }
@@ -61,5 +59,10 @@ class DateHelper {
     if (s.isEmpty) return '';
     final e = formatTime(end);
     return e.isEmpty ? s : '$s–$e';
+  }
+
+  static String _cap(String s) {
+    if (s.isEmpty) return s;
+    return s[0].toUpperCase() + s.substring(1);
   }
 }

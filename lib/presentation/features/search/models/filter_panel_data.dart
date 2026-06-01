@@ -43,7 +43,7 @@ class FilterPanelData {
       if (seen.add(dateStr)) {
         days.add((
           date: dateStr,
-          label: DateHelper.formatShortDate(dateStr, locale),
+          label: DateHelper.formatShortDate(e.startDate!, locale),
         ));
       }
     }

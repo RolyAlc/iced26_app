@@ -3,7 +3,6 @@ import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 /// Clase abstracta final con utilidades para la pantalla de diario.
 abstract final class DiaryHelpers {
@@ -15,7 +14,7 @@ abstract final class DiaryHelpers {
   }
 
   static List<DiaryNote> notesForDay(List<DiaryNote> notes, DateTime day) {
-    return notes.where((n) => isSameDay(n.date, day)).toList();
+    return notes.where((n) => DateHelper.isSameDay(n.date, day)).toList();
   }
 
   static List<Event> eventsForDay(
@@ -40,11 +39,11 @@ abstract final class DiaryHelpers {
   }
 
   static bool hasNote(List<DiaryNote> notes, DateTime day) {
-    return notes.any((n) => isSameDay(n.date, day));
+    return notes.any((n) => DateHelper.isSameDay(n.date, day));
   }
 
   static bool isToday(DateTime date) {
-    return isSameDay(date, DateTime.now());
+    return DateHelper.isSameDay(date, DateTime.now());
   }
 
   // Comprueba si hoy cae dentro de la semana de calendario (lunes-domingo)

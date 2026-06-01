@@ -1,6 +1,7 @@
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/di/data_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -15,7 +16,7 @@ bool diaryShowTodayChip(Ref ref) {
   final today = DateTime.now();
   final todayNorm = DateTime(today.year, today.month, today.day);
 
-  final isSelectedToday = isSameDay(selected, today);
+  final isSelectedToday = DateHelper.isSameDay(selected, today);
 
   final bool isTodayVisible;
   if (format == CalendarFormat.week) {

@@ -161,7 +161,7 @@ class _CollapsedFilterBar extends StatelessWidget {
       if (filters.selectedDay != null)
         ActiveFilterChip(
           label: DateHelper.formatShortDate(
-            filters.selectedDay!,
+            DateTime.parse(filters.selectedDay!),
             l10n.localeName,
           ),
           onRemove: () => notifier.toggleDay(filters.selectedDay!),

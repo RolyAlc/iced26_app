@@ -77,7 +77,7 @@ class _DaySeparator extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            DateHelper.formatShortDate(date, l10n.localeName),
+            DateHelper.formatShortDate(DateTime.parse(date), l10n.localeName),
             style: theme.textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.primary,
