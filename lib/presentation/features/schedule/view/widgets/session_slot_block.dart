@@ -85,7 +85,7 @@ class SessionSlotBlock extends StatelessWidget {
   }
 }
 
-  /// Lista de talks agrupados por bloque.
+/// Lista de talks agrupados por bloque.
 class _SlotPresentationList extends ConsumerWidget {
   _SlotPresentationList({required this.blocks})
     : blockIds = [for (final b in blocks) b.id];
@@ -95,9 +95,7 @@ class _SlotPresentationList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncTalks = ref.watch(
-      presentationsForSlotProvider(blockIds),
-    );
+    final asyncTalks = ref.watch(presentationsForSlotProvider(blockIds));
     final peopleIndex = ref.watch(allPeopleIndexProvider).value ?? {};
     final roomsIndex = ref.watch(allRoomsIndexProvider).value ?? {};
     final locale = Localizations.localeOf(context).languageCode;
@@ -262,10 +260,7 @@ class _BlockSectionState extends State<_BlockSection> {
         )
       else
         for (final talk in widget.talks)
-          SlotPresentationTile(
-            talk: talk,
-            peopleIndex: widget.peopleIndex,
-          ),
+          SlotPresentationTile(talk: talk, peopleIndex: widget.peopleIndex),
       if (talkCount > _kCollapseThreshold)
         _CollapseFooter(controller: _controller),
     ];

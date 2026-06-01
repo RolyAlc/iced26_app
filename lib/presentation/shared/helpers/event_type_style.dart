@@ -15,7 +15,10 @@ extension EventTypeX on EventType {
       EventType.paper => IconColorStyle(AppIcons.article, cs.primary),
       EventType.poster => IconColorStyle(AppIcons.slideshow, cs.secondary),
       EventType.symposium => IconColorStyle(AppIcons.forum, cs.tertiary),
-      EventType.icedTalks => IconColorStyle(AppIcons.recordVoiceOver, cs.primary),
+      EventType.icedTalks => IconColorStyle(
+        AppIcons.recordVoiceOver,
+        cs.primary,
+      ),
       EventType.doctoralColloquium => IconColorStyle(
         AppIcons.workspacePremium,
         cs.secondary,

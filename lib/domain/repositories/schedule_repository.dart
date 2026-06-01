@@ -24,9 +24,7 @@ abstract class ScheduleRepository {
   Future<Result<List<SessionBlock>>> getAllSessionBlocks();
 
   /// Obtiene los talks asociados a una lista de bloques.
-  Future<Result<List<Event>>> getEventsBySessionIds(
-    List<String> sessionIds,
-  );
+  Future<Result<List<Event>>> getEventsBySessionIds(List<String> sessionIds);
 
   /// Obtiene eventos de un tipo concreto.
   Future<Result<List<Event>>> getEventsByType(String type);

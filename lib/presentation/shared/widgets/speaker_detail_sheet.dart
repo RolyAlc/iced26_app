@@ -8,11 +8,7 @@ import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 
 /// Sheet genérico de ponente — reutilizable desde cualquier punto de entrada de la app.
-void showSpeakerDetail(
-  BuildContext context,
-  Person person,
-  List<Event> talks,
-) {
+void showSpeakerDetail(BuildContext context, Person person, List<Event> talks) {
   final locale = Localizations.localeOf(context).languageCode;
   AppBottomSheet.show(
     context: context,

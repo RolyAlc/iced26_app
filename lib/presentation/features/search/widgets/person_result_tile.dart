@@ -22,8 +22,9 @@ class PersonResultTile extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     final name = person.name.resolve(locale);
-    final talks =
-        ref.watch(presentationsByPersonIdProvider.select((v) => v.value?[person.id] ?? []));
+    final talks = ref.watch(
+      presentationsByPersonIdProvider.select((v) => v.value?[person.id] ?? []),
+    );
     final query = ref.watch(searchProvider.select((s) => s.query));
 
     return ListTile(

@@ -94,9 +94,7 @@ Future<Map<String, List<Event>>> presentationsForSlot(
   final result = await ref
       .watch(scheduleRepositoryProvider)
       .getEventsBySessionIds(blockIds);
-  final list = result is Success<List<Event>>
-      ? result.data
-      : <Event>[];
+  final list = result is Success<List<Event>> ? result.data : <Event>[];
   final grouped = <String, List<Event>>{};
   for (final event in list) {
     if (event.sessionId != null) {
