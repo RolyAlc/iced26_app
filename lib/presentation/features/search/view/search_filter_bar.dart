@@ -37,10 +37,11 @@ class FilterBar extends ConsumerWidget {
       );
     }
 
+    final l10n = AppLocalizations.of(context)!;
     final homeState = ref.watch(homeViewModelProvider);
     final zones = homeState.value?.allZones ?? [];
     final Map<String, String> zoneNames = {
-      for (final z in zones) z.id: z.name.resolve('und'),
+      for (final z in zones) z.id: z.name.resolve(l10n.localeName),
     };
 
     return _CollapsedFilterBar(

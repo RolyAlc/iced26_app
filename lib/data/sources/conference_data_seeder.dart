@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:iced26/data/mappers/conference_theme_mapper.dart';
-import 'package:iced26/data/mappers/zone_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/app_data.dart';
 
@@ -98,7 +97,7 @@ class ConferenceDataSeeder {
       appData.collections.zones.map(
         (z) => ZonesCompanion.insert(
           id: z.id,
-          name: ZoneMapper.resolveDisplayName(z),
+          name: z.name.resolve('en'),
           lang: Value(z.lang),
           description: Value(z.description),
         ),

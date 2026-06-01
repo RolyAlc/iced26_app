@@ -19,7 +19,7 @@ class FilterPanelData {
     return FilterPanelData(
       days: _extractDays(events, locale),
       types: _extractTypes(events),
-      zones: _extractZones(homeData),
+      zones: _extractZones(homeData, locale),
       durations: _extractDurations(events),
     );
   }
@@ -58,10 +58,10 @@ class FilterPanelData {
     return types;
   }
 
-  static List<Zone> _extractZones(HomeState homeData) {
+  static List<Zone> _extractZones(HomeState homeData, String locale) {
     final zones = homeData.allZones.toList();
     zones.sort(
-      (a, b) => a.name.resolve('und').compareTo(b.name.resolve('und')),
+      (a, b) => a.name.resolve(locale).compareTo(b.name.resolve(locale)),
     );
     return zones;
   }

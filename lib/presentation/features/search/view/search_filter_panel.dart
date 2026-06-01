@@ -107,7 +107,7 @@ class FilterPanel extends ConsumerWidget {
       AppIcons.locationOn,
       zones.map<Widget>((z) {
         return AppFilterChip(
-          label: z.name.resolve('und'),
+          label: z.name.resolve(l10n.localeName),
           selected: filters.selectedZones.contains(z.id),
           onTap: () {
             notifier.toggleZone(z.id);
