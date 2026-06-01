@@ -63,6 +63,66 @@ class Event {
   final String? externalRef;
   final String? aboutPresentationUrl;
   final String? videoPresentationUrl;
+
+  Event copyWith({
+    String? id,
+    I18nStr? title,
+    String? description,
+    String? subtype,
+    List<String>? tags,
+    int? durationMin,
+    DateTime? startDate,
+    DateTime? endDate,
+    String? zoneId,
+    String? roomId,
+    EventType? type,
+    String? defaultLang,
+    String? filterDate,
+    String? filterTime,
+    List<SpeakerEntry>? speakers,
+    String? slotLabel,
+    String? parentId,
+    String? sessionId,
+    String? track,
+    I18nStr? abstract_,
+    String? number,
+    bool? isSession,
+    List<String>? extraRooms,
+    List<String>? submissionFormats,
+    String? externalRef,
+    String? aboutPresentationUrl,
+    String? videoPresentationUrl,
+  }) {
+    return Event(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      subtype: subtype ?? this.subtype,
+      tags: tags ?? this.tags,
+      durationMin: durationMin ?? this.durationMin,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      zoneId: zoneId ?? this.zoneId,
+      roomId: roomId ?? this.roomId,
+      type: type ?? this.type,
+      defaultLang: defaultLang ?? this.defaultLang,
+      filterDate: filterDate ?? this.filterDate,
+      filterTime: filterTime ?? this.filterTime,
+      speakers: speakers ?? this.speakers,
+      slotLabel: slotLabel ?? this.slotLabel,
+      parentId: parentId ?? this.parentId,
+      sessionId: sessionId ?? this.sessionId,
+      track: track ?? this.track,
+      abstract_: abstract_ ?? this.abstract_,
+      number: number ?? this.number,
+      isSession: isSession ?? this.isSession,
+      extraRooms: extraRooms ?? this.extraRooms,
+      submissionFormats: submissionFormats ?? this.submissionFormats,
+      externalRef: externalRef ?? this.externalRef,
+      aboutPresentationUrl: aboutPresentationUrl ?? this.aboutPresentationUrl,
+      videoPresentationUrl: videoPresentationUrl ?? this.videoPresentationUrl,
+    );
+  }
 }
 
 extension EventX on Event {

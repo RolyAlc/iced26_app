@@ -132,11 +132,44 @@ class ConfigRepositoryImpl implements ConfigRepository {
   }
 
   Future<bool> _hasSeededScheduleData() async {
-    final result = await _db
+    final eventResult = await _db
         .customSelect('SELECT COUNT(*) AS event_count FROM events')
         .getSingle();
-    final eventCount = result.read<int>('event_count') ?? 0;
-    return eventCount > 0;
+    final eventCount = eventResult.read<int>('event_count') ?? 0;
+    if (eventCount == 0) {
+      return false;
+    }
+
+    final blockResult = await _db.customSelect('''
+          SELECT
+            COUNT(*) AS session_block_count,
+            SUM(CASE WHEN start_date IS NULL OR end_date IS NULL THEN 1 ELSE 0 END)
+              AS invalid_time_count
+          FROM session_blocks
+          ''').getSingle();
+    final sessionBlockCount = blockResult.read<int>('session_block_count') ?? 0;
+    final invalidTimeCount = blockResult.read<int>('invalid_time_count') ?? 0;
+    if (sessionBlockCount > 0 && invalidTimeCount > 0) {
+      return false;
+    }
+
+    final talkResult = await _db.customSelect('''
+          SELECT
+            SUM(
+              CASE
+                WHEN session_id IS NOT NULL
+                 AND start_date IS NOT NULL
+                 AND filter_time = '00:00–00:00'
+                THEN 1
+                ELSE 0
+              END
+            ) AS invalid_talk_time_count
+          FROM events
+          ''').getSingle();
+    final invalidTalkTimeCount =
+        talkResult.read<int>('invalid_talk_time_count') ?? 0;
+
+    return invalidTalkTimeCount == 0;
   }
 
   Future<AppData> _loadLocalAppData() async {

@@ -18,15 +18,27 @@ class SessionBlockDTO {
 
   factory SessionBlockDTO.fromMap(Map<String, dynamic> json) {
     final List<String> formats = _mapStringList(json['submissionFormats']);
+    final id = json['id']?.toString() ?? '';
+    final start = _resolveDateTimeValue(
+      date: json['date']?.toString(),
+      primary: json['start']?.toString(),
+      fallback: json['startTime']?.toString(),
+    );
+    final end = _resolveDateTimeValue(
+      date: json['date']?.toString(),
+      primary: json['end']?.toString(),
+      fallback: json['endTime']?.toString(),
+    );
 
     return SessionBlockDTO(
-      id: json['id']?.toString() ?? '',
-      parentId: json['parentId']?.toString() ?? '',
+      id: id,
+      parentId:
+          json['parentId']?.toString() ?? json['sessionId']?.toString() ?? id,
       roomId: json['roomId']?.toString(),
-      track: json['track']?.toString(),
+      track: json['track']?.toString() ?? json['kind']?.toString(),
       title: json['title'],
-      start: json['start']?.toString(),
-      end: json['end']?.toString(),
+      start: start,
+      end: end,
       submissionFormats: formats,
       defaultLang: json['defaultLang']?.toString(),
       externalRef: json['externalRef']?.toString(),
@@ -72,5 +84,27 @@ class SessionBlockDTO {
       return null;
     }
     return DateTime.tryParse(value)?.toLocal();
+  }
+
+  static String? _resolveDateTimeValue({
+    required String? date,
+    required String? primary,
+    required String? fallback,
+  }) {
+    final directValue = primary ?? fallback;
+    if (directValue == null || directValue.isEmpty) {
+      return null;
+    }
+
+    if (DateTime.tryParse(directValue) != null) {
+      return directValue;
+    }
+
+    if (date == null || date.isEmpty) {
+      return null;
+    }
+
+    return '$date'
+        'T$directValue';
   }
 }

@@ -42,40 +42,35 @@ class _PresentationDetailContent extends StatelessWidget {
     final locale = Localizations.localeOf(context).languageCode;
     final title = talk.title.resolve(locale);
     final abstract_ = talk.abstract_?.resolve(locale);
-    final timeRange = DateHelper.formatTimeRange(
-      talk.startDate,
-      talk.endDate,
-    );
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _PresentationTitle(title: title),
-          const SizedBox(height: AppSpacing.sm),
-          _PresentationMetadata(talk: talk, timeRange: timeRange),
-          if (talk.speakers.isNotEmpty) _PresentationSpeakersCard(talk: talk),
-          if (abstract_ != null && abstract_.isNotEmpty)
-            _PresentationSection(
-              child: _PresentationAbstractSection(abstract_: abstract_),
+      children: [
+        _PresentationTitle(title: title),
+        const SizedBox(height: AppSpacing.sm),
+        _PresentationMetadata(talk: talk),
+        if (talk.speakers.isNotEmpty) _PresentationSpeakersCard(talk: talk),
+        if (abstract_ != null && abstract_.isNotEmpty)
+          _PresentationSection(
+            child: _PresentationAbstractSection(abstract_: abstract_),
+          ),
+        if (talk.tags.isNotEmpty)
+          _PresentationSection(
+            child: Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: talk.tags
+                  .map((tag) => PresentationChip(label: '#$tag'))
+                  .toList(),
             ),
-          if (talk.tags.isNotEmpty)
-            _PresentationSection(
-              child: Wrap(
-                spacing: AppSpacing.xs,
-                runSpacing: AppSpacing.xs,
-                children: talk.tags
-                    .map((tag) => PresentationChip(label: '#$tag'))
-                    .toList(),
-              ),
+          ),
+        if (talk.aboutPresentationUrl != null ||
+            talk.videoPresentationUrl != null)
+          _PresentationSection(
+            child: PresentationLinkButtons(
+              aboutUrl: talk.aboutPresentationUrl,
+              videoUrl: talk.videoPresentationUrl,
             ),
-          if (talk.aboutPresentationUrl != null ||
-              talk.videoPresentationUrl != null)
-            _PresentationSection(
-              child: PresentationLinkButtons(
-                aboutUrl: talk.aboutPresentationUrl,
-                videoUrl: talk.videoPresentationUrl,
-              ),
-            ),
+          ),
         const SizedBox(height: AppSpacing.m),
       ],
     );
@@ -99,9 +94,8 @@ class _PresentationTitle extends StatelessWidget {
 // chips compactos para no competir visualmente con el título principal.
 // ConsumerWidget para resolver el nombre de sala via sessionBlockId → allSessionBlocksIndex → allRoomsIndex.
 class _PresentationMetadata extends ConsumerWidget {
-  const _PresentationMetadata({required this.talk, required this.timeRange});
+  const _PresentationMetadata({required this.talk});
   final Event talk;
-  final String timeRange;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -110,6 +104,10 @@ class _PresentationMetadata extends ConsumerWidget {
     final roomsIndex = ref.watch(allRoomsIndexProvider).value ?? {};
 
     final block = blocksIndex[talk.sessionId];
+    final timeRange = DateHelper.formatTimeRange(
+      block?.startDate ?? talk.startDate,
+      block?.endDate ?? talk.endDate,
+    );
     final roomName = block != null
         ? roomsIndex[block.roomId]?.name.resolve(locale)
         : null;

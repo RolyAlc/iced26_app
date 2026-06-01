@@ -39,4 +39,59 @@ void main() {
       expect(merged.collections.rooms, hasLength(1));
     },
   );
+
+  test(
+    'mergeSchedule maps portal session block times onto scheduled talks',
+    () {
+      final merged = AppDataMapper.mergeSchedule(
+        base: AppData.empty(),
+        scheduleJson: {
+          'events': [
+            {
+              'id': '82',
+              'title': 'Poster session',
+              'kind': 'poster session',
+              'type': 'session',
+              'start': '2026-06-24T16:15:00',
+              'end': '2026-06-24T17:45:00',
+              'isSession': true,
+            },
+            {
+              'id': '398',
+              'title': 'Quality and Impact of Peer Mentoring',
+              'type': 'paper',
+              'date': '2026-06-24',
+              'start': '2026-06-24T00:00:00',
+              'end': '2026-06-24T00:00:00',
+              'duration': 0,
+              'sessionId': '82',
+            },
+          ],
+          'sessionBlocks': [
+            {
+              'id': '82',
+              'date': '2026-06-24',
+              'startTime': '2026-06-24T16:15:00',
+              'endTime': '2026-06-24T17:45:00',
+              'kind': 'poster session',
+              'roomId': 'room-1',
+            },
+          ],
+        },
+      );
+
+      final sessionBlock = merged.collections.sessionBlocks.single;
+      final talk = merged.collections.events.firstWhere(
+        (event) => event.id == '398',
+      );
+
+      expect(sessionBlock.parentId, '82');
+      expect(sessionBlock.startDate, DateTime(2026, 6, 24, 16, 15));
+      expect(sessionBlock.endDate, DateTime(2026, 6, 24, 17, 45));
+      expect(talk.startDate, DateTime(2026, 6, 24, 16, 15));
+      expect(talk.endDate, DateTime(2026, 6, 24, 17, 45));
+      expect(talk.filterTime, '16:15–17:45');
+      expect(talk.roomId, 'room-1');
+    },
+  );
 }

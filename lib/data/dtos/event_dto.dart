@@ -36,21 +36,29 @@ class EventDTO {
   });
 
   factory EventDTO.fromMap(Map<String, dynamic> json) {
+    final start = json['start']?.toString() ?? json['startDate']?.toString();
+    final end = json['end']?.toString() ?? json['endDate']?.toString();
+
     return EventDTO(
       id: json['id']?.toString() ?? '',
       title: json['title'] ?? json['name'],
       description: json['description']?.toString(),
       subtype: json['subtype']?.toString(),
       tags: _mapStringList(json['tags']),
-      durationMin: (json['durationMin'] as num?)?.toInt(),
-      start: json['start']?.toString(),
-      end: json['end']?.toString(),
+      durationMin:
+          (json['durationMin'] as num?)?.toInt() ??
+          (json['duration'] as num?)?.toInt(),
+      start: start,
+      end: end,
       zoneId: json['zoneId']?.toString(),
       roomId: json['roomId']?.toString(),
       type: json['type']?.toString() ?? '',
       defaultLang: json['defaultLang']?.toString(),
-      filterDate: json['filterDate']?.toString(),
-      filterTime: json['filterTime']?.toString(),
+      filterDate:
+          json['filterDate']?.toString() ??
+          _buildFilterDate(start, json['date']?.toString()),
+      filterTime:
+          json['filterTime']?.toString() ?? _buildFilterTime(start, end),
       speakers: _mapSpeakers(json['speakers']),
       slotLabel: json['slotLabel']?.toString(),
       parentId: json['parentId']?.toString(),
@@ -178,5 +186,34 @@ class EventDTO {
       return null;
     }
     return DateTime.tryParse(value)?.toLocal();
+  }
+
+  static String? _buildFilterDate(String? start, String? fallbackDate) {
+    final startDate = _parseDate(start);
+    if (startDate != null) {
+      return startDate.toIso8601String().split('T').first;
+    }
+    return fallbackDate;
+  }
+
+  static String? _buildFilterTime(String? start, String? end) {
+    final startDate = _parseDate(start);
+    if (startDate == null) {
+      return null;
+    }
+
+    final startLabel = _formatTime(startDate);
+    final endDate = _parseDate(end);
+    if (endDate == null) {
+      return startLabel;
+    }
+
+    return '$startLabel–${_formatTime(endDate)}';
+  }
+
+  static String _formatTime(DateTime value) {
+    final hour = value.hour.toString().padLeft(2, '0');
+    final minute = value.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
   }
 }
