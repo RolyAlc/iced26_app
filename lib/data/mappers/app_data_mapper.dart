@@ -22,14 +22,17 @@ abstract final class AppDataMapper {
     final metadata = MetadataMapper.fromMap(json.getMap('metadata'));
     final theme = ThemeMapper.fromMap(configMap.getMap('theme'));
     final collections = CollectionsMapper.fromMap(collectionsMap);
+    final conferenceMap = configMap.getMap('conference');
     final conference = ConferenceMapper.fromSplitMaps(
-      config: configMap.getMap('conference'),
+      config: conferenceMap,
       rawThemes: collectionsMap.getList('conferenceThemes'),
     );
+    final conferenceConfig = ConferenceMapper.configFromMap(conferenceMap);
 
     return AppData(
       metadata: metadata,
       conference: conference,
+      conferenceConfig: conferenceConfig,
       theme: theme,
       collections: collections,
     );
