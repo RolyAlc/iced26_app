@@ -10,7 +10,6 @@ import 'package:iced26/data/sources/conference_data_seeder.dart';
 import 'package:iced26/data/sources/remote/portal_api_client.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/app_data.dart';
-import 'package:iced26/domain/entities/collections.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
 
@@ -43,17 +42,22 @@ class ConfigRepositoryImpl implements ConfigRepository {
     try {
       final localAppData = await _loadLocalAppData();
       final hasLocalConferenceData = await _hasSeededConferenceData();
+      final hasLocalScheduleData = await _hasSeededScheduleData();
       final storedLastSyncAt = await _loadConfigValue(_lastSyncAtKey);
       final remoteLastUpdated = await _tryFetchRemoteLastUpdated();
 
-      if (!hasLocalConferenceData) {
+      if (!hasLocalConferenceData || !hasLocalScheduleData) {
         final appData = await _loadBootstrapAppData(
           localAppData: localAppData,
           remoteLastUpdated: remoteLastUpdated,
         );
 
         await _replaceConferenceData(appData, lastSyncAt: remoteLastUpdated);
-        AppLogger.i('Conference data seeded for first launch.');
+        AppLogger.i(
+          !hasLocalConferenceData
+              ? 'Conference data seeded for first launch.'
+              : 'Conference cache repaired from source data.',
+        );
         return const Success(null);
       }
 
@@ -127,6 +131,14 @@ class ConfigRepositoryImpl implements ConfigRepository {
     return _loadConfigValue('event_id').then((value) => value != null);
   }
 
+  Future<bool> _hasSeededScheduleData() async {
+    final result = await _db
+        .customSelect('SELECT COUNT(*) AS event_count FROM events')
+        .getSingle();
+    final eventCount = result.read<int>('event_count') ?? 0;
+    return eventCount > 0;
+  }
+
   Future<AppData> _loadLocalAppData() async {
     final jsonString = await _localSource.loadAppDataJson();
     return AppDataMapper.fromJsonString(jsonString);
@@ -164,10 +176,9 @@ class ConfigRepositoryImpl implements ConfigRepository {
   Future<AppData?> _tryLoadHybridAppData(AppData localAppData) async {
     try {
       final remoteJson = await _portalSource.loadAppDataJson();
-      final remoteAppData = AppDataMapper.fromJsonString(remoteJson);
-      return _mergeSchedule(
-        localAppData: localAppData,
-        remoteAppData: remoteAppData,
+      return AppDataMapper.mergeSchedule(
+        base: localAppData,
+        scheduleJson: jsonDecode(remoteJson) as Map<String, dynamic>,
       );
     } on DioException catch (e, stackTrace) {
       AppLogger.e('Portal schedule fetch failed', e, stackTrace);
@@ -191,28 +202,6 @@ class ConfigRepositoryImpl implements ConfigRepository {
 
     final remoteAppData = await _tryLoadHybridAppData(localAppData);
     return remoteAppData ?? localAppData;
-  }
-
-  AppData _mergeSchedule({
-    required AppData localAppData,
-    required AppData remoteAppData,
-  }) {
-    return AppData(
-      metadata: localAppData.metadata,
-      conference: localAppData.conference,
-      theme: localAppData.theme,
-      collections: Collections(
-        days: localAppData.collections.days,
-        events: remoteAppData.collections.events,
-        sessionBlocks: remoteAppData.collections.sessionBlocks,
-        people: remoteAppData.collections.people,
-        rooms: remoteAppData.collections.rooms,
-        zones: localAppData.collections.zones,
-        submissionTypes: localAppData.collections.submissionTypes,
-        socials: localAppData.collections.socials,
-        news: localAppData.collections.news,
-      ),
-    );
   }
 
   Future<void> _replaceConferenceData(

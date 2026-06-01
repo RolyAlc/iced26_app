@@ -6,6 +6,7 @@ import 'package:iced26/data/mappers/conference_mapper.dart';
 import 'package:iced26/data/mappers/metadata_mapper.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/domain/entities/app_data.dart';
+import 'package:iced26/domain/entities/collections.dart';
 
 /// Mapper para AppData.
 abstract final class AppDataMapper {
@@ -32,6 +33,33 @@ abstract final class AppDataMapper {
       conference: conference,
       theme: theme,
       collections: collections,
+    );
+  }
+
+  /// Mezcla un payload de schedule plano del portal sobre los datos base del asset.
+  ///
+  /// El portal expone `events`, `sessionBlocks`, `speakers` y `rooms` en la raíz,
+  /// mientras que el asset local usa `collections`.
+  static AppData mergeSchedule({
+    required AppData base,
+    required Map<String, dynamic> scheduleJson,
+  }) {
+    final scheduleCollections = CollectionsMapper.fromMap(scheduleJson);
+    return AppData(
+      metadata: base.metadata,
+      conference: base.conference,
+      theme: base.theme,
+      collections: Collections(
+        days: base.collections.days,
+        events: scheduleCollections.events,
+        sessionBlocks: scheduleCollections.sessionBlocks,
+        people: scheduleCollections.people,
+        rooms: scheduleCollections.rooms,
+        zones: base.collections.zones,
+        submissionTypes: base.collections.submissionTypes,
+        socials: base.collections.socials,
+        news: base.collections.news,
+      ),
     );
   }
 }
