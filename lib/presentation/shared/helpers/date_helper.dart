@@ -1,82 +1,52 @@
-/// Helper para formatear fechas.
+import 'package:intl/intl.dart';
+
+/// Helper para formatear fechas respetando el locale activo.
 class DateHelper {
-  static const _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
-  static const _fullMonths = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-
-  static const _weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-  // Parsea un string ISO y lo muestra como "Apr 27". Devuelve el original si no es parseable.
-  static String formatShortDate(String date) {
+  // Parsea un string ISO y lo muestra como "Apr 27" / "abr. 27". Devuelve el original si no es parseable.
+  static String formatShortDate(String date, String locale) {
     final dt = DateTime.tryParse(date);
     if (dt == null) return date;
-    return '${_months[dt.month - 1]} ${dt.day}';
+    return DateFormat('MMM d', locale).format(dt);
   }
 
-  // "January 8, 2026" — fecha completa para cabeceras de formulario.
-  static String formatFullDate(DateTime date) {
-    return '${_fullMonths[date.month - 1]} ${date.day}, ${date.year}';
+  // "January 8, 2026" / "enero 8, 2026" — fecha completa para cabeceras de formulario.
+  static String formatFullDate(DateTime date, String locale) {
+    return DateFormat('MMMM d, y', locale).format(date);
   }
 
-  // "May 2026" — mes y año para cabeceras de calendario.
-  static String formatMonthYear(DateTime date) {
-    return '${_fullMonths[date.month - 1]} ${date.year}';
+  // "May 2026" / "mayo 2026" — mes y año para cabeceras de calendario.
+  static String formatMonthYear(DateTime date, String locale) {
+    return DateFormat('MMMM y', locale).format(date);
   }
 
-  // "8 May" — solo día y mes, sin día de la semana.
-  static String formatDayShort(DateTime date) {
-    return '${date.day} ${_months[date.month - 1]}';
+  // "8 May" / "8 may." — solo día y mes, sin día de la semana.
+  static String formatDayShort(DateTime date, String locale) {
+    return DateFormat('d MMM', locale).format(date);
   }
 
-  // "Jun", "Jul"… — mes corto.
-  static String monthShort(DateTime date) {
-    return _months[date.month - 1];
+  // "Jun" / "jun." — mes corto.
+  static String monthShort(DateTime date, String locale) {
+    return DateFormat('MMM', locale).format(date);
   }
 
-  // "June", "July"… — mes completo.
-  static String monthFull(DateTime date) {
-    return _fullMonths[date.month - 1];
+  // "June" / "junio" — mes completo.
+  static String monthFull(DateTime date, String locale) {
+    return DateFormat('MMMM', locale).format(date);
   }
 
-  // "Mon", "Tue"… — nombre corto del día de la semana.
-  static String weekdayShort(DateTime date) {
-    return _weekdays[date.weekday - 1];
+  // "Mon" / "lun." — nombre corto del día de la semana.
+  static String weekdayShort(DateTime date, String locale) {
+    return DateFormat('E', locale).format(date);
+  }
+
+  // "Thu · 8 May" / "jue. · 8 may." — etiqueta compacta para cabeceras de día.
+  static String formatDayLabel(DateTime date, String locale) {
+    return '${weekdayShort(date, locale)} · ${formatDayShort(date, locale)}';
   }
 
   // Comprueba si dos fechas caen en el mismo día (ignora la hora).
   static bool isSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
-  // "Thu · 8 May" — etiqueta compacta para cabeceras de día.
-  static String formatDayLabel(DateTime date) {
-    return '${_weekdays[date.weekday - 1]} · ${formatDayShort(date)}';
   }
 
   // Devuelve '' si dt es null para que los callers no necesiten null-check.
