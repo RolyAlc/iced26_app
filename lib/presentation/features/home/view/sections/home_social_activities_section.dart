@@ -22,9 +22,11 @@ class HomeSocialActivitiesSection extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final orientation = MediaQuery.orientationOf(context);
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final dimensions = _CardDimensions.from(constraints);
+        final dimensions = _CardDimensions.from(constraints, orientation);
 
         return _SocialCarousel(
           socials: socials,
@@ -41,9 +43,21 @@ class HomeSocialActivitiesSection extends StatelessWidget {
 class _CardDimensions {
   const _CardDimensions({required this.width, required this.height});
 
-  factory _CardDimensions.from(BoxConstraints constraints) {
-    final width = constraints.maxWidth * SocialCard.widthFactor;
-    final height = width / SocialCard.aspectRatio;
+  factory _CardDimensions.from(
+    BoxConstraints constraints,
+    Orientation orientation,
+  ) {
+    final isLandscape = orientation == Orientation.landscape;
+
+    final widthFactor = isLandscape
+        ? AppLayout.landscapeSocialWidthFactor
+        : SocialCard.widthFactor;
+    final aspectRatio = isLandscape
+        ? AppLayout.landscapeSocialAspectRatio
+        : SocialCard.aspectRatio;
+
+    final width = constraints.maxWidth * widthFactor;
+    final height = width / aspectRatio;
     return _CardDimensions(width: width, height: height);
   }
 
