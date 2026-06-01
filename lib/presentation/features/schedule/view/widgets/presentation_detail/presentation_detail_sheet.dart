@@ -213,38 +213,30 @@ class _PresentationSpeakersCardState extends State<_PresentationSpeakersCard> {
 
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.m),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppSpacing.m),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(AppRadius.m),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              headerLabel,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
-                letterSpacing: AppTextStyle.labelLetterSpacing,
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            headerLabel,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+              letterSpacing: AppTextStyle.labelLetterSpacing,
             ),
-            const SizedBox(height: AppSpacing.s),
-            _PresentationSpeakersSection(speakers: visibleSpeakers),
-            if (needsCollapse)
-              _SpeakersToggleFooter(
-                isExpanded: _isExpanded,
-                totalCount: speakers.length,
-                onToggle: () {
-                  setState(() {
-                    _isExpanded = !_isExpanded;
-                  });
-                },
-              ),
-          ],
-        ),
+          ),
+          const SizedBox(height: AppSpacing.s),
+          _PresentationSpeakersSection(speakers: visibleSpeakers),
+          if (needsCollapse)
+            _SpeakersToggleFooter(
+              isExpanded: _isExpanded,
+              totalCount: speakers.length,
+              onToggle: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+            ),
+        ],
       ),
     );
   }
