@@ -223,7 +223,7 @@ class _PresentationSpeakersCardState extends State<_PresentationSpeakersCard> {
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.m),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerLow,
+          color: theme.colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(AppRadius.m),
         ),
         child: Column(

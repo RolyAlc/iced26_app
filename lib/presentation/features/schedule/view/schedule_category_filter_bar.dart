@@ -98,7 +98,7 @@ class _CategoryChip extends StatelessWidget {
       side: selected
           ? BorderSide(color: color.withValues(alpha: 0.4))
           : BorderSide(color: colors.outlineVariant),
-      backgroundColor: colors.surfaceContainerLow,
+      backgroundColor: colors.surfaceContainerHigh,
       selectedColor: color.withValues(alpha: 0.12),
       labelStyle: theme.textTheme.labelMedium?.copyWith(
         fontWeight: selected ? FontWeight.w600 : FontWeight.normal,

@@ -33,7 +33,7 @@ class FeaturedCard extends ConsumerWidget {
     return AppCard(
       onTap: () => showEventDetail(context, event.event),
       borderRadius: AppRadius.container,
-      color: colors.surfaceContainer,
+      color: colors.surfaceContainerHigh,
       padding: const EdgeInsets.all(AppSpacing.m),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

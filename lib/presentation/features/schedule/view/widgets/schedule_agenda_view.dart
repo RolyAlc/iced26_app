@@ -154,7 +154,7 @@ class _SingleEventCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.m),
         decoration: BoxDecoration(
-          color: colors.surfaceContainerLow,
+          color: colors.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(AppRadius.m),
         ),
         child: Column(
@@ -200,7 +200,7 @@ class _SessionSlotCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.m),
         decoration: BoxDecoration(
-          color: colors.surfaceContainerLow,
+          color: colors.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(AppRadius.m),
         ),
         child: Row(

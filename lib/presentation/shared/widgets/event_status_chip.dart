@@ -25,7 +25,7 @@ class EventStatusChip extends StatelessWidget {
         'NEXT',
       ),
       EventStatus.ended => (
-        colors.surfaceContainerHighest,
+        colors.surfaceContainerHigh,
         colors.onSurfaceVariant,
         'ENDED',
       ),

@@ -38,7 +38,7 @@ class SearchInputField extends StatelessWidget {
         hintText: l10n.searchInputHint,
         prefixIcon: Icon(AppIcons.search, color: colors.primary),
         filled: true,
-        fillColor: colors.surfaceContainerHighest,
+        fillColor: colors.surfaceContainerHigh,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.m),
           borderSide: BorderSide.none,

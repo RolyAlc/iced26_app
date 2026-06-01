@@ -65,7 +65,7 @@ class _SpeakerImage extends StatelessWidget {
         child: AppNetworkImage(
           url: photoUrl,
           placeholder: ColoredBox(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            color: Theme.of(context).colorScheme.surfaceContainerHigh,
             child: const Center(
               child: Icon(AppIcons.person, size: _kPlaceholderIconSize),
             ),

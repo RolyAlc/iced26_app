@@ -180,7 +180,7 @@ class _BlockSectionState extends State<_BlockSection> {
       child: Card(
         elevation: 0,
         margin: EdgeInsets.zero,
-        color: theme.colorScheme.surfaceContainerLow,
+        color: theme.colorScheme.surfaceContainerHigh,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.m),
         ),
