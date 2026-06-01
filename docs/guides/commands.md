@@ -1,13 +1,13 @@
 ---
-version: 1.0.0
+version: 1.1.0
 status: activo
-last_updated: 2026-05-26
+last_updated: 2026-06-01
 icon: lucide/square-terminal
 tags:
   - comandos
 ---
 
-<!-- TOOD: Añadir script para que el dev siguiente no tenga que recordarselo -->
+<!-- TODO: Añadir script para que el dev siguiente no tenga que recordarselo -->
 
 # Comandos utiles
 
@@ -78,7 +78,7 @@ r
 R
 ```
 
-## 5. Flujo recomendablde trabajo
+## 5. Flujo recomendable de trabajo
 
 ### 5.1. Desarrollo normal
 
@@ -106,7 +106,7 @@ flutter run --uninstall-first
 # En todo caso, se recomienda borrar la aplicación del dispositivo físico.
 ```
 
-### Si se teco base de datos (Drift)
+### 5.4. Si se toca la base de datos (Drift)
 
 ```bash
 # Para la ejecución
@@ -117,8 +117,42 @@ dart run build_runner watch --delete-conflicting-outputs
 # Volver a ejecutar con run
 ```
 
-## l18n
+## 6. l10n
 
 ```bash
 flutter gen-l10n
 ```
+
+## 7. Builds de distribución
+
+### 7.1. APK — instalación directa en Android
+
+```bash
+flutter build apk --release
+# Salida: build/app/outputs/flutter-apk/app-release.apk
+```
+
+Útil para compartir la app sin pasar por la tienda (testers, demos internas).
+Requiere tener `android/key.properties` con las credenciales del keystore.
+
+### 7.2. AAB — subida a Google Play Store
+
+```bash
+flutter build appbundle --release
+# Salida: build/app/outputs/bundle/release/app-release.aab
+```
+
+Formato requerido por Play Store. No se instala directamente en el dispositivo.
+Ver `docs/guides/app_identity.md` sección 7 para el proceso completo de signing.
+
+### 7.3. IPA — subida a App Store (requiere Mac)
+
+```bash
+flutter build ipa --release
+# Salida: build/ios/ipa/iced26.ipa
+```
+
+Solo ejecutable en macOS con Xcode y Apple Developer Account activa.
+Ver `docs/guides/app_identity.md` sección 8 para el proceso completo.
+
+---
