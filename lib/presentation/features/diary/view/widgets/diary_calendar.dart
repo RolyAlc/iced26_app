@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/diary_note.dart';
 import 'package:iced26/domain/entities/event.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/diary/view/widgets/diary_helpers.dart';
 import 'package:iced26/presentation/features/diary/viewmodel/diary_viewmodel.dart';
@@ -203,11 +204,12 @@ class _CalendarDowCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final isToday = day.weekday == today.weekday;
 
     return Center(
       child: Text(
-        DateHelper.weekdayShort(day),
+        DateHelper.weekdayShort(day, l10n.localeName),
         style: TextStyle(
           color: isToday ? colors.primary : colors.onSurfaceVariant,
           fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
@@ -231,13 +233,14 @@ class _CalendarHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(left: AppSpacing.s),
       child: Row(
         children: [
           Expanded(
             child: Text(
-              DateHelper.formatMonthYear(focusedDay),
+              DateHelper.formatMonthYear(focusedDay, l10n.localeName),
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),

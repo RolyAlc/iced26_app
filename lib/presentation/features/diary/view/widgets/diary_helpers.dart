@@ -70,8 +70,10 @@ abstract final class DiaryHelpers {
   // "Today · 3 May" cuando es hoy, nombre completo del día en otro caso.
   static String formatDayHeader(DateTime date, AppLocalizations l10n) {
     if (isToday(date)) {
-      return l10n.diaryTodayHeader(DateHelper.formatDayShort(date));
+      return l10n.diaryTodayHeader(
+        DateHelper.formatDayShort(date, l10n.localeName),
+      );
     }
-    return DateHelper.formatDayLabel(date);
+    return DateHelper.formatDayLabel(date, l10n.localeName);
   }
 }

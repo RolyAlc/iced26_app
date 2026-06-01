@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/note_color.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
@@ -26,11 +27,12 @@ class DiaryEditorHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final paintColor = color?.color;
 
     return Row(
       children: [
-        _buildDateChip(theme, paintColor),
+        _buildDateChip(theme, paintColor, l10n.localeName),
         const Spacer(),
         _buildActionGroup(context, theme),
       ],
@@ -68,7 +70,7 @@ class DiaryEditorHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildDateChip(ThemeData theme, Color? paintColor) {
+  Widget _buildDateChip(ThemeData theme, Color? paintColor, String locale) {
     final chipColor = paintColor ?? theme.colorScheme.onSurfaceVariant;
 
     return InkWell(
@@ -98,7 +100,7 @@ class DiaryEditorHeader extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.s),
             Text(
-              DateHelper.formatFullDate(date),
+              DateHelper.formatFullDate(date, locale),
               style: theme.textTheme.labelLarge?.copyWith(
                 color: chipColor,
                 fontWeight: FontWeight.bold,
