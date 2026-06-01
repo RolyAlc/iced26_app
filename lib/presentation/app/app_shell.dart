@@ -16,6 +16,18 @@ class AppShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentFeature = ref.watch(navigationProvider);
+    final orientation = MediaQuery.orientationOf(context);
+
+    final body = IndexedStack(
+      index: currentFeature.index,
+      children: const [
+        HomeView(),
+        ScheduleView(),
+        Center(child: Text('Search (Próximamente)')),
+        DiaryView(),
+        SettingsView(),
+      ],
+    );
 
     return NotificationListener<UIMetricsNotification>(
       onNotification: (notification) {
@@ -29,20 +41,20 @@ class AppShell extends ConsumerWidget {
         }
         return true;
       },
-      child: Scaffold(
-        extendBody: true,
-        body: IndexedStack(
-          index: currentFeature.index,
-          children: const [
-            HomeView(),
-            ScheduleView(),
-            Center(child: Text('Search (Próximamente)')),
-            DiaryView(),
-            SettingsView(),
-          ],
-        ),
-        bottomNavigationBar: const AppNavigationBar(),
-      ),
+      child: orientation == Orientation.landscape
+          ? Scaffold(
+              body: Row(
+                children: [
+                  const AppNavigationRail(),
+                  Expanded(child: body),
+                ],
+              ),
+            )
+          : Scaffold(
+              extendBody: true,
+              body: body,
+              bottomNavigationBar: const AppNavigationBar(),
+            ),
     );
   }
 }

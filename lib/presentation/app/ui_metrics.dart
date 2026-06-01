@@ -39,6 +39,10 @@ class SliverClearanceSpacer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (MediaQuery.orientationOf(context) == Orientation.landscape) {
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
+
     final metrics = ref.watch(uiMetricsProvider);
 
     final clearance = metrics.navBarHeight > 0

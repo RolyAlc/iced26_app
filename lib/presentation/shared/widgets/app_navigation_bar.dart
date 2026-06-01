@@ -39,7 +39,7 @@ class AppNavigationBar extends ConsumerWidget {
           bottom: AppLayout.navBarBottomClearance + bottomInset,
         ),
         child: _NavContainer(
-          minHeight: AppLayout.navBarHeight,
+          constraints: const BoxConstraints(minHeight: AppLayout.navBarHeight),
           child: Row(
             children: [
               for (final item in mainNavigationItems)
@@ -81,19 +81,19 @@ String _navLabel(AppFeature feature, AppLocalizations l10n) {
   }
 }
 
-/// Widget contenedor del bottom navigation bar que aplica estilo visual.
+/// Widget contenedor de la navegación que aplica estilo visual (portrait y landscape).
 class _NavContainer extends StatelessWidget {
-  const _NavContainer({required this.child, required this.minHeight});
+  const _NavContainer({required this.child, this.constraints});
 
   final Widget child;
-  final double minHeight;
+  final BoxConstraints? constraints;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      constraints: BoxConstraints(minHeight: minHeight),
+      constraints: constraints,
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppRadius.l),
@@ -108,6 +108,55 @@ class _NavContainer extends StatelessWidget {
         ],
       ),
       child: child,
+    );
+  }
+}
+
+/// Navigation rail lateral para orientación landscape.
+///
+/// Misma lógica y estilo que [AppNavigationBar], pero dispuesta verticalmente
+/// en el lado izquierdo de la pantalla. Reutiliza [_NavigationItem] sin cambios.
+class AppNavigationRail extends ConsumerWidget {
+  const AppNavigationRail({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentFeature = ref.watch(navigationProvider);
+    final notifier = ref.read(navigationProvider.notifier);
+    final searchNotifier = ref.read(searchProvider.notifier);
+    final hasDiaryBadge = ref.watch(hasDiaryNoteForTodayProvider);
+    final leftInset = MediaQuery.of(context).padding.left;
+    final l10n = AppLocalizations.of(context)!;
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: AppLayout.navBarBottomClearance + leftInset,
+        right: AppSpacing.l,
+        top: AppSpacing.l,
+        bottom: AppSpacing.l,
+      ),
+      child: _NavContainer(
+        constraints: const BoxConstraints(minWidth: AppLayout.navBarHeight),
+        child: IntrinsicWidth(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              for (final item in mainNavigationItems)
+                _NavigationItem(
+                  label: _navLabel(item.feature, l10n),
+                  icon: item.icon,
+                  selectedIcon: item.selectedIcon,
+                  isSelected: !item.isAction && currentFeature == item.feature,
+                  isAction: item.isAction,
+                  showBadge: item.feature == AppFeature.diary && hasDiaryBadge,
+                  onTap: item.isAction
+                      ? () => SmartSearchBar.open(context, searchNotifier)
+                      : () => notifier.select(item.feature),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
