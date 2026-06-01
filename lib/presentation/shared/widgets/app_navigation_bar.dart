@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/navigation_constants.dart';
 import 'package:iced26/presentation/app/state/navigation_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
@@ -26,6 +27,8 @@ class AppNavigationBar extends ConsumerWidget {
     final bottomInset = MediaQuery.of(context).padding.bottom;
     final hasDiaryBadge = ref.watch(hasDiaryNoteForTodayProvider);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return UIMetricsReporter(
       onReportNavBar: (size) => size.height,
       child: Padding(
@@ -42,7 +45,7 @@ class AppNavigationBar extends ConsumerWidget {
               for (final item in mainNavigationItems)
                 Expanded(
                   child: _NavigationItem(
-                    label: item.label,
+                    label: _navLabel(item.feature, l10n),
                     icon: item.icon,
                     selectedIcon: item.selectedIcon,
                     isSelected:
@@ -60,6 +63,21 @@ class AppNavigationBar extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+String _navLabel(AppFeature feature, AppLocalizations l10n) {
+  switch (feature) {
+    case AppFeature.home:
+      return l10n.navHome;
+    case AppFeature.schedule:
+      return l10n.navSchedule;
+    case AppFeature.search:
+      return l10n.navSearch;
+    case AppFeature.diary:
+      return l10n.navDiary;
+    case AppFeature.settings:
+      return l10n.navSettings;
   }
 }
 
