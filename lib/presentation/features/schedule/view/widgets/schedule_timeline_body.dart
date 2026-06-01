@@ -71,12 +71,13 @@ class _DaySeparator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.l, bottom: AppSpacing.s),
       child: Row(
         children: [
           Text(
-            DateHelper.formatShortDate(date),
+            DateHelper.formatShortDate(date, l10n.localeName),
             style: theme.textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.primary,

@@ -134,7 +134,7 @@ class _MyScheduleDayHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final label = header.date != null
-        ? DateHelper.formatDayLabel(header.date!)
+        ? DateHelper.formatDayLabel(header.date!, l10n.localeName)
         : l10n.myScheduleUnscheduled;
 
     return Padding(

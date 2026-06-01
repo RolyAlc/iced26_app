@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
@@ -28,10 +29,13 @@ class ScheduleDayTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final firstDate = sections.isNotEmpty
         ? DateTime.tryParse(sections.first.date)
         : null;
-    final monthLabel = firstDate != null ? DateHelper.monthFull(firstDate) : '';
+    final monthLabel = firstDate != null
+        ? DateHelper.monthFull(firstDate, l10n.localeName)
+        : '';
 
     return Material(
       color: colors.surfaceContainerHigh,
@@ -126,6 +130,7 @@ class _DayTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final isToday = DateHelper.isSameDay(date, DateTime.now());
     final labelColor = isSelected ? colors.primary : colors.onSurfaceVariant;
     final backgroundColor = isSelected
@@ -153,7 +158,7 @@ class _DayTab extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                DateHelper.weekdayShort(date),
+                DateHelper.weekdayShort(date, l10n.localeName),
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: labelColor,
                   fontWeight: FontWeight.bold,
