@@ -116,3 +116,9 @@ dart run build_runner watch --delete-conflicting-outputs
 # Volver a dar formato
 # Volver a ejecutar con run
 ```
+
+## l18n
+
+```bash
+flutter gen-l10n
+```
