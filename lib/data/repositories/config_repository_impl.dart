@@ -21,12 +21,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
   final ConferenceDataSeeder _seeder;
 
   /// Sincroniza los datos del congreso solo si la edición cambió.
-  ///
-  /// - Misma edición: no hace nada (arranque rápido).
-  /// - Nueva edición: limpia favoritos y presentaciones guardadas, reinsertta todo.
-  /// - Primera instalación (sin edición guardada): inserta sin limpiar.
   @override
-  Future<Result<void>> initializeDataIfNeeded() async {
+  Future<Result<bool>> initializeDataIfNeeded() async {
     try {
       final appData = await _seeder.loadAppData();
       final storedEventId = await _loadStoredEventId();
@@ -36,7 +32,7 @@ class ConfigRepositoryImpl implements ConfigRepository {
         AppLogger.i(
           'Edición sin cambios ($newEventId) — sincronización omitida.',
         );
-        return const Success(null);
+        return const Success(false);
       }
 
       AppLogger.i(
@@ -44,15 +40,12 @@ class ConfigRepositoryImpl implements ConfigRepository {
       );
 
       await _db.transaction(() async {
-        if (storedEventId != null) {
-          await _clearUserReferentialData();
-        }
         await _seeder.reset();
         await _seeder.seed(appData);
       });
 
       AppLogger.i('Sincronización completada correctamente.');
-      return const Success(null);
+      return const Success(true);
     } catch (e) {
       AppLogger.e('Error en Config Init: $e');
       return Failure('Error al inicializar la configuración: $e');
@@ -63,17 +56,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
   @override
   Future<Result<ThemeConfig?>> getThemeConfig() async {
     try {
-      final query = _db.select(_db.appConfigs)
-        ..where((t) => t.key.equals('theme_config'));
-
-      final result = await query.getSingleOrNull();
-      if (result == null) {
-        return const Success(null);
-      }
-
-      final Map<String, dynamic> data =
-          jsonDecode(result.value) as Map<String, dynamic>;
-
+      final data = await _readConfigMap('theme_config');
+      if (data == null) return const Success(null);
       return Success(ThemeMapper.fromMap(data));
     } catch (e) {
       AppLogger.e('Error al obtener tema: $e');
@@ -85,14 +69,8 @@ class ConfigRepositoryImpl implements ConfigRepository {
   @override
   Future<Result<ConferenceConfig?>> getConferenceConfig() async {
     try {
-      final query = _db.select(_db.appConfigs)
-        ..where((t) => t.key.equals('conference_config'));
-      final result = await query.getSingleOrNull();
-      if (result == null) {
-        return const Success(null);
-      }
-      final Map<String, dynamic> data =
-          jsonDecode(result.value) as Map<String, dynamic>;
+      final data = await _readConfigMap('conference_config');
+      if (data == null) return const Success(null);
       return Success(ConferenceMapper.configFromMap(data));
     } catch (e) {
       AppLogger.e('Error al obtener configuración del congreso: $e');
@@ -100,22 +78,22 @@ class ConfigRepositoryImpl implements ConfigRepository {
     }
   }
 
+  /// Lee una fila de [AppConfigs] por [key] y la decodifica como mapa JSON.
+  /// Devuelve null si la clave no existe.
+  Future<Map<String, dynamic>?> _readConfigMap(String key) async {
+    final row = await (_db.select(
+      _db.appConfigs,
+    )..where((t) => t.key.equals(key))).getSingleOrNull();
+    if (row == null) return null;
+    return jsonDecode(row.value) as Map<String, dynamic>;
+  }
+
   /// Lee el event_id guardado en la última sincronización.
   /// Devuelve null si es la primera instalación.
   Future<String?> _loadStoredEventId() async {
-    final query = _db.select(_db.appConfigs)
-      ..where((t) => t.key.equals('event_id'));
-    final row = await query.getSingleOrNull();
+    final row = await (_db.select(
+      _db.appConfigs,
+    )..where((t) => t.key.equals('event_id'))).getSingleOrNull();
     return row?.value;
-  }
-
-  /// Elimina favoritos y presentaciones guardadas al detectar nueva edición.
-  /// Las notas del diario NO se eliminan — son contenido personal del usuario.
-  Future<void> _clearUserReferentialData() async {
-    await _db.delete(_db.favorites).go();
-    await _db.delete(_db.savedPresentations).go();
-    AppLogger.i(
-      'Favoritos y presentaciones guardadas eliminados (nueva edición).',
-    );
   }
 }
