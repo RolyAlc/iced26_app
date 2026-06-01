@@ -523,5 +523,20 @@
   "@startupErrorTitle": { "description": "Title shown on the startup error screen when the app fails to initialise" },
 
   "startupErrorMessage": "Try restarting the application",
-  "@startupErrorMessage": { "description": "Body text shown on the startup error screen" }
+  "@startupErrorMessage": { "description": "Body text shown on the startup error screen" },
+
+  "navHome": "Home",
+  "@navHome": { "description": "Bottom navigation bar label for the Home tab" },
+
+  "navSchedule": "Schedule",
+  "@navSchedule": { "description": "Bottom navigation bar label for the Schedule tab" },
+
+  "navSearch": "Search",
+  "@navSearch": { "description": "Bottom navigation bar label for the Search action" },
+
+  "navDiary": "Diary",
+  "@navDiary": { "description": "Bottom navigation bar label for the Diary tab" },
+
+  "navSettings": "Settings",
+  "@navSettings": { "description": "Bottom navigation bar label for the Settings tab" }
 }

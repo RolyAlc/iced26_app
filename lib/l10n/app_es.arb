@@ -171,5 +171,11 @@
   "@startupErrorTitle": { "description": "Título en la pantalla de error de arranque cuando la app falla al inicializarse" },
 
   "startupErrorMessage": "Intentá reiniciar la aplicación",
-  "@startupErrorMessage": { "description": "Texto secundario en la pantalla de error de arranque" }
+  "@startupErrorMessage": { "description": "Texto secundario en la pantalla de error de arranque" },
+
+  "navHome": "Inicio",
+  "navSchedule": "Agenda",
+  "navSearch": "Buscar",
+  "navDiary": "Diario",
+  "navSettings": "Ajustes"
 }
