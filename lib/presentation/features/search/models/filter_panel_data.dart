@@ -14,10 +14,10 @@ class FilterPanelData {
   });
 
   /// Crea un [FilterPanelData] a partir de [HomeState].
-  factory FilterPanelData.fromHomeState(HomeState homeData) {
+  factory FilterPanelData.fromHomeState(HomeState homeData, String locale) {
     final events = homeData.allEvents;
     return FilterPanelData(
-      days: _extractDays(events),
+      days: _extractDays(events, locale),
       types: _extractTypes(events),
       zones: _extractZones(homeData),
       durations: _extractDurations(events),
@@ -28,7 +28,10 @@ class FilterPanelData {
   final List<Zone> zones;
   final List<int> durations;
 
-  static List<({String date, String label})> _extractDays(List<Event> events) {
+  static List<({String date, String label})> _extractDays(
+    List<Event> events,
+    String locale,
+  ) {
     final seen = <String>{};
     final days = <({String date, String label})>[];
 
@@ -38,7 +41,10 @@ class FilterPanelData {
       final dateStr = e.startDate!.toIso8601String().split('T').first;
 
       if (seen.add(dateStr)) {
-        days.add((date: dateStr, label: DateHelper.formatShortDate(dateStr)));
+        days.add((
+          date: dateStr,
+          label: DateHelper.formatShortDate(dateStr, locale),
+        ));
       }
     }
 

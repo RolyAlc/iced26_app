@@ -25,9 +25,9 @@ class FilterPanel extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final filters = ref.watch(searchProvider.select((s) => s.filters));
-    final data = FilterPanelData.fromHomeState(homeData);
     final l10n = AppLocalizations.of(context)!;
+    final filters = ref.watch(searchProvider.select((s) => s.filters));
+    final data = FilterPanelData.fromHomeState(homeData, l10n.localeName);
     final dividerColor = Theme.of(context).colorScheme.outlineVariant;
 
     final sections = [
