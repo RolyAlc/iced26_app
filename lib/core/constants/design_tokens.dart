@@ -61,6 +61,22 @@ class AppLayout {
     if (width < 600) return AppSpacing.m;
     return AppSpacing.l;
   }
+
+  // --- Landscape ---
+  // Aspect ratio para FeaturedCard y SpeakerCard en landscape.
+  // Derivación: bodyWidth≈720dp × widthFactor=0.85 → cardW≈612dp; 612/2.5=245dp (≤ max).
+  static const double landscapeCardAspectRatio = 2.5;
+  // Techo de altura para cards en landscape — evita overflow en teléfonos con poca altura.
+  static const double landscapeCardMaxHeight = 260.0;
+  // Piso de altura — evita colapso en teléfonos landscape muy estrechos (≤360dp de ancho).
+  static const double landscapeCardMinHeight = 160.0;
+  // widthFactor para SocialCard en landscape: muestra ~1.5 cards (peek visible).
+  static const double landscapeSocialWidthFactor = 0.44;
+  // Aspect ratio para SocialCard en landscape: más horizontal que el portrait (5/4=1.25).
+  static const double landscapeSocialAspectRatio = 1.6;
+  // Ancho del NavigationRail en landscape — M3 compact spec.
+  // Debe mantenerse sincronizado con el minWidth de AppNavigationRail en app_navigation_bar.dart.
+  static const double navRailWidth = 80.0;
 }
 
 /// Tamaños de iconos semánticos — evita literales dispersos en widgets de error y estado vacío.
