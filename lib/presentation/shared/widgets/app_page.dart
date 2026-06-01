@@ -68,6 +68,12 @@ class _AppPageState extends ConsumerState<AppPage> {
         ? navMetrics.navBarHeight
         : AppLayout.navBarClearanceFallback;
 
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+    final fabBottom = isLandscape
+        ? MediaQuery.paddingOf(context).bottom + AppSpacing.m
+        : navBarHeight;
+
     return NotificationListener<UIMetricsNotification>(
       onNotification: (notification) {
         final height = notification.headerHeight;
@@ -89,7 +95,7 @@ class _AppPageState extends ConsumerState<AppPage> {
               ),
             ),
             Positioned(
-              bottom: navBarHeight,
+              bottom: fabBottom,
               left: 0,
               right: 0,
               child: Center(
