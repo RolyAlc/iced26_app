@@ -1,4 +1,4 @@
-package com.example.iced26
+package es.upv.iced.app
 
 import io.flutter.embedding.android.FlutterActivity
 
