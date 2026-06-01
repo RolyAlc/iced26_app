@@ -63,6 +63,9 @@ class AppLayout {
   }
 
   // --- Landscape ---
+  // widthFactor para FeaturedCard y SpeakerCard en landscape (vs portrait 0.92).
+  // Valor menor = peek más visible del card siguiente en pantalla más ancha.
+  static const double landscapeCardWidthFactor = 0.85;
   // Aspect ratio para FeaturedCard y SpeakerCard en landscape.
   // Derivación: bodyWidth≈720dp × widthFactor=0.85 → cardW≈612dp; 612/2.5=245dp (≤ max).
   static const double landscapeCardAspectRatio = 2.5;

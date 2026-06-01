@@ -25,8 +25,9 @@ class HomeFeaturedSection extends StatefulWidget {
 
 /// Estado interno del HomeFeaturedSection.
 class _HomeFeaturedSectionState extends State<HomeFeaturedSection> {
-  late final PageController _controller;
+  late PageController _controller;
   int _currentPage = 0;
+  Orientation? _orientation;
 
   static const int _maxItems = 6;
 
@@ -34,6 +35,23 @@ class _HomeFeaturedSectionState extends State<HomeFeaturedSection> {
   void initState() {
     super.initState();
     _controller = PageController(viewportFraction: FeaturedCard.widthFactor);
+    _controller.addListener(_onScroll);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newOrientation = MediaQuery.orientationOf(context);
+    if (newOrientation == _orientation) return;
+    _orientation = newOrientation;
+
+    final widthFactor = newOrientation == Orientation.landscape
+        ? AppLayout.landscapeCardWidthFactor
+        : FeaturedCard.widthFactor;
+
+    _controller.removeListener(_onScroll);
+    _controller.dispose();
+    _controller = PageController(viewportFraction: widthFactor);
     _controller.addListener(_onScroll);
   }
 
@@ -77,8 +95,21 @@ class _HomeFeaturedSectionState extends State<HomeFeaturedSection> {
   Widget _buildCarousel(List<EventUIModel> items) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final cardWidth = constraints.maxWidth * FeaturedCard.widthFactor;
-        final cardHeight = cardWidth / FeaturedCard.aspectRatio;
+        final isLandscape =
+            MediaQuery.orientationOf(context) == Orientation.landscape;
+
+        final widthFactor = isLandscape
+            ? AppLayout.landscapeCardWidthFactor
+            : FeaturedCard.widthFactor;
+        final aspectRatio = isLandscape
+            ? AppLayout.landscapeCardAspectRatio
+            : FeaturedCard.aspectRatio;
+
+        final cardWidth = constraints.maxWidth * widthFactor;
+        final cardHeight = (cardWidth / aspectRatio).clamp(
+          AppLayout.landscapeCardMinHeight,
+          AppLayout.landscapeCardMaxHeight,
+        );
 
         return SizedBox(
           height: cardHeight,
