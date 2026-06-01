@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:iced26/core/errors/result.dart';
 import 'package:iced26/core/services/logger/logger.dart';
+import 'package:iced26/data/mappers/conference_mapper.dart';
 import 'package:iced26/data/mappers/theme_mapper.dart';
 import 'package:iced26/data/sources/conference_data_seeder.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
+import 'package:iced26/domain/entities/conference_config.dart';
 import 'package:iced26/domain/entities/theme_config.dart';
 import 'package:iced26/domain/repositories/config_repository.dart';
 
@@ -76,6 +78,25 @@ class ConfigRepositoryImpl implements ConfigRepository {
     } catch (e) {
       AppLogger.e('Error al obtener tema: $e');
       return Failure('No se pudo cargar la configuración del tema: $e');
+    }
+  }
+
+  /// Obtiene los metadatos escalares de la edición del congreso desde la DB.
+  @override
+  Future<Result<ConferenceConfig?>> getConferenceConfig() async {
+    try {
+      final query = _db.select(_db.appConfigs)
+        ..where((t) => t.key.equals('conference_config'));
+      final result = await query.getSingleOrNull();
+      if (result == null) {
+        return const Success(null);
+      }
+      final Map<String, dynamic> data =
+          jsonDecode(result.value) as Map<String, dynamic>;
+      return Success(ConferenceMapper.configFromMap(data));
+    } catch (e) {
+      AppLogger.e('Error al obtener configuración del congreso: $e');
+      return Failure('No se pudo cargar la configuración del congreso: $e');
     }
   }
 

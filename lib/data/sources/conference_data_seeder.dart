@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:iced26/data/mappers/app_data_mapper.dart';
+import 'package:iced26/data/mappers/conference_mapper.dart';
 import 'package:iced26/data/mappers/conference_theme_mapper.dart';
 import 'package:iced26/data/mappers/zone_mapper.dart';
 import 'package:iced26/data/sources/app_data_source.dart';
@@ -9,10 +10,6 @@ import 'package:iced26/data/sources/local/database/app_database.dart';
 import 'package:iced26/domain/entities/app_data.dart';
 
 /// Carga el JSON del congreso y lo vuelca en la base de datos local.
-///
-/// Responsabilidad única: sabe cómo leer [AppDataSource] y cómo escribir
-/// en cada tabla de [AppDatabase]. No decide cuándo hacerlo — eso es
-/// responsabilidad de [ConfigRepositoryImpl].
 class ConferenceDataSeeder {
   const ConferenceDataSeeder(this._db, this._source);
 
@@ -40,6 +37,7 @@ class ConferenceDataSeeder {
     await _db.delete(_db.zones).go();
     await _db.delete(_db.days).go();
     await _db.delete(_db.people).go();
+    await _db.delete(_db.appConfigs).go();
   }
 
   /// Inserta todos los datos del congreso en un único batch.
@@ -189,7 +187,7 @@ class ConferenceDataSeeder {
     );
   }
 
-  /// Algunas presentaciones (ej. posters) no tienen fecha propia en el JSON
+  /// Algunas presentaciones no tienen fecha propia en el JSON
   /// pero sí pertenecen a un SessionBlock con fecha. Se usa el bloque como
   /// fallback para que My Schedule pueda ordenarlas correctamente.
   void _insertPresentations(Batch batch, AppData appData) {
@@ -321,6 +319,16 @@ class ConferenceDataSeeder {
           appData.conference.conferenceThemes
               .map(ConferenceThemeMapper.toMap)
               .toList(),
+        ),
+      ),
+      mode: InsertMode.insertOrReplace,
+    );
+    batch.insert(
+      _db.appConfigs,
+      AppConfigsCompanion.insert(
+        key: 'conference_config',
+        value: jsonEncode(
+          ConferenceMapper.configToMap(appData.conferenceConfig),
         ),
       ),
       mode: InsertMode.insertOrReplace,
