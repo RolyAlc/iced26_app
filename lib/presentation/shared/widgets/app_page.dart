@@ -35,6 +35,7 @@ class AppPage extends ConsumerStatefulWidget {
        );
   final List<Widget> children;
   final Widget? fillChild;
+
   /// Sliver widget placed directly in the scroll view — bypasses [SliverList.builder].
   /// Use when the content widget manages its own sliver layout (e.g. SliverList.builder).
   final Widget? contentSliver;

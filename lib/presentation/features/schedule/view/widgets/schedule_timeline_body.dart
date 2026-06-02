@@ -37,9 +37,7 @@ class ScheduleTimelineBody extends ConsumerWidget {
     if (viewFormat == ScheduleViewFormat.agenda) {
       return SliverPadding(
         padding: const EdgeInsets.only(top: AppSpacing.m),
-        sliver: SliverToBoxAdapter(
-          child: ScheduleAgendaView(items: items),
-        ),
+        sliver: SliverToBoxAdapter(child: ScheduleAgendaView(items: items)),
       );
     }
 

@@ -97,8 +97,8 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
       ),
       fillChild: myScheduleSlot?.fillChild,
       floatingChild: isMySchedule ? null : const ScheduleViewFab(),
-      children: myScheduleSlot?.children ?? const [],
       contentSliver: isMySchedule ? null : const ScheduleTimelineBody(),
+      children: myScheduleSlot?.children ?? const [],
     );
   }
 

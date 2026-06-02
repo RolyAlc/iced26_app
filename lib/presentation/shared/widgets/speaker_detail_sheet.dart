@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
+import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
@@ -118,7 +119,11 @@ class _SpeakerPresentationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
+    final headerLabel = talks.length > 1
+        ? l10n.speakerDetailPresentationsHeaderCount(talks.length)
+        : l10n.speakerDetailPresentationsLabel;
 
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.l),
@@ -126,7 +131,7 @@ class _SpeakerPresentationList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Presentations',
+            headerLabel,
             style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: AppSpacing.s),
