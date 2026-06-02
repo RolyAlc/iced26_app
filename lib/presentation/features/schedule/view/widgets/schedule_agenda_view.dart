@@ -6,10 +6,10 @@ import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/shared/helpers/event_sheet_router.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/session_slot_block.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
+import 'package:iced26/presentation/shared/helpers/event_sheet_router.dart';
 import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 
 const _kTimelineColumnWidth = 56.0;

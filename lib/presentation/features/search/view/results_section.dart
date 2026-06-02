@@ -9,13 +9,13 @@ import 'package:iced26/presentation/app/state/recently_viewed_people_provider.da
 import 'package:iced26/presentation/app/state/recently_viewed_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/shared/helpers/event_sheet_router.dart';
 import 'package:iced26/presentation/features/search/view/recent_searches_section.dart';
 import 'package:iced26/presentation/features/search/view/recently_viewed_people_section.dart';
 import 'package:iced26/presentation/features/search/view/recently_viewed_section.dart';
 import 'package:iced26/presentation/features/search/widgets/person_result_tile.dart';
 import 'package:iced26/presentation/features/search/widgets/result_tile.dart';
 import 'package:iced26/presentation/features/search/widgets/section_label.dart';
+import 'package:iced26/presentation/shared/helpers/event_sheet_router.dart';
 
 // Límites independientes: pueden divergir si el diseño lo requiere
 const _kPeopleCap = 6;
