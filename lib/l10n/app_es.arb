@@ -109,6 +109,8 @@
   "scheduleAttrRoom": "Sala",
   "scheduleAttrDuration": "Duración",
   "scheduleAttrLanguage": "Idioma",
+  "scheduleAttrDate": "Fecha",
+  "scheduleAttrType": "Tipo",
   "scheduleRoomTba": "Por confirmar",
 
   "scheduleLabelSpeakers": "Ponentes",
@@ -138,6 +140,7 @@
   "scheduleDetailDuration": "{minutes} min",
   "scheduleDetailShowAll": "Ver todos ({count})",
   "scheduleDetailShowLess": "Ver menos",
+  "scheduleDetailPresenter": "Presentador",
 
   "searchExploreTitle": "Explorar",
   "searchExploreSubtitle": "Busca por texto o filtra por día, tipo e idioma.",

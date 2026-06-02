@@ -293,6 +293,10 @@
 
   "scheduleAttrLanguage": "Language",
   "@scheduleAttrLanguage": { "description": "Label for the language attribute cell in the event detail sheet" },
+  "scheduleAttrDate": "Date",
+  "@scheduleAttrDate": { "description": "Label for the date attribute cell in the presentation detail sheet" },
+  "scheduleAttrType": "Type",
+  "@scheduleAttrType": { "description": "Label for the event type attribute cell in the presentation detail sheet" },
 
   "scheduleRoomTba": "TBA",
   "@scheduleRoomTba": { "description": "Fallback room label when no room is assigned to an event" },
@@ -412,6 +416,8 @@
 
   "scheduleDetailShowLess": "Show less",
   "@scheduleDetailShowLess": { "description": "Footer action to collapse the speakers list in presentation detail" },
+  "scheduleDetailPresenter": "Presenter",
+  "@scheduleDetailPresenter": { "description": "Badge label shown on the main presenter in the speaker list" },
 
   "searchExploreTitle": "Explore",
   "@searchExploreTitle": { "description": "Title of the explore overlay when search is idle and history is empty" },
