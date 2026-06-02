@@ -19,14 +19,20 @@ class ScheduleDayTabBar extends StatelessWidget {
     required this.tabController,
     required this.sections,
     required this.onDaySelected,
+    this.compact = false,
   });
 
   final TabController tabController;
   final List<ScheduleDaySection> sections;
   final ValueChanged<int> onDaySelected;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    if (compact) {
+      return _buildCompactChips();
+    }
+
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
@@ -58,6 +64,30 @@ class ScheduleDayTabBar extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCompactChips() {
+    return ListenableBuilder(
+      listenable: tabController,
+      builder: (context, _) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (int i = 0; i < sections.length; i++) ...[
+              if (i > 0) const SizedBox(width: AppSpacing.xs),
+              _CompactDayChip(
+                date: DateTime.tryParse(sections[i].date) ?? DateTime.now(),
+                isSelected: tabController.index == i,
+                onTap: () {
+                  tabController.index = i;
+                  onDaySelected(i);
+                },
+              ),
+            ],
+          ],
+        );
+      },
     );
   }
 
@@ -107,6 +137,58 @@ class ScheduleDayTabBar extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+/// Chip compacto de día para layout landscape: muestra "Lun 9" en una línea.
+class _CompactDayChip extends StatelessWidget {
+  const _CompactDayChip({
+    required this.date,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final DateTime date;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+    final isToday = DateHelper.isSameDay(date, DateTime.now());
+    final label =
+        '${DateHelper.weekdayShort(date, l10n.localeName)} ${date.day}';
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: isSelected ? colors.secondaryContainer : Colors.transparent,
+        borderRadius: BorderRadius.circular(AppRadius.s),
+        border: isToday && !isSelected
+            ? Border.all(color: colors.primary.withValues(alpha: 0.5))
+            : null,
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.s),
+        splashColor: colors.onSecondaryContainer.withValues(alpha: 0.12),
+        highlightColor: colors.onSecondaryContainer.withValues(alpha: 0.08),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: AppSpacing.xs,
+            horizontal: AppSpacing.s,
+          ),
+          child: Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: isSelected ? colors.primary : colors.onSurfaceVariant,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -11,10 +11,12 @@ class ScheduleTopTabBar extends StatelessWidget {
     super.key,
     required this.selected,
     required this.onSelect,
+    this.compact = false,
   });
 
   final ScheduleTab selected;
   final ValueChanged<ScheduleTab> onSelect;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +27,16 @@ class ScheduleTopTabBar extends StatelessWidget {
         _ScheduleTopTab(
           label: l10n.scheduleTitle,
           isSelected: selected == ScheduleTab.timeline,
+          compact: compact,
           onTap: () {
             onSelect(ScheduleTab.timeline);
           },
         ),
-        const SizedBox(width: AppSpacing.l),
+        SizedBox(width: compact ? AppSpacing.m : AppSpacing.l),
         _ScheduleTopTab(
           label: l10n.myScheduleTitle,
           isSelected: selected == ScheduleTab.mySchedule,
+          compact: compact,
           onTap: () {
             onSelect(ScheduleTab.mySchedule);
           },
@@ -50,11 +54,13 @@ class _ScheduleTopTab extends StatelessWidget {
   const _ScheduleTopTab({
     required this.label,
     required this.isSelected,
+    required this.compact,
     required this.onTap,
   });
 
   final String label;
   final bool isSelected;
+  final bool compact;
   final VoidCallback onTap;
 
   @override
@@ -63,6 +69,15 @@ class _ScheduleTopTab extends StatelessWidget {
     final colors = theme.colorScheme;
     final textColor = isSelected ? colors.onSurface : colors.onSurfaceVariant;
     final indicatorColor = isSelected ? colors.primary : Colors.transparent;
+    final textStyle = compact
+        ? theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          )
+        : theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          );
 
     return InkWell(
       onTap: onTap,
@@ -74,14 +89,7 @@ class _ScheduleTopTab extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                label,
-                // fix manual para que no ocupe overflow
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
+              Text(label, style: textStyle),
               const SizedBox(height: AppSpacing.xs),
               _buildIndicator(indicatorColor),
             ],

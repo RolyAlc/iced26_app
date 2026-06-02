@@ -13,22 +13,27 @@ class ScheduleCategoryFilterBar extends StatelessWidget {
     required this.categories,
     required this.selected,
     required this.onSelect,
+    this.contentPadding,
   });
 
   final List<EventType> categories;
   final EventType? selected;
   final ValueChanged<EventType?> onSelect;
 
+  /// Padding del scroll. Si es null, usa [AppLayout.horizontalPadding].
+  final EdgeInsets? contentPadding;
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
+    final padding =
+        contentPadding ??
+        EdgeInsets.symmetric(horizontal: AppLayout.horizontalPadding(context));
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.symmetric(
-        horizontal: AppLayout.horizontalPadding(context),
-      ),
+      padding: padding,
       child: Row(children: _buildChips(l10n, colors)),
     );
   }
