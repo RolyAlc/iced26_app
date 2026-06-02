@@ -5,23 +5,19 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
-import 'package:iced26/domain/entities/person.dart';
-import 'package:iced26/domain/entities/speaker_entry.dart';
 import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
+import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/widgets/presentation_speaker_list.dart';
 import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 import 'package:iced26/presentation/shared/models/icon_color_style.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
 import 'package:iced26/presentation/shared/widgets/event_attributes_card.dart';
 import 'package:iced26/presentation/shared/widgets/event_status_chip.dart';
-import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
-import 'package:iced26/presentation/shared/widgets/speaker_detail_sheet.dart';
 
 const _kTypeIconSize = 12.0;
-const _kChevronSize = 16.0;
 // Espacio de letras para la etiqueta de tipo de evento (badge inline, más compacto que labelLetterSpacing).
 const _kTypeBadgeLetterSpacing = 0.5;
 
@@ -42,6 +38,7 @@ class EventDetailContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     final status = EventStatusResolver.resolve(event);
     final duration = const EventFormatter().displayDuration(
@@ -67,7 +64,16 @@ class EventDetailContent extends ConsumerWidget {
         _EventAttributesGrid(event: event, duration: duration),
         if (event.speakers.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.l),
-          _SpeakerSection(
+          Text(
+            l10n.scheduleLabelSpeakers,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+              letterSpacing: AppTextStyle.labelLetterSpacing,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.s),
+          PresentationSpeakerList(
             speakers: event.speakers,
             people: people,
             presentationsByPerson: presentationsByPerson,
@@ -192,121 +198,6 @@ class _EventFavoriteButton extends ConsumerWidget {
       },
       icon: isFavorite ? AppIcons.bookmarkOn : AppIcons.bookmarkAdd,
       label: isFavorite ? l10n.scheduleButtonSaved : l10n.scheduleButtonAdd,
-    );
-  }
-}
-
-/// Sección de ponentes del evento.
-class _SpeakerSection extends StatelessWidget {
-  const _SpeakerSection({
-    required this.speakers,
-    required this.people,
-    required this.presentationsByPerson,
-  });
-
-  final List<SpeakerEntry> speakers;
-  final Map<String, Person> people;
-  final Map<String, List<Event>> presentationsByPerson;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.scheduleLabelSpeakers,
-          style: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
-            letterSpacing: AppTextStyle.labelLetterSpacing,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.s),
-        for (final s in speakers)
-          _SpeakerRow(
-            entry: s,
-            person: people[s.personId],
-            presentations: presentationsByPerson[s.personId] ?? [],
-          ),
-      ],
-    );
-  }
-}
-
-/// Fila de ponente: avatar + nombre/afiliación + enlace a detalle.
-class _SpeakerRow extends StatelessWidget {
-  const _SpeakerRow({
-    required this.entry,
-    required this.person,
-    required this.presentations,
-  });
-
-  final SpeakerEntry entry;
-  final Person? person;
-  final List<Event> presentations;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final locale = Localizations.localeOf(context).languageCode;
-    final name = person?.name.resolve(locale) ?? entry.personId;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.s),
-      child: InkWell(
-        onTap: person != null
-            ? () => showSpeakerDetail(context, person!, presentations)
-            : null,
-        borderRadius: BorderRadius.circular(AppRadius.s),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.xs,
-            horizontal: AppSpacing.xs,
-          ),
-          child: Row(
-            children: [
-              SpeakerAvatar(person: person, name: name),
-              const SizedBox(width: AppSpacing.m),
-              Expanded(child: _buildSpeakerInfo(theme, name)),
-              if (person != null) _buildChevron(theme),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSpeakerInfo(ThemeData theme, String name) {
-    final institution = person?.institution;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          name,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        if (institution != null)
-          Text(
-            institution,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildChevron(ThemeData theme) {
-    return Icon(
-      AppIcons.chevronRight,
-      size: _kChevronSize,
-      color: theme.colorScheme.onSurfaceVariant,
     );
   }
 }
