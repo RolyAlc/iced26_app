@@ -11,39 +11,56 @@ import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmod
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/shared/widgets/app_empty_state.dart';
 
-/// Cuerpo del schedule — lee sus propios providers.
+/// Sliver del timeline — gestiona sus propios providers.
+///
+/// Retorna un sliver (SliverList.builder, SliverPadding+SliverToBoxAdapter,
+/// o SliverFillRemaining) para que AppPage lo inserte directamente en el
+/// CustomScrollView sin romper el lazy rendering.
 class ScheduleTimelineBody extends ConsumerWidget {
   const ScheduleTimelineBody({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visibleItems = ref.watch(visibleItemsProvider);
+    final items = ref.watch(visibleItemsProvider);
     final isFiltered = ref.watch(
       selectedScheduleCategoryProvider.select((cat) => cat != null),
     );
     final viewFormat = ref.watch(selectedScheduleViewFormatProvider);
 
-    if (visibleItems.isEmpty && isFiltered) {
-      return const _EmptyScheduleFilter();
+    if (items.isEmpty && isFiltered) {
+      return const SliverFillRemaining(
+        hasScrollBody: false,
+        child: _EmptyScheduleFilter(),
+      );
     }
 
     if (viewFormat == ScheduleViewFormat.agenda) {
-      return ScheduleAgendaView(items: visibleItems);
+      return SliverPadding(
+        padding: const EdgeInsets.only(top: AppSpacing.m),
+        sliver: SliverToBoxAdapter(
+          child: ScheduleAgendaView(items: items),
+        ),
+      );
     }
 
-    return Column(children: visibleItems.map(_buildScheduleItem).toList());
+    return SliverPadding(
+      padding: const EdgeInsets.only(top: AppSpacing.m),
+      sliver: SliverList.builder(
+        itemCount: items.length,
+        itemBuilder: (_, index) => _buildItem(items[index]),
+      ),
+    );
+  }
+
+  Widget _buildItem(ScheduleItem item) {
+    return switch (item) {
+      SingleEventItem(:final event) => EventCard(event: event),
+      SessionSlotItem() => SessionSlotBlock(item: item),
+      DaySeparatorItem(:final date) => _DaySeparator(date: date),
+    };
   }
 }
 
-Widget _buildScheduleItem(ScheduleItem item) {
-  return switch (item) {
-    SingleEventItem(:final event) => EventCard(event: event),
-    SessionSlotItem() => SessionSlotBlock(item: item),
-    DaySeparatorItem(:final date) => _DaySeparator(date: date),
-  };
-}
-
-/// Estado vacío del schedule cuando se aplica un filtro.
 class _EmptyScheduleFilter extends StatelessWidget {
   const _EmptyScheduleFilter();
 
@@ -62,7 +79,6 @@ class _EmptyScheduleFilter extends StatelessWidget {
   }
 }
 
-/// Separador de días.
 class _DaySeparator extends StatelessWidget {
   const _DaySeparator({required this.date});
 

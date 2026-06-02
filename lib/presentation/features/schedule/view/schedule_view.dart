@@ -77,24 +77,28 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
       }
     });
 
-    final slot = isMySchedule
+    final myScheduleSlot = isMySchedule
         ? _buildMyScheduleSlot(context, theme, l10n)
-        : _ContentSlot.scrollable(
-            _buildPaddedContent(context, const ScheduleTimelineBody()),
-          );
+        : null;
 
     // AppPage único — su estado (_headerHeight) persiste al cambiar de tab
-    // y al transicionar entre fillChild y children, evitando saltos de layout.
+    // y al transicionar entre fillChild/contentSliver, evitando saltos de layout.
     return AppPage(
+      padding: isMySchedule
+          ? null
+          : EdgeInsets.symmetric(
+              horizontal: AppLayout.horizontalPadding(context),
+            ),
       header: ScheduleHeader(
         tabController: _tabController,
         categories: widget.state.categories,
         sections: widget.state.sections,
         topTab: topTab,
       ),
-      fillChild: slot.fillChild,
+      fillChild: myScheduleSlot?.fillChild,
       floatingChild: isMySchedule ? null : const ScheduleViewFab(),
-      children: slot.children,
+      children: myScheduleSlot?.children ?? const [],
+      contentSliver: isMySchedule ? null : const ScheduleTimelineBody(),
     );
   }
 
@@ -176,7 +180,7 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
   }
 }
 
-/// Slot de contenido para AppPage.
+/// Slot de contenido para AppPage — usado solo por MySchedule.
 ///
 /// `.fill` — un solo widget que ocupa todo el espacio disponible (loading, error, empty).
 /// `.scrollable` — lista de children que se añaden al scroll de AppPage (contenido real).

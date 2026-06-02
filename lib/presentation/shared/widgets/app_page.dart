@@ -13,6 +13,7 @@ class AppPage extends ConsumerStatefulWidget {
     super.key,
     this.children = const [],
     this.fillChild,
+    this.contentSliver,
     this.header,
     this.collapsedHeader,
     this.padding,
@@ -21,8 +22,8 @@ class AppPage extends ConsumerStatefulWidget {
     this.collapsedHeaderFallbackHeight,
     this.floatingChild,
   }) : assert(
-         children.length > 0 || fillChild != null,
-         'AppPage requires either children or fillChild',
+         children.length > 0 || fillChild != null || contentSliver != null,
+         'AppPage requires either children, fillChild, or contentSliver',
        ),
        assert(
          collapsedHeaderFallbackHeight == null || collapsedHeader != null,
@@ -34,6 +35,9 @@ class AppPage extends ConsumerStatefulWidget {
        );
   final List<Widget> children;
   final Widget? fillChild;
+  /// Sliver widget placed directly in the scroll view — bypasses [SliverList.builder].
+  /// Use when the content widget manages its own sliver layout (e.g. SliverList.builder).
+  final Widget? contentSliver;
   final Widget? header;
   final Widget? collapsedHeader;
   final EdgeInsets? padding;
@@ -130,6 +134,11 @@ class _AppPageState extends ConsumerState<AppPage> {
               child: widget.fillChild,
             ),
           )
+        else if (widget.contentSliver != null)
+          SliverPadding(
+            padding: widget.padding ?? EdgeInsets.zero,
+            sliver: widget.contentSliver!,
+          )
         else
           _buildSliverContent(),
         SliverClearanceSpacer(
@@ -173,7 +182,10 @@ class _AppPageState extends ConsumerState<AppPage> {
   Widget _buildSliverContent() {
     return SliverPadding(
       padding: widget.padding ?? EdgeInsets.zero,
-      sliver: SliverList.list(children: widget.children),
+      sliver: SliverList.builder(
+        itemCount: widget.children.length,
+        itemBuilder: (_, index) => widget.children[index],
+      ),
     );
   }
 
