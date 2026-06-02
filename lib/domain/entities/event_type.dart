@@ -45,6 +45,18 @@ enum EventType {
     _ => unknown,
   };
 
+  bool get isPresentation => switch (this) {
+    paper ||
+    poster ||
+    icedTalks ||
+    doctoralColloquium ||
+    keynoteSpeaker ||
+    workshop ||
+    symposium ||
+    internationalPanel => true,
+    _ => false,
+  };
+
   /// Valor original del JSON/DB. Usar al escribir en Drift o serializar.
   String get jsonValue => switch (this) {
     break_ => 'break',

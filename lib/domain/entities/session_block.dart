@@ -13,6 +13,9 @@ class SessionBlock {
     this.submissionFormats = const [],
     this.defaultLang,
     this.externalRef,
+    this.number,
+    this.description,
+    this.chairs = const [],
   });
   final String id;
   final String parentId;
@@ -24,4 +27,7 @@ class SessionBlock {
   final List<String> submissionFormats;
   final String? defaultLang;
   final String? externalRef;
+  final int? number;
+  final String? description;
+  final List<String> chairs;
 }

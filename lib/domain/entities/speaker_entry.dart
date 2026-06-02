@@ -1,5 +1,5 @@
 class SpeakerEntry {
-  const SpeakerEntry({required this.personId, this.role});
+  const SpeakerEntry({required this.personId, this.isPresenter});
   final String personId;
-  final String? role;
+  final bool? isPresenter;
 }
