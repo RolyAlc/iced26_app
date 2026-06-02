@@ -56,6 +56,8 @@ class _SearchModalBodyState extends ConsumerState<SearchModalBody> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(searchProvider);
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +69,7 @@ class _SearchModalBodyState extends ConsumerState<SearchModalBody> {
           onToggleFilters: widget.onToggleFilters,
           onSubmitted: _onSearchSubmitted,
         ),
-        const SizedBox(height: AppSpacing.l),
+        SizedBox(height: isLandscape ? AppSpacing.xs : AppSpacing.l),
         Expanded(
           child: SearchBody(
             state: state,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
@@ -24,6 +25,38 @@ class SearchHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+
+    if (isLandscape) {
+      return Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppLayout.horizontalPadding(context),
+        ),
+        child: Row(
+          children: [
+            IconButton(
+              padding: const EdgeInsets.only(right: AppSpacing.s),
+              icon: const Icon(AppIcons.arrowBack),
+              onPressed: () => Navigator.pop(context),
+            ),
+            Expanded(
+              child: SearchInputField(
+                controller: controller,
+                onChanged: notifier.performSearch,
+                onSubmitted: onSubmitted,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.s),
+            _CompactFilterButton(
+              isExpanded: filtersExpanded,
+              onToggle: onToggleFilters,
+            ),
+          ],
+        ),
+      );
+    }
+
     return Column(
       children: [
         Padding(
@@ -54,6 +87,46 @@ class SearchHeader extends StatelessWidget {
           onToggle: onToggleFilters,
         ),
       ],
+    );
+  }
+}
+
+class _CompactFilterButton extends ConsumerWidget {
+  const _CompactFilterButton({
+    required this.isExpanded,
+    required this.onToggle,
+  });
+  final bool isExpanded;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isActive = ref.watch(
+      searchProvider.select((s) => s.filters.isActive),
+    );
+    final colors = Theme.of(context).colorScheme;
+
+    return Badge(
+      isLabelVisible: isActive,
+      smallSize: 8,
+      child: IconButton(
+        style: IconButton.styleFrom(
+          backgroundColor: isActive
+              ? colors.primaryContainer
+              : colors.surfaceContainerHighest,
+          foregroundColor: isActive
+              ? colors.onPrimaryContainer
+              : colors.onSurfaceVariant,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.m),
+          ),
+        ),
+        icon: const Icon(AppIcons.filter),
+        onPressed: () {
+          FocusScope.of(context).unfocus();
+          onToggle();
+        },
+      ),
     );
   }
 }

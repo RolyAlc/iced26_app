@@ -156,6 +156,7 @@ class _SearchScreenState extends ConsumerState<_SearchScreen> {
     );
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Stack(
