@@ -125,21 +125,22 @@ class AppNavigationRail extends ConsumerWidget {
     final notifier = ref.read(navigationProvider.notifier);
     final searchNotifier = ref.read(searchProvider.notifier);
     final hasDiaryBadge = ref.watch(hasDiaryNoteForTodayProvider);
-    final leftInset = MediaQuery.of(context).padding.left;
+    final sysPadding = MediaQuery.of(context).padding;
     final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: EdgeInsets.only(
-        left: AppLayout.navBarBottomClearance + leftInset,
+        left: AppLayout.navBarBottomClearance + sysPadding.left,
         right: AppSpacing.l,
-        top: AppSpacing.l,
-        bottom: AppSpacing.l,
+        top: AppSpacing.l + sysPadding.top,
+        bottom: AppSpacing.l + sysPadding.bottom,
       ),
       child: _NavContainer(
         constraints: const BoxConstraints(minWidth: AppLayout.navBarHeight),
-        child: IntrinsicWidth(
+        child: SizedBox(
+          width: AppLayout.navRailWidth,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               for (final item in mainNavigationItems)
                 _NavigationItem(
@@ -149,6 +150,7 @@ class AppNavigationRail extends ConsumerWidget {
                   isSelected: !item.isAction && currentFeature == item.feature,
                   isAction: item.isAction,
                   showBadge: item.feature == AppFeature.diary && hasDiaryBadge,
+                  showLabel: false,
                   onTap: item.isAction
                       ? () => SmartSearchBar.open(context, searchNotifier)
                       : () => notifier.select(item.feature),
@@ -174,6 +176,7 @@ class _NavigationItem extends StatelessWidget {
     required this.isAction,
     required this.showBadge,
     required this.onTap,
+    this.showLabel = true,
   });
 
   final String label;
@@ -183,6 +186,7 @@ class _NavigationItem extends StatelessWidget {
   // True cuando el item dispara una acción modal (ej. Search) en vez de navegar a una pestaña.
   final bool isAction;
   final bool showBadge;
+  final bool showLabel;
   final VoidCallback onTap;
 
   Widget _buildIndicator(Color activeColor) {
@@ -231,6 +235,7 @@ class _NavigationItem extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadius.full),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
         child: Column(
@@ -240,16 +245,18 @@ class _NavigationItem extends StatelessWidget {
               data: IconThemeData(color: itemColor),
               child: _buildIndicator(activeColor),
             ),
-            const SizedBox(height: AppSpacing.xxs),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: textTheme.labelSmall?.copyWith(
-                color: itemColor,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            if (showLabel) ...[
+              const SizedBox(height: AppSpacing.xxs),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.labelSmall?.copyWith(
+                  color: itemColor,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

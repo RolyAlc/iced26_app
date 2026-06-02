@@ -46,7 +46,9 @@ class AppShell extends ConsumerWidget {
               body: Row(
                 children: [
                   const AppNavigationRail(),
-                  Expanded(child: body),
+                  Expanded(
+                    child: SafeArea(left: false, top: false, child: body),
+                  ),
                 ],
               ),
             )
