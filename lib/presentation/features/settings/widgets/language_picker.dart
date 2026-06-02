@@ -68,21 +68,43 @@ class _LanguagePickerDialogState extends ConsumerState<_LanguagePickerDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return AlertDialog(
       title: Text(l10n.settingsLanguageDialogTitle),
-      contentPadding: const EdgeInsets.only(top: AppSpacing.s),
-      content: RadioGroup<Locale?>(
-        groupValue: _selected,
-        onChanged: _select,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final locale in LocaleNotifier.supportedLocales)
-              _LanguageOptionTile(locale: locale),
-          ],
-        ),
+      contentPadding: EdgeInsets.only(
+        top: AppSpacing.s,
+        left: isLandscape ? AppSpacing.m : 0,
+        right: isLandscape ? AppSpacing.m : 0,
+        bottom: isLandscape ? AppSpacing.m : 0,
       ),
+      content: isLandscape
+          ? SizedBox(
+              width: double.maxFinite,
+              child: SegmentedButton<Locale?>(
+                segments: [
+                  for (final locale in LocaleNotifier.supportedLocales)
+                    ButtonSegment<Locale?>(
+                      value: locale,
+                      label: Text(_localeLabel(locale)),
+                    ),
+                ],
+                selected: {_selected},
+                onSelectionChanged: (s) => _select(s.first),
+              ),
+            )
+          : RadioGroup<Locale?>(
+              groupValue: _selected,
+              onChanged: _select,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final locale in LocaleNotifier.supportedLocales)
+                    _LanguageOptionTile(locale: locale),
+                ],
+              ),
+            ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),

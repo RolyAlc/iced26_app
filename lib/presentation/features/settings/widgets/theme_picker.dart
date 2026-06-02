@@ -6,6 +6,8 @@ import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/settings/widgets/settings_section.dart';
+import 'package:iced26/presentation/shared/utils/theme_mode_l10n.dart';
+import 'package:iced26/presentation/shared/widgets/theme_mode_selector.dart';
 
 /// Ítem de tema: muestra el modo activo y abre el picker al tocar.
 class ThemeItem extends ConsumerWidget {
@@ -19,7 +21,7 @@ class ThemeItem extends ConsumerWidget {
     return SettingsItem(
       icon: AppIcons.forThemeMode(mode),
       title: l10n.settingsThemeTitle,
-      subtitle: _themeLabel(mode, l10n),
+      subtitle: themeModeLabel(mode, l10n),
       onTap: () {
         showDialog<void>(
           context: context,
@@ -64,24 +66,37 @@ class _ThemePickerDialogState extends ConsumerState<_ThemePickerDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return AlertDialog(
       title: Text(l10n.settingsThemeTitle),
-      contentPadding: const EdgeInsets.only(top: AppSpacing.s),
-      content: RadioGroup<ThemeMode>(
-        groupValue: _selected,
-        onChanged: (v) {
-          if (v != null) {
-            _select(v);
-          }
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final mode in ThemeMode.values) _ThemeOptionTile(mode: mode),
-          ],
-        ),
+      contentPadding: EdgeInsets.only(
+        top: AppSpacing.s,
+        left: isLandscape ? AppSpacing.m : 0,
+        right: isLandscape ? AppSpacing.m : 0,
+        bottom: isLandscape ? AppSpacing.m : 0,
       ),
+      content: isLandscape
+          ? SizedBox(
+              width: double.maxFinite,
+              child: ThemeModeSelector(selected: _selected, onChanged: _select),
+            )
+          : RadioGroup<ThemeMode>(
+              groupValue: _selected,
+              onChanged: (v) {
+                if (v != null) {
+                  _select(v);
+                }
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final mode in ThemeMode.values)
+                    _ThemeOptionTile(mode: mode),
+                ],
+              ),
+            ),
       actions: [
         TextButton(
           onPressed: () {
@@ -128,7 +143,7 @@ class _ThemeOptionTile extends StatelessWidget {
             Icon(AppIcons.forThemeMode(mode), size: 20),
             const SizedBox(width: AppSpacing.s),
             Text(
-              _themeLabel(mode, l10n),
+              themeModeLabel(mode, l10n),
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
@@ -136,13 +151,4 @@ class _ThemeOptionTile extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Devuelve la etiqueta localizada del modo de tema.
-String _themeLabel(ThemeMode mode, AppLocalizations l10n) {
-  return switch (mode) {
-    ThemeMode.light => l10n.settingsThemeLight,
-    ThemeMode.dark => l10n.settingsThemeDark,
-    ThemeMode.system => l10n.settingsThemeSystem,
-  };
 }

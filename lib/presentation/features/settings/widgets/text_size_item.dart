@@ -8,6 +8,7 @@ import 'package:iced26/presentation/app/state/text_size_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/settings/widgets/settings_section.dart';
 import 'package:iced26/presentation/shared/utils/text_size_l10n.dart';
+import 'package:iced26/presentation/shared/widgets/text_size_selector.dart';
 
 /// Ítem de tamaño de texto: muestra la preferencia activa y abre el picker al tocar.
 class TextSizeItem extends ConsumerWidget {
@@ -66,26 +67,37 @@ class _TextSizePickerDialogState extends ConsumerState<_TextSizePickerDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return AlertDialog(
       title: Text(l10n.settingsTextSizeTitle),
-      // Sin padding lateral para que el InkWell de cada opción llegue al borde.
-      contentPadding: const EdgeInsets.only(top: AppSpacing.s),
-      content: RadioGroup<TextSizePreference>(
-        groupValue: _selected,
-        onChanged: (v) {
-          if (v != null) {
-            _select(v);
-          }
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final pref in TextSizePreference.values)
-              _TextSizeOptionTile(pref: pref),
-          ],
-        ),
+      contentPadding: EdgeInsets.only(
+        top: AppSpacing.s,
+        left: isLandscape ? AppSpacing.m : 0,
+        right: isLandscape ? AppSpacing.m : 0,
+        bottom: isLandscape ? AppSpacing.m : 0,
       ),
+      content: isLandscape
+          ? SizedBox(
+              width: double.maxFinite,
+              child: TextSizeSelector(selected: _selected, onChanged: _select),
+            )
+          : RadioGroup<TextSizePreference>(
+              groupValue: _selected,
+              onChanged: (v) {
+                if (v != null) {
+                  _select(v);
+                }
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final pref in TextSizePreference.values)
+                    _TextSizeOptionTile(pref: pref),
+                ],
+              ),
+            ),
       actions: [
         TextButton(
           onPressed: () {
