@@ -372,6 +372,17 @@
     }
   },
 
+  "speakerDetailPresentationsLabel": "Presentations",
+  "@speakerDetailPresentationsLabel": { "description": "Section label for the presentations list in the speaker detail sheet" },
+
+  "speakerDetailPresentationsHeaderCount": "Presentations · {count}",
+  "@speakerDetailPresentationsHeaderCount": {
+    "description": "Presentations section header in speaker detail when there is more than one presentation",
+    "placeholders": {
+      "count": { "type": "int", "description": "Total number of presentations" }
+    }
+  },
+
   "scheduleDetailAbstract": "Abstract",
   "@scheduleDetailAbstract": { "description": "Section label for the abstract in the presentation detail sheet" },
 

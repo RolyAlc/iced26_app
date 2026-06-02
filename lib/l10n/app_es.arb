@@ -129,6 +129,10 @@
   "myScheduleNothingSavedMessage": "Guarda sesiones y charlas para crear tu agenda",
 
   "scheduleSpeakersHeaderCount": "Ponentes · {count}",
+
+  "speakerDetailPresentationsLabel": "Presentaciones",
+  "speakerDetailPresentationsHeaderCount": "Presentaciones · {count}",
+
   "scheduleDetailAbstract": "Resumen",
   "scheduleDetailTrack": "Track {track}",
   "scheduleDetailDuration": "{minutes} min",
