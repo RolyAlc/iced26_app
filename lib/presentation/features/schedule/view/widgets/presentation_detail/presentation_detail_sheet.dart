@@ -15,7 +15,7 @@ import 'package:iced26/presentation/features/schedule/view/widgets/presentation_
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
-import 'package:iced26/presentation/shared/widgets/attribute_cell.dart';
+import 'package:iced26/presentation/shared/widgets/event_attributes_card.dart';
 
 const _kSpeakersCollapseThreshold = 3;
 
@@ -178,81 +178,40 @@ class _PresentationAttributesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final divider = Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
-      child: Divider(
-        height: 1,
-        color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2),
-      ),
-    );
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.m),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(AppRadius.m),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: AttributeCell(
-                  icon: AppIcons.accessTime,
-                  label: l10n.scheduleAttrTime,
-                  value: timeLabel,
-                ),
-              ),
-              Expanded(
-                child: AttributeCell(
-                  icon: AppIcons.meetingRoom,
-                  label: l10n.scheduleAttrRoom,
-                  value: roomName,
-                ),
-              ),
-            ],
-          ),
-          divider,
-          Row(
-            children: [
-              Expanded(
-                child: AttributeCell(
-                  icon: AppIcons.duration,
-                  label: l10n.scheduleAttrDuration,
-                  value: duration,
-                ),
-              ),
-              Expanded(
-                child: AttributeCell(
-                  icon: AppIcons.translate,
-                  label: l10n.scheduleAttrLanguage,
-                  value: language,
-                ),
-              ),
-            ],
-          ),
-          divider,
-          Row(
-            children: [
-              Expanded(
-                child: AttributeCell(
-                  icon: AppIcons.calendarToday,
-                  label: l10n.scheduleAttrDate,
-                  value: dateLabel,
-                ),
-              ),
-              Expanded(
-                child: AttributeCell(
-                  icon: AppIcons.category,
-                  label: l10n.scheduleAttrType,
-                  value: typeLabel,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+    return EventAttributesCard(
+      cells: [
+        AttributeCellData(
+          icon: AppIcons.accessTime,
+          label: l10n.scheduleAttrTime,
+          value: timeLabel,
+        ),
+        AttributeCellData(
+          icon: AppIcons.meetingRoom,
+          label: l10n.scheduleAttrRoom,
+          value: roomName,
+        ),
+        AttributeCellData(
+          icon: AppIcons.duration,
+          label: l10n.scheduleAttrDuration,
+          value: duration,
+        ),
+        AttributeCellData(
+          icon: AppIcons.translate,
+          label: l10n.scheduleAttrLanguage,
+          value: language,
+        ),
+        AttributeCellData(
+          icon: AppIcons.calendarToday,
+          label: l10n.scheduleAttrDate,
+          value: dateLabel,
+        ),
+        AttributeCellData(
+          icon: AppIcons.category,
+          label: l10n.scheduleAttrType,
+          value: typeLabel,
+        ),
+      ],
     );
   }
 }

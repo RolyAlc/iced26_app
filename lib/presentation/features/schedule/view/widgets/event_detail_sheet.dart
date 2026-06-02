@@ -15,7 +15,7 @@ import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 import 'package:iced26/presentation/shared/models/icon_color_style.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
-import 'package:iced26/presentation/shared/widgets/attribute_cell.dart';
+import 'package:iced26/presentation/shared/widgets/event_attributes_card.dart';
 import 'package:iced26/presentation/shared/widgets/event_status_chip.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_detail_sheet.dart';
@@ -142,57 +142,29 @@ class _EventAttributesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.m),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(AppRadius.m),
-      ),
-      child: Column(
-        children: [
-          _buildAttributeRow(
-            AttributeCell(
-              icon: AppIcons.accessTime,
-              label: l10n.scheduleAttrTime,
-              value: event.filterTime ?? EventFormatter.noTime,
-            ),
-            AttributeCell(
-              icon: AppIcons.meetingRoom,
-              label: l10n.scheduleAttrRoom,
-              value: event.roomId ?? l10n.scheduleRoomTba,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
-            child: Divider(
-              height: 1,
-              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2),
-            ),
-          ),
-          _buildAttributeRow(
-            AttributeCell(
-              icon: AppIcons.duration,
-              label: l10n.scheduleAttrDuration,
-              value: duration ?? EventFormatter.noValue,
-            ),
-            AttributeCell(
-              icon: AppIcons.translate,
-              label: l10n.scheduleAttrLanguage,
-              value: event.defaultLang?.toUpperCase() ?? EventFormatter.noValue,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAttributeRow(Widget left, Widget right) {
-    return Row(
-      children: [
-        Expanded(child: left),
-        Expanded(child: right),
+    return EventAttributesCard(
+      cells: [
+        AttributeCellData(
+          icon: AppIcons.accessTime,
+          label: l10n.scheduleAttrTime,
+          value: event.filterTime ?? EventFormatter.noTime,
+        ),
+        AttributeCellData(
+          icon: AppIcons.meetingRoom,
+          label: l10n.scheduleAttrRoom,
+          value: event.roomId ?? l10n.scheduleRoomTba,
+        ),
+        AttributeCellData(
+          icon: AppIcons.duration,
+          label: l10n.scheduleAttrDuration,
+          value: duration ?? EventFormatter.noValue,
+        ),
+        AttributeCellData(
+          icon: AppIcons.translate,
+          label: l10n.scheduleAttrLanguage,
+          value: event.defaultLang?.toUpperCase() ?? EventFormatter.noValue,
+        ),
       ],
     );
   }
