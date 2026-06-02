@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
+import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/widgets/presentation_detail_ui_parts.dart';
@@ -13,6 +15,7 @@ import 'package:iced26/presentation/features/schedule/view/widgets/presentation_
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/app_button.dart';
+import 'package:iced26/presentation/shared/widgets/attribute_cell.dart';
 
 const _kSpeakersCollapseThreshold = 3;
 
@@ -86,8 +89,7 @@ class _PresentationTitle extends StatelessWidget {
   }
 }
 
-// chips compactos para no competir visualmente con el título principal.
-// ConsumerWidget para resolver el nombre de sala via sessionBlockId → allSessionBlocksIndex → allRoomsIndex.
+// ConsumerWidget para resolver sala y bloque via sessionBlockId → allSessionBlocksIndex → allRoomsIndex.
 class _PresentationMetadata extends ConsumerWidget {
   const _PresentationMetadata({required this.talk});
   final Event talk;
@@ -96,37 +98,161 @@ class _PresentationMetadata extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
-    final blocksIndex = ref.watch(allSessionBlocksIndexProvider).value ?? {};
-    final roomsIndex = ref.watch(allRoomsIndexProvider).value ?? {};
+    final blocksAsync = ref.watch(allSessionBlocksIndexProvider);
+    final roomsAsync = ref.watch(allRoomsIndexProvider);
 
+    if (blocksAsync.isLoading || roomsAsync.isLoading) {
+      return const SizedBox(
+        height: 20,
+        child: LinearProgressIndicator(minHeight: 2),
+      );
+    }
+
+    final blocksIndex = blocksAsync.value ?? {};
+    final roomsIndex = roomsAsync.value ?? {};
     final block = blocksIndex[talk.sessionId];
-    final timeRange = DateHelper.formatTimeRange(
-      block?.startDate ?? talk.startDate,
-      block?.endDate ?? talk.endDate,
-    );
+    final startDate = block?.startDate ?? talk.startDate;
+    final endDate = block?.endDate ?? talk.endDate;
+    final timeRange = DateHelper.formatTimeRange(startDate, endDate);
+    final timeLabel = timeRange.isNotEmpty ? timeRange : EventFormatter.noTime;
+    final dateLabel = startDate != null
+        ? DateHelper.formatDayLabel(startDate, locale)
+        : EventFormatter.noValue;
     final roomName = block != null
         ? roomsIndex[block.roomId]?.name.resolve(locale)
         : null;
+    final duration = talk.durationMin != null
+        ? l10n.scheduleDetailDuration(talk.durationMin!)
+        : EventFormatter.noValue;
 
-    return Wrap(
-      spacing: AppSpacing.s,
-      runSpacing: AppSpacing.xs,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (talk.track != null)
-          PresentationChip(
-            label: l10n.scheduleDetailTrack(talk.track!),
-            primary: true,
+        if (talk.number != null || talk.track != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Wrap(
+              spacing: AppSpacing.s,
+              runSpacing: AppSpacing.xs,
+              children: [
+                if (talk.number != null)
+                  PresentationChip(label: '#${talk.number!}'),
+                if (talk.track != null)
+                  PresentationChip(
+                    label: l10n.scheduleDetailTrack(talk.track!),
+                    primary: true,
+                  ),
+              ],
+            ),
           ),
-        if (timeRange.isNotEmpty)
-          PresentationChip(label: timeRange, icon: AppIcons.time),
-        if (talk.durationMin != null)
-          PresentationChip(
-            label: l10n.scheduleDetailDuration(talk.durationMin!),
-            icon: AppIcons.duration,
-          ),
-        if (roomName != null)
-          PresentationChip(label: roomName, icon: AppIcons.meetingRoom),
+        _PresentationAttributesGrid(
+          timeLabel: timeLabel,
+          roomName: roomName ?? l10n.scheduleRoomTba,
+          duration: duration,
+          language: talk.defaultLang?.toUpperCase() ?? EventFormatter.noValue,
+          dateLabel: dateLabel,
+          typeLabel: talk.type.label,
+        ),
       ],
+    );
+  }
+}
+
+class _PresentationAttributesGrid extends StatelessWidget {
+  const _PresentationAttributesGrid({
+    required this.timeLabel,
+    required this.roomName,
+    required this.duration,
+    required this.language,
+    required this.dateLabel,
+    required this.typeLabel,
+  });
+
+  final String timeLabel;
+  final String roomName;
+  final String duration;
+  final String language;
+  final String dateLabel;
+  final String typeLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final divider = Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
+      child: Divider(
+        height: 1,
+        color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2),
+      ),
+    );
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.m),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(AppRadius.m),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: AttributeCell(
+                  icon: AppIcons.accessTime,
+                  label: l10n.scheduleAttrTime,
+                  value: timeLabel,
+                ),
+              ),
+              Expanded(
+                child: AttributeCell(
+                  icon: AppIcons.meetingRoom,
+                  label: l10n.scheduleAttrRoom,
+                  value: roomName,
+                ),
+              ),
+            ],
+          ),
+          divider,
+          Row(
+            children: [
+              Expanded(
+                child: AttributeCell(
+                  icon: AppIcons.duration,
+                  label: l10n.scheduleAttrDuration,
+                  value: duration,
+                ),
+              ),
+              Expanded(
+                child: AttributeCell(
+                  icon: AppIcons.translate,
+                  label: l10n.scheduleAttrLanguage,
+                  value: language,
+                ),
+              ),
+            ],
+          ),
+          divider,
+          Row(
+            children: [
+              Expanded(
+                child: AttributeCell(
+                  icon: AppIcons.calendarToday,
+                  label: l10n.scheduleAttrDate,
+                  value: dateLabel,
+                ),
+              ),
+              Expanded(
+                child: AttributeCell(
+                  icon: AppIcons.category,
+                  label: l10n.scheduleAttrType,
+                  value: typeLabel,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -139,14 +265,26 @@ class _PresentationSpeakersSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final people = ref.watch(allPeopleIndexProvider).value ?? {};
-    final presentationsByPerson =
-        ref.watch(presentationsByPersonIdProvider).value ?? {};
+    final peopleAsync = ref.watch(allPeopleIndexProvider);
+    final presentationsAsync = ref.watch(presentationsByPersonIdProvider);
+
+    if (peopleAsync.isLoading || presentationsAsync.isLoading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.m),
+        child: Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      );
+    }
 
     return PresentationSpeakerList(
       speakers: speakers,
-      people: people,
-      presentationsByPerson: presentationsByPerson,
+      people: peopleAsync.value ?? {},
+      presentationsByPerson: presentationsAsync.value ?? {},
     );
   }
 }
@@ -172,12 +310,18 @@ class _PresentationAbstractSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.s),
-        Text(
-          abstract_,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-            height: 1.5,
-          ),
+        Html(
+          data: abstract_,
+          style: {
+            'body': Style(
+              margin: Margins.zero,
+              padding: HtmlPaddings.zero,
+              fontSize: FontSize(theme.textTheme.bodyMedium?.fontSize ?? 14),
+              color: theme.colorScheme.onSurfaceVariant,
+              lineHeight: const LineHeight(1.5),
+            ),
+            'p': Style(margin: Margins.only(bottom: 8)),
+          },
         ),
       ],
     );

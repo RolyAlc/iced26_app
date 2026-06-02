@@ -4,9 +4,10 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
+import 'package:iced26/presentation/shared/helpers/event_sheet_router.dart';
 import 'package:iced26/presentation/shared/widgets/app_bottom_sheet.dart';
 import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Sheet genérico de ponente — reutilizable desde cualquier punto de entrada de la app.
 void showSpeakerDetail(BuildContext context, Person person, List<Event> talks) {
@@ -32,6 +33,8 @@ class _SpeakerDetailBody extends StatelessWidget {
         _SpeakerHeader(person: person),
         if (person.bio != null && person.bio!.isNotEmpty)
           _SpeakerBio(bio: person.bio!),
+        if (person.email != null || person.webPage != null)
+          _SpeakerLinks(email: person.email, webPage: person.webPage),
         if (talks.isNotEmpty) _SpeakerPresentationList(talks: talks),
         const SizedBox(height: AppSpacing.l),
       ],
@@ -73,6 +76,13 @@ class _SpeakerHeader extends StatelessWidget {
                     color: colors.onSurfaceVariant,
                   ),
                 ),
+              if (person.country != null)
+                Text(
+                  person.country!,
+                  style: textTheme.labelSmall?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
               if (person.title != null)
                 Text(
                   person.title!,
@@ -106,6 +116,58 @@ class _SpeakerBio extends StatelessWidget {
           color: theme.colorScheme.onSurfaceVariant,
           height: 1.5,
         ),
+      ),
+    );
+  }
+}
+
+class _SpeakerLinks extends StatelessWidget {
+  const _SpeakerLinks({this.email, this.webPage});
+
+  final String? email;
+  final String? webPage;
+
+  Future<void> _open(Uri uri) async {
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.m),
+      child: Wrap(
+        spacing: AppSpacing.s,
+        runSpacing: AppSpacing.s,
+        children: [
+          if (email != null)
+            OutlinedButton.icon(
+              onPressed: () {
+                _open(Uri(scheme: 'mailto', path: email));
+              },
+              icon: const Icon(AppIcons.email, size: 18),
+              label: const Text('Email'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: theme.colorScheme.primary,
+                side: BorderSide(color: theme.colorScheme.outline),
+                textStyle: theme.textTheme.labelMedium,
+              ),
+            ),
+          if (webPage != null)
+            OutlinedButton.icon(
+              onPressed: () {
+                final uri = Uri.tryParse(webPage!);
+                if (uri != null) _open(uri);
+              },
+              icon: const Icon(AppIcons.language, size: 18),
+              label: const Text('Website'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: theme.colorScheme.primary,
+                side: BorderSide(color: theme.colorScheme.outline),
+                textStyle: theme.textTheme.labelMedium,
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -157,7 +219,7 @@ class _PresentationRow extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        showPresentationDetail(context, talk);
+        showEventSheet(context, talk);
       },
       borderRadius: BorderRadius.circular(AppRadius.s),
       child: Padding(

@@ -107,6 +107,7 @@ abstract final class AppIcons {
   static const translate = Icons.translate_rounded;
   static const smartphone = Icons.smartphone_rounded;
   static const language = Icons.language_rounded;
+  static const email = Icons.email_outlined;
 
   // --- Helpers ---
   static final Map<ThemeMode, IconData> _icons = {

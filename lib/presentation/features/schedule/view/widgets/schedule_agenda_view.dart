@@ -6,7 +6,7 @@ import 'package:iced26/domain/logic/event_formatter.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
+import 'package:iced26/presentation/shared/helpers/event_sheet_router.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/session_slot_block.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
@@ -149,7 +149,7 @@ class _SingleEventCard extends StatelessWidget {
     final typeStyle = event.type.style(colors);
 
     return InkWell(
-      onTap: () => showEventDetail(context, event),
+      onTap: () => showEventSheet(context, event),
       borderRadius: BorderRadius.circular(AppRadius.m),
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.m),

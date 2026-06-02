@@ -70,6 +70,7 @@ class FilterPanelData {
     final durations = events
         .map((e) => e.durationMin)
         .whereType<int>()
+        .where((d) => d > 0)
         .toSet()
         .toList();
 

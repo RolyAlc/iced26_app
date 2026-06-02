@@ -34,7 +34,6 @@ const _kUnknownRoom = 'Unknown Room';
 final _kMaxDate = DateTime(9999);
 final _kMinDate = DateTime(0);
 
-// Tipos que tienen valor de discovery para el asistente al congreso.
 const _kDiscoverableTypes = {
   EventType.keynote,
   EventType.workshop,
@@ -42,188 +41,6 @@ const _kDiscoverableTypes = {
   EventType.internationalPanel,
   EventType.presidents,
 };
-
-// Asigna una prioridad numérica al estado del evento para ordenación.
-// Menor número = mayor relevancia en la UI.
-int _statusPriority(EventStatus s) {
-  return switch (s) {
-    EventStatus.live => 0,
-    EventStatus.next => 1,
-    EventStatus.ended => 2,
-  };
-}
-
-/// Filtra y ordena los eventos que NO han terminado (live o next).
-List<Event> _sortLiveAndNextEvents(List<Event> events, DateTime now) {
-  final liveOrNext = events.where((e) {
-    return EventStatusResolver.resolve(e, now: now) != EventStatus.ended;
-  }).toList();
-
-  liveOrNext.sort((a, b) {
-    final pa = _statusPriority(EventStatusResolver.resolve(a, now: now));
-    final pb = _statusPriority(EventStatusResolver.resolve(b, now: now));
-
-    if (pa != pb) {
-      return pa.compareTo(pb);
-    }
-    return (a.startDate ?? _kMaxDate).compareTo(b.startDate ?? _kMaxDate);
-  });
-
-  return liveOrNext;
-}
-
-/// Ordena todos los [events] en orden cronológico inverso (post-conferencia).
-List<Event> _sortByDateDescending(List<Event> events) {
-  final sorted = [...events];
-  sorted.sort((a, b) {
-    return (b.startDate ?? _kMinDate).compareTo(a.startDate ?? _kMinDate);
-  });
-  return sorted;
-}
-
-/// Devuelve los eventos ordenados por relevancia: live → next → ended.
-List<Event> _sortedByRelevance(List<Event> events) {
-  final now = DateTime.now();
-  final liveOrNext = _sortLiveAndNextEvents(events, now);
-
-  if (liveOrNext.isNotEmpty) {
-    return liveOrNext;
-  }
-
-  return _sortByDateDescending(events);
-}
-
-/// Construye un mapa [id → Person] para búsquedas eficientes por ID.
-Map<String, Person> _buildPeopleIndex(List<Person> allPeople) {
-  return {for (final p in allPeople) p.id: p};
-}
-
-/// Devuelve la [photoUrl] del primer speaker con foto válida, o null.
-String? _resolveSpeakerPhoto(Event event, Map<String, Person> peopleById) {
-  for (final id in event.speakers.map((s) => s.personId)) {
-    final photoUrl = peopleById[id]?.photoUrl;
-    if (photoUrl != null && photoUrl.isNotEmpty) {
-      return photoUrl;
-    }
-  }
-  return null;
-}
-
-/// Devuelve el nombre de la sala de [event] buscando en [allRooms].
-String _resolveRoomName(Event event, List<Room> allRooms, String locale) {
-  final room = allRooms.firstWhereOrNull((r) => r.id == event.roomId);
-  return room?.name.resolve(locale) ?? _kUnknownRoom;
-}
-
-/// Construye la lista de [EventUIModel] para los eventos destacados.
-List<EventUIModel> _buildFeaturedEvents({
-  required List<Event> allEvents,
-  required List<Room> allRooms,
-  required Map<String, Person> peopleById,
-  required String locale,
-}) {
-  final discoverableEvents = [
-    for (final e in allEvents)
-      if (_kDiscoverableTypes.contains(e.type)) e,
-  ];
-  final topEvents = _sortedByRelevance(
-    discoverableEvents,
-  ).take(_kMaxFeaturedEvents);
-  return topEvents.map((event) {
-    final roomName = _resolveRoomName(event, allRooms, locale);
-    final imageUrl = _resolveSpeakerPhoto(event, peopleById);
-    return EventUIMapper.fromEntity(event, roomName, imageUrl: imageUrl);
-  }).toList();
-}
-
-/// Construye los [SessionUIModel] que un speaker tiene en los eventos keynote.
-List<SessionUIModel> _buildSpeakerSessions({
-  required Person speaker,
-  required List<Event> keynoteEvents,
-  required String locale,
-}) {
-  return keynoteEvents
-      .where((e) => e.speakers.any((s) => s.personId == speaker.id))
-      .map(
-        (e) => SessionUIModel(
-          type: e.type,
-          title: e.title.resolve(locale),
-          formattedDateTime: e.formattedDateTime,
-          event: e,
-        ),
-      )
-      .toList();
-}
-
-/// Construye el [KeynoteSpeakerUIModel] para un [speaker] dado.
-KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
-  required Person speaker,
-  required List<Event> keynoteEvents,
-  required List<Event> keynoteTalks,
-  required DateTime today,
-  required String locale,
-}) {
-  final talk = keynoteTalks.firstWhereOrNull(
-    (event) => event.speakers.any((s) => s.personId == speaker.id),
-  );
-
-  final events = _buildSpeakerSessions(
-    speaker: speaker,
-    keynoteEvents: keynoteEvents,
-    locale: locale,
-  );
-
-  final isPresentingToday = events.any((s) {
-    final d = s.event.startDate;
-    return d != null && DateHelper.isSameDay(d, today);
-  });
-
-  return KeynoteSpeakerUIModel(
-    id: speaker.id,
-    name: speaker.name.resolve(locale),
-    institution: speaker.institution,
-    photoUrl: speaker.photoUrl,
-    events: events,
-    talk: talk,
-    isPresentingToday: isPresentingToday,
-  );
-}
-
-/// Construye la lista de [KeynoteSpeakerUIModel] para la pantalla Home.
-List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
-  required List<Event> keynoteTalks,
-  required List<Event> allEvents,
-  required List<Person> allPeople,
-  required DateTime today,
-  required String locale,
-}) {
-  final peopleById = _buildPeopleIndex(allPeople);
-  final keynoteEvents = allEvents
-      .where((e) => e.type == EventType.keynote)
-      .toList();
-
-  final speakerIds = keynoteTalks
-      .expand((event) => event.speakers.map((s) => s.personId))
-      .toSet();
-
-  final speakers = speakerIds.map((id) => peopleById[id]).whereType<Person>();
-
-  return [
-    for (final speaker in speakers)
-      _buildKeynoteSpeakerModel(
-        speaker: speaker,
-        keynoteEvents: keynoteEvents,
-        keynoteTalks: keynoteTalks,
-        today: today,
-        locale: locale,
-      ),
-  ];
-}
-
-/// Construye la lista de [Category] a partir de los subtipos del evento.
-List<Category> _buildCategories(List<SubmissionType> subTypes, String locale) {
-  return subTypes.map((st) => Category(name: st.name.resolve(locale))).toList();
-}
 
 /// ViewModel para la pantalla Home.
 @riverpod
@@ -282,5 +99,172 @@ class HomeViewModel extends _$HomeViewModel {
       headerInfoLabel: _kWelcomeLabel,
       today: now,
     );
+  }
+
+  static int _statusPriority(EventStatus s) {
+    return switch (s) {
+      EventStatus.live => 0,
+      EventStatus.next => 1,
+      EventStatus.ended => 2,
+    };
+  }
+
+  static List<Event> _sortLiveAndNextEvents(List<Event> events, DateTime now) {
+    final liveOrNext = events.where((e) {
+      return EventStatusResolver.resolve(e, now: now) != EventStatus.ended;
+    }).toList();
+
+    liveOrNext.sort((a, b) {
+      final pa = _statusPriority(EventStatusResolver.resolve(a, now: now));
+      final pb = _statusPriority(EventStatusResolver.resolve(b, now: now));
+      if (pa != pb) return pa.compareTo(pb);
+      return (a.startDate ?? _kMaxDate).compareTo(b.startDate ?? _kMaxDate);
+    });
+
+    return liveOrNext;
+  }
+
+  static List<Event> _sortByDateDescending(List<Event> events) {
+    final sorted = [...events];
+    sorted.sort(
+      (a, b) => (b.startDate ?? _kMinDate).compareTo(a.startDate ?? _kMinDate),
+    );
+    return sorted;
+  }
+
+  static List<Event> _sortedByRelevance(List<Event> events) {
+    final now = DateTime.now();
+    final liveOrNext = _sortLiveAndNextEvents(events, now);
+    return liveOrNext.isNotEmpty ? liveOrNext : _sortByDateDescending(events);
+  }
+
+  static Map<String, Person> _buildPeopleIndex(List<Person> allPeople) {
+    return {for (final p in allPeople) p.id: p};
+  }
+
+  static String? _resolveSpeakerPhoto(
+    Event event,
+    Map<String, Person> peopleById,
+  ) {
+    for (final id in event.speakers.map((s) => s.personId)) {
+      final photoUrl = peopleById[id]?.photoUrl;
+      if (photoUrl != null && photoUrl.isNotEmpty) return photoUrl;
+    }
+    return null;
+  }
+
+  static String _resolveRoomName(
+    Event event,
+    List<Room> allRooms,
+    String locale,
+  ) {
+    final room = allRooms.firstWhereOrNull((r) => r.id == event.roomId);
+    return room?.name.resolve(locale) ?? _kUnknownRoom;
+  }
+
+  static List<EventUIModel> _buildFeaturedEvents({
+    required List<Event> allEvents,
+    required List<Room> allRooms,
+    required Map<String, Person> peopleById,
+    required String locale,
+  }) {
+    final discoverableEvents = [
+      for (final e in allEvents)
+        if (_kDiscoverableTypes.contains(e.type)) e,
+    ];
+    final topEvents = _sortedByRelevance(
+      discoverableEvents,
+    ).take(_kMaxFeaturedEvents);
+    return topEvents.map((event) {
+      final roomName = _resolveRoomName(event, allRooms, locale);
+      final imageUrl = _resolveSpeakerPhoto(event, peopleById);
+      return EventUIMapper.fromEntity(event, roomName, imageUrl: imageUrl);
+    }).toList();
+  }
+
+  static List<SessionUIModel> _buildSpeakerSessions({
+    required Person speaker,
+    required List<Event> keynoteEvents,
+    required String locale,
+  }) {
+    return keynoteEvents
+        .where((e) => e.speakers.any((s) => s.personId == speaker.id))
+        .map(
+          (e) => SessionUIModel(
+            type: e.type,
+            title: e.title.resolve(locale),
+            formattedDateTime: e.formattedDateTime,
+            event: e,
+          ),
+        )
+        .toList();
+  }
+
+  static KeynoteSpeakerUIModel _buildKeynoteSpeakerModel({
+    required Person speaker,
+    required List<Event> keynoteEvents,
+    required List<Event> keynoteTalks,
+    required DateTime today,
+    required String locale,
+  }) {
+    final talk = keynoteTalks.firstWhereOrNull(
+      (event) => event.speakers.any((s) => s.personId == speaker.id),
+    );
+    final events = _buildSpeakerSessions(
+      speaker: speaker,
+      keynoteEvents: keynoteEvents,
+      locale: locale,
+    );
+    final isPresentingToday = events.any((s) {
+      final d = s.event.startDate;
+      return d != null && DateHelper.isSameDay(d, today);
+    });
+
+    return KeynoteSpeakerUIModel(
+      id: speaker.id,
+      name: speaker.name.resolve(locale),
+      institution: speaker.institution,
+      photoUrl: speaker.photoUrl,
+      events: events,
+      talk: talk,
+      isPresentingToday: isPresentingToday,
+    );
+  }
+
+  static List<KeynoteSpeakerUIModel> _buildKeynoteSpeakers({
+    required List<Event> keynoteTalks,
+    required List<Event> allEvents,
+    required List<Person> allPeople,
+    required DateTime today,
+    required String locale,
+  }) {
+    final peopleById = _buildPeopleIndex(allPeople);
+    final keynoteEvents = allEvents
+        .where((e) => e.type == EventType.keynote)
+        .toList();
+    final speakerIds = keynoteTalks
+        .expand((event) => event.speakers.map((s) => s.personId))
+        .toSet();
+    final speakers = speakerIds.map((id) => peopleById[id]).whereType<Person>();
+
+    return [
+      for (final speaker in speakers)
+        _buildKeynoteSpeakerModel(
+          speaker: speaker,
+          keynoteEvents: keynoteEvents,
+          keynoteTalks: keynoteTalks,
+          today: today,
+          locale: locale,
+        ),
+    ];
+  }
+
+  static List<Category> _buildCategories(
+    List<SubmissionType> subTypes,
+    String locale,
+  ) {
+    return subTypes
+        .map((st) => Category(name: st.name.resolve(locale)))
+        .toList();
   }
 }

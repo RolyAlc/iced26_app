@@ -8,7 +8,7 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/logic/event_status_resolver.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
+import 'package:iced26/presentation/shared/helpers/event_sheet_router.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
 import 'package:iced26/presentation/shared/helpers/event_type_style.dart';
 import 'package:iced26/presentation/shared/widgets/app_card.dart';
@@ -68,7 +68,7 @@ class EventCard extends ConsumerWidget {
 
   /// Acción al pulsar la card
   void _onTap(BuildContext context) {
-    showEventDetail(context, event);
+    showEventSheet(context, event);
   }
 }
 

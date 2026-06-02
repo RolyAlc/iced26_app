@@ -8,7 +8,7 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/presentation_detail/presentation_detail_sheet.dart';
+import 'package:iced26/presentation/shared/helpers/event_sheet_router.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_card_row.dart';
 
 const _kBookmarkIconSize = 20.0;
@@ -100,7 +100,7 @@ class SlotPresentationTile extends ConsumerWidget {
     return Column(
       children: [
         InkWell(
-          onTap: () => showPresentationDetail(context, talk),
+          onTap: () => showEventSheet(context, talk),
           child: _buildTileContent(theme, title, speakerNames, isFavorite),
         ),
         Divider(

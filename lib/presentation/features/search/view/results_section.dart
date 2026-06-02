@@ -9,7 +9,7 @@ import 'package:iced26/presentation/app/state/recently_viewed_people_provider.da
 import 'package:iced26/presentation/app/state/recently_viewed_provider.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/event_detail_sheet.dart';
+import 'package:iced26/presentation/shared/helpers/event_sheet_router.dart';
 import 'package:iced26/presentation/features/search/view/recent_searches_section.dart';
 import 'package:iced26/presentation/features/search/view/recently_viewed_people_section.dart';
 import 'package:iced26/presentation/features/search/view/recently_viewed_section.dart';
@@ -73,7 +73,7 @@ class ResultsSection extends ConsumerWidget {
                 onEventTap: (event) {
                   // Re-sube al tope del historial al volver a visitar.
                   ref.read(recentlyViewedProvider.notifier).add(event.id);
-                  showEventDetail(context, event);
+                  showEventSheet(context, event);
                 },
               ),
             if (recentlyViewedPeople.isNotEmpty)
@@ -102,7 +102,7 @@ class ResultsSection extends ConsumerWidget {
                 ref.read(recentSearchesProvider.notifier).add(state.query);
               }
               ref.read(recentlyViewedProvider.notifier).add(event.id);
-              showEventDetail(context, event);
+              showEventSheet(context, event);
             },
             onPersonTap: (person) {
               if (state.query.isNotEmpty) {
