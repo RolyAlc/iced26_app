@@ -112,6 +112,9 @@ class SessionBlocks extends Table {
   TextColumn get submissionFormatsJson => text().nullable()();
   TextColumn get defaultLang => text().nullable()();
   TextColumn get externalRef => text().nullable()();
+  IntColumn get number => integer().nullable()();
+  TextColumn get description => text().nullable()();
+  TextColumn get chairsJson => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};

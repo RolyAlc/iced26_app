@@ -130,7 +130,12 @@ class ConferenceDataSeeder {
                 ? null
                 : jsonEncode(
                     e.speakers
-                        .map((s) => {'personId': s.personId, 'role': s.role})
+                        .map(
+                          (s) => {
+                            'personId': s.personId,
+                            'isPresenter': s.isPresenter,
+                          },
+                        )
                         .toList(),
                   ),
           ),
@@ -177,6 +182,9 @@ class ConferenceDataSeeder {
           ),
           defaultLang: Value(sb.defaultLang),
           externalRef: Value(sb.externalRef),
+          number: Value(sb.number),
+          description: Value(sb.description),
+          chairsJson: Value(sb.chairs.isEmpty ? null : jsonEncode(sb.chairs)),
         ),
       ),
       mode: InsertMode.insertOrReplace,
