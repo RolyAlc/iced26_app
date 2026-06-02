@@ -59,7 +59,7 @@ class EventDTO {
           _buildFilterDate(start, json['date']?.toString()),
       filterTime:
           json['filterTime']?.toString() ?? _buildFilterTime(start, end),
-      speakers: _mapSpeakers(json['speakers']),
+      speakers: _mapSpeakers(json['speakers'] ?? json['authors']),
       slotLabel: json['slotLabel']?.toString(),
       parentId: json['parentId']?.toString(),
       sessionId:
@@ -142,7 +142,8 @@ class EventDTO {
         .whereType<Map<String, dynamic>>()
         .map(
           (s) => SpeakerEntry(
-            personId: s['personId']?.toString() ?? '',
+            personId:
+                s['personId']?.toString() ?? s['id']?.toString() ?? '',
             role: s['role']?.toString(),
           ),
         )

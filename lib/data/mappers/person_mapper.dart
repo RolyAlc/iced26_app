@@ -1,6 +1,7 @@
 import 'package:iced26/core/extensions/map_extensions.dart';
 import 'package:iced26/data/mappers/i18n_mapper.dart';
 import 'package:iced26/data/sources/local/database/app_database.dart';
+import 'package:iced26/domain/entities/i18n_str.dart';
 import 'package:iced26/domain/entities/person.dart';
 
 /// Mapper para [Person]
@@ -12,14 +13,29 @@ abstract final class PersonMapper {
         ? 'assets/$photoPath'
         : json.getStringOrNull('photoUrl');
 
+    final firstName = json.getStringOrNull('firstName');
+    final lastName = json.getStringOrNull('lastName');
+    final I18nStr name;
+    if (firstName != null || lastName != null) {
+      name = I18nMapper.fromRaw(
+        [firstName, lastName].whereType<String>().join(' '),
+      );
+    } else {
+      name = I18nMapper.fromRaw(json['name'] ?? json['fullName']);
+    }
+
     return Person(
       id: json.getString('id'),
-      name: I18nMapper.fromRaw(json['name'] ?? json['fullName']),
+      name: name,
       country: json.getStringOrNull('country'),
       title: json.getStringOrNull('title'),
-      institution: json.getStringOrNull('institution'),
+      institution:
+          json.getStringOrNull('affiliation') ??
+          json.getStringOrNull('institution'),
       bio: json.getStringOrNull('bio'),
       photoUrl: photoUrl,
+      email: json.getStringOrNull('email'),
+      webPage: json.getStringOrNull('webPage'),
     );
   }
 
@@ -33,6 +49,8 @@ abstract final class PersonMapper {
       institution: data.institution,
       bio: data.bio,
       photoUrl: data.photoUrl,
+      email: data.email,
+      webPage: data.webPage,
     );
   }
 }

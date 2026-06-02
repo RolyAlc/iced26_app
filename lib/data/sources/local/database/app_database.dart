@@ -158,6 +158,8 @@ class People extends Table {
   TextColumn get institution => text().nullable()();
   TextColumn get bio => text().nullable()();
   TextColumn get photoUrl => text().nullable()();
+  TextColumn get email => text().nullable()();
+  TextColumn get webPage => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -230,7 +232,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 16;
+  int get schemaVersion => 17;
 
   // Dos tipos de tablas con estrategias distintas:
   // - Configuración (Events, Zones…): ConfigRepositoryImpl las
@@ -287,6 +289,10 @@ class AppDatabase extends _$AppDatabase {
         );
         await customStatement('DROP TABLE IF EXISTS "presentations"');
         await customStatement('DROP TABLE IF EXISTS "saved_presentations"');
+      }
+      if (from < 17) {
+        await m.addColumn(people, people.email);
+        await m.addColumn(people, people.webPage);
       }
     },
   );

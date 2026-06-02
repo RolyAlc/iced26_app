@@ -230,6 +230,8 @@ class ConferenceDataSeeder {
           institution: Value(p.institution),
           bio: Value(p.bio),
           photoUrl: Value(p.photoUrl),
+          email: Value(p.email),
+          webPage: Value(p.webPage),
         ),
       ),
       mode: InsertMode.insertOrReplace,

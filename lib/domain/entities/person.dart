@@ -10,6 +10,8 @@ class Person {
     this.institution,
     this.bio,
     this.photoUrl,
+    this.email,
+    this.webPage,
   });
   final String id;
   final I18nStr name;
@@ -18,4 +20,6 @@ class Person {
   final String? institution;
   final String? bio;
   final String? photoUrl;
+  final String? email;
+  final String? webPage;
 }
