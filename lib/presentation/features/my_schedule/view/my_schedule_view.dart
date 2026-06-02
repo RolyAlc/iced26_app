@@ -97,14 +97,25 @@ class MyScheduleView extends ConsumerWidget {
 }
 
 /// Lista de items guardados sin [AppPage] propio, para embeber en otras pantallas.
+///
+/// [compact] elimina el top padding del primer day header — úsalo cuando no hay
+/// un título de página encima y el header de la pantalla ya provee la separación.
 class MyScheduleContent extends StatelessWidget {
-  const MyScheduleContent({super.key, required this.items});
+  const MyScheduleContent({
+    super.key,
+    required this.items,
+    this.compact = false,
+  });
 
   final List<MyScheduleDisplayItem> items;
+  final bool compact;
 
-  static Widget _buildDisplayItem(MyScheduleDisplayItem displayItem) {
+  Widget _buildDisplayItem(MyScheduleDisplayItem displayItem, bool isFirst) {
     return switch (displayItem) {
-      MyScheduleDayHeader() => _MyScheduleDayHeader(header: displayItem),
+      MyScheduleDayHeader() => _MyScheduleDayHeader(
+        header: displayItem,
+        suppressTopPadding: compact && isFirst,
+      ),
       MyScheduleRow(:final item) => _buildScheduleItem(item),
     };
   }
@@ -118,16 +129,23 @@ class MyScheduleContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [for (final item in items) _buildDisplayItem(item)],
+      children: [
+        for (int i = 0; i < items.length; i++)
+          _buildDisplayItem(items[i], i == 0),
+      ],
     );
   }
 }
 
 /// Header de sección de un día dentro de [MyScheduleContent].
 class _MyScheduleDayHeader extends StatelessWidget {
-  const _MyScheduleDayHeader({required this.header});
+  const _MyScheduleDayHeader({
+    required this.header,
+    this.suppressTopPadding = false,
+  });
 
   final MyScheduleDayHeader header;
+  final bool suppressTopPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +156,10 @@ class _MyScheduleDayHeader extends StatelessWidget {
         : l10n.myScheduleUnscheduled;
 
     return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.l, bottom: AppSpacing.s),
+      padding: EdgeInsets.only(
+        top: suppressTopPadding ? AppSpacing.s : AppSpacing.l,
+        bottom: AppSpacing.s,
+      ),
       child: Row(
         children: [
           Text(

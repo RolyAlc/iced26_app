@@ -34,6 +34,10 @@ class ScheduleHeader extends ConsumerWidget {
     final isLandscape =
         MediaQuery.orientationOf(context) == Orientation.landscape;
 
+    if (isLandscape) {
+      return _buildLandscapeRow(context, ref, horizontal, selectedCategory);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -42,7 +46,7 @@ class ScheduleHeader extends ConsumerWidget {
           padding: EdgeInsets.only(
             left: horizontal,
             right: horizontal,
-            top: isLandscape ? AppSpacing.m : AppSpacing.xl,
+            top: AppSpacing.xl,
           ),
           child: ScheduleTopTabBar(
             selected: topTab,
@@ -61,7 +65,6 @@ class ScheduleHeader extends ConsumerWidget {
                   categories: categories,
                   tabController: tabController,
                   selectedCategory: selectedCategory,
-                  isLandscape: isLandscape,
                   onCategorySelect: (cat) {
                     ref
                         .read(selectedScheduleCategoryProvider.notifier)
@@ -75,16 +78,108 @@ class ScheduleHeader extends ConsumerWidget {
       ],
     );
   }
+
+  Widget _buildLandscapeRow(
+    BuildContext context,
+    WidgetRef ref,
+    double horizontal,
+    EventType? selectedCategory,
+  ) {
+    final colors = Theme.of(context).colorScheme;
+    final showScheduleControls = topTab == ScheduleTab.timeline;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(
+            left: horizontal,
+            right: horizontal,
+            top: AppSpacing.s,
+          ),
+          child: Row(
+            children: [
+              ScheduleTopTabBar(
+                selected: topTab,
+                compact: true,
+                onSelect: (tab) {
+                  ref.read(scheduleTopTabProvider.notifier).select(tab);
+                },
+              ),
+              AnimatedOpacity(
+                duration: AppDuration.fast,
+                opacity: showScheduleControls ? 1.0 : 0.0,
+                child: IgnorePointer(
+                  ignoring: !showScheduleControls,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(width: AppSpacing.m),
+                      SizedBox(
+                        height: 24,
+                        child: VerticalDivider(
+                          width: 1,
+                          color: colors.outlineVariant,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.m),
+                      if (sections.isNotEmpty)
+                        selectedCategory != null
+                            ? _ViewingAllDaysLabel(category: selectedCategory)
+                            : ScheduleDayTabBar(
+                                tabController: tabController,
+                                sections: sections,
+                                compact: true,
+                                onDaySelected: (index) {
+                                  ref
+                                      .read(selectedDayIndexProvider.notifier)
+                                      .set(index);
+                                },
+                              ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        AnimatedSize(
+          duration: AppDuration.fast,
+          curve: Curves.easeInOut,
+          child: showScheduleControls
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (categories.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      ScheduleCategoryFilterBar(
+                        categories: categories,
+                        selected: selectedCategory,
+                        onSelect: (cat) {
+                          ref
+                              .read(selectedScheduleCategoryProvider.notifier)
+                              .select(cat);
+                        },
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.s),
+                  ],
+                )
+              : const SizedBox.shrink(),
+        ),
+      ],
+    );
+  }
 }
 
-/// Contenido bajo los tabs: selector de día y filtro de categoría.
+/// Contenido bajo los tabs en portrait: selector de día y filtro de categoría.
 class _ScheduleSubHeader extends StatelessWidget {
   const _ScheduleSubHeader({
     required this.sections,
     required this.categories,
     required this.tabController,
     required this.selectedCategory,
-    required this.isLandscape,
     required this.onCategorySelect,
     required this.onDaySelected,
   });
@@ -93,19 +188,11 @@ class _ScheduleSubHeader extends StatelessWidget {
   final List<EventType> categories;
   final TabController tabController;
   final EventType? selectedCategory;
-  final bool isLandscape;
   final ValueChanged<EventType?> onCategorySelect;
   final ValueChanged<int> onDaySelected;
 
   @override
   Widget build(BuildContext context) {
-    if (isLandscape) {
-      return _buildLandscapeRow(context);
-    }
-    return _buildPortraitColumn(context);
-  }
-
-  Widget _buildPortraitColumn(BuildContext context) {
     final category = selectedCategory;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -135,41 +222,6 @@ class _ScheduleSubHeader extends StatelessWidget {
           ),
         ],
       ],
-    );
-  }
-
-  Widget _buildLandscapeRow(BuildContext context) {
-    final category = selectedCategory;
-    final horizontal = AppLayout.horizontalPadding(context);
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.s),
-      child: Row(
-        children: [
-          if (sections.isNotEmpty) ...[
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(left: horizontal),
-                child: category != null
-                    ? _ViewingAllDaysLabel(category: category)
-                    : ScheduleDayTabBar(
-                        tabController: tabController,
-                        sections: sections,
-                        onDaySelected: onDaySelected,
-                      ),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.s),
-          ],
-          if (categories.isNotEmpty)
-            Flexible(
-              child: ScheduleCategoryFilterBar(
-                categories: categories,
-                selected: selectedCategory,
-                onSelect: onCategorySelect,
-              ),
-            ),
-        ],
-      ),
     );
   }
 }

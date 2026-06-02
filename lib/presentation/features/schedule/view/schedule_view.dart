@@ -119,7 +119,11 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
       return _ContentSlot.fill(_buildMyScheduleEmpty(theme, l10n));
     }
     return _ContentSlot.scrollable(
-      _buildPaddedContent(context, MyScheduleContent(items: items)),
+      _buildPaddedContent(
+        context,
+        MyScheduleContent(items: items, compact: true),
+        topSpacing: 0,
+      ),
     );
   }
 
@@ -155,9 +159,13 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
     );
   }
 
-  List<Widget> _buildPaddedContent(BuildContext context, Widget child) {
+  List<Widget> _buildPaddedContent(
+    BuildContext context,
+    Widget child, {
+    double topSpacing = AppSpacing.m,
+  }) {
     return [
-      const SizedBox(height: AppSpacing.m),
+      SizedBox(height: topSpacing),
       Padding(
         padding: EdgeInsets.symmetric(
           horizontal: AppLayout.horizontalPadding(context),
