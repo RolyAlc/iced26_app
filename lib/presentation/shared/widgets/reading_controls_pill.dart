@@ -7,7 +7,8 @@ import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/text_size_provider.dart';
 import 'package:iced26/presentation/app/state/theme_mode_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
-import 'package:iced26/presentation/shared/utils/text_size_l10n.dart';
+import 'package:iced26/presentation/shared/widgets/text_size_selector.dart';
+import 'package:iced26/presentation/shared/widgets/theme_mode_selector.dart';
 
 const double _kFabIconSize = 22.0;
 const double _kFabButtonPaddingH = 18.0;
@@ -32,6 +33,7 @@ class ReadingControlsFab extends ConsumerWidget {
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
       builder: (_) => const _ReadingControlsSheet(),
     );
   }
@@ -176,54 +178,18 @@ class _ReadingControlsSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildTextSizeControl(
-    WidgetRef ref,
-    TextSizePreference current,
-    AppLocalizations l10n,
-  ) {
-    return SegmentedButton<TextSizePreference>(
-      segments: [
-        for (final pref in TextSizePreference.values)
-          ButtonSegment<TextSizePreference>(
-            value: pref,
-            label: Text(pref.label),
-            tooltip: textSizeLabel(pref, l10n),
-          ),
-      ],
-      selected: {current},
-      onSelectionChanged: (selection) {
-        ref.read(textSizeProvider.notifier).setPreference(selection.first);
-      },
+  Widget _buildTextSizeControl(WidgetRef ref, TextSizePreference current) {
+    return TextSizeSelector(
+      selected: current,
+      onChanged: (pref) =>
+          ref.read(textSizeProvider.notifier).setPreference(pref),
     );
   }
 
-  Widget _buildThemeModeControl(
-    WidgetRef ref,
-    ThemeMode current,
-    AppLocalizations l10n,
-  ) {
-    return SegmentedButton<ThemeMode>(
-      segments: [
-        ButtonSegment<ThemeMode>(
-          value: ThemeMode.light,
-          icon: const Icon(AppIcons.lightTheme),
-          label: Text(l10n.settingsThemeLight),
-        ),
-        ButtonSegment<ThemeMode>(
-          value: ThemeMode.system,
-          icon: const Icon(AppIcons.systemTheme),
-          label: Text(l10n.settingsThemeSystem),
-        ),
-        ButtonSegment<ThemeMode>(
-          value: ThemeMode.dark,
-          icon: const Icon(AppIcons.darkTheme),
-          label: Text(l10n.settingsThemeDark),
-        ),
-      ],
-      selected: {current},
-      onSelectionChanged: (selection) {
-        ref.read(themeModeProvider.notifier).setMode(selection.first);
-      },
+  Widget _buildThemeModeControl(WidgetRef ref, ThemeMode current) {
+    return ThemeModeSelector(
+      selected: current,
+      onChanged: (mode) => ref.read(themeModeProvider.notifier).setMode(mode),
     );
   }
 
@@ -236,30 +202,32 @@ class _ReadingControlsSheet extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return SafeArea(
-      child: Padding(
-        // Top reducido: showDragHandle ya añade espacio visual suficiente arriba.
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.l,
-          AppSpacing.s,
-          AppSpacing.l,
-          AppSpacing.l,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSection(
-              theme,
-              l10n.settingsTextSizeTitle,
-              _buildTextSizeControl(ref, textSize, l10n),
-            ),
-            const SizedBox(height: AppSpacing.l),
-            _buildSection(
-              theme,
-              l10n.settingsThemeTitle,
-              _buildThemeModeControl(ref, themeMode, l10n),
-            ),
-          ],
+      child: SingleChildScrollView(
+        child: Padding(
+          // Top reducido: showDragHandle ya añade espacio visual suficiente arriba.
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.l,
+            AppSpacing.s,
+            AppSpacing.l,
+            AppSpacing.l,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSection(
+                theme,
+                l10n.settingsTextSizeTitle,
+                _buildTextSizeControl(ref, textSize),
+              ),
+              const SizedBox(height: AppSpacing.l),
+              _buildSection(
+                theme,
+                l10n.settingsThemeTitle,
+                _buildThemeModeControl(ref, themeMode),
+              ),
+            ],
+          ),
         ),
       ),
     );

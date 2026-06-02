@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/conference_theme_ui_model.dart';
-import 'package:iced26/presentation/shared/widgets/reading_controls_fab.dart';
+import 'package:iced26/presentation/shared/widgets/reading_controls_pill.dart';
 
 // Constants
 const _kBack = 'Back';
