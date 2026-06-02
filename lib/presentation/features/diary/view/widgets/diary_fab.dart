@@ -18,9 +18,14 @@ class DiaryFab extends ConsumerWidget {
     final selectedDate = ref.watch(selectedDiaryDateProvider);
     final navBarHeight = ref.watch(uiMetricsProvider).navBarHeight;
     final l10n = AppLocalizations.of(context)!;
-    final bottom =
-        (navBarHeight > 0 ? navBarHeight : AppLayout.navBarClearanceFallback) +
-        AppSpacing.m;
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+    final bottom = isLandscape
+        ? MediaQuery.paddingOf(context).bottom + AppSpacing.m
+        : (navBarHeight > 0
+                  ? navBarHeight
+                  : AppLayout.navBarClearanceFallback) +
+              AppSpacing.m;
 
     return Positioned(
       right: AppSpacing.l,

@@ -62,13 +62,8 @@ class DiaryEditorTitleInput extends StatelessWidget {
 
 /// Campo de texto para el contenido de la nota del diario.
 class DiaryEditorContentInput extends StatelessWidget {
-  const DiaryEditorContentInput({
-    super.key,
-    required this.controller,
-    this.autofocus = false,
-  });
+  const DiaryEditorContentInput({super.key, required this.controller});
   final TextEditingController controller;
-  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +71,6 @@ class DiaryEditorContentInput extends StatelessWidget {
 
     return TextField(
       controller: controller,
-      autofocus: autofocus,
       maxLines: _kMaxLines,
       minLines: _kMinLines,
       decoration: _editorDecoration(

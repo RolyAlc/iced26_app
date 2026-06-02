@@ -32,13 +32,12 @@ class DiaryNoteEditorSheet extends ConsumerStatefulWidget {
     required DateTime date,
     DiaryNote? existingNote,
   }) {
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (_) {
-        return DiaryNoteEditorSheet(date: date, existingNote: existingNote);
-      },
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) =>
+            DiaryNoteEditorSheet(date: date, existingNote: existingNote),
+      ),
     );
   }
 
@@ -190,17 +189,35 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final viewInsets = MediaQuery.viewInsetsOf(context);
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: _buildScrollableForm(context)),
+            _buildSaveButton(),
+          ],
+        ),
+      ),
+    );
+  }
 
+  Widget _buildSaveButton() {
+    if (MediaQuery.viewInsetsOf(context).bottom > 0) return const SizedBox.shrink();
     return Padding(
-      padding: EdgeInsets.only(bottom: viewInsets.bottom),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Flexible(child: _buildScrollableForm(context)),
-          _buildSaveButton(),
-        ],
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.l,
+        AppSpacing.s,
+        AppSpacing.l,
+        AppSpacing.l,
+      ),
+      child: AppButton(
+        onPressed: (_saving || !_canSave) ? null : _save,
+        isLoading: _saving,
+        label: _saving
+            ? AppLocalizations.of(context)!.diaryNoteEditorSaving
+            : AppLocalizations.of(context)!.diaryNoteEditorSaveNote,
+        icon: _saving ? null : AppIcons.check,
       ),
     );
   }
@@ -209,6 +226,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.l,
         AppSpacing.l,
@@ -240,10 +258,7 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
             color: colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: AppSpacing.s),
-          DiaryEditorContentInput(
-            controller: _contentController,
-            autofocus: !_isEditing,
-          ),
+          DiaryEditorContentInput(controller: _contentController),
           const SizedBox(height: AppSpacing.l),
           DiaryEditorSectionLabel(
             icon: AppIcons.palette,
@@ -259,25 +274,6 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
             },
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSaveButton() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.l,
-        AppSpacing.s,
-        AppSpacing.l,
-        AppSpacing.l,
-      ),
-      child: AppButton(
-        onPressed: (_saving || !_canSave) ? null : _save,
-        isLoading: _saving,
-        label: _saving
-            ? AppLocalizations.of(context)!.diaryNoteEditorSaving
-            : AppLocalizations.of(context)!.diaryNoteEditorSaveNote,
-        icon: _saving ? null : AppIcons.check,
       ),
     );
   }
