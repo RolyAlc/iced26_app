@@ -31,6 +31,8 @@ class ScheduleHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCategory = ref.watch(selectedScheduleCategoryProvider);
     final horizontal = AppLayout.horizontalPadding(context);
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +42,7 @@ class ScheduleHeader extends ConsumerWidget {
           padding: EdgeInsets.only(
             left: horizontal,
             right: horizontal,
-            top: AppSpacing.xl,
+            top: isLandscape ? AppSpacing.m : AppSpacing.xl,
           ),
           child: ScheduleTopTabBar(
             selected: topTab,
@@ -59,6 +61,7 @@ class ScheduleHeader extends ConsumerWidget {
                   categories: categories,
                   tabController: tabController,
                   selectedCategory: selectedCategory,
+                  isLandscape: isLandscape,
                   onCategorySelect: (cat) {
                     ref
                         .read(selectedScheduleCategoryProvider.notifier)
@@ -81,6 +84,7 @@ class _ScheduleSubHeader extends StatelessWidget {
     required this.categories,
     required this.tabController,
     required this.selectedCategory,
+    required this.isLandscape,
     required this.onCategorySelect,
     required this.onDaySelected,
   });
@@ -89,11 +93,19 @@ class _ScheduleSubHeader extends StatelessWidget {
   final List<EventType> categories;
   final TabController tabController;
   final EventType? selectedCategory;
+  final bool isLandscape;
   final ValueChanged<EventType?> onCategorySelect;
   final ValueChanged<int> onDaySelected;
 
   @override
   Widget build(BuildContext context) {
+    if (isLandscape) {
+      return _buildLandscapeRow(context);
+    }
+    return _buildPortraitColumn(context);
+  }
+
+  Widget _buildPortraitColumn(BuildContext context) {
     final category = selectedCategory;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -123,6 +135,41 @@ class _ScheduleSubHeader extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+
+  Widget _buildLandscapeRow(BuildContext context) {
+    final category = selectedCategory;
+    final horizontal = AppLayout.horizontalPadding(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.s),
+      child: Row(
+        children: [
+          if (sections.isNotEmpty) ...[
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: horizontal),
+                child: category != null
+                    ? _ViewingAllDaysLabel(category: category)
+                    : ScheduleDayTabBar(
+                        tabController: tabController,
+                        sections: sections,
+                        onDaySelected: onDaySelected,
+                      ),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.s),
+          ],
+          if (categories.isNotEmpty)
+            Flexible(
+              child: ScheduleCategoryFilterBar(
+                categories: categories,
+                selected: selectedCategory,
+                onSelect: onCategorySelect,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
