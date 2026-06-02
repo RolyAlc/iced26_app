@@ -203,7 +203,9 @@ class _DiaryNoteEditorSheetState extends ConsumerState<DiaryNoteEditorSheet> {
   }
 
   Widget _buildSaveButton() {
-    if (MediaQuery.viewInsetsOf(context).bottom > 0) return const SizedBox.shrink();
+    if (MediaQuery.viewInsetsOf(context).bottom > 0) {
+      return const SizedBox.shrink();
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.l,
