@@ -151,6 +151,7 @@ class AppNavigationRail extends ConsumerWidget {
                   isAction: item.isAction,
                   showBadge: item.feature == AppFeature.diary && hasDiaryBadge,
                   showLabel: false,
+                  animate: false,
                   onTap: item.isAction
                       ? () => SmartSearchBar.open(context, searchNotifier)
                       : () => notifier.select(item.feature),
@@ -177,6 +178,7 @@ class _NavigationItem extends StatelessWidget {
     required this.showBadge,
     required this.onTap,
     this.showLabel = true,
+    this.animate = true,
   });
 
   final String label;
@@ -187,6 +189,7 @@ class _NavigationItem extends StatelessWidget {
   final bool isAction;
   final bool showBadge;
   final bool showLabel;
+  final bool animate;
   final VoidCallback onTap;
 
   Widget _buildIndicator(Color activeColor) {
@@ -194,7 +197,7 @@ class _NavigationItem extends StatelessWidget {
     final iconData = isSelected || isAction ? selectedIcon : icon;
 
     return AnimatedContainer(
-      duration: AppDuration.medium,
+      duration: animate ? AppDuration.medium : Duration.zero,
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.m,
         vertical: AppSpacing.xs,

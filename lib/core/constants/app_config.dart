@@ -8,8 +8,8 @@ abstract final class AppConfig {
   static const String welcomeLabel = 'Welcome to ICED26';
   static const String websiteUrl = 'https://iced26.es';
   static const String websiteLabel = 'iced26.es';
-  // TODO: reemplazar con la URL real de la política de privacidad
-  static const String privacyPolicyUrl = 'https://iced26.es/privacy-policy';
+  static const String privacyPolicyUrl =
+      'https://rolyalc.github.io/iced26_app/legal/privacy/';
   static const String portalApiBaseUrl = String.fromEnvironment(
     'PORTAL_API_BASE_URL',
     defaultValue: 'https://iced26-app-portal-production.up.railway.app/api',

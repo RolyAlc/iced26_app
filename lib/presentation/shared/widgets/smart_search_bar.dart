@@ -99,7 +99,7 @@ class SmartSearchBar extends ConsumerWidget {
             ),
           );
         },
-        reverseTransitionDuration: AppDuration.fast,
+
       ),
     );
   }
