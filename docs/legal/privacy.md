@@ -1,7 +1,7 @@
 ---
-version: 1.1.0
-status: borrador
-last_updated: 2026-06-02
+version: 1.1.1
+status: activo
+last_updated: 2026-06-03
 icon: lucide/shield-check
 hide:
   - toc
@@ -10,89 +10,65 @@ tags:
   - legal
 ---
 
-# Política de privacidad
+# Política de Privacidad
 
-> **Borrador - pendiente de revisión por la entidad responsable antes de publicar.**
-> La traducción al inglés se añadirá una vez aprobado este texto.
+**Aplicación ICED26 · Versión 1.1.1 · Junio 2026**:
 
-**Última actualización:** [FECHA]
+Esta aplicación no recopila, almacena ni transmite ningún dato personal. Toda la información se gestiona localmente en el dispositivo del usuario.
 
-**Entidad responsable:** [ENTIDAD_RESPONSABLE]
+## 1. Información general
 
----
+La aplicación ICED26 es una herramienta de consulta de contenido para el evento ICED 2026. Su propósito es mostrar la información del evento (ponencias, horarios, presentaciones) y permitir al usuario guardar sus sesiones favoritas de forma local en su dispositivo.
 
-ICED26 es una aplicación de apoyo al congreso ICED26. Esta política explica, de forma clara y sin tecnicismos innecesarios, cómo gestiona la app tu información.
+## 2. Datos recopilados
 
-## 1. Quién es responsable
+Esta aplicación no recopila ningún dato personal. No existe ningún sistema de registro, inicio de sesión, analítica ni telemetría.
 
-La entidad responsable de esta aplicación es **[ENTIDAD_RESPONSABLE]**.
+No se recoge ni procesa ninguno de los siguientes datos:
 
-- Contacto de privacidad: [EMAIL_PRIVACIDAD]
-- Contacto de soporte: [EMAIL_SOPORTE]
+- Nombre, correo electrónico u otros datos identificativos
+- Ubicación geográfica
+- Identificadores de dispositivo
+- Datos de uso o navegación dentro de la app
 
-## 2. Información que guardamos en tu dispositivo
+## 3. Almacenamiento local
 
-Cuando usas la app, esta puede almacenar localmente en tu dispositivo:
+Las presentaciones marcadas como favoritas se guardan exclusivamente en el almacenamiento interno del dispositivo. Estos datos nunca se envían a ningún servidor externo y únicamente son accesibles por el propio usuario.
 
-- **Sesiones favoritas** guardadas en tu agenda personal.
-- **Notas del diario** que hayas escrito durante el congreso.
-- **Búsquedas recientes** para facilitar el acceso rápido.
-- **Contenido visto recientemente** para que puedas retomarlo fácilmente.
-- **Preferencias de la app**, como el idioma o el tema visual.
+## 4. Descarga de datos del evento
 
-Esta información no sale de tu dispositivo. No la subimos a ningún servidor ni la compartimos con terceros.
-
-## 3. Contenido del congreso
-
-La app muestra el contenido del congreso: sesiones, ponentes, horarios, salas, imágenes y noticias. Este contenido lo proporciona la organización de ICED26 y no es información personal recogida de los usuarios.
-
-## 4. Lo que no recopilamos
-
-La versión actual de ICED26 no requiere que crees una cuenta ni que inicies sesión.
-
-No recopilamos ni transmitimos:
-
-- Datos de registro o cuenta.
-- Tu ubicación.
-- Información de pago.
-- Datos de analítica o estadísticas de uso.
-- Informes de errores mediante servicios externos de crash reporting.
-- Datos con fines publicitarios.
+La aplicación realiza una única petición de red para descargar el contenido público del evento (agenda, ponentes, sesiones). Esta descarga no incluye ningún dato personal del usuario y es funcionalmente equivalente a visitar una página web pública. Una vez descargado, el contenido se almacena en caché local para su uso sin conexión.
 
 ## 5. Servicios de terceros
 
-La versión actual de la app no incluye publicidad, analítica ni SDKs externos de crash reporting.
+La aplicación no integra ningún SDK de terceros, red publicitaria, servicio de analítica ni plataforma de seguimiento. No se comparte información con terceros.
 
-Si en una versión futura se añaden servicios de terceros, esta política se actualizará para describir qué datos procesan y con qué finalidad.
+## 6. Permisos del dispositivo
 
-## 6. Conexión a internet y enlaces externos
+La app únicamente requiere acceso a internet para la descarga inicial del contenido del evento. No solicita ningún otro permiso del dispositivo.
 
-Algunas funciones pueden necesitar conexión a internet, por ejemplo para cargar imágenes de ponentes o abrir enlaces del congreso en el navegador.
+| Permiso   | Estado        |
+| --------- | ------------- |
+| Internet  | Requerido     |
+| Cámara    | No solicitado |
+| Micrófono | No solicitado |
+| Contactos | No solicitado |
+| Ubicación | No solicitado |
 
-Cuando abres un enlace externo desde la app, ese sitio tiene su propia política de privacidad. No somos responsables de cómo gestionan tu información.
+## 7. Menores de edad
 
-## 7. Tus derechos
+Dado que la aplicación no recopila ningún dato personal, no existe riesgo asociado al uso por parte de menores de edad. No se aplican restricciones de edad.
 
-Si la normativa aplicable -como el RGPD en la Unión Europea- te reconoce derechos sobre tus datos personales, puedes ejercerlos contactándonos en **[EMAIL_PRIVACIDAD]**.
+## 8. Cambios en esta política
 
-Como la app no recopila datos personales fuera de tu dispositivo, muchos de estos derechos no tienen aplicación práctica en la versión actual.
+Cualquier actualización a esta política de privacidad se reflejará en una nueva versión de la aplicación. Se notificará al usuario si la política cambia de forma significativa.
 
-## 8. Retención y eliminación de datos
+## 9. Derechos del usuario (RGPD)
 
-La información almacenada por la app permanece en tu dispositivo hasta que la elimines, borres los datos de la app o desinstales la aplicación.
+Dado que no se recopila ni procesa ningún dato personal, los derechos de acceso, rectificación, supresión y portabilidad reconocidos por el Reglamento General de Protección de Datos (RGPD) no son de aplicación. Para cualquier consulta, puede utilizarse el canal de contacto indicado a continuación.
 
-Como no hay cuentas de usuario ni datos en nuestros servidores, no existe un proceso de eliminación de cuenta.
+## 10. Contacto
 
-## 9. Menores
+Para cualquier pregunta relacionada con esta política de privacidad:
 
-La app está dirigida a asistentes del congreso y a un uso profesional o académico. No está dirigida a menores de edad.
-
-## 10. Cambios en esta política
-
-Si la app incorpora nuevas funciones que afecten a la privacidad -como analítica, login o notificaciones push-, actualizaremos esta política y cambiaremos la fecha de última actualización.
-
-## 11. Contacto
-
-Para consultas de privacidad: **[EMAIL_PRIVACIDAD]**
-
-Para soporte técnico: **[EMAIL_SOPORTE]**
+**Email:** [contacto@iced26.org](contacto@iced26.org)
