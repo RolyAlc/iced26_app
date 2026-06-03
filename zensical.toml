@@ -76,6 +76,10 @@ nav = [
       { "ARB y flutter_localizations" = "architecture/adr/0009_arb_flutter_localizations.md" }
     ]}
   ]},
+  { "Legal" = [
+    { "Política de privacidad" = "legal/privacy.md" },
+    { "Aviso legal" = "legal/legal_notice.md" }
+  ]},
   { "Guías" = [
     { "Inicio rápido" = "guides/onboarding.md" },
     { "Comandos útiles" = "guides/commands.md" },
