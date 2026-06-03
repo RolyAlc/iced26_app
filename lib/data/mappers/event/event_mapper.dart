@@ -24,15 +24,9 @@ abstract final class EventMapper {
           (json['duration'] as num?)?.toInt(),
       startDate: JsonParsers.parseDate(start),
       endDate: JsonParsers.parseDate(end),
-      zoneId: json['zoneId']?.toString(),
       roomId: json['roomId']?.toString(),
       type: EventType.fromString(type),
       defaultLang: json['defaultLang']?.toString(),
-      filterDate:
-          json['filterDate']?.toString() ??
-          _buildFilterDate(start, json['date']?.toString()),
-      filterTime:
-          json['filterTime']?.toString() ?? _buildFilterTime(start, end),
       speakers: JsonParsers.rawSpeakers(json['speakers'] ?? json['authors']),
       slotLabel: json['slotLabel']?.toString(),
       parentId: json['parentId']?.toString(),
@@ -63,12 +57,9 @@ abstract final class EventMapper {
       durationMin: data.durationMin,
       startDate: data.startDate,
       endDate: data.endDate,
-      zoneId: data.zoneId,
       roomId: data.roomId,
       type: EventType.fromString(data.type),
       defaultLang: data.defaultLang,
-      filterDate: data.filterDate,
-      filterTime: data.filterTime,
       speakers: JsonParsers.parseSpeakers(data.speakersJson),
       slotLabel: data.slotLabel,
       parentId: data.parentId,
@@ -138,18 +129,4 @@ abstract final class EventMapper {
     return null;
   }
 
-  static String? _buildFilterDate(String? start, String? fallbackDate) {
-    final startDate = JsonParsers.parseDate(start);
-    if (startDate != null) {
-      return startDate.toIso8601String().split('T').first;
-    }
-    return fallbackDate;
-  }
-
-  static String? _buildFilterTime(String? start, String? end) {
-    return JsonParsers.formatFilterTime(
-      JsonParsers.parseDate(start),
-      JsonParsers.parseDate(end),
-    );
-  }
 }

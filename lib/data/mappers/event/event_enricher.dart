@@ -1,4 +1,3 @@
-import 'package:iced26/data/mappers/json_parsers.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 
@@ -18,7 +17,16 @@ abstract final class EventEnricher {
       if (sessionId == null) return event;
 
       final block = blocksById[sessionId];
-      if (block == null || !_needsSessionBlockTime(event)) return event;
+      if (block == null) return event;
+
+      final needsTime = _needsSessionBlockTime(event);
+      final resolvedRoomId = event.roomId ?? block.roomId;
+
+      if (!needsTime) {
+        return resolvedRoomId != event.roomId
+            ? event.copyWith(roomId: resolvedRoomId)
+            : event;
+      }
 
       final inheritedStart = block.startDate;
       final inheritedEnd = block.endDate;
@@ -29,11 +37,7 @@ abstract final class EventEnricher {
       return event.copyWith(
         startDate: inheritedStart,
         endDate: inheritedEnd,
-        roomId: event.roomId ?? block.roomId,
-        filterDate:
-            inheritedStart?.toIso8601String().split('T').first ??
-            event.filterDate,
-        filterTime: JsonParsers.formatFilterTime(inheritedStart, inheritedEnd),
+        roomId: resolvedRoomId,
         durationMin: computedDuration ?? event.durationMin,
       );
     }).toList();

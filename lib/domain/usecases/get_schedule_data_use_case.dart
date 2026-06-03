@@ -1,4 +1,5 @@
 import 'package:iced26/core/errors/result.dart';
+import 'package:iced26/data/mappers/event/event_enricher.dart';
 import 'package:iced26/domain/entities/day.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/room.dart';
@@ -33,9 +34,11 @@ class GetScheduleDataUseCase {
     }
 
     final days = (results[0] as Success<List<Day>>).data;
-    final events = (results[1] as Success<List<Event>>).data;
+    final rawEvents = (results[1] as Success<List<Event>>).data;
     final rooms = (results[2] as Success<List<Room>>).data;
     final blocks = (results[3] as Success<List<SessionBlock>>).data;
+
+    final events = EventEnricher.inheritSessionBlockTimes(rawEvents, blocks);
 
     return Success((
       days: days,

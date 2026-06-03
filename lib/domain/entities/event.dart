@@ -13,12 +13,9 @@ class Event {
     this.durationMin,
     this.startDate,
     this.endDate,
-    this.zoneId,
     this.roomId,
     required this.type,
     this.defaultLang,
-    this.filterDate,
-    this.filterTime,
     this.speakers = const [],
     this.slotLabel,
     this.parentId,
@@ -41,12 +38,9 @@ class Event {
   final int? durationMin;
   final DateTime? startDate;
   final DateTime? endDate;
-  final String? zoneId;
   final String? roomId;
   final EventType type;
   final String? defaultLang;
-  final String? filterDate;
-  final String? filterTime;
   final List<SpeakerEntry> speakers;
   final String? slotLabel;
   final String? parentId;
@@ -61,6 +55,17 @@ class Event {
   final String? aboutPresentationUrl;
   final String? videoPresentationUrl;
 
+  String? get filterDate => startDate?.toIso8601String().split('T').first;
+
+  String? get filterTime {
+    final s = startDate;
+    if (s == null) return null;
+    final start = '${s.hour.toString().padLeft(2, '0')}:${s.minute.toString().padLeft(2, '0')}';
+    final e = endDate;
+    if (e == null) return start;
+    return '$start–${e.hour.toString().padLeft(2, '0')}:${e.minute.toString().padLeft(2, '0')}';
+  }
+
   Event copyWith({
     String? id,
     I18nStr? title,
@@ -70,12 +75,9 @@ class Event {
     int? durationMin,
     DateTime? startDate,
     DateTime? endDate,
-    String? zoneId,
     String? roomId,
     EventType? type,
     String? defaultLang,
-    String? filterDate,
-    String? filterTime,
     List<SpeakerEntry>? speakers,
     String? slotLabel,
     String? parentId,
@@ -99,12 +101,9 @@ class Event {
       durationMin: durationMin ?? this.durationMin,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      zoneId: zoneId ?? this.zoneId,
       roomId: roomId ?? this.roomId,
       type: type ?? this.type,
       defaultLang: defaultLang ?? this.defaultLang,
-      filterDate: filterDate ?? this.filterDate,
-      filterTime: filterTime ?? this.filterTime,
       speakers: speakers ?? this.speakers,
       slotLabel: slotLabel ?? this.slotLabel,
       parentId: parentId ?? this.parentId,
