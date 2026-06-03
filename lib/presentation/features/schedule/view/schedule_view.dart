@@ -8,7 +8,6 @@ import 'package:iced26/presentation/features/my_schedule/view/my_schedule_view.d
 import 'package:iced26/presentation/features/my_schedule/viewmodel/my_schedule_viewmodel.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_header.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/schedule_timeline_body.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/schedule_view_fab.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
 import 'package:iced26/presentation/shared/widgets/app_async_value_widget.dart';
@@ -96,7 +95,6 @@ class _ScheduleContentState extends ConsumerState<_ScheduleContent>
         topTab: topTab,
       ),
       fillChild: myScheduleSlot?.fillChild,
-      floatingChild: isMySchedule ? null : const ScheduleViewFab(),
       contentSliver: isMySchedule ? null : const ScheduleTimelineBody(),
       children: myScheduleSlot?.children ?? const [],
     );

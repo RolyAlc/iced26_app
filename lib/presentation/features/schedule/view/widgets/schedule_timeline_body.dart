@@ -4,7 +4,6 @@ import 'package:iced26/core/constants/design_tokens.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/event_card.dart';
-import 'package:iced26/presentation/features/schedule/view/widgets/schedule_agenda_view.dart';
 import 'package:iced26/presentation/features/schedule/view/widgets/session_slot_block.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/models/schedule_state.dart';
 import 'package:iced26/presentation/features/schedule/viewmodel/schedule_viewmodel.dart';
@@ -25,19 +24,10 @@ class ScheduleTimelineBody extends ConsumerWidget {
     final isFiltered = ref.watch(
       selectedScheduleCategoryProvider.select((cat) => cat != null),
     );
-    final viewFormat = ref.watch(selectedScheduleViewFormatProvider);
-
     if (items.isEmpty && isFiltered) {
       return const SliverFillRemaining(
         hasScrollBody: false,
         child: _EmptyScheduleFilter(),
-      );
-    }
-
-    if (viewFormat == ScheduleViewFormat.agenda) {
-      return SliverPadding(
-        padding: const EdgeInsets.only(top: AppSpacing.m),
-        sliver: SliverToBoxAdapter(child: ScheduleAgendaView(items: items)),
       );
     }
 

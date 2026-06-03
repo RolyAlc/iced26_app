@@ -15,9 +15,6 @@ part 'schedule_viewmodel.g.dart';
 
 const _kUnknownDate = 'Unknown date';
 
-/// Formato de visualización de la lista de sesiones.
-enum ScheduleViewFormat { list, agenda }
-
 @riverpod
 class ScheduleTopTab extends _$ScheduleTopTab {
   @override
@@ -40,21 +37,6 @@ class SelectedDayIndex extends _$SelectedDayIndex {
 
   void set(int value) {
     state = value;
-  }
-}
-
-/// Formato activo de la vista (lista o agenda). Se resetea al cambiar de día.
-@riverpod
-class SelectedScheduleViewFormat extends _$SelectedScheduleViewFormat {
-  @override
-  ScheduleViewFormat build() {
-    return ScheduleViewFormat.list;
-  }
-
-  void toggle() {
-    state = state == ScheduleViewFormat.list
-        ? ScheduleViewFormat.agenda
-        : ScheduleViewFormat.list;
   }
 }
 
