@@ -15,8 +15,6 @@ import 'package:iced26/presentation/shared/widgets/app_page.dart';
 import 'package:iced26/presentation/shared/widgets/app_page_title.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const String _kVersionValue = '—';
-
 /// Vista de ajustes de la app.
 class SettingsView extends ConsumerWidget {
   const SettingsView({super.key});
@@ -56,12 +54,6 @@ class SettingsView extends ConsumerWidget {
               icon: AppIcons.info,
               title: editionName,
               subtitle: location,
-            ),
-            SettingsItem(
-              icon: AppIcons.smartphone,
-              title: l10n.settingsVersionTitle,
-              // TODO: obtener versión real con package_info_plus
-              subtitle: _kVersionValue,
             ),
             SettingsItem(
               icon: AppIcons.language,
