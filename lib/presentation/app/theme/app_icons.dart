@@ -127,4 +127,5 @@ abstract final class AppIcons {
   static const wineBar = Icons.wine_bar_rounded;
   static const wavingHand = Icons.waving_hand_rounded;
   static const registration = Icons.how_to_reg_rounded;
+  static const tag = Icons.label_rounded;
 }

@@ -46,8 +46,6 @@ class EventDetailContent extends ConsumerWidget {
       event.endDate,
     );
     final people = ref.watch(allPeopleIndexProvider).value ?? {};
-    final presentationsByPerson =
-        ref.watch(presentationsByPersonIdProvider).value ?? {};
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,11 +71,7 @@ class EventDetailContent extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.s),
-          PresentationSpeakerList(
-            speakers: event.speakers,
-            people: people,
-            presentationsByPerson: presentationsByPerson,
-          ),
+          PresentationSpeakerList(speakers: event.speakers, people: people),
         ],
         const SizedBox(height: AppSpacing.l),
         _EventFavoriteButton(eventId: event.id),

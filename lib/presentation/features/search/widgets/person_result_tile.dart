@@ -51,7 +51,7 @@ class PersonResultTile extends ConsumerWidget {
           : null,
       onTap: () {
         onTap?.call();
-        showSpeakerDetail(context, person, talks);
+        showSpeakerDetail(context, person);
       },
     );
   }

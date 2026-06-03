@@ -14,10 +14,12 @@ class PresentationChip extends StatelessWidget {
     required this.label,
     this.primary = false,
     this.icon,
+    this.onTap,
   });
   final String label;
   final bool primary;
   final IconData? icon;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class PresentationChip extends StatelessWidget {
         ? theme.colorScheme.onPrimaryContainer
         : theme.colorScheme.onSurfaceVariant;
 
-    return Container(
+    final chip = Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.s,
         vertical: _kChipVerticalPadding,
@@ -53,6 +55,15 @@ class PresentationChip extends StatelessWidget {
           ),
         ],
       ),
+    );
+
+    if (onTap == null) {
+      return chip;
+    }
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadius.s),
+      child: chip,
     );
   }
 }

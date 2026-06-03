@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
-import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/speaker_entry.dart';
 import 'package:iced26/l10n/app_localizations.dart';
@@ -15,11 +14,9 @@ class PresentationSpeakerList extends StatelessWidget {
     super.key,
     required this.speakers,
     required this.people,
-    required this.presentationsByPerson,
   });
   final List<SpeakerEntry> speakers;
   final Map<String, Person> people;
-  final Map<String, List<Event>> presentationsByPerson;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +29,6 @@ class PresentationSpeakerList extends StatelessWidget {
         final person = people[s.personId];
         final name = person?.name.resolve(locale) ?? s.personId;
         final institution = person?.institution;
-        final speakerPresentations = presentationsByPerson[s.personId] ?? [];
         final isPresenter = s.isPresenter == true;
 
         final canTap = person != null;
@@ -44,7 +40,7 @@ class PresentationSpeakerList extends StatelessWidget {
             child: InkWell(
               onTap: canTap
                   ? () {
-                      showSpeakerDetail(context, person, speakerPresentations);
+                      showSpeakerDetail(context, person);
                     }
                   : null,
               borderRadius: BorderRadius.circular(AppRadius.s),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/di/domain_providers.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/l10n/app_localizations.dart';
@@ -10,23 +12,28 @@ import 'package:iced26/presentation/shared/widgets/speaker_avatar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Sheet genérico de ponente — reutilizable desde cualquier punto de entrada de la app.
-void showSpeakerDetail(BuildContext context, Person person, List<Event> talks) {
+void showSpeakerDetail(BuildContext context, Person person) {
   final locale = Localizations.localeOf(context).languageCode;
   AppBottomSheet.show(
     context: context,
     title: person.name.resolve(locale),
-    child: _SpeakerDetailBody(person: person, talks: talks),
+    child: _SpeakerDetailBody(person: person),
   );
 }
 
-class _SpeakerDetailBody extends StatelessWidget {
-  const _SpeakerDetailBody({required this.person, required this.talks});
+class _SpeakerDetailBody extends ConsumerWidget {
+  const _SpeakerDetailBody({required this.person});
 
   final Person person;
-  final List<Event> talks;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final talks = ref.watch(
+      presentationsByPersonIdProvider.select(
+        (v) => v.value?[person.id] ?? const [],
+      ),
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
