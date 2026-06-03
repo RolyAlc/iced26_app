@@ -27,6 +27,7 @@ dependencies:
   cached_network_image: ^3.4.1
   dio: ^5.9.0
   intl: ^0.20.2
+  flutter_html: ^3.0.0
 # ==== DEPENDENCIAS MODO DEV ====
 dev_dependencies:
   flutter_test:
