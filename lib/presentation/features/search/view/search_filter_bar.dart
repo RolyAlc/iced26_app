@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/domain/entities/duration_range.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
@@ -39,9 +40,9 @@ class FilterBar extends ConsumerWidget {
 
     final l10n = AppLocalizations.of(context)!;
     final homeState = ref.watch(homeViewModelProvider);
-    final zones = homeState.value?.allZones ?? [];
+    final rooms = homeState.value?.allRooms ?? [];
     final Map<String, String> zoneNames = {
-      for (final z in zones) z.id: z.name.resolve(l10n.localeName),
+      for (final r in rooms) r.id: r.name.resolve(l10n.localeName),
     };
 
     return _CollapsedFilterBar(
@@ -172,15 +173,24 @@ class _CollapsedFilterBar extends StatelessWidget {
           label: t.label,
           onRemove: () => notifier.toggleType(t),
         ),
-      for (final id in filters.selectedZones)
+      for (final lang in filters.selectedLanguages)
+        ActiveFilterChip(
+          label: lang.toUpperCase(),
+          onRemove: () => notifier.toggleLanguage(lang),
+        ),
+      for (final id in filters.selectedRooms)
         ActiveFilterChip(
           label: zoneNames[id] ?? id,
-          onRemove: () => notifier.toggleZone(id),
+          onRemove: () => notifier.toggleRoom(id),
         ),
-      for (final d in filters.selectedDurations)
+      for (final range in filters.selectedDurations)
         ActiveFilterChip(
-          label: l10n.searchDurationLabel(d),
-          onRemove: () => notifier.toggleDuration(d),
+          label: switch (range) {
+            DurationRange.short => l10n.searchDurationShort,
+            DurationRange.medium => l10n.searchDurationMedium,
+            DurationRange.long => l10n.searchDurationLong,
+          },
+          onRemove: () => notifier.toggleDuration(range),
         ),
       for (final s in filters.selectedStatuses)
         ActiveFilterChip(
@@ -190,6 +200,16 @@ class _CollapsedFilterBar extends StatelessWidget {
             EventStatus.ended => l10n.searchStatusEnded,
           },
           onRemove: () => notifier.toggleStatus(s),
+        ),
+      for (final tag in filters.selectedTags)
+        ActiveFilterChip(
+          label: '#$tag',
+          onRemove: () => notifier.toggleTag(tag),
+        ),
+      for (final track in filters.selectedTracks)
+        ActiveFilterChip(
+          label: track,
+          onRemove: () => notifier.toggleTrack(track),
         ),
     ];
   }

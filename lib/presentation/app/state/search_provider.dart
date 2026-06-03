@@ -1,3 +1,4 @@
+import 'package:iced26/domain/entities/duration_range.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/event_type.dart';
@@ -18,15 +19,19 @@ class SearchFilterState {
     this.selectedTypes = const {},
     this.selectedLanguages = const {},
     this.selectedStatuses = const {},
-    this.selectedZones = const {},
+    this.selectedRooms = const {},
     this.selectedDurations = const {},
+    this.selectedTags = const {},
+    this.selectedTracks = const {},
   });
   final String? selectedDay;
   final Set<EventType> selectedTypes;
   final Set<String> selectedLanguages;
   final Set<EventStatus> selectedStatuses;
-  final Set<String> selectedZones;
-  final Set<int> selectedDurations;
+  final Set<String> selectedRooms;
+  final Set<DurationRange> selectedDurations;
+  final Set<String> selectedTags;
+  final Set<String> selectedTracks;
 
   /// True si hay algún filtro activo.
   bool get isActive =>
@@ -34,8 +39,10 @@ class SearchFilterState {
       selectedTypes.isNotEmpty ||
       selectedLanguages.isNotEmpty ||
       selectedStatuses.isNotEmpty ||
-      selectedZones.isNotEmpty ||
-      selectedDurations.isNotEmpty;
+      selectedRooms.isNotEmpty ||
+      selectedDurations.isNotEmpty ||
+      selectedTags.isNotEmpty ||
+      selectedTracks.isNotEmpty;
 
   /// Número de filtros activos.
   int get activeCount =>
@@ -43,8 +50,10 @@ class SearchFilterState {
       selectedTypes.length +
       selectedLanguages.length +
       selectedStatuses.length +
-      selectedZones.length +
-      selectedDurations.length;
+      selectedRooms.length +
+      selectedDurations.length +
+      selectedTags.length +
+      selectedTracks.length;
 
   SearchFilterState copyWith({
     // Sentinel para distinguir "poner null" de "no cambiar".
@@ -52,8 +61,10 @@ class SearchFilterState {
     Set<EventType>? selectedTypes,
     Set<String>? selectedLanguages,
     Set<EventStatus>? selectedStatuses,
-    Set<String>? selectedZones,
-    Set<int>? selectedDurations,
+    Set<String>? selectedRooms,
+    Set<DurationRange>? selectedDurations,
+    Set<String>? selectedTags,
+    Set<String>? selectedTracks,
   }) {
     return SearchFilterState(
       selectedDay: selectedDay == _kUnset
@@ -62,8 +73,10 @@ class SearchFilterState {
       selectedTypes: selectedTypes ?? this.selectedTypes,
       selectedLanguages: selectedLanguages ?? this.selectedLanguages,
       selectedStatuses: selectedStatuses ?? this.selectedStatuses,
-      selectedZones: selectedZones ?? this.selectedZones,
+      selectedRooms: selectedRooms ?? this.selectedRooms,
       selectedDurations: selectedDurations ?? this.selectedDurations,
+      selectedTags: selectedTags ?? this.selectedTags,
+      selectedTracks: selectedTracks ?? this.selectedTracks,
     );
   }
 
@@ -87,14 +100,24 @@ class SearchFilterState {
     return copyWith(selectedStatuses: _toggleSet(selectedStatuses, status));
   }
 
-  /// Activa o desactiva una zona.
-  SearchFilterState withToggledZone(String zoneId) {
-    return copyWith(selectedZones: _toggleSet(selectedZones, zoneId));
+  /// Activa o desactiva una sala.
+  SearchFilterState withToggledRoom(String roomId) {
+    return copyWith(selectedRooms: _toggleSet(selectedRooms, roomId));
   }
 
-  /// Activa o desactiva una duración.
-  SearchFilterState withToggledDuration(int minutes) {
-    return copyWith(selectedDurations: _toggleSet(selectedDurations, minutes));
+  /// Activa o desactiva un rango de duración.
+  SearchFilterState withToggledDuration(DurationRange range) {
+    return copyWith(selectedDurations: _toggleSet(selectedDurations, range));
+  }
+
+  /// Activa o desactiva un tag.
+  SearchFilterState withToggledTag(String tag) {
+    return copyWith(selectedTags: _toggleSet(selectedTags, tag));
+  }
+
+  /// Activa o desactiva un track.
+  SearchFilterState withToggledTrack(String track) {
+    return copyWith(selectedTracks: _toggleSet(selectedTracks, track));
   }
 }
 
@@ -170,13 +193,23 @@ class Search extends _$Search {
   }
 
   /// Cambia el filtro de zona.
-  void toggleZone(String zoneId) {
-    updateFilters(state.filters.withToggledZone(zoneId));
+  void toggleRoom(String roomId) {
+    updateFilters(state.filters.withToggledRoom(roomId));
   }
 
-  /// Cambia el filtro de duración.
-  void toggleDuration(int minutes) {
-    updateFilters(state.filters.withToggledDuration(minutes));
+  /// Cambia el filtro de rango de duración.
+  void toggleDuration(DurationRange range) {
+    updateFilters(state.filters.withToggledDuration(range));
+  }
+
+  /// Cambia el filtro de tag.
+  void toggleTag(String tag) {
+    updateFilters(state.filters.withToggledTag(tag));
+  }
+
+  /// Cambia el filtro de track.
+  void toggleTrack(String track) {
+    updateFilters(state.filters.withToggledTrack(track));
   }
 
   /// Limpia todos los filtros.
@@ -253,13 +286,24 @@ class Search extends _$Search {
       return false;
     }
 
-    if (f.selectedZones.isNotEmpty &&
-        !f.selectedZones.contains(e.zoneId ?? '')) {
+    if (f.selectedRooms.isNotEmpty &&
+        !f.selectedRooms.contains(e.roomId ?? '')) {
       return false;
     }
 
-    if (f.selectedDurations.isNotEmpty &&
-        !f.selectedDurations.contains(e.durationMin)) {
+    if (f.selectedDurations.isNotEmpty) {
+      final d = e.durationMin;
+      if (d == null || !f.selectedDurations.any((r) => r.matches(d))) {
+        return false;
+      }
+    }
+
+    if (f.selectedTags.isNotEmpty && !f.selectedTags.any(e.tags.contains)) {
+      return false;
+    }
+
+    if (f.selectedTracks.isNotEmpty &&
+        !f.selectedTracks.contains(e.track ?? '')) {
       return false;
     }
 

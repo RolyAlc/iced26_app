@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iced26/core/constants/design_tokens.dart';
+import 'package:iced26/domain/entities/duration_range.dart';
 import 'package:iced26/domain/entities/event_status.dart';
 import 'package:iced26/domain/entities/event_type.dart';
-import 'package:iced26/domain/entities/zone.dart';
+import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/l10n/app_localizations.dart';
 import 'package:iced26/presentation/app/state/search_provider.dart';
 import 'package:iced26/presentation/app/theme/app_icons.dart';
@@ -33,7 +34,10 @@ class FilterPanel extends ConsumerWidget {
     final sections = [
       _buildDaySection(l10n, data.days, filters),
       _buildTypeSection(l10n, data.types, filters),
-      _buildZoneSection(l10n, data.zones, filters),
+      _buildTrackSection(l10n, data.tracks, filters),
+      _buildRoomSection(l10n, data.rooms, filters, l10n.localeName),
+      _buildLanguageSection(l10n, data.languages, filters),
+      _buildTagsSection(l10n, data.tags, filters),
       _buildDurationSection(l10n, data.durations, filters),
       _buildStatusSection(l10n, filters),
     ].where((s) => s.isNotEmpty).toList();
@@ -97,44 +101,124 @@ class FilterPanel extends ConsumerWidget {
     );
   }
 
-  List<Widget> _buildZoneSection(
+  List<Widget> _buildTrackSection(
     AppLocalizations l10n,
-    List<Zone> zones,
+    List<String> tracks,
     SearchFilterState filters,
   ) {
     return _filterSection(
-      l10n.searchFilterZone,
-      AppIcons.locationOn,
-      zones.map<Widget>((z) {
+      l10n.searchFilterTrack,
+      AppIcons.category,
+      tracks.map<Widget>((t) {
         return AppFilterChip(
-          label: z.name.resolve(l10n.localeName),
-          selected: filters.selectedZones.contains(z.id),
+          label: t,
+          selected: filters.selectedTracks.contains(t),
           onTap: () {
-            notifier.toggleZone(z.id);
+            notifier.toggleTrack(t);
           },
         );
       }).toList(),
     );
   }
 
+  List<Widget> _buildRoomSection(
+    AppLocalizations l10n,
+    List<Room> rooms,
+    SearchFilterState filters,
+    String locale,
+  ) {
+    if (rooms.isEmpty) return [];
+    return [
+      SectionLabel(label: l10n.searchFilterRoom, icon: AppIcons.meetingRoom),
+      const SizedBox(height: AppSpacing.s),
+      _CappedFilterSection(
+        items: rooms.map((r) {
+          final isSelected = filters.selectedRooms.contains(r.id);
+          return (
+            chip: AppFilterChip(
+              label: r.name.resolve(locale),
+              selected: isSelected,
+              onTap: () => notifier.toggleRoom(r.id),
+            ) as Widget,
+            selected: isSelected,
+          );
+        }).toList(),
+      ),
+      const SizedBox(height: AppSpacing.m),
+    ];
+  }
+
+  List<Widget> _buildLanguageSection(
+    AppLocalizations l10n,
+    List<String> languages,
+    SearchFilterState filters,
+  ) {
+    return _filterSection(
+      l10n.searchFilterLanguage,
+      AppIcons.translate,
+      languages.map<Widget>((lang) {
+        return AppFilterChip(
+          label: lang.toUpperCase(),
+          selected: filters.selectedLanguages.contains(lang),
+          onTap: () {
+            notifier.toggleLanguage(lang);
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  List<Widget> _buildTagsSection(
+    AppLocalizations l10n,
+    List<String> tags,
+    SearchFilterState filters,
+  ) {
+    if (tags.isEmpty) return [];
+    return [
+      SectionLabel(label: l10n.searchFilterTags, icon: AppIcons.tag),
+      const SizedBox(height: AppSpacing.s),
+      _CappedFilterSection(
+        items: tags.map((tag) {
+          return (
+            chip: AppFilterChip(
+              label: '#$tag',
+              selected: filters.selectedTags.contains(tag),
+              onTap: () => notifier.toggleTag(tag),
+            ) as Widget,
+            selected: filters.selectedTags.contains(tag),
+          );
+        }).toList(),
+      ),
+      const SizedBox(height: AppSpacing.m),
+    ];
+  }
+
   List<Widget> _buildDurationSection(
     AppLocalizations l10n,
-    List<int> durations,
+    List<DurationRange> durations,
     SearchFilterState filters,
   ) {
     return _filterSection(
       l10n.searchFilterDuration,
       AppIcons.duration,
-      durations.map<Widget>((d) {
+      durations.map<Widget>((range) {
         return AppFilterChip(
-          label: l10n.searchDurationLabel(d),
-          selected: filters.selectedDurations.contains(d),
+          label: _durationRangeLabel(l10n, range),
+          selected: filters.selectedDurations.contains(range),
           onTap: () {
-            notifier.toggleDuration(d);
+            notifier.toggleDuration(range);
           },
         );
       }).toList(),
     );
+  }
+
+  String _durationRangeLabel(AppLocalizations l10n, DurationRange range) {
+    return switch (range) {
+      DurationRange.short => l10n.searchDurationShort,
+      DurationRange.medium => l10n.searchDurationMedium,
+      DurationRange.long => l10n.searchDurationLong,
+    };
   }
 
   List<Widget> _buildStatusSection(
@@ -164,6 +248,62 @@ class FilterPanel extends ConsumerWidget {
         },
       ),
     ]);
+  }
+}
+
+const _kChipCap = 8;
+
+typedef _ChipItem = ({Widget chip, bool selected});
+
+class _CappedFilterSection extends StatefulWidget {
+  const _CappedFilterSection({required this.items});
+
+  final List<_ChipItem> items;
+
+  @override
+  State<_CappedFilterSection> createState() => _CappedFilterSectionState();
+}
+
+class _CappedFilterSectionState extends State<_CappedFilterSection> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final selected = widget.items.where((i) => i.selected).toList();
+    final unselected = widget.items.where((i) => !i.selected).toList();
+    final visibleUnselected = _expanded
+        ? unselected
+        : unselected.take((_kChipCap - selected.length).clamp(0, _kChipCap)).toList();
+    final hiddenCount = unselected.length - visibleUnselected.length;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: AppSpacing.s,
+          runSpacing: AppSpacing.s,
+          children: [
+            for (final item in [...selected, ...visibleUnselected]) item.chip,
+          ],
+        ),
+        if (hiddenCount > 0 || _expanded)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.s),
+            child: GestureDetector(
+              onTap: () => setState(() => _expanded = !_expanded),
+              child: Text(
+                _expanded
+                    ? l10n.searchFilterTagsShowLess
+                    : l10n.searchFilterTagsShowMore(hiddenCount),
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
 

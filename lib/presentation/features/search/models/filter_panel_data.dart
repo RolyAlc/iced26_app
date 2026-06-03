@@ -1,6 +1,7 @@
+import 'package:iced26/domain/entities/duration_range.dart';
 import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/event_type.dart';
-import 'package:iced26/domain/entities/zone.dart';
+import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/presentation/features/home/viewmodel/models/home_state.dart';
 import 'package:iced26/presentation/shared/helpers/date_helper.dart';
 
@@ -9,8 +10,11 @@ class FilterPanelData {
   FilterPanelData({
     required this.days,
     required this.types,
-    required this.zones,
+    required this.rooms,
     required this.durations,
+    required this.tracks,
+    required this.languages,
+    required this.tags,
   });
 
   /// Crea un [FilterPanelData] a partir de [HomeState].
@@ -19,14 +23,20 @@ class FilterPanelData {
     return FilterPanelData(
       days: _extractDays(events, locale),
       types: _extractTypes(events),
-      zones: _extractZones(homeData, locale),
+      rooms: _extractRooms(homeData, locale),
       durations: _extractDurations(events),
+      tracks: _extractTracks(events),
+      languages: _extractLanguages(events),
+      tags: _extractTags(events),
     );
   }
   final List<({String date, String label})> days;
   final List<EventType> types;
-  final List<Zone> zones;
-  final List<int> durations;
+  final List<Room> rooms;
+  final List<DurationRange> durations;
+  final List<String> tracks;
+  final List<String> languages;
+  final List<String> tags;
 
   static List<({String date, String label})> _extractDays(
     List<Event> events,
@@ -58,23 +68,46 @@ class FilterPanelData {
     return types;
   }
 
-  static List<Zone> _extractZones(HomeState homeData, String locale) {
-    final zones = homeData.allZones.toList();
-    zones.sort(
+  static List<Room> _extractRooms(HomeState homeData, String locale) {
+    final rooms = homeData.allRooms.toList();
+    rooms.sort(
       (a, b) => a.name.resolve(locale).compareTo(b.name.resolve(locale)),
     );
-    return zones;
+    return rooms;
   }
 
-  static List<int> _extractDurations(List<Event> events) {
-    final durations = events
-        .map((e) => e.durationMin)
-        .whereType<int>()
-        .where((d) => d > 0)
+  static List<DurationRange> _extractDurations(List<Event> events) {
+    return DurationRange.values.where((range) {
+      return events.any((e) => e.durationMin != null && range.matches(e.durationMin!));
+    }).toList();
+  }
+
+  static List<String> _extractTracks(List<Event> events) {
+    final tracks = events
+        .map((e) => e.track)
+        .whereType<String>()
         .toSet()
         .toList();
 
-    durations.sort();
-    return durations;
+    tracks.sort();
+    return tracks;
+  }
+
+  static List<String> _extractLanguages(List<Event> events) {
+    final languages = events
+        .map((e) => e.defaultLang)
+        .whereType<String>()
+        .where((l) => l.isNotEmpty)
+        .toSet()
+        .toList();
+
+    languages.sort();
+    return languages;
+  }
+
+  static List<String> _extractTags(List<Event> events) {
+    final tags = events.expand((e) => e.tags).toSet().toList();
+    tags.sort();
+    return tags;
   }
 }
