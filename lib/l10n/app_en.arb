@@ -170,6 +170,9 @@
   "settingsWebsiteTitle": "Official website",
   "@settingsWebsiteTitle": { "description": "Label for the official website link in Settings > About" },
 
+  "settingsPrivacyPolicyTitle": "Privacy policy",
+  "@settingsPrivacyPolicyTitle": { "description": "Label for the privacy policy link in Settings > About" },
+
   "settingsComingSoon": "Soon",
   "@settingsComingSoon": { "description": "Badge label on settings items that are not yet implemented" },
 

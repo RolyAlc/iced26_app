@@ -28,6 +28,7 @@ class SettingsView extends ConsumerWidget {
     final location = conference?.location ?? AppConfig.location;
     final websiteLabel = conference?.websiteLabel ?? AppConfig.websiteLabel;
     final websiteUrl = conference?.websiteUrl ?? AppConfig.websiteUrl;
+    const privacyPolicyUrl = AppConfig.privacyPolicyUrl;
 
     return AppPage(
       header: AppPageTitle(title: l10n.settingsTitle),
@@ -62,6 +63,16 @@ class SettingsView extends ConsumerWidget {
               onTap: () async {
                 await launchUrl(
                   Uri.parse(websiteUrl),
+                  mode: LaunchMode.externalApplication,
+                );
+              },
+            ),
+            SettingsItem(
+              icon: AppIcons.privacyPolicy,
+              title: l10n.settingsPrivacyPolicyTitle,
+              onTap: () async {
+                await launchUrl(
+                  Uri.parse(privacyPolicyUrl),
                   mode: LaunchMode.externalApplication,
                 );
               },

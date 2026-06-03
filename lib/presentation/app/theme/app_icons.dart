@@ -108,6 +108,7 @@ abstract final class AppIcons {
   static const smartphone = Icons.smartphone_rounded;
   static const language = Icons.language_rounded;
   static const email = Icons.email_outlined;
+  static const privacyPolicy = Icons.shield_outlined;
 
   // --- Helpers ---
   static final Map<ThemeMode, IconData> _icons = {
