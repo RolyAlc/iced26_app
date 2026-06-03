@@ -12,7 +12,7 @@ tags:
 
 # Política de privacidad
 
-> **Borrador — pendiente de revisión por la entidad responsable antes de publicar.**
+> **Borrador - pendiente de revisión por la entidad responsable antes de publicar.**
 > La traducción al inglés se añadirá una vez aprobado este texto.
 
 **Última actualización:** [FECHA]
@@ -73,7 +73,7 @@ Cuando abres un enlace externo desde la app, ese sitio tiene su propia política
 
 ## 7. Tus derechos
 
-Si la normativa aplicable —como el RGPD en la Unión Europea— te reconoce derechos sobre tus datos personales, puedes ejercerlos contactándonos en **[EMAIL_PRIVACIDAD]**.
+Si la normativa aplicable -como el RGPD en la Unión Europea- te reconoce derechos sobre tus datos personales, puedes ejercerlos contactándonos en **[EMAIL_PRIVACIDAD]**.
 
 Como la app no recopila datos personales fuera de tu dispositivo, muchos de estos derechos no tienen aplicación práctica en la versión actual.
 
@@ -89,7 +89,7 @@ La app está dirigida a asistentes del congreso y a un uso profesional o académ
 
 ## 10. Cambios en esta política
 
-Si la app incorpora nuevas funciones que afecten a la privacidad —como analítica, login o notificaciones push—, actualizaremos esta política y cambiaremos la fecha de última actualización.
+Si la app incorpora nuevas funciones que afecten a la privacidad -como analítica, login o notificaciones push-, actualizaremos esta política y cambiaremos la fecha de última actualización.
 
 ## 11. Contacto
 

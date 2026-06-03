@@ -83,6 +83,10 @@ tools/           > scripts de utilidad (smell_checker, generador de estructura)
 zensical serve
 ```
 
+o en la web
+
+[Documentación iced26](https://rolyalc.github.io/iced26_app/)
+
 O consulta directamente los ficheros en `docs/`.
 
 ## 7. Scripts útiles
