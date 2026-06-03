@@ -4,6 +4,7 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/session_block.dart';
+
 /// Contrato para la gestión de la schedule y eventos.
 abstract class ScheduleRepository {
   /// Obtiene todos los días de la conferencia.

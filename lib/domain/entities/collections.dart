@@ -6,6 +6,7 @@ import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/session_block.dart';
 import 'package:iced26/domain/entities/social_activity.dart';
 import 'package:iced26/domain/entities/submission_type.dart';
+
 /// Entidad que representa las colecciones de datos.
 class Collections {
   Collections({

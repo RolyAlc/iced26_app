@@ -78,7 +78,9 @@ class FilterPanelData {
 
   static List<DurationRange> _extractDurations(List<Event> events) {
     return DurationRange.values.where((range) {
-      return events.any((e) => e.durationMin != null && range.matches(e.durationMin!));
+      return events.any(
+        (e) => e.durationMin != null && range.matches(e.durationMin!),
+      );
     }).toList();
   }
 

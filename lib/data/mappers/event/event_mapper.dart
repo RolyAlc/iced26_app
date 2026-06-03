@@ -128,5 +128,4 @@ abstract final class EventMapper {
     }
     return null;
   }
-
 }

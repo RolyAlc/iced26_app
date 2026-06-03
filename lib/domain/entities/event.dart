@@ -60,7 +60,8 @@ class Event {
   String? get filterTime {
     final s = startDate;
     if (s == null) return null;
-    final start = '${s.hour.toString().padLeft(2, '0')}:${s.minute.toString().padLeft(2, '0')}';
+    final start =
+        '${s.hour.toString().padLeft(2, '0')}:${s.minute.toString().padLeft(2, '0')}';
     final e = endDate;
     if (e == null) return start;
     return '$start–${e.hour.toString().padLeft(2, '0')}:${e.minute.toString().padLeft(2, '0')}';

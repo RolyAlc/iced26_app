@@ -135,11 +135,13 @@ class FilterPanel extends ConsumerWidget {
         items: rooms.map((r) {
           final isSelected = filters.selectedRooms.contains(r.id);
           return (
-            chip: AppFilterChip(
-              label: r.name.resolve(locale),
-              selected: isSelected,
-              onTap: () => notifier.toggleRoom(r.id),
-            ) as Widget,
+            chip:
+                AppFilterChip(
+                      label: r.name.resolve(locale),
+                      selected: isSelected,
+                      onTap: () => notifier.toggleRoom(r.id),
+                    )
+                    as Widget,
             selected: isSelected,
           );
         }).toList(),
@@ -180,11 +182,13 @@ class FilterPanel extends ConsumerWidget {
       _CappedFilterSection(
         items: tags.map((tag) {
           return (
-            chip: AppFilterChip(
-              label: '#$tag',
-              selected: filters.selectedTags.contains(tag),
-              onTap: () => notifier.toggleTag(tag),
-            ) as Widget,
+            chip:
+                AppFilterChip(
+                      label: '#$tag',
+                      selected: filters.selectedTags.contains(tag),
+                      onTap: () => notifier.toggleTag(tag),
+                    )
+                    as Widget,
             selected: filters.selectedTags.contains(tag),
           );
         }).toList(),
@@ -274,7 +278,9 @@ class _CappedFilterSectionState extends State<_CappedFilterSection> {
     final unselected = widget.items.where((i) => !i.selected).toList();
     final visibleUnselected = _expanded
         ? unselected
-        : unselected.take((_kChipCap - selected.length).clamp(0, _kChipCap)).toList();
+        : unselected
+              .take((_kChipCap - selected.length).clamp(0, _kChipCap))
+              .toList();
     final hiddenCount = unselected.length - visibleUnselected.length;
 
     return Column(
