@@ -136,6 +136,7 @@
   "speakerDetailPresentationsHeaderCount": "Presentaciones · {count}",
 
   "scheduleDetailAbstract": "Resumen",
+  "scheduleDetailExploreMore": "Buscar similares",
   "scheduleDetailTrack": "Track {track}",
   "scheduleDetailDuration": "{minutes} min",
   "scheduleDetailShowAll": "Ver todos ({count})",
@@ -166,7 +167,23 @@
   "searchFilterZone": "Zona",
   "searchFilterDuration": "Duración",
   "searchFilterStatus": "Estado",
+  "searchFilterTrack": "Track",
+  "searchFilterRoom": "Sala",
+  "searchFilterLanguage": "Idioma",
+  "searchFilterTags": "Etiquetas",
+  "searchFilterTagsShowMore": "+{count} más",
+  "@searchFilterTagsShowMore": {
+    "description": "Botón para expandir la sección de etiquetas",
+    "placeholders": {
+      "count": { "type": "int", "description": "Número de etiquetas ocultas" }
+    }
+  },
+  "searchFilterTagsShowLess": "Ver menos",
+  "@searchFilterTagsShowLess": { "description": "Botón para colapsar la sección de etiquetas" },
   "searchDurationLabel": "{minutes} min",
+  "searchDurationShort": "≤ 30 min",
+  "searchDurationMedium": "30–90 min",
+  "searchDurationLong": "> 90 min",
   "searchStatusLiveNow": "En directo",
   "searchStatusUpNext": "Próximamente",
   "searchStatusEnded": "Finalizada",

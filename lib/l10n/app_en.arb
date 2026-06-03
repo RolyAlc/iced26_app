@@ -389,6 +389,8 @@
 
   "scheduleDetailAbstract": "Abstract",
   "@scheduleDetailAbstract": { "description": "Section label for the abstract in the presentation detail sheet" },
+  "scheduleDetailExploreMore": "Find similar",
+  "@scheduleDetailExploreMore": { "description": "Section label for the explore-more filter chips in the presentation detail sheet" },
 
   "scheduleDetailTrack": "Track {track}",
   "@scheduleDetailTrack": {
@@ -510,6 +512,28 @@
 
   "searchFilterStatus": "Status",
   "@searchFilterStatus": { "description": "Section label for the status filter in the search filter panel" },
+  "searchFilterTrack": "Track",
+  "@searchFilterTrack": { "description": "Section label for the track filter in the search filter panel" },
+
+  "searchFilterRoom": "Room",
+  "@searchFilterRoom": { "description": "Section label for the room filter in the search filter panel" },
+
+  "searchFilterLanguage": "Language",
+  "@searchFilterLanguage": { "description": "Section label for the language filter in the search filter panel" },
+
+  "searchFilterTags": "Tags",
+  "@searchFilterTags": { "description": "Section label for the tags filter in the search filter panel" },
+
+  "searchFilterTagsShowMore": "+{count} more",
+  "@searchFilterTagsShowMore": {
+    "description": "Button to expand the tags filter section",
+    "placeholders": {
+      "count": { "type": "int", "description": "Number of hidden tags" }
+    }
+  },
+
+  "searchFilterTagsShowLess": "Show less",
+  "@searchFilterTagsShowLess": { "description": "Button to collapse the tags filter section" },
 
   "searchDurationLabel": "{minutes} min",
   "@searchDurationLabel": {
@@ -518,6 +542,15 @@
       "minutes": { "type": "int", "description": "Duration in minutes" }
     }
   },
+
+  "searchDurationShort": "≤ 30 min",
+  "@searchDurationShort": { "description": "Duration range filter: short sessions up to 30 min" },
+
+  "searchDurationMedium": "30–90 min",
+  "@searchDurationMedium": { "description": "Duration range filter: medium sessions 31 to 90 min" },
+
+  "searchDurationLong": "> 90 min",
+  "@searchDurationLong": { "description": "Duration range filter: long sessions over 90 min" },
 
   "searchStatusLiveNow": "Live now",
   "@searchStatusLiveNow": { "description": "Status filter chip label for sessions currently live" },
