@@ -35,7 +35,6 @@ class AppData {
         sessionBlocks: [],
         people: [],
         rooms: [],
-        zones: [],
         submissionTypes: [],
         socials: [],
         news: [],

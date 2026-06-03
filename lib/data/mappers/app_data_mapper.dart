@@ -59,7 +59,6 @@ abstract final class AppDataMapper {
         sessionBlocks: scheduleCollections.sessionBlocks,
         people: scheduleCollections.people,
         rooms: scheduleCollections.rooms,
-        zones: base.collections.zones,
         submissionTypes: base.collections.submissionTypes,
         socials: base.collections.socials,
         news: base.collections.news,

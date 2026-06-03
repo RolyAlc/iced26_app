@@ -8,7 +8,6 @@ import 'package:iced26/data/mappers/person_mapper.dart';
 import 'package:iced26/data/mappers/room_mapper.dart';
 import 'package:iced26/data/mappers/session_block/session_block_mapper.dart';
 import 'package:iced26/data/mappers/submission_type_mapper.dart';
-import 'package:iced26/data/mappers/zone_mapper.dart';
 import 'package:iced26/domain/entities/collections.dart';
 
 abstract final class CollectionsMapper {
@@ -41,7 +40,6 @@ abstract final class CollectionsMapper {
       sessionBlocks: sessionBlocks,
       people: _toListOf(people, PersonMapper.fromMap),
       rooms: _toListOf(map.getList('rooms'), RoomMapper.fromMap),
-      zones: _toListOf(map.getList('zones'), ZoneMapper.fromMap),
       submissionTypes: _toListOf(
         map.getList('submissionTypes'),
         SubmissionTypeMapper.fromMap,

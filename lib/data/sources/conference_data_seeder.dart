@@ -38,7 +38,6 @@ class ConferenceDataSeeder {
       _insertDays(batch, appData);
       _insertSubmissionTypes(batch, appData);
       _insertRooms(batch, appData);
-      _insertZones(batch, appData);
       _insertEvents(batch, appData);
       _insertSessionBlocks(batch, appData);
       _insertNews(batch, appData);
@@ -91,21 +90,6 @@ class ConferenceDataSeeder {
     );
   }
 
-  void _insertZones(Batch batch, AppData appData) {
-    batch.insertAll(
-      _db.zones,
-      appData.collections.zones.map(
-        (z) => ZonesCompanion.insert(
-          id: z.id,
-          name: z.name.resolve('en'),
-          lang: Value(z.lang),
-          description: Value(z.description),
-        ),
-      ),
-      mode: InsertMode.insertOrReplace,
-    );
-  }
-
   void _insertEvents(Batch batch, AppData appData) {
     batch.insertAll(
       _db.events,
@@ -119,12 +103,9 @@ class ConferenceDataSeeder {
           durationMin: Value(e.durationMin),
           startDate: Value(e.startDate),
           endDate: Value(e.endDate),
-          zoneId: Value(e.zoneId),
           roomId: Value(e.roomId),
           type: e.type.jsonValue,
           defaultLang: Value(e.defaultLang),
-          filterDate: Value(e.filterDate),
-          filterTime: Value(e.filterTime),
           speakersJson: Value(
             e.speakers.isEmpty
                 ? null

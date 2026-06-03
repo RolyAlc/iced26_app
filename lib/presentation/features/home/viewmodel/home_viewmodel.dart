@@ -72,7 +72,6 @@ class HomeViewModel extends _$HomeViewModel {
       days: data.days,
       allEvents: data.allEvents,
       allRooms: data.allRooms,
-      allZones: data.allZones,
       featuredEvents: _buildFeaturedEvents(
         allEvents: data.allEvents,
         allRooms: data.allRooms,

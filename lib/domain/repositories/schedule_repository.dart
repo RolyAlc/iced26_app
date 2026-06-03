@@ -4,8 +4,6 @@ import 'package:iced26/domain/entities/event.dart';
 import 'package:iced26/domain/entities/person.dart';
 import 'package:iced26/domain/entities/room.dart';
 import 'package:iced26/domain/entities/session_block.dart';
-import 'package:iced26/domain/entities/zone.dart';
-
 /// Contrato para la gestión de la schedule y eventos.
 abstract class ScheduleRepository {
   /// Obtiene todos los días de la conferencia.
@@ -13,9 +11,6 @@ abstract class ScheduleRepository {
 
   /// Obtiene todas las salas.
   Future<Result<List<Room>>> getAllRooms();
-
-  /// Obtiene todas las zonas de la conferencia.
-  Future<Result<List<Zone>>> getAllZones();
 
   /// Obtiene todos los eventos.
   Future<Result<List<Event>>> getAllEvents();
