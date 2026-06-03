@@ -14,11 +14,10 @@ class AttributeCellData {
   final String value;
 }
 
-/// Grid 2 columnas de celdas icono+etiqueta+valor — acepta cualquier número
-/// par de [cells] y separa las filas con un divider sutil.
+/// Grid 2 columnas de celdas icono+etiqueta+valor.
+/// Si [cells] tiene longitud impar, la última celda ocupa el ancho completo.
 class EventAttributesCard extends StatelessWidget {
-  const EventAttributesCard({super.key, required this.cells})
-    : assert(cells.length % 2 == 0, 'cells must be even — rendered in pairs');
+  const EventAttributesCard({super.key, required this.cells});
 
   final List<AttributeCellData> cells;
 
@@ -38,6 +37,7 @@ class EventAttributesCard extends StatelessWidget {
           ),
         );
       }
+      final isLastOdd = i + 1 >= cells.length;
       rows.add(
         Row(
           children: [
@@ -48,13 +48,14 @@ class EventAttributesCard extends StatelessWidget {
                 value: cells[i].value,
               ),
             ),
-            Expanded(
-              child: AttributeCell(
-                icon: cells[i + 1].icon,
-                label: cells[i + 1].label,
-                value: cells[i + 1].value,
+            if (!isLastOdd)
+              Expanded(
+                child: AttributeCell(
+                  icon: cells[i + 1].icon,
+                  label: cells[i + 1].label,
+                  value: cells[i + 1].value,
+                ),
               ),
-            ),
           ],
         ),
       );
