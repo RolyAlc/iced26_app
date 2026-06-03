@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:iced26/core/config/app_config.dart';
@@ -9,8 +10,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppConfig.applyDebugFlags();
 
-  // TODO(test): reactivar antes de publicar
-  // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   runApp(const ProviderScope(child: MyApp()));
 }
