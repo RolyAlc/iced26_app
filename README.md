@@ -11,6 +11,8 @@ Aplicación móvil para el congreso **ICED26** (International Conference on Engi
 
 Funciona sin conexión: todos los datos están empaquetados en la app.
 
+[Documentación iced26 - Deploy](https://rolyalc.github.io/iced26_app/)
+
 ## 1. ¿Qué puede hacer el usuario?
 
 | Pantalla        | Descripción                                                                  |
